@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>GradientOne Demo Page</title>
+    
+    <script src="js/addons/jquery-1.11.3.js"></script>    
+    <script src="js/jquery-ui-1.11.4/jquery-ui.js"></script>
+    <script src="bootstrap/js/bootstrap.min.js"></script>    
+    <script src="js/addons/lodash.js"></script>  
+    <script src="js/addons/knockout.min.js"></script>
+    <script src="js/addons/gridstack.js"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="js/chart1.js"></script>
+    <script type="text/javascript" src="js/chart2.js"></script>
+    <script type="text/javascript" src="js/chart3.js"></script>
+    <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="bootstrap/css/custom.css">
+    <link rel="stylesheet" type="text/css" href="css/hoverzoom.css">
+    <link rel="stylesheet" href="css/gridstack.css"/>
+    <script type="text/javascript" src="js/addons/Grid.js"></script>
+    <style type="text/css">
+        
+    </style>
+
+</head>
+<body background="images/triangles.png">
+    <div class="container">       
+        <nav class="navbar navbar-inverse navbar-collapse collapse">
+                <div class="container-fluid">
+                  <div class="navbar-header">
+                  <img class="logo" src="images/Glogo.png" style="width:110px;">
+                  </div>
+                  <div id="navbar">
+                    <ul class="topmenu nav navbar-nav">
+                      <li><a href="canvas.html">CANVAS</a></li>
+                      <li class="dots glyphicon glyphicon-option-vertical"></li>
+                      <li><a href="instruments.html">INSTRUMENTS</a></li>
+                      <li class="dots glyphicon glyphicon-option-vertical"></li>
+                      <li><a href="community.html">COMMUNITY</a></li>          
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                      <li><a class="glyphicon glyphicon-envelope"href="../navbar-static-top/"></a></li>
+                      <li><a class="glyphicon glyphicon-bell" href="../navbar-static-top/"></a></li>
+                      <li><a class="glyphicon glyphicon-user"href="../navbar-fixed-top/">Login</a></li>
+                    </ul>
+                  </div>
+                </div>
+        </nav>
+        <div class="row">
+            <div class="col-sm-3 col-md-3">
+                <div class="panel-group" id="accordion" style="
+    width: 140px;">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">Instruments</a>
+                            </h4>
+                        </div>
+                        <div id="collapseOne" class="panel-collapse collapse in">
+                            <div class="panel-body">
+                                <table class="table">
+                                    <tr>
+                                        <td>
+                                            <a>VSG</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <a>VNA</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                           <a>VCO</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <a>O-Scope</a>                             
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"><span>
+                                </span>Measurements</a>
+                            </h4>
+                        </div>
+                        <div id="collapseTwo" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <table class="table">
+                                    <tr>
+                                        <td>
+                                            <a>Peak Power</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <a>Spectral Mask</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <a>Adjacent Channel Power</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <a>Harmonics</a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree"><span>
+                                </span>Sequencing</a>
+                            </h4>
+                        </div>
+                        <div id="collapseThree" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <table class="table">
+                                    <tr>
+                                        <td>
+                                            <a>DUT</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <a>Subroutine</a> <span></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <a>Power Sweep</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span></span><a>Frequency Sweep</a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour"><span>
+                                </span>Test Plans</a>
+                            </h4>
+                        </div>
+                        <div id="collapseFour" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <table class="table">
+                                    <tr>
+                                        <td>
+                                            <span></span><a>Components</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span></span><a>Standards</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span></span><a>Custom</a>
+                                        </td>
+                                    </tr>                                   
+                                </table>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+        <div class="canvas container-fluid">
+            <h3>Canvas</h3>
+            <div>
+                <button class="butt" data-bind="click: add_new_widget">Add New</button>
+            </div>
+            <br>
+            <div data-bind="component: {name: 'dashboard-grid', params: $data}">
+            </div>
+        </div>
+        <div class="row">
+            <nav>
+                <ul>
+                    <div id="chart1" class="col-md-4 hoverzoom img-responsive"></div>
+                </ul>
+                <ul>
+                    <div id="chart2" class="col-md-4 hoverzoom"></div>
+                </ul>
+                <ul>
+                    <div id="chart3" class="col-md-4"></div>
+                </ul>               
+            </nav>             
+        </div> 
+    <hr>
+    </div>     
+</body>
+</html>
