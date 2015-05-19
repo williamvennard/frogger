@@ -9,21 +9,22 @@
     <script src="js/addons/lodash.js"></script>  
     <script src="js/addons/knockout.min.js"></script>
     <script src="js/addons/gridstack.js"></script>
-    <script type="text/javascript" src="bootstrap/js/bootstrap.js"></script>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <script type="text/javascript" src="js/DataPlot.js"></script>
+    <script type="text/javascript" src="js/chart1.js"></script>
+    <script type="text/javascript" src="js/chart2.js"></script>
+    <script type="text/javascript" src="js/chart3.js"></script>
     <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="bootstrap/css/custom.css">
+    <link rel="stylesheet" type="text/css" href="css/hoverzoom.css">
     <link rel="stylesheet" href="css/gridstack.css"/>
-
+    <script type="text/javascript" src="js/addons/Grid.js"></script>
     <style type="text/css">
         
     </style>
 
 </head>
 <body background="images/triangles.png">
-    <div class="container">   
-    <p>Hello World!</p>    
+    <div class="container">       
         <nav class="navbar navbar-inverse navbar-collapse collapse">
                 <div class="container-fluid">
                   <div class="navbar-header">
@@ -31,11 +32,11 @@
                   </div>
                   <div id="navbar">
                     <ul class="topmenu nav navbar-nav">
-                      <li><a href="#">CANVAS</a></li>
+                      <li><a href="canvas.html">CANVAS</a></li>
                       <li class="dots glyphicon glyphicon-option-vertical"></li>
-                      <li><a href="#">INSTRUMENTS</a></li>
+                      <li><a href="instruments.html">INSTRUMENTS</a></li>
                       <li class="dots glyphicon glyphicon-option-vertical"></li>
-                      <li><a href="#">COMMUNITY</a></li>          
+                      <li><a href="community.html">COMMUNITY</a></li>          
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                       <li><a class="glyphicon glyphicon-envelope"href="../navbar-static-top/"></a></li>
@@ -181,26 +182,23 @@
                 </div>
             </div>
         </div>
-        <div class="canvas container-fluid">
+        <div class="container-fluid">
             <h3>Canvas</h3>
-            <div>
-                <button class="butt" data-bind="click: add_new_widget">Add New</button>
-            </div>
-            <br>
-            <div data-bind="component: {name: 'dashboard-grid', params: $data}">
-            </div>
         </div>
-
         <div class="row">
-            <nav id="zoomzoom">
+            <nav>
                 <ul>
-                    <div id="chart_div"></div>
+                    <div id="chart1" class="col-md-4 hoverzoom img-responsive"></div>
                 </ul>
-            </nav>
-              
+                <ul>
+                    <div id="chart2" class="col-md-4 hoverzoom"></div>
+                </ul>
+                <ul>
+                    <div id="chart3" class="col-md-4 hoverzoom"></div>
+                </ul>               
+            </nav>             
         </div> 
-
-    </div> 
-    <script type="text/javascript" src="js/addons/Grid.js"></script>
+    <hr>
+    </div>     
 </body>
 </html>
