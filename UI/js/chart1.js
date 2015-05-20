@@ -5,7 +5,7 @@
     google.setOnLoadCallback(drawChart);
 
     function readTextFile(file)
-    {
+    ]
         var allText;
         var rawFile = new XMLHttpRequest();
         rawFile.open("GET", file, false);
