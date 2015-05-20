@@ -6,9 +6,19 @@
     border-radius: 10px;
     color: #2c3e50;
     text-align: center;
-    background-color: rgb(146, 220, 202);
+    background-color: #eee;
 }
-
+.dragdrop{
+    
+    position: absolute;
+    left:50%;
+    top:100px;
+    color: white;
+    opacity: 0.25;
+}
+.canvas{
+    margin-left:200px;
+}
 #wrapper {
     padding-left: 250px;
     transition: all 0.4s ease 0s;
@@ -29,19 +39,6 @@
 .butt{
     border-radius:5px;
     color: black;
-}
-.canvas{
-    color: white;
-    margin-left: 160px;
-    margin-bottom: 20px;
-}
-.dragdrop{
-    
-    position: absolute;
-    left:50%;
-    top:100px;
-    color: white;
-    opacity: 0.25;
 }
 #sidebar-wrapper {
     margin-left: 0%;
@@ -68,42 +65,6 @@
     margin: 0;
     padding: 0;
 }
-#zoomzoom ul
-{
-    list-style-type: none;
-    position: absolute;
-    top: 40%;
-    left: 35%;
-}
-#zoomzoom li
-{
-    float: left;
-}
-#zoomzoom li a
-{
-    background-color: White;
-    border: 1px solid;
-    color: Black;
-    display: block;
-    height: 1em;
-    margin: .25em;
-    padding: 2em;
-    text-decoration: none;
-    width: 1em;
-    -moz-border-radius: 50px;
-    -moz-box-shadow: 2px 2px #999;
-    -moz-transition: .5s ease-in-out;
-    -webkit-border-radius: 50px;
-    -webkit-box-shadow: 2px 2px #999;
-    -webkit-transition: .25s ease-in-out;       
-}
-#zoomzoom li a:hover
-{    
-    -moz-transform:scale(1.5);
-    -webkit-transform:scale(1.5);      
-}
-#zoomzoom li a span
-{
-    position: relative;
-    right: 10px;    
+.well{
+    background-color: #eee; 
 }
