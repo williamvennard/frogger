@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block import %}
+
+   {% for d in datasets %}  
+
+    <a href="data/{{ d.description | safe }}">{{ d.description | safe }}</a>
+    {{ d.render() | safe }}
+    <br><br>
+  {% endfor %}
+
+{% endblock %}
+
+
+#<a href="_edit{{PAGE_RE}}">edit</a>

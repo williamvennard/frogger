@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block import %}
+
+	<b>GradientOne Data Input Page</b>
+	
+  	  
+  	  <br> <br>
+  	  
+  <form method="post">
+
+      <label>
+        <div>Description</div>
+        <input type = "text" name="description" value="{{description}}">
+      </label>
+
+      <label>
+        <div>Input</div>
+        <textarea name="inputdata">{{inputdata}}</textarea>
+      </label>
+
+
+      <input type="submit">
+    </form>
+ 
+   	
+	
+{% endblock %}

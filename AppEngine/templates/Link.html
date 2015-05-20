@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block import %}
+
+   
+
+    {{ d.description | safe }}
+    {{ d.render() | safe }}
+    <br><br>
+  {% endfor %}
+
+{% endblock %}
+
