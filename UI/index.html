@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html ng-app lang="en">
 <head>
     <title>GradientOne Demo Page</title>
-    
+         
     <script src="js/addons/jquery-1.11.3.js"></script>    
     <script src="js/jquery-ui-1.11.4/jquery-ui.js"></script>
     <script src="bootstrap/js/bootstrap.min.js"></script>    
@@ -14,42 +14,41 @@
     <script type="text/javascript" src="js/chart2.js"></script>
     <script type="text/javascript" src="js/chart3.js"></script>
     <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="bootstrap/css/custom.css">
+    <link rel="stylesheet" type="text/css" href="css/custom.css">
     <link rel="stylesheet" type="text/css" href="css/hoverzoom.css">
     <link rel="stylesheet" href="css/gridstack.css"/>
     <script type="text/javascript" src="js/addons/Grid.js"></script>
-    <style type="text/css">
-        
-    </style>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.13/angular.min.js"></script>
+    <script type="text/javascript" src="js/addons/clickadd.js"></script>
+    <style type="text/css"></style>
 </head>
+
 <body background="images/triangles.png">
-    <div class="container">       
+    <div ng-controller="Note" class="container">       
         <nav class="navbar navbar-inverse navbar-collapse collapse">
                 <div class="container-fluid">
-                  <div class="navbar-header">
-                  <img class="logo" src="images/Glogo.png" style="width:110px;">
-                  </div>
-                  <div id="navbar">
-                    <ul class="topmenu nav navbar-nav">
-                      <li><a href="canvas.html">CANVAS</a></li>
-                      <li class="dots glyphicon glyphicon-option-vertical"></li>
-                      <li><a href="instruments.html">INSTRUMENTS</a></li>
-                      <li class="dots glyphicon glyphicon-option-vertical"></li>
-                      <li><a href="community.html">COMMUNITY</a></li>          
-                    </ul>
-                    <ul class="nav navbar-nav navbar-right">
-                      <li><a class="glyphicon glyphicon-envelope"href="../navbar-static-top/"></a></li>
-                      <li><a class="glyphicon glyphicon-bell" href="../navbar-static-top/"></a></li>
-                      <li><a class="glyphicon glyphicon-user"href="../navbar-fixed-top/">Login</a></li>
-                    </ul>
-                  </div>
+                    <div class="navbar-header">
+                        <img class="logo" src="images/Glogo.png" style="width:110px;">
+                    </div>
+                    <div id="navbar">
+                        <ul class="topmenu nav navbar-nav">
+                            <li><a href="canvas.html">CANVAS</a></li>
+                            <li class="dots glyphicon glyphicon-option-vertical"></li>
+                            <li><a href="instruments.html">INSTRUMENTS</a></li>
+                            <li class="dots glyphicon glyphicon-option-vertical"></li>
+                            <li><a href="community.html">COMMUNITY</a></li>          
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                          <li><a class="glyphicon glyphicon-envelope"href="../navbar-static-top/"></a></li>
+                          <li><a class="glyphicon glyphicon-bell" href="../navbar-static-top/"></a></li>
+                          <li><a class="glyphicon glyphicon-user"href="../navbar-fixed-top/">Login</a></li>
+                        </ul>
+                    </div>
                 </div>
         </nav>
         <div class="row">
-            <div class="col-sm-3 col-md-3">
-                <div class="panel-group" id="accordion" style="
-    width: 140px;">
+            <div class="col-md-3" style="width: 180px;">
+                <div class="panel-group" id="accordion" style="width: 140px;">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4 class="panel-title">
@@ -71,7 +70,7 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                           <a>VCO</a>
+                                            <a>VCO</a>
                                         </td>
                                     </tr>
                                     <tr>
@@ -86,8 +85,7 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4 class="panel-title">
-                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"><span>
-                                </span>Measurements</a>
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">Measurements</a>
                             </h4>
                         </div>
                         <div id="collapseTwo" class="panel-collapse collapse">
@@ -95,7 +93,7 @@
                                 <table class="table">
                                     <tr>
                                         <td>
-                                            <a>Peak Power</a>
+                                            <a ng-click="add()">Peak Power</a>
                                         </td>
                                     </tr>
                                     <tr>
@@ -120,8 +118,7 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4 class="panel-title">
-                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree"><span>
-                                </span>Sequencing</a>
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">Sequencing</a>
                             </h4>
                         </div>
                         <div id="collapseThree" class="panel-collapse collapse">
@@ -154,8 +151,7 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4 class="panel-title">
-                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour"><span>
-                                </span>Test Plans</a>
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour">Test Plans</a>
                             </h4>
                         </div>
                         <div id="collapseFour" class="panel-collapse collapse">
@@ -179,16 +175,42 @@
                                 </table>
                             </div>
                         </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="container-fluid">
-            <h3>Canvas</h3>
-        </div>
+            </div>        
+            <div class="col-md-3" style="width: 300px">
+                <div ng-repeat="item in items" class="well">
+                    <h3>Peak Power</h3>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1">Trigger Delay</span>
+                        <select class="form-control">                          
+                            <option>External</option>
+                            <option>RF Burst</option>
+                            <option>Free Run</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1">Bandwidth</span>
+                        <input type="text" class="form-control" placeholder="Hz" aria-describedby="basic-addon1">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1">Trigger Delay</span>
+                        <input type="text" class="form-control" placeholder="&mu;Sec" aria-describedby="basic-addon1">
+                    </div>
+                    <div class="btn-group btn-group-sm" style=" margin-top: 10px;"role="group">
+                        <button type="button" class="btn btn-default">Save</button>
+                        <button type="button" class="btn btn-success">Execute</button>
+                        <button type="button" class="btn" ng-click="remove($index)">Delete</button>
+                    </div>
+                </div>
+            </div> 
+        </div>       
+        <hr>
         <div class="row">
             <nav>
                 <ul>
-                    <div id="chart1" class="col-md-4 hoverzoom img-responsive"></div>
+                    <div id="chart1" class="col-md-4 hoverzoom" data-toggle="modal" 
+            data-target="#myModal"></div>
                 </ul>
                 <ul>
                     <div id="chart2" class="col-md-4 hoverzoom"></div>
@@ -198,7 +220,24 @@
                 </ul>               
             </nav>             
         </div> 
-    <hr>
-    </div>     
+        <hr>
+            <!-- Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">MMIC Amplifier</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div id="chart2"></div>               
+                        <p>Blah Blah Blah </p>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> 
 </body>
 </html>
