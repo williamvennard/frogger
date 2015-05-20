@@ -102,7 +102,7 @@ class InputPage(InstrumentDataHandler):
 		j = str(i.key().id())
 		print j
 		#self.render("front.html")
-		#self.redirect('/data')
+		self.redirect('/data')
 		
 
 PAGE_RE = r'(/(?:[a-zA-Z0-9_-]+/?)*)'
