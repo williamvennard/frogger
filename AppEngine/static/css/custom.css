@@ -1,0 +1,101 @@
+
+.grid-stack {
+    background: black;
+}
+
+.grid-stack-item-content {
+    border-radius: 10px;
+    color: #2c3e50;
+    text-align: center;
+    background-color: #eee;
+}
+.dragdrop {
+    
+    position: absolute;
+    left:50%;
+    top:100px;
+    color: white;
+    opacity: 0.25;
+}
+.canvas {
+    margin-left:200px;
+}
+#wrapper {
+    padding-left: 250px;
+    transition: all 0.4s ease 0s;
+}
+.logo {
+    position: absolute;
+    left: 0px;
+}
+
+.dots {
+    color: gray;
+    top:10px;
+    font-size: 200%;
+}
+.topmenu {
+    margin-left: 15%;
+}
+.butt {
+    border-radius:5px;
+    color: black;
+}
+#sidebar-wrapper {
+    margin-left: 0%;
+    left: 3%;
+    width: 100px;
+    background: #000;
+    position: fixed;
+    height: 100%;
+    overflow-y: auto;
+    z-index: 1000;
+    transition: all 0.4s ease 0s;
+}
+.sidebar-nav {
+    line-height: 2;
+}
+#page-content-wrapper {
+    width: 100%;
+}
+.sidebar-nav {
+    position: absolute;
+    top: 0;
+    width: 250px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.well {
+    background-color: lightgray; 
+}
+.com {
+    margin-bottom: 0px;
+    background-image: url(../images/gradient.jpg);
+    color: white;
+    text-align: center;
+}
+.canv {
+    margin-bottom: 10px;
+    background-image: url(../images/gradient.jpg);
+    color: white;
+    text-align: center;
+}
+.nav {
+    float: none;
+    display: inline-block;
+    vertical-align: top;
+}
+h2 {
+    font-weight: 100;
+}
+h3 {
+    color: lightgray;
+    font-weight: 100;
+}
+.panel-group {
+    color: black;
+}
+.hoverzoom {
+    
+}

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html ng-app lang="en">
+<head>
+    <title>Instrument Page</title>
+         
+    <script src="js/addons/jquery-1.11.3.js"></script>    
+    <script src="js/jquery-ui-1.11.4/jquery-ui.js"></script>
+    <script src="bootstrap/js/bootstrap.min.js"></script>    
+    <script src="js/addons/lodash.js"></script>  
+    <script src="js/addons/knockout.min.js"></script>
+    <script src="js/addons/gridstack.js"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="js/chart1.js"></script>
+    <script type="text/javascript" src="js/chart2.js"></script>
+    <script type="text/javascript" src="js/chart3.js"></script>
+    <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/custom.css">
+    <link rel="stylesheet" type="text/css" href="css/hoverzoom.css">
+    <link rel="stylesheet" href="css/gridstack.css"/>
+    <script type="text/javascript" src="js/addons/Grid.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.13/angular.min.js"></script>
+    <script type="text/javascript" src="js/addons/clickadd.js"></script>
+    <style type="text/css"></style>
+</head>
+
+<body background="images/triangles.png">
+    <div ng-controller="Note" class="container">       
+        <nav class="navbar navbar-inverse navbar-collapse collapse">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <img class="logo" src="images/Glogo.png" style="width:110px;">
+                    </div>
+                    <div id="navbar">
+                        <ul class="topmenu nav navbar-nav">
+                            <li><a href="index.html">CANVAS</a></li>
+                            <li class="dots glyphicon glyphicon-option-vertical"></li>
+                            <li><a href="instruments.html">INSTRUMENTS</a></li>
+                            <li class="dots glyphicon glyphicon-option-vertical"></li>
+                            <li><a href="community.html">COMMUNITY</a></li>          
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                          <li><a class="glyphicon glyphicon-envelope" href="../navbar-static-top/"></a></li>
+                          <li><a class="glyphicon glyphicon-bell" href="../navbar-static-top/"></a></li>
+                          <li><a class="glyphicon glyphicon-user" href="../navbar-fixed-top/">Profile</a></li>
+                        </ul>
+                    </div>
+                </div>
+        </nav>
+        <div class="row">
+            <div class="col-md-3" style="width: 180px;">
+                <div class="panel-group" id="accordion" style="width: 140px;">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">Instrument Options</a>
+                            </h4>
+                        </div>
+                        <div id="collapseOne" class="panel-collapse collapse in">
+                            <div class="panel-body">
+                                <table class="table">
+                                    <tr>
+                                        <td>
+                                            <a ng-click="add()">Voltmeter</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <a>Ohmmeter</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <a>Ammeter</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <a>VCO</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <a>O-Scope</a>                             
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">Measurements</a>
+                            </h4>
+                        </div>
+                        <div id="collapseTwo" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <table class="table">
+                                    <tr>
+                                        <td>
+                                            <a>Peak Power</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <a>Spectral Mask</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <a>Adjacent Channel Power</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <a>Harmonics</a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">Saved Instruments</a>
+                            </h4>
+                        </div>
+                        <div id="collapseThree" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <table class="table">
+                                    <tr>
+                                        <td>
+                                            <a>Blank Instrument</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <a>Subroutine</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <a>Power Sweep</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span></span><a>Frequency Sweep</a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>        
+            <div class="col-md-3" style="width: 300px">
+                <div ng-repeat="item in items" class="well">
+                    <h4>Voltmeter</h4>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1">Current Type</span>
+                        <select class="form-control">                          
+                            <option>AC</option>
+                            <option>DC</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1">Voltage Range</span>
+                        <select class="form-control">                          
+                            <option>200 mV</option>
+                            <option>2 V</option>
+                            <option>20 V</option>
+                            <option>200 V</option>
+                            <option>600 V</option>
+                        </select>
+                    </div>
+                    <div class="btn-group btn-group-sm" style="left: 25%; margin-top: 10px;" role="group">
+                        <button type="button" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-success">Execute</button>
+                        <button type="button" class="btn btn-danger" ng-click="remove($index)">Delete</button>
+                    </div>
+                </div>
+            </div> 
+        </div>       
+        
+        <div class="row">
+            <nav>
+                <ul>
+                    <div id="chart2" class="col-md-12"></div>
+                </ul>              
+            </nav>             
+        </div> 
+        <hr>
+    </div> 
+    <script type="text/javascript">$('#collapseOne').collapse("hide");</script><!--stops accordion from loading open -->
+</body>
+</html>
