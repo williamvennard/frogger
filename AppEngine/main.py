@@ -39,8 +39,10 @@ def input_key(name = 'default'):
 	return db.Key.from_path('inputs', name)
 
 class Input(db.Model):
+	frequency = db.FloatProperty(required = True)
+	S11dB = db.FloatProperty(required = True)
+	S12dB = db.FloatProperty(required = True)
 	description = db.StringProperty(required = True)
-	inputdata= db.TextProperty(required = True)
 	created = db.DateTimeProperty(auto_now_add = True)
 	def render(self):
 		self._render_text = self.inputdata.replace('\n', '<br>')
@@ -48,7 +50,7 @@ class Input(db.Model):
 
 class LinkPage(InstrumentDataHandler):
 	def get(self):
-		datasets = db.GqlQuery("select * from Input order by created desc limit 10")
+		datasets = db.GqlQuery("SELECT * FROM Input LIMIT 1")
 		jsondata = datasets.get()
 		print "you are in the linkpage handler"
 		#datasets = jsondata.inputdata
@@ -57,11 +59,8 @@ class LinkPage(InstrumentDataHandler):
 
 class DataPage(InstrumentDataHandler):
 	def get(self):
-		datasets = db.GqlQuery("select * from Input order by created desc limit 10")
-		jsondata = datasets.get()
-		#print "you are in the datapage handler"
-		#datasets = jsondata.inputdata
-		description = jsondata.description
+		
+		datasets = db.GqlQuery("SELECT * FROM Input ORDER BY frequency ASC")
 		self.render('data.html', datasets = datasets)
 
 class InputPage(InstrumentDataHandler):
@@ -70,12 +69,25 @@ class InputPage(InstrumentDataHandler):
         print "you are in the get handler"
     def post(self):
 		print "you are in the posthandler"
-		inputdata = self.request.get("inputdata")
 		description = self.request.get("description")
-		i = Input(parent = input_key(), inputdata = inputdata, description = description)
-		i.put()
-		j = str(i.key().id())
-		print j
+		jsoninput = self.request.get("jsoninput")
+		#print jsoninput
+		decoded = json.loads(jsoninput)
+		print decoded
+		new_decoded = {}
+		for number_key, value_dict in decoded.iteritems():
+			sub_dict = {}
+			for value_key, value in value_dict.iteritems():
+				sub_dict[value_key] = float(value)
+			new_decoded[float(number_key)] = sub_dict
+
+		for k in new_decoded:
+			frequency = new_decoded[k]['FREQ']
+			S11dB = new_decoded[k]['dB(S11)']
+			S12dB = new_decoded[k]['dB(S12)']
+			i = Input(parent = input_key(), frequency = frequency, S11dB = S11dB, S12dB = S12dB, description = description)
+			i.put()
+		
 		#self.render("front.html")
 		self.redirect('/data')
 		
