@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html ng-app lang="en">
 <head>
-    <title>iCanvas Page</title>
+    <title>Instrument Page</title>
          
     <script src="js/addons/jquery-1.11.3.js"></script>    
     <script src="js/jquery-ui-1.11.4/jquery-ui.js"></script>
@@ -39,9 +39,9 @@
                             <li><a href="community.html">COMMUNITY</a></li>          
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
-                          <li><a class="glyphicon glyphicon-envelope"href="../navbar-static-top/"></a></li>
+                          <li><a class="glyphicon glyphicon-envelope" href="../navbar-static-top/"></a></li>
                           <li><a class="glyphicon glyphicon-bell" href="../navbar-static-top/"></a></li>
-                          <li><a class="glyphicon glyphicon-user"href="../navbar-fixed-top/">Profile</a></li>
+                          <li><a class="glyphicon glyphicon-user" href="../navbar-fixed-top/">Profile</a></li>
                         </ul>
                     </div>
                 </div>
@@ -52,7 +52,7 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4 class="panel-title">
-                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">Instruments</a>
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">Instrument Options</a>
                             </h4>
                         </div>
                         <div id="collapseOne" class="panel-collapse collapse in">
@@ -60,12 +60,17 @@
                                 <table class="table">
                                     <tr>
                                         <td>
-                                            <a>VSG</a>
+                                            <a ng-click="add()">Voltmeter</a>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            <a>VNA</a>
+                                            <a>Ohmmeter</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <a>Ammeter</a>
                                         </td>
                                     </tr>
                                     <tr>
@@ -93,7 +98,7 @@
                                 <table class="table">
                                     <tr>
                                         <td>
-                                            <a ng-click="add()">Peak Power</a>
+                                            <a>Peak Power</a>
                                         </td>
                                     </tr>
                                     <tr>
@@ -118,7 +123,7 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4 class="panel-title">
-                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">Sequencing</a>
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">Saved Instruments</a>
                             </h4>
                         </div>
                         <div id="collapseThree" class="panel-collapse collapse">
@@ -126,12 +131,12 @@
                                 <table class="table">
                                     <tr>
                                         <td>
-                                            <a>DUT</a>
+                                            <a>Blank Instrument</a>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            <a>Subroutine</a> <span></span>
+                                            <a>Subroutine</a>
                                         </td>
                                     </tr>
                                     <tr>
@@ -148,61 +153,32 @@
                             </div>
                         </div>
                     </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h4 class="panel-title">
-                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour">Test Plans</a>
-                            </h4>
-                        </div>
-                        <div id="collapseFour" class="panel-collapse collapse">
-                            <div class="panel-body">
-                                <table class="table">
-                                    <tr>
-                                        <td>
-                                            <span></span><a>Components</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <span></span><a>Standards</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <span></span><a>Custom</a>
-                                        </td>
-                                    </tr>                                   
-                                </table>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>        
             <div class="col-md-3" style="width: 300px">
-                <div ng-repeat="item in items" class="well well-sm">
-                    <h4><a class="btn btn-inverse glyphicon glyphicon-menu-right" data-toggle="collapse" href="#volt" aria-expanded="false" aria-controls="collapseExample" style=""></a>Peak Power</h4>
-                    <div class="collapse" id="volt">
-                        <div class="input-group">
-                            <span class="input-group-addon" id="basic-addon1">Trigger Delay</span>
-                            <select class="form-control">                          
-                                <option>External</option>
-                                <option>RF Burst</option>
-                                <option>Free Run</option>
-                            </select>
-                        </div>
-                        <div class="input-group">
-                            <span class="input-group-addon" id="basic-addon1">Bandwidth</span>
-                            <input type="text" class="form-control" placeholder="Hz" aria-describedby="basic-addon1">
-                        </div>
-                        <div class="input-group">
-                            <span class="input-group-addon" id="basic-addon1">Trigger Delay</span>
-                            <input type="text" class="form-control" placeholder="&mu;Sec" aria-describedby="basic-addon1">
-                        </div>
-                        <div class="btn-group btn-group-sm" style=" left: 25%; margin-top: 10px;"role="group">
-                            <button type="button" class="btn btn-primary">Save</button>
-                            <button type="button" class="btn btn-success">Execute</button>
-                            <button type="button" class="btn btn-danger" ng-click="remove($index)">Delete</button>
-                        </div>
+                <div ng-repeat="item in items" class="well">
+                    <h4>Voltmeter</h4>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1">Current Type</span>
+                        <select class="form-control">                          
+                            <option>AC</option>
+                            <option>DC</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1">Voltage Range</span>
+                        <select class="form-control">                          
+                            <option>200 mV</option>
+                            <option>2 V</option>
+                            <option>20 V</option>
+                            <option>200 V</option>
+                            <option>600 V</option>
+                        </select>
+                    </div>
+                    <div class="btn-group btn-group-sm" style="left: 25%; margin-top: 10px;" role="group">
+                        <button type="button" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-success">Execute</button>
+                        <button type="button" class="btn btn-danger" ng-click="remove($index)">Delete</button>
                     </div>
                 </div>
             </div> 
@@ -211,15 +187,9 @@
         <div class="row">
             <nav>
                 <ul>
-                    <div id="chart1" class="col-md-4" data-toggle="modal" 
+                    <div id="chart2" class="col-md-12" data-toggle="modal" 
             data-target="#myModal"></div>
-                </ul>
-                <ul>
-                    <div id="chart2" class="col-md-4 hoverzoom"></div>
-                </ul>
-                <ul>
-                    <div id="chart3" class="col-md-4 hoverzoom"></div>
-                </ul>               
+                </ul>              
             </nav>             
         </div> 
         <hr>
@@ -232,7 +202,7 @@
                     </div>
                     <div class="modal-body">
                         <div id="chart2"></div>               
-                        <p>PLEASE WORK!!!</p>
+                        <p>Blah Blah Blah </p>
                     </div>
                     <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
