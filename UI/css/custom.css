@@ -1,3 +1,4 @@
+
 .grid-stack {
     background: black;
 }
@@ -8,7 +9,7 @@
     text-align: center;
     background-color: #eee;
 }
-.dragdrop{
+.dragdrop {
     
     position: absolute;
     left:50%;
@@ -16,27 +17,27 @@
     color: white;
     opacity: 0.25;
 }
-.canvas{
+.canvas {
     margin-left:200px;
 }
 #wrapper {
     padding-left: 250px;
     transition: all 0.4s ease 0s;
 }
-.logo{
+.logo {
     position: absolute;
     left: 0px;
 }
 
-.dots{
+.dots {
     color: gray;
     top:10px;
     font-size: 200%;
 }
-.topmenu{
+.topmenu {
     margin-left: 15%;
 }
-.butt{
+.butt {
     border-radius:5px;
     color: black;
 }
@@ -51,7 +52,7 @@
     z-index: 1000;
     transition: all 0.4s ease 0s;
 }
-.sidebar-nav{
+.sidebar-nav {
     line-height: 2;
 }
 #page-content-wrapper {
@@ -65,6 +66,27 @@
     margin: 0;
     padding: 0;
 }
-.well{
-    background-color: #eee; 
+.well {
+    background-color: lightgray; 
+}
+.com {
+    margin-bottom: 0px;
+    background-image: url(../images/gradient.jpg);
+    color: white;
+    text-align: center;
+}
+.nav {
+    float: none;
+    display: inline-block;
+    vertical-align: top;
+}
+h2 {
+    font-weight: 100;
+}
+h3 {
+    color: lightgray;
+    font-weight: 100;
+}
+.panel-group {
+    color: black;
 }
