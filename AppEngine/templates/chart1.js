@@ -1,4 +1,5 @@
-    // Load the Visualization API and the piechart package.
+<script type="text/javascript">
+    // Load the Visualization API and the corechart package.
     google.load('visualization', '1', {'packages':['corechart']});
       
     // Set a callback to run when the Google Visualization API is loaded.
@@ -10,8 +11,8 @@
           
     cols: [{id: 'freq', label: 'Frequency', type: 'number'},
            {id: 'db11', label: 'S11', type: 'number'},{id: 'db12', label: 'S22', type: 'number'}],
-    rows: [{c:[{v: '50.0'}, {v: '25.04'}, {v: '20.154'}]},
-           {c:[{v: '77.0'}, {v: '24.335'}, {v: '19.554'}]},
+    rows: [{c:[ {v: '50.0'}, {v: '25.04'}, {v: '20.154'} ]},
+           {c:[ {v: '77.0'}, {v: '24.335'}, {v: '19.554'} ]},
            {c:[{v: '104.0'}, {v: '24.332'}, {v: '19.357'}]},
            {c:[{v: '131.0'}, {v: '24.566'}, {v: '19.652'}]},
            {c:[{v: '158.0'}, {v: '24.564'}, {v: '19.764'}]},
@@ -48,14 +49,13 @@
 
           var options = {
             title: 'MMIC Amplifier @ +85degC',
-            titleTextStyle: {color:'black', fontSize: 15},
+            titleTextStyle: {color:'black', fontSize: 16},
             legend: {alignment:'center'},
             hAxis: {title: 'Frequency'},
             vAxis: {title: 'dB'},
             backgroundColor: {color: 'white', stroke: 'silver', strokeWidth: 3,},                 
             colors: ['rgb(248,157,0)','rgb(75,19,115)'],
           }
-        //jsonData = readTextFile("file:///Users/william/Desktop/GoogleCharts/freqDb.txt");
 
           // Create our data table out of JSON data loaded from server.
           var data = new google.visualization.DataTable(jsonData);
@@ -65,4 +65,4 @@
           chart.draw(data, {width: 300, height: 200});
           chart.draw(data, options);
         }
-
+</script>
