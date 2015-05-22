@@ -4,26 +4,6 @@
     // Set a callback to run when the Google Visualization API is loaded.
     google.setOnLoadCallback(drawChart);
 
-    function readTextFile(file)
-    {
-        var allText;
-        var rawFile = new XMLHttpRequest();
-        rawFile.open("GET", file, false);
-        rawFile.onreadystatechange = function ()
-        {
-            if(rawFile.readyState === 4)
-            {
-                if(rawFile.status === 200 || rawFile.status == 0)
-                {
-                    var allText = rawFile.responseText;
-                    //alert(allText);
-                }
-            }
-        }
-        rawFile.send(null);
-        return allText;
-    }  
-
     function drawChart() {
     
         var jsonData = {
@@ -74,11 +54,12 @@
           title: 'MMIC Amplifier @ +25degC',
           titleTextStyle: {color:'white', fontSize: 15},
           legend: {alignment:'center', textStyle:{color:'white'}},
-          hAxis: {title: 'Frequency',titleTextStyle:{color:'white'}, textStyle:{color:'white'}},
-          vAxis: {title: 'dB', titleTextStyle:{color:'white'}, textStyle:{color:'white'}},
+          hAxis: {title: 'Frequency',titleTextStyle:{color:'white'}, textStyle:{color:'white'}, baselineColor:'gray', gridlines:{color: 'gray', count: 5}, minorGridlines:{color: 'gray', count: 1}, viewWindowMode:'pretty'},
+          vAxis: {title: 'dB', titleTextStyle:{color:'white'}, textStyle:{color:'white'}, baselineColor:'gray', gridlines:{color: 'gray', count: 5}, minorGridlines:{color: 'gray', count: 1}},
           backgroundColor: {fill: 'black', stroke: 'silver', strokeWidth: 3,},  
           colors: ['rgb(248,157,0)'],
-          
+          chartArea:{backgroundColor:'black'},
+          lineWidth: 1.5,
           };
         
 

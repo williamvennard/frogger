@@ -51,14 +51,14 @@
         } 
         //jsonData = readTextFile("file:///Users/william/Desktop/GoogleCharts/freqDb.txt");
           var options = {
-            title: 'MMIC Amplifier @ -45degC',
+            title: '',
             titleTextStyle: {color:'black', fontSize: 15},
-            legend: {alignment:'center'},
-            hAxis: {title: 'Frequency', baselineColor:'gray', gridlines:{color: 'gray', count: 5}, minorGridlines:{color: 'lightgray', count: 1}, viewWindowMode:'pretty'},
-            vAxis: {title: 'dB', baselineColor:'gray', gridlines:{color: 'gray', count: 5}, minorGridlines:{color: 'lightgray', count: 1}, viewWindowMode:'pretty'},
-            backgroundColor: {fill: 'none', stroke: 'silver', strokeWidth: 0,},  
-            colors: ['rgb(255, 102, 255)'], 
-            lineWidth: 2,         
+            legend: 'none',
+            hAxis: {title: '', baselineColor:'black', gridlines:{color: 'gray', count: 5}, minorGridlines:{color: 'gray', count: 1}, viewWindowMode:'pretty'},
+            vAxis: {title: 'Amp', baselineColor:'gray', gridlines:{color: 'gray', count: 5}, minorGridlines:{color: 'gray', count: 1}, viewWindowMode:'pretty'},
+            backgroundColor: {fill: 'none', stroke: 'silver', strokeWidth: 3,},  
+            colors: ['#7FFF00'], 
+            lineWidth: 1,         
           };
 
 
@@ -66,8 +66,8 @@
           var data = new google.visualization.DataTable(jsonData);
 
           // Instantiate and draw our chart, passing in some options.
-          var chart = new google.visualization.LineChart(document.getElementById('chart3'));
-          chart.draw(data, {width: 300, height: 200});
+          var chart = new google.visualization.LineChart(document.getElementById('ochart'));
+          chart.draw(data, {width: 600, height: 400});
           chart.draw(data, options);
         }
 

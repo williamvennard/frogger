@@ -17,9 +17,6 @@
     color: white;
     opacity: 0.25;
 }
-.canvas {
-    margin-left:200px;
-}
 #wrapper {
     padding-left: 250px;
     transition: all 0.4s ease 0s;
@@ -75,6 +72,26 @@
     color: white;
     text-align: center;
 }
+.canv {
+    margin-bottom: 10px;
+    background-image: url(../images/gradient.jpg);
+    color: white;
+    text-align: center;
+}
+#canvasTitle {
+    text-align: center;
+}
+#canvasBox {
+    border-style: solid;
+    border-color: gray;
+    border-width: 1px;
+    border-radius: 5px;
+    margin: 10px;
+}
+#chart3 {
+    border-style: solid;
+    background-image: radial-gradient(#00C5B6, #00A984);
+}
 .nav {
     float: none;
     display: inline-block;
@@ -87,6 +104,12 @@ h3 {
     color: lightgray;
     font-weight: 100;
 }
-.panel-group {
-    color: black;
+
+.instnav {
+    border-style: solid;
+    border-width: 2px;
+    border-color: silver;
+    border-radius: 5px;
+    background-color: black;
+
 }

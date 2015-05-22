@@ -1,0 +1,140 @@
+button {
+    margin-top: 10px;
+    width: 90px;
+    height: 30px;
+}
+h3 {
+    color: black;
+}
+.box {
+    border-style: solid;
+    border-radius: 5px;
+    border-width: 2px;
+    border-color: white;
+    background-color: lightgray;
+    margin:10px;
+}
+.instname {
+    text-align: center;
+    color:black;
+}
+#buttons {
+    width: 190px;
+    margin: 0 auto;
+}
+#container {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-block;
+    max-width: 1300px;
+}
+#optionsBox {
+    width: 250px;
+    height: 400px;
+    float: right;
+    background-color: #DFE0DD;
+    border-radius: 10px;
+    border: 1px solid;
+    margin-top: 10px;
+    margin-left: -50px;
+    margin-bottom: 10px;
+}
+#optionsBoxTitle {
+    width: 93px;
+}
+#sachart{
+    display: inline-block;
+    background-image: radial-gradient(#00C5B6, #00A984);
+    border-radius: 8px;
+    border: 5px inset #f4f4f4;
+    -webkit-box-shadow: inset 6px 5px 55px 1px rgba(0,0,0,0.8);
+    -moz-box-shadow: inset 6px 5px 55px 1px rgba(0,0,0,0.8);
+    box-shadow: inset 6px 5px 55px 1px rgba(0,0,0,0.8);
+    margin: 0 20px 20px 0;
+}
+.boxTitle {
+    margin-left: 60px;
+    background-color: #DFE0DD;
+}
+.boxTitle h2 {
+    margin-left: 10px;
+}
+
+.knob-sx { background-image: url(""); }
+.knob-sy { background-image: url(""); }
+
+.knobs { 
+    text-align: center;  
+    margin: 20px;
+}
+#knob1 {
+    height: 75px;
+}
+#knob2 {
+    height: 75px;
+}
+.knob-dx { background-image: url(""); }
+.knob-dy { background-image: url(""); }
+
+.ctrlBtn {
+    width: 40px;
+}
+
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1000px) {
+    #container {
+        top: 0;
+        transform: none;
+    }
+    #optionsBox {
+        float: none;
+        width: 90%;
+        height: 190px;
+        display: inline-block;
+        margin-left: 20px;
+        margin-right:0px;
+        margin-bottom: 20px;
+    }
+    .knobs {
+        display: inline-block;
+        margin-top: 0;
+        margin-right: 50px;
+        vertical-align: top;
+        margin-top: -14px;
+    }
+    #buttons {
+        margin-right: 50px;
+        margin-left:20px;
+        display: inline-block;
+    }
+    #knob1 {
+        height:75px;
+        display: inline-block;
+        text-align: right;
+    } 
+    #knob2 {
+        height:75px;
+        display: inline-block;
+        text-align: right;
+    }
+}
+@media (max-width: 740px) {
+    #container {
+        top: 0;
+        transform: none;
+    }
+    #optionsBox {
+        float: none;
+        width: 280px;
+        height: 150px;
+        display: inline-block;
+        margin-left: 20px;
+        margin-right:0px;
+        margin-bottom: 20px;
+    }
+    .knobs {
+        display: none;       
+    }  
+}

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app lang="en">
+<html lang="en">
 <head>
     <title>Instrument Page</title>
          
@@ -7,24 +7,24 @@
     <script src="js/jquery-ui-1.11.4/jquery-ui.js"></script>
     <script src="bootstrap/js/bootstrap.min.js"></script>    
     <script src="js/addons/lodash.js"></script>  
-    <script src="js/addons/knockout.min.js"></script>
-    <script src="js/addons/gridstack.js"></script>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <script type="text/javascript" src="js/chart1.js"></script>
-    <script type="text/javascript" src="js/chart2.js"></script>
+    <script type="text/javascript" src="js/ochart.js"></script>
+    <script type="text/javascript" src="js/sachart.js"></script>
     <script type="text/javascript" src="js/chart3.js"></script>
     <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/custom.css">
-    <link rel="stylesheet" type="text/css" href="css/hoverzoom.css">
-    <link rel="stylesheet" href="css/gridstack.css"/>
-    <script type="text/javascript" src="js/addons/Grid.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/oscope.css">
+    <link rel="stylesheet" type="text/css" href="css/specanal.css">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.13/angular.min.js"></script>
     <script type="text/javascript" src="js/addons/clickadd.js"></script>
+    <script type="text/javascript" src="js/addons/jquery.knob.min.js"></script>
     <style type="text/css"></style>
+
+
 </head>
 
-<body background="images/triangles.png">
-    <div ng-controller="Note" class="container">       
+<body ng-app="controller" background="images/triangles.png">
+    <div ng-controller="SettingsController" class="container">       
         <nav class="navbar navbar-inverse navbar-collapse collapse">
                 <div class="container-fluid">
                     <div class="navbar-header">
@@ -47,170 +47,143 @@
                 </div>
         </nav>
         <div class="row">
-            <div class="col-md-3" style="width: 180px;">
-                <div class="panel-group" id="accordion" style="width: 140px;">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h4 class="panel-title">
-                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">Instrument Options</a>
-                            </h4>
-                        </div>
-                        <div id="collapseOne" class="panel-collapse collapse in">
-                            <div class="panel-body">
-                                <table class="table">
-                                    <tr>
-                                        <td>
-                                            <a ng-click="add()">Voltmeter</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a>Ohmmeter</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a>Ammeter</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a>VCO</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a>O-Scope</a>                             
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h4 class="panel-title">
-                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">Measurements</a>
-                            </h4>
-                        </div>
-                        <div id="collapseTwo" class="panel-collapse collapse">
-                            <div class="panel-body">
-                                <table class="table">
-                                    <tr>
-                                        <td>
-                                            <a>Peak Power</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a>Spectral Mask</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a>Adjacent Channel Power</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a>Harmonics</a>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h4 class="panel-title">
-                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">Saved Instruments</a>
-                            </h4>
-                        </div>
-                        <div id="collapseThree" class="panel-collapse collapse">
-                            <div class="panel-body">
-                                <table class="table">
-                                    <tr>
-                                        <td>
-                                            <a>Blank Instrument</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a>Subroutine</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a>Power Sweep</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <span></span><a>Frequency Sweep</a>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>        
-            <div class="col-md-3" style="width: 300px">
-                <div ng-repeat="item in items" class="well">
-                    <h4>Voltmeter</h4>
-                    <div class="input-group">
-                        <span class="input-group-addon" id="basic-addon1">Current Type</span>
-                        <select class="form-control">                          
-                            <option>AC</option>
-                            <option>DC</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <span class="input-group-addon" id="basic-addon1">Voltage Range</span>
-                        <select class="form-control">                          
-                            <option>200 mV</option>
-                            <option>2 V</option>
-                            <option>20 V</option>
-                            <option>200 V</option>
-                            <option>600 V</option>
-                        </select>
-                    </div>
-                    <div class="btn-group btn-group-sm" style="left: 25%; margin-top: 10px;" role="group">
-                        <button type="button" class="btn btn-primary">Save</button>
-                        <button type="button" class="btn btn-success">Execute</button>
-                        <button type="button" class="btn btn-danger" ng-click="remove($index)">Delete</button>
-                    </div>
-                </div>
-            </div> 
-        </div>       
-        
-        <div class="row">
-            <nav>
-                <ul>
-                    <div id="chart2" class="col-md-12" data-toggle="modal" 
-            data-target="#myModal"></div>
-                </ul>              
-            </nav>             
-        </div> 
-        <hr>
-            <!-- Modal -->
-        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                    <h4 class="modal-title" id="myModalLabel">MMIC Amplifier</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div id="chart2"></div>               
-                        <p>Blah Blah Blah </p>
-                    </div>
-                    <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
+            <div class="col-md-12 well well-sm canv">
+                <h2>GradientOne Instruments</h2> 
             </div>
         </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    <ul class="nav nav-pills nav-stacked instnav">
+                      <li role="presentation" class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false" style="text-align:center;">
+                          Instrument Options <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                        GradientOne Instruments
+                          <select multiple class="form-control">
+                                  <option>VNA</option>
+                                  <option>VNA</option>
+                                  <option ng-click="add()">O-Scope</option>
+                                  <option>VNA</option>
+                                  <option>VNA</option>
+                            </select> 
+                        </ul>
+                      </li>
+                      <li role="presentation" class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false" style="text-align:center;">
+                          Saved Instruments<span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                          <select multiple class="form-control">
+                                  <option>Steve's VNA</option>
+                                  <option>VNA</option>
+                                </select> 
+                        </ul>
+                      </li>
+                    </ul> 
+                </div>                           
+            </div>
+        </div>
+          <div class="container">
+              <div class="col-md-12 box">
+                  <h2 class="instname">Oscilloscope</h2>
+                  <div id="ochart"></div>
+                  <div id="optionsBox">
+                      <div id="optionsBoxTitle" class="boxTitle">
+                          <h2>Options</h2>
+                      </div>
+                      <div id="buttons">
+                          <button type="button" id="start">Start</button>
+                          <button type="button" id="stop">Stop</button>
+                          <button type="button" id="start">Save</button>
+                          <button type="button" id="stop" ng-click="remove($index)">Delete</button>
+                      </div>
+                      <div class="knobs" style="height: 100px;">
+                          <h3>Amplitude</h3>
+                          <div id="knob1">
+                            <input 
+                            type="text" 
+                            value="25" 
+                            class="dial" 
+                            data-width="75"
+                            data-fgColor="#00C5B6"
+                            data-skin="tron"
+                            data-thickness=".4"
+                            data-angleOffset="0">
+                          </div>
+                      </div>
+                      <div class="knobs">
+                          <h3>Period</h3>
+                          <div id="knob2">
+                            <input 
+                            type="text" 
+                            value="25" 
+                            class="dial" 
+                            data-width="75"
+                            data-fgColor="#00C5B6"
+                            data-skin="tron"
+                            data-thickness=".4"
+                            data-angleOffset="0">
+                          </div>
+                      </div>
+                  </div>
+              </div>  
+          </div>
+          <div class="container">
+              <div class="col-md-12 box">
+                  <h2 class="instname">Spectrum Analyzer</h2>
+                  <div id="sachart"></div>
+                  <div id="optionsBox">
+                      <div id="optionsBoxTitle" class="boxTitle">
+                          <h2>Options</h2>
+                      </div>
+                      <div id="buttons">
+                          <button type="button" id="start">Start</button>
+                          <button type="button" id="stop">Stop</button>
+                      </div>
+                      <div class="knobs" style="height: 100px;">
+                          <h3>Amplitude</h3>
+                          <div id="knob1">
+                            <input 
+                            type="text" 
+                            value="25" 
+                            class="dial" 
+                            data-width="75"
+                            data-fgColor="#00C5B6"
+                            data-skin="tron"
+                            data-thickness=".4"
+                            data-angleOffset="0">
+                          </div>
+                      </div>
+                      <div class="knobs">
+                          <h3>Period</h3>
+                          <div id="knob2">
+                            <input 
+                            type="text" 
+                            value="25" 
+                            class="dial" 
+                            data-width="75"
+                            data-fgColor="#00C5B6"
+                            data-skin="tron"
+                            data-thickness=".4"
+                            data-angleOffset="0">
+                          </div>
+                      </div>
+                  </div>
+              </div>    
+          </div>  
+        <hr>
     </div> 
+    
+            
+        
+    
+    <script>
+    $(".dial").knob({
+        'change' : function (v) { console.log(v); }
+    });
+    </script>
     <script type="text/javascript">$('#collapseOne').collapse("hide");</script><!--stops accordion from loading open -->
 </body>
 </html>
