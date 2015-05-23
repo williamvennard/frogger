@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app lang="en">
+<html lang="en">
 <head>
     <title>iCanvas Page</title>
          
@@ -12,23 +12,23 @@
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript" src="js/chart1.js"></script>
     <script type="text/javascript" src="js/chart2.js"></script>
-    <script type="text/javascript" src="js/chart3.js"></script>
+    <script type="text/javascript" src="js/chart3.js"></script>  
     <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/custom.css">
     <link rel="stylesheet" type="text/css" href="css/hoverzoom.css">
     <link rel="stylesheet" href="css/gridstack.css"/>
     <script type="text/javascript" src="js/addons/Grid.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.13/angular.min.js"></script>
+    <script src="js/addons/angular.min.js"></script>
     <script type="text/javascript" src="js/addons/clickadd.js"></script>
     <style type="text/css"></style>
 </head>
 
-<body background="images/triangles.png">
-    <div ng-controller="Note" class="container">       
+<body data-ng-app="controller" background="images/triangles.png">
+    <div data-ng-controller="SettingsController" class="container">       
         <nav class="navbar navbar-inverse navbar-collapse collapse">
                 <div class="container-fluid">
                     <div class="navbar-header">
-                        <img class="logo" src="images/Glogo.png" style="width:110px;">
+                        <img class="logo" src="images/Glogo.png" style="width:110px;" alt="Gradient One logo">
                     </div>
                     <div id="navbar">
                         <ul class="topmenu nav navbar-nav">
@@ -39,15 +39,21 @@
                             <li><a href="community.html">COMMUNITY</a></li>          
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
-                          <li><a class="glyphicon glyphicon-envelope"href="../navbar-static-top/"></a></li>
+                          <li><a class="glyphicon glyphicon-envelope" href="../navbar-static-top/"></a></li>
                           <li><a class="glyphicon glyphicon-bell" href="../navbar-static-top/"></a></li>
-                          <li><a class="glyphicon glyphicon-user"href="../navbar-fixed-top/">Profile</a></li>
+                          <li><a class="glyphicon glyphicon-user" href="../navbar-fixed-top/">Profile</a></li>
                         </ul>
                     </div>
                 </div>
         </nav>
         <div class="row">
-            <div class="col-md-3" style="width: 180px;">
+            <div class="col-md-12 well well-sm canv">
+                <h2>GradientOne Canvas</h2>
+                <p></p>  
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3" style="width: 180px; margin-top: 20px;">
                 <div class="panel-group" id="accordion" style="width: 140px;">
                     <div class="panel panel-default">
                         <div class="panel-heading">
@@ -93,7 +99,7 @@
                                 <table class="table">
                                     <tr>
                                         <td>
-                                            <a ng-click="add()">Peak Power</a>
+                                            <a data-ng-click="add()">Peak Power</a>
                                         </td>
                                     </tr>
                                     <tr>
@@ -177,69 +183,48 @@
                         </div>
                     </div>
                 </div>
-            </div>        
-            <div class="col-md-3" style="width: 300px">
-                <div ng-repeat="item in items" class="well well-sm">
-                    <h4><a class="btn btn-inverse glyphicon glyphicon-menu-right" data-toggle="collapse" href="#volt" aria-expanded="false" aria-controls="collapseExample" style=""></a>Peak Power</h4>
-                    <div class="collapse" id="volt">
-                        <div class="input-group">
-                            <span class="input-group-addon" id="basic-addon1">Trigger Delay</span>
-                            <select class="form-control">                          
-                                <option>External</option>
-                                <option>RF Burst</option>
-                                <option>Free Run</option>
-                            </select>
-                        </div>
-                        <div class="input-group">
-                            <span class="input-group-addon" id="basic-addon1">Bandwidth</span>
-                            <input type="text" class="form-control" placeholder="Hz" aria-describedby="basic-addon1">
-                        </div>
-                        <div class="input-group">
-                            <span class="input-group-addon" id="basic-addon1">Trigger Delay</span>
-                            <input type="text" class="form-control" placeholder="&mu;Sec" aria-describedby="basic-addon1">
-                        </div>
-                        <div class="btn-group btn-group-sm" style=" left: 25%; margin-top: 10px;"role="group">
-                            <button type="button" class="btn btn-primary">Save</button>
-                            <button type="button" class="btn btn-success">Execute</button>
-                            <button type="button" class="btn btn-danger" ng-click="remove($index)">Delete</button>
-                        </div>
+            </div>    
+            <div class="col-md-12" id="canvasBox" style="width: 80%; margin-top: 10px;">
+                <h3 id="canvasTitle">Test Space</h3>
+                <div data-ng-repeat="item in items" class="well well-sm" style="margin-top: 10px;">
+                    <h4 style="margin-top: 0px; margin= 0px;">
+                        <a class="btn btn-inverse glyphicon glyphicon-menu-right">
+                        </a>
+                        Peak Power <span ></span>
+                        <a class="btn btn-inverse glyphicon glyphicon-chevron-up" style="float: right;"></a>
+                        <a class="btn btn-inverse glyphicon glyphicon-chevron-down" style="float: right;"></a>
+                    </h4>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1">Trigger Delay</span>
+                        <select class="form-control">                          
+                            <option>External</option>
+                            <option>RF Burst</option>
+                            <option>Free Run</option>
+                        </select>
                     </div>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon2">Bandwidth</span>
+                        <input type="text" class="form-control" placeholder="Hz" aria-describedby="basic-addon1">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon3">Trigger Delay</span>
+                        <input type="text" class="form-control" placeholder="&mu;Sec" aria-describedby="basic-addon1">
+                    </div>
+                    <div class="btn-group btn-group-sm" style=" left: 25%; margin-top: 10px;" role="group">
+                        <button type="button" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-success">Execute</button>
+                        <button type="button" class="btn btn-danger" data-ng-click="remove($index)">Delete</button>
+                    </div>                    
                 </div>
             </div> 
         </div>       
         
         <div class="row">
-            <nav>
-                <ul>
-                    <div id="chart1" class="col-md-4" data-toggle="modal" 
-            data-target="#myModal"></div>
-                </ul>
-                <ul>
-                    <div id="chart2" class="col-md-4 hoverzoom"></div>
-                </ul>
-                <ul>
-                    <div id="chart3" class="col-md-4 hoverzoom"></div>
-                </ul>               
-            </nav>             
+            <div id="chart1" class="col-md-4 hoverzoom"></div>   
+            <div id="chart2" class="col-md-4 hoverzoom"></div>               
+            <div id="chart3" class="col-md-4 hoverzoom" style="width: 350px"></div>             
         </div> 
         <hr>
-            <!-- Modal -->
-        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                    <h4 class="modal-title" id="myModalLabel">MMIC Amplifier</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div id="chart2"></div>               
-                        <p>PLEASE WORK!!!</p>
-                    </div>
-                    <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div> 
     <script type="text/javascript">$('#collapseOne').collapse("hide");</script><!--stops accordion from loading open -->
 </body>

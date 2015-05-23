@@ -3,33 +3,13 @@
       
     // Set a callback to run when the Google Visualization API is loaded.
     google.setOnLoadCallback(drawChart);
-
-    function readTextFile(file)
-    ]
-        var allText;
-        var rawFile = new XMLHttpRequest();
-        rawFile.open("GET", file, false);
-        rawFile.onreadystatechange = function ()
-        {
-            if(rawFile.readyState === 4)
-            {
-                if(rawFile.status === 200 || rawFile.status == 0)
-                {
-                    var allText = rawFile.responseText;
-                    //alert(allText);
-                }
-            }
-        }
-        rawFile.send(null);
-        return allText;
-    }  
-
+ 
     function drawChart() {
     
         var jsonData = {
           
     cols: [{id: 'freq', label: 'Frequency', type: 'number'},
-           {id: 'db11', label: 'CH1', type: 'number'},{id: 'db12', label: 'CH2', type: 'number'}],
+           {id: 'db11', label: 'S11', type: 'number'},{id: 'db12', label: 'S22', type: 'number'}],
     rows: [{c:[{v: '50.0'}, {v: '25.04'}, {v: '20.154'}]},
            {c:[{v: '77.0'}, {v: '24.335'}, {v: '19.554'}]},
            {c:[{v: '104.0'}, {v: '24.332'}, {v: '19.357'}]},
@@ -68,12 +48,15 @@
 
           var options = {
             title: 'MMIC Amplifier @ +85degC',
-            titleTextStyle: {color:'black', fontSize: 15},
-            legend: {alignment:'center'},
-            hAxis: {title: 'Frequency'},
-            vAxis: {title: 'dB'},
-            backgroundColor: {color: 'white', stroke: 'silver', strokeWidth: 3,},                 
-            colors: ['rgb(248,157,0)','rgb(75,19,115)'],
+            titleTextStyle: {color:'white', fontSize: 15},
+            legend: {alignment:'center', textStyle:{color:'white'}},
+            hAxis: {title: 'Frequency',titleTextStyle:{color:'white'}, textStyle:{color:'white'}, baselineColor:'white', gridlines:{color: 'white', count: 6}, minorGridlines:{color: 'white', count: 1}, viewWindowMode:'pretty'},
+            vAxis: {title: 'dB', titleTextStyle:{color:'white'}, textStyle:{color:'white'}, baselineColor:'white', gridlines:{color: 'white', count: 6}, minorGridlines:{color: 'white', count: 1}},
+            backgroundColor: {fill:'rgb(59,96,120)', stroke: 'silver', strokeWidth: 3,},                 
+            colors: ['rgb(254,241,10)','rgb(231,61,35)'],
+            chartArea:{backgroundColor:''},
+            lineWidth: 1.5,
+            curveType: 'function',
           }
         //jsonData = readTextFile("file:///Users/william/Desktop/GoogleCharts/freqDb.txt");
 
@@ -81,7 +64,7 @@
           var data = new google.visualization.DataTable(jsonData);
 
           // Instantiate and draw our chart, passing in some options.
-          var chart = new google.visualization.AreaChart(document.getElementById('chart1'));
+          var chart = new google.visualization.LineChart(document.getElementById('chart1'));
           chart.draw(data, {width: 300, height: 200});
           chart.draw(data, options);
         }
