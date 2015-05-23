@@ -12,6 +12,10 @@
 #       values[frequency] = dict(zip(column_names, fields))
 # - The "else: return FALSE" is not necessary.  
 #   The student put it there because tabs vs. spaces caused indentation errors.
+# - The [8] and [9:] assumptions are vulnerable to comments being added to or 
+#   subtracted from the input file.  The file actually contains a delimiting
+#   line between comments and table that begins with a "#" mark.  This should
+#   be used to find where the data table begins.
 ###
 import json
 filename = 'ERA_1_32mA_Minus45.S2P'
