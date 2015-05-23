@@ -6,7 +6,7 @@ The touchstone module supplies one class, Touchstone.  For example,
 >>> from touchstone import Touchstone
 >>> touch = Touchstone('ERA_1_32mA_Minus45.S2P')
 >>> dir(touch)
-['FormatError', '__doc__', '__init__', '__module__', 'lines', 'make_json', 'parse']
+['FormatError', '__doc__', '__init__', '__module__', 'db_table', 'lines', 'make_json', 'parse']
 >>>
 """
 
@@ -94,18 +94,19 @@ class Touchstone:
         freqs.sort(key=float)
         table_spec = """{
             cols: [{id: 'freq', label: 'Frequency', type: 'number'},
-                   {id: 'db', label: 'DB', type: 'number'}],
+                   {id: 'db11', label: 'DB11', type: 'number'},
+                   {id: 'db12', label: 'DB12', type: 'number'}],
             rows: ["""
         r = self.data[freqs[0]]
-        table_spec += "{c:[{v: '%s'}, {v: '%s'}]}," % (float(freqs[0]),
-                                                   float(r['dB(S11)']))
-        
+        table_spec += "{c:[{v: '%s'}, {v: '%s'}, {v: '%s'}]}," % (
+                      float(freqs[0]),float(r['dB(S11)']),
+                      float(r['dB(S12)']))
         rows = []
         for freq in freqs[1:]:
             r = self.data[freq]
             line = "                   "
-            line += "{c:[{v: '%s'}, {v: '%s'}]}," % (float(freq),
-                                                 float(r['dB(S11)']))
+            line += "{c:[{v: '%s'}, {v: '%s'}, {v: '%s'}]}," % (
+                    float(freq),float(r['dB(S11)']),float(r['dB(S12)']))
             rows.append(line)
         table_spec += "\n"
         table_spec += "\n".join(rows)
@@ -114,10 +115,12 @@ class Touchstone:
         }"""
         return table_spec
 
-
-if __name__ == "__main__":
-    import doctest
-    #doctest.testmod()
+def make_db_table():
+    """for debugging charts, only"""
     t = Touchstone('ERA_1_32mA_Minus45.S2P')
     t.parse()
     print t.db_table()
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
