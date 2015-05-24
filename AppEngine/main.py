@@ -19,6 +19,7 @@ authorized_users = ['charlie@gradientone.com',
                     'nedwards@gradientone.com',
                     'nhannotte@gradientone.com',
                     'wvennard@gradientone.com',
+                    'test@example.com',
                    ]
 
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
@@ -44,11 +45,11 @@ class InstrumentDataHandler(webapp2.RequestHandler):
     def authcheck(self):
         user = users.get_current_user()
         if user:
-            if user in authorized_users:
+            if user.email() in authorized_users:
                 authorized = True
             else:
                 self.response.headers['Content-Type'] = 'text/html; charset=utf-8'
-                self.response.write('Hello, ' + user.nickname() + '!')
+                self.response.write('Hello, ' + user.email() + '!')
                 self.response.write(
                     ' you need to register with your GradientOne admin')
                 authorized = False
