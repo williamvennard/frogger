@@ -1,6 +1,7 @@
 {
     cols: [{id: 'freq', label: 'Frequency', type: 'number'},
-           {id: 'db', label: 'DB', type: 'number'}],
+           {id: 'db11', label: 'DB11', type: 'number'},
+           {id: 'db12', label: 'DB12', type: 'number'}],
     rows: [{c:[{v: '50.0'}, {v: '-25.04'}, {v: '-16.754'}]},
            {c:[{v: '77.0'}, {v: '-24.335'}, {v: '-16.754'}]},
            {c:[{v: '104.0'}, {v: '-24.332'}, {v: '-16.757'}]},

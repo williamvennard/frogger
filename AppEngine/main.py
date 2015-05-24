@@ -13,6 +13,15 @@ from time import gmtime, strftime
 import collections
 import hashlib
 from google.appengine.ext import db
+from google.appengine.api import users
+
+authorized_users = ['charlie@gradientone.com',
+                    'nedwards@gradientone.com',
+                    'nhannotte@gradientone.com',
+                    'wvennard@gradientone.com',
+                    'test@example.com',
+                   ]
+
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
                                autoescape = False)
@@ -23,6 +32,7 @@ def render_str(template, **params):
     return t.render(params)
 
 class InstrumentDataHandler(webapp2.RequestHandler):
+    authorized = False
     def write(self, *a, **kw):
         self.response.out.write(*a, **kw)
 
@@ -32,12 +42,39 @@ class InstrumentDataHandler(webapp2.RequestHandler):
     def render(self, template, **kw):
         self.write(self.render_str(template, **kw))
 
+    def authcheck(self):
+        user = users.get_current_user()
+        if user:
+            if user.email() in authorized_users:
+                authorized = True
+            else:
+                self.response.headers['Content-Type'] = 'text/html; charset=utf-8'
+                self.response.write('Hello, ' + user.email() + '!')
+                self.response.write(
+                    ' you need to register with your GradientOne admin')
+                authorized = False
+        else:
+            authorized = False
+            self.redirect(users.create_login_url(self.request.uri))
+        return authorized
+
 #def render_post(response, post):
 #   response.out.write('<b>' + input.description + '</b><br>')
 #   response.out.write(input.inputdata)
 
 def input_key(name = 'default'):
     return db.Key.from_path('inputs', name)
+
+
+class MainPage(InstrumentDataHandler):
+
+    def get(self):
+        user = users.get_current_user()
+        if user:
+            self.response.headers['Content-Type'] = 'text/html; charset=utf-8'
+            self.response.write('Hello, ' + user.nickname())
+        else:
+            self.redirect(users.create_login_url(self.request.uri))
 
 class Input(db.Model):
     frequency = db.FloatProperty(required = True)
@@ -51,19 +88,24 @@ class Input(db.Model):
 
 class DataPage(InstrumentDataHandler):
     def get(self,name=""):
+        if not self.authcheck():
+            return  # redirect to login later?
         query = """SELECT * FROM Input
                    WHERE description = '%s'
                    ORDER BY frequency ASC;""" % name
         print query
         datasets = db.GqlQuery(query)
-        #datasets = db.GqlQuery("SELECT * FROM Input WHERE description = '%s' ORDER BY frequency ASC" % name)
         self.render('data.html', datasets = datasets)
 
 class InputPage(InstrumentDataHandler):
     def get(self):
+        if not self.authcheck():
+            return  # redirect to login later?
         self.render("front.html")
         print "you are in the get handler"
     def post(self):
+        if not self.authcheck():
+            return  # redirect to login later?
         print "you are in the InputPage posthandler"
         description = self.request.get("description")
         print "InputPage: post: description =", description
@@ -89,8 +131,8 @@ class InputPage(InstrumentDataHandler):
         #self.render("front.html")
         self.redirect('/data/' + description)
         
-#PAGE_RE = r'(/(?:[a-zA-Z0-9_-]+/?)*)'
 app = webapp2.WSGIApplication([
+    ('/', MainPage),
     ('/input', InputPage),
     ('/data/?', DataPage),
     ('/data/([a-zA-Z0-9-]+)', DataPage),
