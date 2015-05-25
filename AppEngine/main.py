@@ -69,6 +69,7 @@ def UserDB_key(name = 'default'):
 class UserDB(db.Model):
     user = db.StringProperty(required = True)
     companyname = db.StringProperty(required = True)
+    admin = db.BooleanProperty(required = False)
 
 def input_key(name = 'default'):
     return db.Key.from_path('inputs', name)
@@ -93,11 +94,19 @@ class AdduserPage(InstrumentDataHandler):
 
     def post(self):
         user = self.request.get('user')
-        companyname = self.request.get('companyname')
-        print user
-        print companyname   
+        companyname = self.request.get('companyname')  
         s = UserDB(parent = UserDB_key(), user = user, companyname = companyname)
         s.put()
+        checked_box = self.request.get("admin")
+        if checked_box:
+            s.admin = True
+            print s.admin
+        else:
+            s.admin = False
+            print s.admin
+        s.put()
+        self.redirect('/input')
+
 
 class Input(db.Model):
     frequency = db.FloatProperty(required = True)
