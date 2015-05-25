@@ -95,16 +95,24 @@ class ListUsersPage(InstrumentDataHandler):
     def get(self):
         users = db.GqlQuery("SELECT * FROM UserDB WHERE companyname = 'GradientOne'").fetch(None)
         print "ListUsersPage:get: users =",users
-        self.render('listusers.html',company=users[0].companyname,users=users)
+        if len(users) > 0:
+            self.render('listusers.html',company=users[0].companyname,
+                        users=users)
+        else:
+            self.render('listusers.html',company="new company?",
+                        users=users)
 
 
 class AdduserPage(InstrumentDataHandler):
 
     def get(self):
         u = users.get_current_user()
+        if not u:
+            self.redirect('/')
+            return
         if not self.authcheck():
             self.response.headers['Content-Type'] = 'text/html; charset=utf-8'
-            self.response.write('Hello, ' + u.nickname())
+            self.response.write('Hello, ' + u.email())
             self.response.write(' you are not authorized to add users.')
             return
         admin_email = u.email()
