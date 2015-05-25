@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block import %}
+
+<html>
+  <head>
+    <title>Add User</title>
+    <style type="text/css">
+      .label {text-align: right}
+      .error {color: red}
+    </style>
+
+  </head>
+
+  <body>
+    <h2>Add User</h2>
+    <form method="post">
+      <table>
+        <tr>
+          <td class="label">
+            User Email
+          </td>
+          <td>
+            <input type="text" name="user" value="{{user}}">
+          </td>
+          <td class="error">
+            {{error_email}}
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            Company Name
+          </td>
+          <td>
+            <input type="text" name="companyname" value="{{companyname}}">
+          </td>
+          <td class="error">
+            {{error_companyname}}
+          </td>
+        </tr>
+      </table>
+
+      <input type="submit">
+    </form>
+  </body>
+
+</html>
+
+{% endblock %}
