@@ -23,8 +23,8 @@
 
 </head>
 
-<body ng-app="controller" background="images/triangles.png">
-    <div ng-controller="SettingsController" class="container">       
+<body background="images/triangles.png">
+    <div class="container-fluid">       
         <nav class="navbar navbar-inverse navbar-collapse collapse">
                 <div class="container-fluid">
                     <div class="navbar-header">
@@ -46,49 +46,66 @@
                     </div>
                 </div>
         </nav>
-        <div class="row">
+        <div class="container-fluid">
             <div class="col-md-12 well well-sm canv">
-                <h2>GradientOne Instruments</h2> 
+                <h2 id="headr">GradientOne Instruments</h2> 
             </div>
         </div>
-        <div class="container">
+        
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-3" style="width: 170px;">
                     <ul class="nav nav-pills nav-stacked instnav">
-                      <li role="presentation" class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false" style="text-align:center;">
-                          Instrument Options <span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu" role="menu">
-                        GradientOne Instruments
-                          <select multiple class="form-control">
+                      
+                        <li class="side-menu" role="menu">
+                        <h4> GradientOne Instruments</h4>
+                          <select multiple class="form-control" style="height:300px;color:white; background-color: #383838;">
                                   <option>VNA</option>
                                   <option>VNA</option>
-                                  <option ng-click="add()">O-Scope</option>
+                                  <option>O-Scope</option>
+                                  <option>VNA</option>
+                                  <option>VNA</option>
+                                  <option>VNA</option>
+                                  <option>VNA</option>
+                                  <option>O-Scope</option>
+                                  <option>VNA</option>
+                                  <option>VNA</option>
+                                  <option>VNA</option>
+                                  <option>VNA</option>
+                                  <option>O-Scope</option>
+                                  <option>VNA</option>
+                                  <option>VNA</option>
+                                  <option>VNA</option>
+                                  <option>VNA</option>
+                                  <option>O-Scope</option>
+                                  <option>VNA</option>
+                                  <option>VNA</option>
+                                  <option>VNA</option>
+                                  <option>VNA</option>
+                                  <option>O-Scope</option>
                                   <option>VNA</option>
                                   <option>VNA</option>
                             </select> 
-                        </ul>
-                      </li>
-                      <li role="presentation" class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false" style="text-align:center;">
-                          Saved Instruments<span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu" role="menu">
-                          <select multiple class="form-control">
-                                  <option>Steve's VNA</option>
+                        </li>
+                      
+                      <li class="side-menu" role="menu">
+                        <h4>Saved Instruments</h4>
+                          <select multiple class="form-control" style="height:300px; color:white; background-color: #383838;">
                                   <option>VNA</option>
-                                </select> 
-                        </ul>
-                      </li>
+                                  <option>VNA</option>
+                                  <option>O-Scope</option>
+                                  <option>VNA</option>
+                                  <option>VNA</option>
+                            </select> 
+                        </li>
                     </ul> 
                 </div>                           
-            </div>
-        </div>
-          <div class="container">
-              <div class="col-md-12 box">
+           
+        
+          
+              <div class="col-md-9 box"  style="margin-right: 30px;">
                   <h2 class="instname">Oscilloscope</h2>
-                  <div id="ochart"></div>
+                  <div id="ochart">
+                  </div>
                   <div id="optionsBox">
                       <div id="optionsBoxTitle" class="boxTitle">
                           <h2>Options</h2>
@@ -97,7 +114,7 @@
                           <button type="button" id="start">Start</button>
                           <button type="button" id="stop">Stop</button>
                           <button type="button" id="start">Save</button>
-                          <button type="button" id="stop" ng-click="remove($index)">Delete</button>
+                          <button type="button" id="stop">Delete</button>
                       </div>
                       <div class="knobs" style="height: 100px;">
                           <h3>Amplitude</h3>
@@ -129,49 +146,6 @@
                       </div>
                   </div>
               </div>  
-          </div>
-          <div class="container">
-              <div class="col-md-12 box">
-                  <h2 class="instname">Spectrum Analyzer</h2>
-                  <div id="sachart"></div>
-                  <div id="optionsBox">
-                      <div id="optionsBoxTitle" class="boxTitle">
-                          <h2>Options</h2>
-                      </div>
-                      <div id="buttons">
-                          <button type="button" id="start">Start</button>
-                          <button type="button" id="stop">Stop</button>
-                      </div>
-                      <div class="knobs" style="height: 100px;">
-                          <h3>Amplitude</h3>
-                          <div id="knob1">
-                            <input 
-                            type="text" 
-                            value="25" 
-                            class="dial" 
-                            data-width="75"
-                            data-fgColor="#00C5B6"
-                            data-skin="tron"
-                            data-thickness=".4"
-                            data-angleOffset="0">
-                          </div>
-                      </div>
-                      <div class="knobs">
-                          <h3>Period</h3>
-                          <div id="knob2">
-                            <input 
-                            type="text" 
-                            value="25" 
-                            class="dial" 
-                            data-width="75"
-                            data-fgColor="#00C5B6"
-                            data-skin="tron"
-                            data-thickness=".4"
-                            data-angleOffset="0">
-                          </div>
-                      </div>
-                  </div>
-              </div>    
           </div>  
         <hr>
     </div> 
