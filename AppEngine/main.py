@@ -45,22 +45,27 @@ class InstrumentDataHandler(webapp2.RequestHandler):
     def authcheck(self):
         user = users.get_current_user()
         if user:
-            if user.email() in authorized_users:
-                authorized = True
+            user = str(user)
+            userok = db.GqlQuery("SELECT * FROM UserDB WHERE user = :1", user)
+            results = userok.get()
+            if results:
+                if user == results.user:
+                    authorized = True
+                    print "match"
             else:
-                self.response.headers['Content-Type'] = 'text/html; charset=utf-8'
-                self.response.write('Hello, ' + user.email() + '!')
-                self.response.write(
-                    ' you need to register with your GradientOne admin')
+                self.redirect('/adduser')
                 authorized = False
         else:
             authorized = False
-            self.redirect(users.create_login_url(self.request.uri))
+            self.redirect('/addduser')
         return authorized
 
-#def render_post(response, post):
-#   response.out.write('<b>' + input.description + '</b><br>')
-#   response.out.write(input.inputdata)
+def UserDB_key(name = 'default'):
+    return db.Key.from_path('users', name)
+
+class UserDB(db.Model):
+    user = db.StringProperty(required = True)
+    companyname = db.StringProperty(required = True)
 
 def input_key(name = 'default'):
     return db.Key.from_path('inputs', name)
@@ -70,11 +75,28 @@ class MainPage(InstrumentDataHandler):
 
     def get(self):
         user = users.get_current_user()
+
         if user:
             self.response.headers['Content-Type'] = 'text/html; charset=utf-8'
             self.response.write('Hello, ' + user.nickname())
         else:
             self.redirect(users.create_login_url(self.request.uri))
+
+class AdduserPage(InstrumentDataHandler):
+
+    def get(self):
+        if self.authcheck():
+            self.redirect('/input')
+        user = users.get_current_user()
+        self.render('adduser.html')
+
+    def post(self):
+        user = self.request.get('user')
+        companyname = self.request.get('companyname')
+        print user
+        print companyname   
+        s = UserDB(parent = UserDB_key(), user = user, companyname = companyname)
+        s.put()
 
 class Input(db.Model):
     frequency = db.FloatProperty(required = True)
@@ -136,4 +158,5 @@ app = webapp2.WSGIApplication([
     ('/input', InputPage),
     ('/data/?', DataPage),
     ('/data/([a-zA-Z0-9-]+)', DataPage),
+    ('/adduser', AdduserPage)
 ], debug=True)
