@@ -44,8 +44,10 @@ class InstrumentDataHandler(webapp2.RequestHandler):
 
     def authcheck(self):
         user = users.get_current_user()
+        print user
         if user:
-            user = str(user)
+            user = user.email()
+            print user
             userok = db.GqlQuery("SELECT * FROM UserDB WHERE user = :1", user)
             results = userok.get()
             if results:
@@ -57,7 +59,8 @@ class InstrumentDataHandler(webapp2.RequestHandler):
                 authorized = False
         else:
             authorized = False
-            self.redirect('/addduser')
+            self.redirect('/adduser')
+            print "no match"
         return authorized
 
 def UserDB_key(name = 'default'):
@@ -85,8 +88,6 @@ class MainPage(InstrumentDataHandler):
 class AdduserPage(InstrumentDataHandler):
 
     def get(self):
-        if self.authcheck():
-            self.redirect('/input')
         user = users.get_current_user()
         self.render('adduser.html')
 
