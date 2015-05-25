@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block import %}
+
+<html>
+  <head>
+    <title>List Users ({{company}})</title>
+    <style type="text/css">
+      .label {text-align: right}
+      .error {color: red}
+    </style>
+
+  </head>
+
+  <body>
+    <h2>Users ({{company}})</h2>
+    <ul>
+    {% for user in users %}
+       <li>{{user.email}},{{user.companyname}},{{user.admin}}
+    {% endfor %}
+    </ul>
+  </body>
+
+</html>
+
+{% endblock %}

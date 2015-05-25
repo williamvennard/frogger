@@ -15,12 +15,12 @@ import hashlib
 from google.appengine.ext import db
 from google.appengine.api import users
 
-#authorized_users = ['charlie@gradientone.com',
+authorized_users = ['charlie@gradientone.com',
 #                    'nedwards@gradientone.com',
 #                    'nhannotte@gradientone.com',
 #                    'wvennard@gradientone.com',
-#                    'test@example.com',
-#                   ]
+                    'test@example.com',
+                   ]
 
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
@@ -33,8 +33,7 @@ def render_str(template, **params):
 
 class InstrumentDataHandler(webapp2.RequestHandler):
     authorized = False
-    def write(self, *a, **kw):
-        self.response.out.write(*a, **kw)
+    def write(self, *a, **kw): self.response.out.write(*a, **kw)
 
     def render_str(self, template, **params):
         return render_str(template, **params)
@@ -42,32 +41,37 @@ class InstrumentDataHandler(webapp2.RequestHandler):
     def render(self, template, **kw):
         self.write(self.render_str(template, **kw))
 
-    def authcheck(self):
+    def authcheck(self, check_admin=False):
         user = users.get_current_user()
-        print user
         if user:
-            user = user.email()
-            print user
-            userok = db.GqlQuery("SELECT * FROM UserDB WHERE user = :1", user)
-            results = userok.get()
-            if results:
-                if user == results.user:
-                    authorized = True
-                    print "match"
+            if user.email() in authorized_users:
+                return True
+            # todo: put in try block and handle exception
+            cursor = db.GqlQuery("SELECT * FROM UserDB WHERE user = :1", 
+                                 user.email())
+            result = cursor.get()
+            if result:
+                if user.email() == result.email:
+                    if check_admin:
+                        if result.admin:
+                            authorized = True
+                        else:
+                            authorized = False
+                    else:
+                        authorized = True
             else:
-                self.redirect('/adduser')
                 authorized = False
         else:
             authorized = False
-            self.redirect('/adduser')
-            print "no match"
+        if not authorized:
+            self.redirect('/static/autherror.html')
         return authorized
 
 def UserDB_key(name = 'default'):
-    return db.Key.from_path('users', name)
+    return db.Key.from_path('emails', name)
 
 class UserDB(db.Model):
-    user = db.StringProperty(required = True)
+    email = db.StringProperty(required = True)
     companyname = db.StringProperty(required = True)
     admin = db.BooleanProperty(required = False)
 
@@ -86,16 +90,31 @@ class MainPage(InstrumentDataHandler):
         else:
             self.redirect(users.create_login_url(self.request.uri))
 
+class ListUsersPage(InstrumentDataHandler):
+
+    def get(self):
+        users = db.GqlQuery("SELECT * FROM UserDB WHERE companyname = 'GradientOne'").fetch(None)
+        print "ListUsersPage:get: users =",users
+        self.render('listusers.html',company=users[0].companyname,users=users)
+
+
 class AdduserPage(InstrumentDataHandler):
 
     def get(self):
-        user = users.get_current_user()
+        u = users.get_current_user()
+        if not self.authcheck():
+            self.response.headers['Content-Type'] = 'text/html; charset=utf-8'
+            self.response.write('Hello, ' + u.nickname())
+            self.response.write(' you are not authorized to add users.')
+            return
+        admin_email = u.email()
         self.render('adduser.html')
 
     def post(self):
-        user = self.request.get('user')
+        username = self.request.get('email')
         companyname = self.request.get('companyname')  
-        s = UserDB(parent = UserDB_key(), user = user, companyname = companyname)
+        print "post: companyname =", companyname
+        s = UserDB(parent = UserDB_key(), email = username, companyname = companyname)
         s.put()
         checked_box = self.request.get("admin")
         if checked_box:
@@ -160,13 +179,14 @@ class InputPage(InstrumentDataHandler):
             i = Input(parent = input_key(description), frequency = frequency, S11dB = S11dB, S12dB = S12dB, description = description)
             i.put()
         
-        #self.render("front.html")
         self.redirect('/data/' + description)
         
 app = webapp2.WSGIApplication([
     ('/', MainPage),
+    ('/help', MainPage),
     ('/input', InputPage),
     ('/data/?', DataPage),
     ('/data/([a-zA-Z0-9-]+)', DataPage),
-    ('/adduser', AdduserPage)
+    ('/adduser', AdduserPage),
+    ('/listusers', ListUsersPage),
 ], debug=True)

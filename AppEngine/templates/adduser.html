@@ -4,7 +4,7 @@
 
 <html>
   <head>
-    <title>Add User</title>
+    <title>Add User ({{admin_email}})</title>
     <style type="text/css">
       .label {text-align: right}
       .error {color: red}
@@ -21,7 +21,7 @@
             User Email
           </td>
           <td>
-            <input type="text" name="user" value="{{user}}">
+            <input type="text" name="email" value="{{email}}">
           </td>
           <td class="error">
             {{error_email}}
