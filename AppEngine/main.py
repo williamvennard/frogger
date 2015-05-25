@@ -15,12 +15,12 @@ import hashlib
 from google.appengine.ext import db
 from google.appengine.api import users
 
-authorized_users = ['charlie@gradientone.com',
-                    'nedwards@gradientone.com',
-                    'nhannotte@gradientone.com',
-                    'wvennard@gradientone.com',
-                    'test@example.com',
-                   ]
+#authorized_users = ['charlie@gradientone.com',
+#                    'nedwards@gradientone.com',
+#                    'nhannotte@gradientone.com',
+#                    'wvennard@gradientone.com',
+#                    'test@example.com',
+#                   ]
 
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
