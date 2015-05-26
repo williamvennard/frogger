@@ -47,7 +47,7 @@ class InstrumentDataHandler(webapp2.RequestHandler):
             if user.email() in authorized_users:
                 return True
             # todo: put in try block and handle exception
-            cursor = db.GqlQuery("SELECT * FROM UserDB WHERE user = :1", 
+            cursor = db.GqlQuery("SELECT * FROM UserDB WHERE email = :1", 
                                  user.email())
             result = cursor.get()
             if result:
