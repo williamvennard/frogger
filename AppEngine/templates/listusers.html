@@ -14,11 +14,13 @@
 
   <body>
     <h2>Users ({{company}})</h2>
-    <ul>
+    <tr><th>email</th><th>company</th><th>admin</th></tr>
     {% for user in users %}
-       <li>{{user.email}},{{user.companyname}},{{user.admin}}
+       <tr>
+       <td>{{user.email}}</td><td>{{user.companyname}}</td><td>{{user.admin}}</td>
+       </tr>
     {% endfor %}
-    </ul>
+    </table>
   </body>
 
 </html>
