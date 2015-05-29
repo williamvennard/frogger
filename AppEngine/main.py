@@ -18,8 +18,7 @@ from google.appengine.ext import db
 from google.appengine.api import users
 from google.appengine.api import oauth
 
-SCOPE = 'email'
-user = oauth.get_current_user(SCOPE)
+
 
 authorized_users = ['charlie@gradientone.com',
                     'nedwards@gradientone.com',
