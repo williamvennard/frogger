@@ -9,14 +9,20 @@ import jinja2
 import json
 import datetime
 import re
+import csv
+import itertools
 from time import gmtime, strftime
 import collections
 import hashlib
 from google.appengine.ext import db
 from google.appengine.api import users
+from google.appengine.api import oauth
+
+SCOPE = 'email'
+user = oauth.get_current_user(SCOPE)
 
 authorized_users = ['charlie@gradientone.com',
-#                    'nedwards@gradientone.com',
+                    'nedwards@gradientone.com',
 #                    'nhannotte@gradientone.com',
 #                    'wvennard@gradientone.com',
                     'test@example.com',
@@ -145,6 +151,33 @@ class Input(db.Model):
         self._render_text = self.inputdata.replace('\n', '<br>')
         return render_str("post.html", p = self)
 
+class OscopeData(db.Model):
+    time = db.FloatProperty(required = True)
+    ch1 = db.FloatProperty(required = True)
+    ch2 = db.FloatProperty(required = True)
+    ch3 = db.FloatProperty(required = True)
+    ch4 = db.FloatProperty(required = True)
+
+def Oscope_key(name = 'default'):
+    return db.Key.from_path('oscopedata', name)
+
+class OscopePage(InstrumentDataHandler):
+    def get(self):
+        f = open('tek0012ALL.csv')
+        f = itertools.islice(f, 18, 100)
+        reader = csv.DictReader(f, fieldnames = ("TIME", "CH1", "CH2", "CH3", "CH4"))
+        out = json.dumps([row for row in reader])
+        self.response.write(out)
+        #for row in reader:
+            #r = OscopeData(parent = Oscope_key(), time = TIME, ch1 = CH1, ch2 = CH2, ch3 = CH3, ch4 = CH4)
+            #r.put()
+
+
+
+
+
+
+
 class DataPage(InstrumentDataHandler):
     def get(self,name=""):
         if not self.authcheck():
@@ -163,6 +196,7 @@ class InputPage(InstrumentDataHandler):
         self.render("front.html")
         print "you are in the get handler"
     def post(self):
+
         if not self.authcheck():
             return  # redirect to login later?
         print "you are in the InputPage posthandler"
@@ -197,4 +231,5 @@ app = webapp2.WSGIApplication([
     ('/data/([a-zA-Z0-9-]+)', DataPage),
     ('/adduser', AdduserPage),
     ('/listusers', ListUsersPage),
+    ('/oscope.json', OscopePage),
 ], debug=True)
