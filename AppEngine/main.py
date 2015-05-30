@@ -150,31 +150,41 @@ class Input(db.Model):
         self._render_text = self.inputdata.replace('\n', '<br>')
         return render_str("post.html", p = self)
 
-class OscopeData(db.Model):
-    time = db.FloatProperty(required = True)
-    ch1 = db.FloatProperty(required = True)
-    ch2 = db.FloatProperty(required = True)
-    ch3 = db.FloatProperty(required = True)
-    ch4 = db.FloatProperty(required = True)
+#class OscopeData(db.Model):
+#   """ Future DB code.
 
-def Oscope_key(name = 'default'):
-    return db.Key.from_path('oscopedata', name)
+#    I will write code for the handling of the data from the tek OSCOPE for it go into the DB."""
+
+#   time = db.FloatProperty(required = True)
+#   ch1 = db.FloatProperty(required = True)
+#   ch2 = db.FloatProperty(required = True)
+#   ch3 = db.FloatProperty(required = True)
+#   ch4 = db.FloatProperty(required = True)
+
+#def Oscope_key(name = 'default'):
+#   return db.Key.from_path('oscopedata', name)
 
 class OscopePage(InstrumentDataHandler):
     def get(self):
         f = open('tek0012ALL.csv')
         f = itertools.islice(f, 18, 100)
-        reader = csv.DictReader(f, fieldnames = ("TIME", "CH1", "CH2", "CH3", "CH4"))
-        out = json.dumps([row for row in reader])
-        self.response.write(out)
+        #reader = csv.DictReader(f, fieldnames = ("TIME", "CH1", "CH2", "CH3", "CH4"))
+        #out = json.dumps([row for row in reader])
+        #self.response.write(out)
         #for row in reader:
             #r = OscopeData(parent = Oscope_key(), time = TIME, ch1 = CH1, ch2 = CH2, ch3 = CH3, ch4 = CH4)
             #r.put()
 
+class InstrumentsPage(InstrumentDataHandler):
+    def get(self):
+        self.render('instruments.html')
 
-
-
-
+class ConfigPage(InstrumentDataHandler):
+    def get(self):
+        config_variable = {"config_var:", "start"}
+        config_output = json.dumps([row for row in config_variable])
+        self.response.write(config_output)
+        self.render('config.html')
 
 
 class DataPage(InstrumentDataHandler):
@@ -230,5 +240,7 @@ app = webapp2.WSGIApplication([
     ('/data/([a-zA-Z0-9-]+)', DataPage),
     ('/adduser', AdduserPage),
     ('/listusers', ListUsersPage),
+    ('/instruments', InstrumentsPage),
+    ('/config.json', ConfigPage),
     ('/oscope.json', OscopePage),
 ], debug=True)
