@@ -166,7 +166,8 @@ class Input(db.Model):
 
 class OscopePage(InstrumentDataHandler):
     def get(self):
-        f = open('tek0012ALL.csv')
+        #if not self.authcheck():
+        #     return f = open('tek0012ALL.csv')
         f = itertools.islice(f, 18, 100)
         #reader = csv.DictReader(f, fieldnames = ("TIME", "CH1", "CH2", "CH3", "CH4"))
         #out = json.dumps([row for row in reader])
@@ -175,12 +176,22 @@ class OscopePage(InstrumentDataHandler):
             #r = OscopeData(parent = Oscope_key(), time = TIME, ch1 = CH1, ch2 = CH2, ch3 = CH3, ch4 = CH4)
             #r.put()
 
+    def post(self, data):
+        #if not self.authcheck():
+        #    return
+        print "you posted in the oscope handler"
+        self.write.out(data)
+
 class InstrumentsPage(InstrumentDataHandler):
     def get(self):
+        if not self.authcheck():
+            return
         self.render('instruments.html')
 
 class ConfigPage(InstrumentDataHandler):
     def get(self):
+        if not self.authcheck():
+            return
         config_variable = {"config_var:", "start"}
         config_output = json.dumps([row for row in config_variable])
         self.response.write(config_output)
