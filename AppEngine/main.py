@@ -171,7 +171,10 @@ class OscopePage(InstrumentDataHandler):
         f = itertools.islice(f, 18, 100)
         reader = csv.DictReader(f, fieldnames = ("TIME", "CH1", "CH2", "CH3", "CH4"))
         out = json.dumps([row for row in reader])
+        self.response.headers['Content-Type'] = 'application/js; charset=utf-8'
+        self.response.headers['Access-Control-Allow-Origin'] = '*'
         self.response.write(out)
+        #self.response.write("(" + out + ")")
         #for row in reader:
             #r = OscopeData(parent = Oscope_key(), time = TIME, ch1 = CH1, ch2 = CH2, ch3 = CH3, ch4 = CH4)
             #r.put()
