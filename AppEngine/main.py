@@ -3,22 +3,20 @@ This is the "data importer" module.
 
 It takes a http from input and stores it in the database.  It also allows you to display the results of the entry.
 """
-import os
-import webapp2
+import collections
+import csv
+import datetime
+import hashlib
+import itertools
 import jinja2
 import json
-import datetime
+import os
 import re
-import csv
-import itertools
-from time import gmtime, strftime
-import collections
-import hashlib
-from google.appengine.ext import db
-from google.appengine.api import users
+import webapp2
 from google.appengine.api import oauth
-
-
+from google.appengine.api import users
+from google.appengine.ext import db
+from time import gmtime, strftime
 
 authorized_users = ['charlie@gradientone.com',
                     'nedwards@gradientone.com',
@@ -79,6 +77,14 @@ class UserDB(db.Model):
     email = db.StringProperty(required = True)
     companyname = db.StringProperty(required = True)
     admin = db.BooleanProperty(required = False)
+
+def DemoDB_key(name = 'default'):
+    return db.Key.from_path('messages', name)
+
+class DemoDB(db.Model):
+    receiver = db.StringProperty(required = True)
+    sender = db.StringProperty(required = True)
+    message = db.StringProperty(required = True)
 
 def input_key(name = 'default'):
     return db.Key.from_path('inputs', name)
@@ -243,6 +249,21 @@ class InputPage(InstrumentDataHandler):
         
         self.redirect('/data/' + description)
         
+class TestJSON(InstrumentDataHandler):
+    def get(self):
+        print "InstrumentDataHandler: get: you are in the get handler"
+
+    def post(self):
+        print "InstrumentDataHandler:post"
+        jsoninput = self.request.get("jsoninput")
+        print jsoninput
+        demo = json.loads(self.request.body)
+        print "InstrumentDataHandler:post demo =",demo
+        print "demo =",demo
+        s = DemoDB(parent = DemoDB_key(), sender = demo['sender'], 
+                   receiver = demo['receiver'], message = demo['message'])
+        s.put()
+
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/help', MainPage),
@@ -254,4 +275,5 @@ app = webapp2.WSGIApplication([
     ('/instruments', InstrumentsPage),
     ('/config.json', ConfigPage),
     ('/oscope.json', OscopePage),
+    ('/testnuc', TestJSON),
 ], debug=True)
