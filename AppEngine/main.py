@@ -17,6 +17,7 @@ import hashlib
 from google.appengine.ext import db
 from google.appengine.api import users
 from google.appengine.api import oauth
+from google.appengine.api import memcache
 
 
 
@@ -83,6 +84,25 @@ class UserDB(db.Model):
 def input_key(name = 'default'):
     return db.Key.from_path('inputs', name)
 
+class DictModel(db.Model):
+    def to_dict(self):
+       return dict([(p, unicode(getattr(self, p))) for p in self.properties()])
+
+class ConfigDB(DictModel):
+    company_nickname = db.StringProperty(required = True)
+    hardware_name = db.StringProperty(required = True)
+    instrument_type = db.StringProperty(required = True)
+    instrument_name = db.StringProperty(required = False)
+    source = db.StringProperty(required = False)
+    horizontal_position = db.FloatProperty(required = False)
+    horizontal_seconds_per_div = db.FloatProperty(required = False)
+    vertical_position = db.FloatProperty(required = False)
+    vertical_volts_per_division = db.FloatProperty(required = False)
+    trigger_type = db.StringProperty(required = False)
+    #trigger_value = db.FloatProperty(required = False)
+
+def ConfigDB_key(name = 'default'):
+    return db.Key.from_path('company_nickname', name)
 
 class MainPage(InstrumentDataHandler):
 
@@ -188,15 +208,46 @@ class InstrumentsPage(InstrumentDataHandler):
             return
         self.render('instruments.html')
 
-class ConfigPage(InstrumentDataHandler):
+class ConfigInputPage(InstrumentDataHandler):
     def get(self):
-        if not self.authcheck():
-            return
-        config_variable = {"config_var:", "start"}
-        config_output = json.dumps([row for row in config_variable])
-        self.response.write(config_output)
-        self.render('config.html')
+        #configiable = {"config:", "start"}
+        #config_output = json.dumps([row for row in configiable])
+        #self.response.write(config_output)
+        self.render('configinput.html')
 
+    def post(self):
+        company_nickname = self.request.get('company_nickname')
+        hardware_name = self.request.get('hardware_name')
+        instrument_type = self.request.get('instrument_type')
+        instrument_name = self.request.get('instrument_name')
+        source = self.request.get('source')
+        horizontal_position = float(self.request.get('horizontal_position'))
+        horizontal_seconds_per_div = float(self.request.get('horizontal_seconds_per_div'))
+        vertical_position = float(self.request.get('vertical_position'))
+        vertical_volts_per_divsision = float(self.request.get('vertical_volts_per_divsision'))
+        trigger_type = self.request.get('trigger_type')
+
+        c = ConfigDB(parent = ConfigDB_key(), company_nickname = company_nickname, 
+            hardware_name = hardware_name, instrument_type = instrument_type, instrument_name = instrument_name, 
+            source = source, horizontal_position = horizontal_position, 
+            horizontal_seconds_per_div = horizontal_seconds_per_div, vertical_position = vertical_position, 
+            vertical_volts_per_division = vertical_volts_per_divsision, trigger_type= trigger_type,)
+        c.put()   
+        
+   
+class ConfigOutputPage(InstrumentDataHandler):
+    def get(self):
+        #config_query = db.GqlQuery("SELECT * FROM ConfigDB")
+        #q = db.Query(ConfigDB)
+        configs = ConfigDB.all()
+        self.response.write(json.dumps([c.to_dict() for c in configs]))
+        #dict_of_vars = dict((str(config.company_nickname), {'company_nickname': config.company_nickname, 'source': config.source, 'hardware_name': config.hardware_name, 'instrument_type': config.instrument_type, 'instrument_name': config.instrument_name, 'horizontal_position': config.horizontal_position, 'horizontal_seconds_per_div': config.horizontal_seconds_per_div, 'vertical_position': config.vertical_position, 'vertical_volts_per_division': config.vertical_volts_per_division, 'trigger_type': config.trigger_type}) for config in configs)
+        
+        #out = json.dumps(dict_of_vars)
+        #self.response.write(out)
+#dict_of_entities = dict((str(entity.key()), {'name': entity.name, 'size': entity.size}) for entity in entities)
+
+        
 
 class DataPage(InstrumentDataHandler):
     def get(self,name=""):
@@ -215,6 +266,7 @@ class InputPage(InstrumentDataHandler):
             return  # redirect to login later?
         self.render("front.html")
         print "you are in the get handler"
+
     def post(self):
 
         if not self.authcheck():
@@ -252,6 +304,7 @@ app = webapp2.WSGIApplication([
     ('/adduser', AdduserPage),
     ('/listusers', ListUsersPage),
     ('/instruments', InstrumentsPage),
-    ('/config.json', ConfigPage),
+    ('/configinput', ConfigInputPage),
+    ('/configoutput', ConfigOutputPage),
     ('/oscope.json', OscopePage),
 ], debug=True)
