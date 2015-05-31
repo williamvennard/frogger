@@ -336,6 +336,19 @@ class TestJSON(InstrumentDataHandler):
                    receiver = demo['receiver'], message = demo['message'])
         s.put()
 
+class OscopeData(InstrumentDataHandler):
+    def get(self):
+        print "InstrumentDataHandler: get: you are in the get handler"
+
+    def post(self):
+        print "InstrumentDataHandler:post"
+        demo = json.loads(self.request.body)
+        print "InstrumentDataHandler:post demo =",demo
+        print "demo =",demo
+        s = DemoDB(parent = DemoDB_key(), sender = demo['sender'], 
+                   receiver = demo['receiver'], message = demo['message'])
+        s.put()
+
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/help', MainPage),
@@ -349,4 +362,6 @@ app = webapp2.WSGIApplication([
     ('/configoutput.json', ConfigOutputPage),
     ('/oscope.json', OscopePage),
     ('/testnuc', TestJSON),
+    ('/oscopedata', OscopeData),
+    def get(self,name=""):
 ], debug=True)
