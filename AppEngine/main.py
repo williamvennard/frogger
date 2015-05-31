@@ -258,8 +258,6 @@ class TestJSON(InstrumentDataHandler):
 
     def post(self):
         print "InstrumentDataHandler:post"
-        jsoninput = self.request.get("jsoninput")
-        print jsoninput
         demo = json.loads(self.request.body)
         print "InstrumentDataHandler:post demo =",demo
         print "demo =",demo
