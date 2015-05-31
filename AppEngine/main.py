@@ -7,10 +7,12 @@ import os
 import webapp2
 import jinja2
 import json
+import logging
 import datetime
 import re
 import csv
 import itertools
+import time
 from time import gmtime, strftime
 import collections
 import hashlib
@@ -235,14 +237,30 @@ class ConfigInputPage(InstrumentDataHandler):
             source = source, horizontal_position = horizontal_position, 
             horizontal_seconds_per_div = horizontal_seconds_per_div, vertical_position = vertical_position, 
             vertical_volts_per_division = vertical_volts_per_divsision, trigger_type= trigger_type,)
-        c.put()   
+        c.put() 
+        memcache.delete('top')
+        memcache.delete('timer')  
         
    
 class ConfigOutputPage(InstrumentDataHandler):
     def get(self):
+        key = 'top'
+        key2 = 'timer'
+        configs = memcache.get(key)
+        if configs is None :
+            logging.error("DB Query")
+            configs = ConfigDB.all()
+            query_time = time.time()
+            configs = list(configs)
+            memcache.set(key, configs)
+            memcache.set(key2, query_time)
+        delta = time.time() - memcache.get(key2)
+
         #config_query = db.GqlQuery("SELECT * FROM ConfigDB")
         #q = db.Query(ConfigDB)
-        configs = ConfigDB.all()
+        #configs = ConfigDB.all()
+        self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
+        self.response.headers['Access-Control-Allow-Origin'] = '*'
         self.response.write(json.dumps([c.to_dict() for c in configs]))
         #dict_of_vars = dict((str(config.company_nickname), {'company_nickname': config.company_nickname, 'source': config.source, 'hardware_name': config.hardware_name, 'instrument_type': config.instrument_type, 'instrument_name': config.instrument_name, 'horizontal_position': config.horizontal_position, 'horizontal_seconds_per_div': config.horizontal_seconds_per_div, 'vertical_position': config.vertical_position, 'vertical_volts_per_division': config.vertical_volts_per_division, 'trigger_type': config.trigger_type}) for config in configs)
         
@@ -308,6 +326,6 @@ app = webapp2.WSGIApplication([
     ('/listusers', ListUsersPage),
     ('/instruments', InstrumentsPage),
     ('/configinput', ConfigInputPage),
-    ('/configoutput', ConfigOutputPage),
+    ('/configoutput.json', ConfigOutputPage),
     ('/oscope.json', OscopePage),
 ], debug=True)
