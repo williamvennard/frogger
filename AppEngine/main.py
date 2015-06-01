@@ -104,8 +104,11 @@ class TestDB(DictModel):
     measurement_P2P = db.BooleanProperty(required = False)
     measurement_Peak = db.BooleanProperty(required = False)
     measurement_RMS = db.BooleanProperty(required = False)
+    RMS_time_start = db.FloatProperty(required = False)
+    RMS_time_stop = db.FloatProperty(required = False)
     measurement_RiseT = db.BooleanProperty(required = False)
     public = db.BooleanProperty(required = False)    
+    commence_test = db.BooleanProperty(required = False)
 
 def TestDB_key(name = 'default'):
     return db.Key.from_path('tests', name)
@@ -133,7 +136,7 @@ class OscopeDB(DictModel):
     name = db.StringProperty(required = True)
     config = db.StringProperty(required = True)
     slicename = db.StringProperty(required = True)
-    TIME = db.FloatProperty(required = True)
+    TIME = db.DateTimeProperty(required = True)
     CH1 = db.FloatProperty(required = True)
     CH2 = db.FloatProperty(required = True)
     CH3 = db.FloatProperty(required = True)
@@ -205,19 +208,6 @@ class Input(db.Model):
         self._render_text = self.inputdata.replace('\n', '<br>')
         return render_str("post.html", p = self)
 
-#class OscopeData(db.Model):
-#   """ Future DB code.
-
-#    I will write code for the handling of the data from the tek OSCOPE for it go into the DB."""
-
-#   time = db.FloatProperty(required = True)
-#   ch1 = db.FloatProperty(required = True)
-#   ch2 = db.FloatProperty(required = True)
-#   ch3 = db.FloatProperty(required = True)
-#   ch4 = db.FloatProperty(required = True)
-
-#def Oscope_key(name = 'default'):
-#   return db.Key.from_path('oscopedata', name)
 
 class OscopePage(InstrumentDataHandler):
     def get(self):
@@ -258,10 +248,18 @@ class TestConfigPage(InstrumentDataHandler):
         measurement_P2P = self.request.get('measurement_P2P')
         measurement_Peak = self.request.get('measurement_Peak')
         mesaurement_RMS = self.request.get('measurement_RMS')
+        RMS_time_start = float(self.request.get('RMS_time_start'))
+        RMS_time_stop = float(self.request.get('RMS_time_stop'))
         measurement_RiseT = self.request.get('measurement_RiseT')
         public = self.request.get('public')
+        commence_test = self.request.get('commence_test')
+        print commence_test
+        print RMS_time_start
+        print RMS_time_stop
 
-        t = TestDB(parent = TestDB_key(), testplan_name = testplan_name, company_nickname = company_nickname, author = author, instrument_type = instrument_type)
+        t = TestDB(parent = TestDB_key(), testplan_name = testplan_name, company_nickname = company_nickname, author = author, instrument_type = instrument_type, 
+            RMS_time_start = RMS_time_start, 
+            RMS_time_stop = RMS_time_stop,)
         t.put()
 
         checked_box = self.request.get("measurement_P2P")
@@ -298,6 +296,14 @@ class TestConfigPage(InstrumentDataHandler):
         else:
             t.public = False
         t.put()
+
+        checked_box = self.request.get("commence_test")
+        if checked_box:
+            t.commence_test = True
+        else:
+            t.commence_test = False
+        t.put()
+
 
 class ConfigInputPage(InstrumentDataHandler):
     def get(self):
