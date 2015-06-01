@@ -78,10 +78,26 @@
           </td>
         <td>
           <input type="checkbox" name="measurement_RMS">
-          <input type="text" name="measurement window start" value="{{rms_time_start}}">
-          <input type="text" name="measurement window stop" value="{{rms_time_stop}}">
         </td>
         </tr> 
+
+        <tr>
+          <td class="label">
+            RMS Start Time
+          </td>
+          <td>
+            <input type="text" name="RMS_time_start" value="{{RMS_time_start}}">
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            RMS Stop Time
+          </td>
+          <td>
+            <input type="text" name="RMS_time_stop" value="{{RMS_time_stop}}">
+          </td>
+        </tr>
 
         <tr>
           <td>
@@ -98,6 +114,15 @@
           </td>
         <td>
           <input type="checkbox" name="public">
+        </td>
+        </tr> 
+
+        <tr>
+          <td>
+            Commence Test Now
+          </td>
+        <td>
+          <input type="checkbox" name="commence_test">
         </td>
         </tr> 
 

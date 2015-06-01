@@ -133,7 +133,7 @@ class OscopeDB(DictModel):
     name = db.StringProperty(required = True)
     config = db.StringProperty(required = True)
     slicename = db.StringProperty(required = True)
-    TIME = db.FloatProperty(required = True)
+    TIME = db.DateTimeProperty(required = True)
     CH1 = db.FloatProperty(required = True)
     CH2 = db.FloatProperty(required = True)
     CH3 = db.FloatProperty(required = True)
@@ -443,11 +443,15 @@ class OscopeData(InstrumentDataHandler):
         oscope_data = json.loads(self.request.body)
         print "oscope_data['slicename']=",oscope_data['slicename']
         print "oscope_data['config']=",oscope_data['config']
-        for row in oscope_data['data']:
+        def getKey(row):
+            return float(row['TIME'])
+        t = time.time()
+        for row in sorted(oscope_data['data'], key=getKey):
+            dt = datetime.datetime.fromtimestamp(t + float(row['TIME']))
             r = OscopeDB(parent = OscopeDB_key(name), name=name,
                          slicename=oscope_data['slicename'],
                          config=str(oscope_data['config']),
-                         TIME=float(row['TIME']),
+                         TIME=dt,
                          CH1=float(row['CH1']),
                          CH2=float(row['CH2']),
                          CH3=float(row['CH3']),
@@ -467,11 +471,8 @@ app = webapp2.WSGIApplication([
     ('/configinput', ConfigInputPage),
     ('/configoutput.json', ConfigOutputPage),
     ('/oscope.json', OscopePage),
-<<<<<<< HEAD
     ('/testconfig', TestConfigPage),
-=======
     ('/testnuc', TestJSON),
     ('/oscopedata/([a-zA-Z0-9-]+)', OscopeData),
     ('/oscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', OscopeData),
->>>>>>> refs/remotes/origin/master
 ], debug=True)
