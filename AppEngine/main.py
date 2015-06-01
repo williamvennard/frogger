@@ -467,11 +467,8 @@ app = webapp2.WSGIApplication([
     ('/configinput', ConfigInputPage),
     ('/configoutput.json', ConfigOutputPage),
     ('/oscope.json', OscopePage),
-<<<<<<< HEAD
     ('/testconfig', TestConfigPage),
-=======
     ('/testnuc', TestJSON),
     ('/oscopedata/([a-zA-Z0-9-]+)', OscopeData),
     ('/oscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', OscopeData),
->>>>>>> refs/remotes/origin/master
 ], debug=True)
