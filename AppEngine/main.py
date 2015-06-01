@@ -90,6 +90,20 @@ class DictModel(db.Model):
     def to_dict(self):
        return dict([(p, unicode(getattr(self, p))) for p in self.properties()])
 
+class TestDB(DictModel):
+    testplan_name = db.StringProperty(required = True)
+    company_nickname = db.StringProperty(required = True)
+    author = db.StringProperty(required = True)
+    instrument_type = db.StringProperty(required = True)
+    measurement_P2P = db.BooleanProperty(required = False)
+    measurement_Peak = db.BooleanProperty(required = False)
+    measurement_RMS = db.BooleanProperty(required = False)
+    measurement_RiseT = db.BooleanProperty(required = False)
+    public = db.BooleanProperty(required = False)    
+
+def TestDB_key(name = 'default'):
+    return db.Key.from_path('tests', name)
+
 class ConfigDB(DictModel):
     company_nickname = db.StringProperty(required = True)
     hardware_name = db.StringProperty(required = True)
@@ -213,11 +227,61 @@ class InstrumentsPage(InstrumentDataHandler):
             return
         self.render('instruments.html')
 
+class TestConfigPage(InstrumentDataHandler):
+    def get(self):
+        self.render('testconfig.html')
+
+    def post(self):
+        testplan_name = self.request.get('testplan_name')
+        company_nickname = self.request.get('company_nickname')
+        author = self.request.get('author')
+        instrument_type = self.request.get('instrument_type')
+        measurement_P2P = self.request.get('measurement_P2P')
+        measurement_Peak = self.request.get('measurement_Peak')
+        mesaurement_RMS = self.request.get('measurement_RMS')
+        measurement_RiseT = self.request.get('measurement_RiseT')
+        public = self.request.get('public')
+
+        t = TestDB(parent = TestDB_key(), testplan_name = testplan_name, company_nickname = company_nickname, author = author, instrument_type = instrument_type)
+        t.put()
+
+        checked_box = self.request.get("measurement_P2P")
+        if checked_box:
+            t.measurement_P2P = True
+        else:
+            t.measurement_P2P = False
+        t.put()
+
+        checked_box = self.request.get("measurement_Peak")
+        if checked_box:
+            t.measurement_Peak = True
+        else:
+            t.measurement_Peak = False
+        t.put()
+
+        checked_box = self.request.get("measurement_RMS")
+        if checked_box:
+            t.measurement_RMS = True
+        else:
+            t.measurement_RMS = False
+        t.put()
+
+        checked_box = self.request.get("measurement_RiseT")
+        if checked_box:
+            t.measurement_RiseT = True
+        else:
+            t.measurement_RiseT = False
+        t.put()
+
+        checked_box = self.request.get("public")
+        if checked_box:
+            t.public = True
+        else:
+            t.public = False
+        t.put()
+
 class ConfigInputPage(InstrumentDataHandler):
     def get(self):
-        #configiable = {"config:", "start"}
-        #config_output = json.dumps([row for row in configiable])
-        #self.response.write(config_output)
         self.render('configinput.html')
 
     def post(self):
@@ -329,4 +393,5 @@ app = webapp2.WSGIApplication([
     ('/configinput', ConfigInputPage),
     ('/configoutput.json', ConfigOutputPage),
     ('/oscope.json', OscopePage),
+    ('/testconfig', TestConfigPage),
 ], debug=True)
