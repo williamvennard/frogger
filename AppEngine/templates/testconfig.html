@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block import %}
+
+<html>
+  <head>
+    <title>Test Input </title>
+    <style type="text/css">
+      .label {text-align: right}
+      .error {color: red}
+    </style>
+
+  </head>
+
+
+  <body>
+    <h2>Test Plan Configuration</h2>
+    <form method="post">
+      <table>
+        <tr>
+          <td class="label">
+            Test Plan Name
+          </td>
+          <td>
+            <input type="text" name="testplan_name" value="{{testplan_name}}">
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            Company Nickname
+          </td>
+          <td>
+            <input type="text" name="company_nickname" value="{{company_nickname}}">
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            Author
+          </td>
+          <td>
+            <input type="text" name="author" value="{{author}}">
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            Instrument Type
+          </td>
+          <td>
+            <input type="text" name="instrument_type" value="{{instrument_type}}">
+          </td>
+        </tr>
+
+
+        <tr>
+          <td>
+            Peak To Peak Voltage
+          </td>
+        <td>
+          <input type="checkbox" name="measurement_P2P">
+        </td>
+        </tr> 
+
+        <tr>
+          <td>
+            Peak Voltage
+          </td>
+        <td>
+          <input type="checkbox" name="measurement_Peak">
+        </td>
+        </tr> 
+
+        <tr>
+          <td>
+            Root Mean Squared Voltage
+          </td>
+        <td>
+          <input type="checkbox" name="measurement_RMS">
+          <input type="text" name="measurement window start" value="{{rms_time_start}}">
+          <input type="text" name="measurement window stop" value="{{rms_time_stop}}">
+        </td>
+        </tr> 
+
+        <tr>
+          <td>
+            Rise Time
+          </td>
+        <td>
+          <input type="checkbox" name="measurement_RiseT">
+        </td>
+        </tr> 
+
+        <tr>
+          <td>
+            Public
+          </td>
+        <td>
+          <input type="checkbox" name="public">
+        </td>
+        </tr> 
+
+
+      </table>
+
+      <input type="submit">
+    </form>
+  </body>
+
+</html>
+
+{% endblock %}
