@@ -112,6 +112,19 @@ class ConfigDB(DictModel):
 def ConfigDB_key(name = 'default'):
     return db.Key.from_path('company_nickname', name)
 
+def OscopeDB_key(name):
+    return db.Key.from_path('oscope', name)
+
+class OscopeDB(DictModel):
+    name = db.StringProperty(required = True)
+    config = db.StringProperty(required = True)
+    slicename = db.StringProperty(required = True)
+    TIME = db.FloatProperty(required = True)
+    CH1 = db.FloatProperty(required = True)
+    CH2 = db.FloatProperty(required = True)
+    CH3 = db.FloatProperty(required = True)
+    CH4 = db.FloatProperty(required = True)
+
 class MainPage(InstrumentDataHandler):
 
     def get(self):
@@ -337,17 +350,46 @@ class TestJSON(InstrumentDataHandler):
         s.put()
 
 class OscopeData(InstrumentDataHandler):
-    def get(self):
-        print "InstrumentDataHandler: get: you are in the get handler"
+    def get(self,name="",slicename=""):
+        "retrieve data by intstrument name and time slice name"
+        print "OscopeData: get: name =",name
+        print "OscopeData: get: slicename =",slicename
+        key = 'oscope' + name + slicename
+        rows = memcache.get(key)
+        if rows is None:
+            logging.error("OscopeData:get: query")
+            query = """SELECT * FROM OscopeDB
+                         WHERE name = %(name)s
+                         AND slicename = %(slicename)s;
+                    """ 
+            logging.error("OscopeData:get: query")
+            rows = db.GqlQuery("SELECT * FROM OscopeDB")
+        memcache.set(key, rows)
 
-    def post(self):
-        print "InstrumentDataHandler:post"
-        demo = json.loads(self.request.body)
-        print "InstrumentDataHandler:post demo =",demo
-        print "demo =",demo
-        s = DemoDB(parent = DemoDB_key(), sender = demo['sender'], 
-                   receiver = demo['receiver'], message = demo['message'])
-        s.put()
+        #config_query = db.GqlQuery("SELECT * FROM ConfigDB")
+        #q = db.Query(ConfigDB)
+        #configs = ConfigDB.all()
+        self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
+        self.response.headers['Access-Control-Allow-Origin'] = '*'
+        self.response.write(json.dumps([r.to_dict() for r in rows]))
+
+    def post(self,name=""):
+        "store data by intstrument name and time slice name"
+        print "OscopeData: post: name =",name
+        oscope_data = json.loads(self.request.body)
+        print "oscope_data['slicename']=",oscope_data['slicename']
+        print "oscope_data['config']=",oscope_data['config']
+        for row in oscope_data['data']:
+            r = OscopeDB(parent = OscopeDB_key(name), name=name,
+                         slicename=oscope_data['slicename'],
+                         config=str(oscope_data['config']),
+                         TIME=float(row['TIME']),
+                         CH1=float(row['CH1']),
+                         CH2=float(row['CH2']),
+                         CH3=float(row['CH3']),
+                         CH4=float(row['CH4']))
+            r.put()
+        
 
 app = webapp2.WSGIApplication([
     ('/', MainPage),
@@ -362,6 +404,6 @@ app = webapp2.WSGIApplication([
     ('/configoutput.json', ConfigOutputPage),
     ('/oscope.json', OscopePage),
     ('/testnuc', TestJSON),
-    ('/oscopedata', OscopeData),
-    def get(self,name=""):
+    ('/oscopedata/([a-zA-Z0-9-]+)', OscopeData),
+    ('/oscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', OscopeData),
 ], debug=True)
