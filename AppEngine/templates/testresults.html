@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block import %}
+
+<html>
+  <head>
+    <title>Test Results </title>
+    <style type="text/css">
+      .label {text-align: right}
+      .error {color: red}
+    </style>
+
+  </head>
+
+  <body>
+    <h2>Test Results</h2>
+    <form method="post">
+      <table>
+        <tr>
+        </tr>
+
+        {% for t in tests %}
+        
+          <a href ="testresults/{{t.testplan_name}}">{{ t.testplan_name }}</a>
+          <br><br>   
+        {% endfor %}
+      </table>
+    </form>
+  </body>
+
+</html>
+
+{% endblock %}
