@@ -247,10 +247,7 @@ class TestResultsPage(InstrumentDataHandler):
             if rows is None:
                 rows = db.GqlQuery("SELECT * FROM OscopeDB ORDER BY TIME ASC")
             memcache.set(key, rows)
-
-            print rows
-            #self.response.write(json.dumps([r.to_dict() for r in rows]))
-            print  "Test ResultsPage: get: rows = ", [r.to_dict() for r in rows]
+            self.response.write([r.to_dict() for r in rows])
             #decoded = json.loads(entries)
             #decoded_sorted = sorted(decoded, key=lambda item: item['TIME'])
             #self.response.write(decoded_sorted)
@@ -497,6 +494,8 @@ class OscopeData(InstrumentDataHandler):
             logging.error("OscopeData:get: query")
             rows = db.GqlQuery(query)
             memcache.set(key, rows)
+
+        print [r.to_dict() for r in rows]
 
         #config_query = db.GqlQuery("SELECT * FROM ConfigDB")
         #q = db.Query(ConfigDB)
