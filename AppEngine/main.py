@@ -489,12 +489,13 @@ class OscopeData(InstrumentDataHandler):
         if rows is None:
             logging.error("OscopeData:get: query")
             query = """SELECT * FROM OscopeDB
-                         WHERE name = %(name)s
-                         AND slicename = %(slicename)s;
-                    """ 
+                         WHERE name = '%(name)s'
+                         AND slicename = '%(slicename)s'
+                         ORDER BY TIME ASC;
+                    """  % {'name':name,'slicename':slicename}
             logging.error("OscopeData:get: query")
-            rows = db.GqlQuery("SELECT * FROM OscopeDB")
-        memcache.set(key, rows)
+            rows = db.GqlQuery(query)
+            memcache.set(key, rows)
 
         #config_query = db.GqlQuery("SELECT * FROM ConfigDB")
         #q = db.Query(ConfigDB)
@@ -503,34 +504,18 @@ class OscopeData(InstrumentDataHandler):
         self.response.headers['Access-Control-Allow-Origin'] = '*'
         self.response.write(json.dumps([r.to_dict() for r in rows]))
 
-    #def post(self,name=""):
-    #    "store data by intstrument name and time slice name"
-    #    print "OscopeData: post: name =",name
-    #   oscope_data = json.loads(self.request.body)
-    #    print "oscope_data['slicename']=",oscope_data['slicename']
-    #    print "oscope_data['config']=",oscope_data['config']
-    #    for row in oscope_data['data']:
-    #        r = OscopeDB(parent = OscopeDB_key(name), name=name,
-    #                     slicename=oscope_data['slicename'],
-    #                     config=str(oscope_data['config']),
-    #                     TIME=float(row['TIME']),
-    #                     CH1=float(row['CH1']),
-    #                     CH2=float(row['CH2']),
-    #                     CH3=float(row['CH3']),
-    #                     CH4=float(row['CH4']))
-            #r.put()
-
     def post(self,name=""):
         "store data by intstrument name and time slice name"
-        print "OscopeData: post: name =",name
+        #print "OscopeData: post: name =",name
         oscope_data = json.loads(self.request.body)
-        print "oscope_data['slicename']=",oscope_data['slicename']
-        print "oscope_data['config']=",oscope_data['config']
+        #print "oscope_data['slicename']=",oscope_data['slicename']
+        #print "oscope_data['config']=",oscope_data['config']
         def getKey(row):
             return float(row['TIME'])
+        sorted_data = sorted(oscope_data['data'], key=getKey)
+        #print "post:sorted_data =",sorted_data
         t = time.time()
-        for row in sorted(oscope_data['data'], key=getKey):
-            print row
+        for row in sorted_data:
             dt = datetime.datetime.fromtimestamp(t + float(row['TIME']))
             r = OscopeDB(parent = OscopeDB_key(name), name=name,
                          slicename=oscope_data['slicename'],
@@ -541,7 +526,6 @@ class OscopeData(InstrumentDataHandler):
                          CH3=float(row['CH3']),
                          CH4=float(row['CH4']))
             r.put()
-
 
 app = webapp2.WSGIApplication([
     ('/', MainPage),
