@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html ng-app lang="en">
+{% block import %}
+<html lang="en">
 <head>
     <title>iCanvas Page</title>
          
@@ -12,23 +13,25 @@
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript" src="js/chart1.js"></script>
     <script type="text/javascript" src="js/chart2.js"></script>
-    <script type="text/javascript" src="js/chart3.js"></script>   
+    <script type="text/javascript" src="js/chart3.js"></script>  
     <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/custom.css">
     <link rel="stylesheet" type="text/css" href="css/hoverzoom.css">
     <link rel="stylesheet" href="css/gridstack.css"/>
     <script type="text/javascript" src="js/addons/Grid.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.13/angular.min.js"></script>
+    <script src="js/addons/angular.min.js"></script>
     <script type="text/javascript" src="js/addons/clickadd.js"></script>
+    <link rel="stylesheet" type="text/css" href="testconfig.css">
+    <link rel="stylesheet" type="text/css" href="testResults.css">
     <style type="text/css"></style>
 </head>
 
-<body background="images/triangles.png">
-    <div ng-controller="Note" class="container">       
+<body data-ng-app="controller" background="images/triangles.png">
+    <div data-ng-controller="SettingsController as settings" class="container">       
         <nav class="navbar navbar-inverse navbar-collapse collapse">
                 <div class="container-fluid">
                     <div class="navbar-header">
-                        <img class="logo" src="images/Glogo.png" style="width:110px;">
+                        <img class="logo" src="images/Glogo.png" style="width:110px;" alt="Gradient One logo">
                     </div>
                     <div id="navbar">
                         <ul class="topmenu nav navbar-nav">
@@ -39,27 +42,27 @@
                             <li><a href="community.html">COMMUNITY</a></li>          
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
-                          <li><a class="glyphicon glyphicon-envelope"href="../navbar-static-top/"></a></li>
+                          <li><a class="glyphicon glyphicon-envelope" href="../navbar-static-top/"></a></li>
                           <li><a class="glyphicon glyphicon-bell" href="../navbar-static-top/"></a></li>
-                          <li><a class="glyphicon glyphicon-user"href="../navbar-fixed-top/">Profile</a></li>
+                          <li><a class="glyphicon glyphicon-user" href="../navbar-fixed-top/">Profile</a></li>
                         </ul>
                     </div>
                 </div>
         </nav>
         <div class="row">
-            <div class="col-md-12 well well-sm canv">
-                <h2>GradientOne Canvas</h2>
+            <div class="col-md-12 well well-sm canv" style="margin-bottom: 10px;">
+                <h2 id="headr">GradientOne Canvas</h2>
                 <p></p>  
             </div>
         </div>
         <div class="row">
-            <div class="col-md-3" style="width: 180px;">
+            <div class="col-md-3" style="width: 180px; margin-top: 20px;">
                 <div class="panel-group" id="accordion" style="width: 140px;">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h4 class="panel-title">
+                            <h5 class="panel-title">
                                 <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">Instruments</a>
-                            </h4>
+                            </h5>
                         </div>
                         <div id="collapseOne" class="panel-collapse collapse in">
                             <div class="panel-body">
@@ -90,16 +93,16 @@
                     </div>
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h4 class="panel-title">
+                            <h5 class="panel-title">
                                 <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">Measurements</a>
-                            </h4>
+                            </h5>
                         </div>
                         <div id="collapseTwo" class="panel-collapse collapse">
                             <div class="panel-body">
                                 <table class="table">
                                     <tr>
                                         <td>
-                                            <a ng-click="add()">Peak Power</a>
+                                            <a data-ng-click="settings.addItem(item)">Peak Power</a>
                                         </td>
                                     </tr>
                                     <tr>
@@ -123,9 +126,9 @@
                     </div>
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h4 class="panel-title">
+                            <h5 class="panel-title">
                                 <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">Sequencing</a>
-                            </h4>
+                            </h5>
                         </div>
                         <div id="collapseThree" class="panel-collapse collapse">
                             <div class="panel-body">
@@ -156,9 +159,9 @@
                     </div>
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h4 class="panel-title">
+                            <h5 class="panel-title">
                                 <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour">Test Plans</a>
-                            </h4>
+                            </h5>
                         </div>
                         <div id="collapseFour" class="panel-collapse collapse">
                             <div class="panel-body">
@@ -183,55 +186,237 @@
                         </div>
                     </div>
                 </div>
-            </div>        
-            <div class="col-md-3" style="width: 300px; margin-top: 10px;">
-                <div ng-repeat="item in items" class="well well-sm">
-                    <h4><a class="btn btn-inverse glyphicon glyphicon-menu-right" data-toggle="collapse" href="#volt" aria-expanded="false" aria-controls="collapseExample" style="">
-                    </a>Peak Power<a class="btn btn-default glyphicon glyphicon-menu-up" style="float: right;"></a>
-                    <a class="btn btn-default glyphicon glyphicon-menu-down" style="float: right;"></a>
-                    </h4>
-                    <div class="collapse" id="volt">
-                        <div class="input-group">
-                            <span class="input-group-addon" id="basic-addon1">Trigger Delay</span>
-                            <select class="form-control">                          
-                                <option>External</option>
-                                <option>RF Burst</option>
-                                <option>Free Run</option>
-                            </select>
-                        </div>
-                        <div class="input-group">
-                            <span class="input-group-addon" id="basic-addon1">Bandwidth</span>
-                            <input type="text" class="form-control" placeholder="Hz" aria-describedby="basic-addon1">
-                        </div>
-                        <div class="input-group">
-                            <span class="input-group-addon" id="basic-addon1">Trigger Delay</span>
-                            <input type="text" class="form-control" placeholder="&mu;Sec" aria-describedby="basic-addon1">
-                        </div>
-                        <div class="btn-group btn-group-sm" style=" left: 25%; margin-top: 10px;"role="group">
-                            <button type="button" class="btn btn-primary">Save</button>
-                            <button type="button" class="btn btn-success">Execute</button>
-                            <button type="button" class="btn btn-danger" ng-click="remove($index)">Delete</button>
-                        </div>
+            </div>    
+            <fieldset class="col-md-12" id="canvasBox" style="width: 40%;">
+                <span class="spacer"></span><legend style="width: 100px;">Test Space</legend><span class="spacer"></span>
+<!--TEST PLAN CONFIGURATION-->
+                <div class="well well-sm" id="testPlanBox">
+                  <h2 style="text-align:center;">Test Plan Configuration</h2>
+                  <hr id="breakLine">
+                  <form method="post">
+            <!--TEST PLAN NAME-->
+                    <div class="row configRow" style="margin-left:10px;">
+                      <tr>
+                        <td>
+                        <p class="configLabel" style="margin-left: px;">
+                          Test Plan Name:
+                        </p>
+                          <input class="textBlocks" type="text" name="testplan_name" placeholder="Billy_Bob's_Test" value="{{testplan_name}}">
+                        </td>
+                      </tr>
                     </div>
+            <!--COMPANY NICKNAME-->
+                  <div class="row configRow" style="margin-left:10px;">
+                      <tr>
+                        <p class="configLabel" style="margin-left: px;">
+                          Company Nickname:
+                        </p>
+                        <td>
+                          <input class="textBlocks" type="text" name="company_nickname" placeholder="GradientOne" value="{{company_nickname}}">
+                        </td>
+                      </tr>
+                    </div>
+            <!--AUTHOR-->
+                    <div class="row configRow" style="margin-left:10px;">
+                      <tr>
+                        <p class="configLabel" style="margin-left: px;">
+                          Author:
+                        </p>
+                        <td>
+                          <input class="textBlocks" type="text" name="author" placeholder="James Bond" value="{{author}}">
+                        </td>
+                      </tr>
+                    </div>
+            <!--INSTRUMENT TYPE-->
+                    <div class="row" style="margin-left:10px;">
+                      <tr>
+                        <p class="configLabel" style="margin-left: px;">
+                          Instrument Type:
+                        </p>
+                        <td>
+                          <input class="textBlocks" type="text" name="instrument_type" placeholder="Oscilloscope" value="{{instrument_type}}">
+                        </td>
+                      </tr>
+                    </div>
+            <!--Vp TO Vp VOLTAGE-->
+                    <div class="row" style="margin-left:20px;">
+                      <tr>
+                        <td>
+                          <input data-toggle="collapse" data-target="#Vpp" aria-expanded="false" aria-controls="Vpp" type="checkbox" name="measurement_P2P" class="checkBoxBox">
+                        </td>
+                        
+                        <p class="checkBoxLabel"> Peak to Peak Voltage </p>
+                        
+                      </tr> 
+                      <div class="collapse" id="Vpp">
+                        <div class="dropDownBox">
+                            <tr>
+                                <td class="configLabel">
+                                    V<sub>pp</sub>
+                                </td>
+                                <td>
+                                    <input type="text" name="Vpp" placeholder="5 V" value="{{Vpp}}">
+                                </td>
+                            </tr>
+                        </div>
+                      </div>
+                    </div>
+            <!--Peak VOLTAGE-->
+                    <div class="row" style="margin-left:20px;">
+                      <tr>
+                        <td>
+                          <input data-toggle="collapse" data-target="#Vp" aria-expanded="false" aria-controls="Vp" type="checkbox" name="measurement_peak" class="checkBoxBox">
+                        </td>
+                        <p class="checkBoxLabel">Peak Voltage</p>       
+                      </tr> 
+                      <div class="collapse" id="Vp">
+                        <div class="dropDownBox">
+                            <tr>
+                                <td class="configLabel">
+                                    V<sub>p</sub>
+                                </td>
+                                <td>
+                                    <input type="text" name="Vp" placeholder="2.5 V" value="{{Vp}}">
+                                </td>
+                            </tr>
+                        </div>
+                      </div>
+                    </div>
+            <!-- ROOT MEAN SQUARED VOLTAGE-->
+                    <div class="row" style="margin-left:20px;">
+                      <tr>
+                        <td>
+                          <input data-toggle="collapse" data-target="#RMS" aria-expanded="false" aria-controls="RMS" type="checkbox" name="measurement_RMS" class="checkBoxBox">
+                        </td>
+                        <p class="checkBoxLabel">Root Mean Squared Voltage</p>
+                      </tr> 
+                      <div class="collapse" id="RMS">
+                        <div class="dropDownBox">
+                            <tr>
+                                <td class="configLabel">
+                                    RMS Start Time                      
+                                    <input type="text" name="RMS_time_start" placeholder="200 sec" value="{{RMS_time_start}}">
+                                </td>
+                            </tr>
+                        </div>
+                        <div class="dropDownBox">
+                            <tr style="">
+                                <td class="configLabel">
+                                    RMS Stop Time
+                                </td>
+                                <td>
+                                    <input type="text" name="RMS_time_stop" placeholder="400 sec" value="{{RMS_time_stop}}">
+                                </td>
+                            </tr>
+                        </div>
+                      </div>
+                    </div>
+            <!--RISE TIME-->
+                    <div class="row" style="margin-left:20px;">
+                      <tr>
+                        <td>
+                          <input data-toggle="collapse" data-target="#RT" aria-expanded="false" aria-controls="RT" type="checkbox" name="measurement_RiseT" class="checkBoxBox">
+                        </td>
+                        <p class="checkBoxLabel">Rise Time</p>
+                      </tr>
+                      <div class="collapse" id="RT">
+                        <div class="dropDownBox">
+                            <tr>
+                                <td class="configLabel">
+                                </td>
+                                <td>
+                                    <input type="text" name="rise_time" placeholder="2 &mu;sec" value="{{rise_time}}">
+                                </td>
+                            </tr>
+                        </div>
+                      </div>
+                    </div>
+            <!--MAKE PUBLIC-->
+                    <div class="row" style="margin-left:20px;">
+                      <tr>
+                        <td>
+                          <input type="checkbox" name="public" class="checkBoxBox">                      
+                            <p class="checkBoxLabel">Make Public</p>
+                        </td>
+                      </tr> 
+                    </div>
+            <!--COMMENCE TEST NOW-->
+                    <div class="row" style="margin-left:20px;">
+                      <tr>
+                      <td>
+                        <input type="checkbox" name="commence_test" class="checkBoxBox">                      
+                        <p class="checkBoxLabel">Commence Test Now</p>
+                      </td>
+                      </tr> 
+                    </div>
+                      <button id="submitBtn" type="button" class="btn btn-default" style="text-align:center">
+                        Submit
+                      </button>
+                  </form>   
+                </div>  
+<!--PEAK POWER APP-->
+                <div data-ng-repeat="item in settings.items track by $index" class="well well-sm" style="margin-top: 10px;">
+                    <h4 style="margin-top: 0px; margin= 0px;">
+                        <a class="btn btn-inverse glyphicon glyphicon-menu-right">
+                        </a>
+                        Peak Power <span></span>
+                        <a class="btn btn-inverse glyphicon glyphicon-chevron-up" style="float: right;"></a>
+                        <a class="btn btn-inverse glyphicon glyphicon-chevron-down" style="float: right;"></a>
+                    </h4>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1">Trigger Source</span>
+                        <select id="sourceSelect" class="form-control">                          
+                            <option value="External">External</option>
+                            <option value="RF Burst">RF Burst</option>
+                            <option value="Free Run">Free Run</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon2">Bandwidth</span>
+                        <input type="text" class="form-control" placeholder="20 MHz" aria-describedby="basic-addon2">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon3">Trigger Delay</span>
+                        <input type="text" class="form-control" placeholder="2 &mu;Sec" aria-describedby="basic-addon3">
+                    </div>
+                    <div class="btn-group btn-group-sm" style=" left: 25%; margin-top: 10px;" role="group">
+                        <button type="button" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-success">Execute</button>
+                        <button type="button" class="btn btn-danger" data-ng-click="settings.removeItem($index)">Delete</button> 
+                        <span ng-bind="$parent.$eval(item)"></span>
+                    </div>                    
                 </div>
-            </div> 
-        </div>       
-        
+            </fieldset>
+            <fieldset class="col-md-12" id="resultsBox" style="width: 40%;">
+                    <span class="spacer"></span><legend style="width: 120px;">Test Results</legend><span class="spacer"></span>   
+<!--TEST RESULTS-->              
+                <div class="well well-sm testResultsBox">
+                    <h2 style="text-align:center">Test Results</h2>
+                    <hr id="breakLine">
+                    <form method="post">
+                      <table>
+                        <tr>
+                        </tr>
+
+                        {% for t in tests %}
+                        
+                          <a href ="testresults/{{t.testplan_name}}">{{ t.testplan_name }}</a>
+                          <br><br>   
+                        {% endfor %}
+                      </table>
+                    </form>
+                </div>
+            </fieldset>
+        </div>
+        <fieldset id='testReelTitle'><legend style="text-align:center; width: 120px; color:white;">Test Reel</legend></fieldset>
         <div class="row">
-            <nav>
-                <ul>
-                    <div id="chart1" class="col-md-4 hoverzoom"</div>
-                </ul>
-                <ul>
-                    <div id="chart2" class="col-md-4 hoverzoom"></div>
-                </ul>
-                <ul>
-                    <div id="chart3" class="col-md-4 hoverzoom"></div>
-                </ul>               
-            </nav>             
+            <div id="chart1" class="col-md-4 hoverzoom"></div>   
+            <div id="chart2" class="col-md-4 hoverzoom"></div>               
+            <div id="chart3" class="col-md-4 hoverzoom" style="width: 350px"></div>             
         </div> 
-        <hr>
+        <hr style="color:white;">
     </div> 
     <script type="text/javascript">$('#collapseOne').collapse("hide");</script><!--stops accordion from loading open -->
 </body>
 </html>
+{% endblock %}
