@@ -248,17 +248,18 @@ class TestResultsPage(InstrumentDataHandler):
                 rows = db.GqlQuery("SELECT * FROM OscopeDB ORDER BY TIME ASC")
             memcache.set(key, rows)
 
-            self.response.write(json.dumps([r.to_dict() for r in rows]))
-            entries = json.dumps([r.to_dict() for r in rows])
-            decoded = json.loads(entries)
-            decoded_sorted = sorted(decoded, key=lambda item: item['TIME'])
-            self.response.write(decoded_sorted)
+            print rows
+            #self.response.write(json.dumps([r.to_dict() for r in rows]))
+            print  "Test ResultsPage: get: rows = ", [r.to_dict() for r in rows]
+            #decoded = json.loads(entries)
+            #decoded_sorted = sorted(decoded, key=lambda item: item['TIME'])
+            #self.response.write(decoded_sorted)
 
             test = db.GqlQuery("SELECT * FROM TestDB WHERE testplan_name =:1", testplan_name)
             test = json.dumps([t.to_dict() for t in test])
             test = json.loads(test)
             print test
-            start_of_test = decoded_sorted[0]['TIME']
+            #start_of_test = decoded_sorted[0]['TIME']
             RMS_time_start = float(test[0]["RMS_time_start"])
             RMS_time_stop = float(test[0]["RMS_time_stop"])
             print RMS_time_start
@@ -266,13 +267,13 @@ class TestResultsPage(InstrumentDataHandler):
             sum = 0
             tempsq = 0
             i = 0
-            for entry in decoded_sorted[0:10]:
-                tempsq = float(entry['CH1'])*float(entry['CH1'])
-                sum += tempsq
-                i += 1
-            z = sum/i
-            rms = math.sqrt(z)
-            print rms
+            #for entry in decoded_sorted[0:10]:
+            #    tempsq = float(entry['CH1'])*float(entry['CH1'])
+            #    sum += tempsq
+            #    i += 1
+           # z = sum/i
+            #rms = math.sqrt(z)
+            #print rms
 
             
         else:
