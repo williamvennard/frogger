@@ -15,6 +15,7 @@ import os
 import re
 import time
 import webapp2
+import math
 from google.appengine.api import memcache
 from google.appengine.api import oauth
 from google.appengine.api import users
@@ -237,9 +238,42 @@ class InstrumentsPage(InstrumentDataHandler):
         self.render('instruments.html')
 
 class TestResultsPage(InstrumentDataHandler):
+    "present to the user all of the completed tests, with a path that supports specific test entries"
     def get(self, testplan_name=""):
         if testplan_name:
             print "test results here"
+            key = 'oscope' + testplan_name
+            rows = memcache.get(key)
+            if rows is None:
+                rows = db.GqlQuery("SELECT * FROM OscopeDB ORDER BY TIME ASC")
+            memcache.set(key, rows)
+
+            self.response.write(json.dumps([r.to_dict() for r in rows]))
+            entries = json.dumps([r.to_dict() for r in rows])
+            decoded = json.loads(entries)
+            decoded_sorted = sorted(decoded, key=lambda item: item['TIME'])
+            self.response.write(decoded_sorted)
+
+            test = db.GqlQuery("SELECT * FROM TestDB WHERE testplan_name =:1", testplan_name)
+            test = json.dumps([t.to_dict() for t in test])
+            test = json.loads(test)
+            print test
+            start_of_test = decoded_sorted[0]['TIME']
+            RMS_time_start = float(test[0]["RMS_time_start"])
+            RMS_time_stop = float(test[0]["RMS_time_stop"])
+            print RMS_time_start
+            print RMS_time_stop
+            sum = 0
+            tempsq = 0
+            i = 0
+            for entry in decoded_sorted[0:10]:
+                tempsq = float(entry['CH1'])*float(entry['CH1'])
+                sum += tempsq
+                i += 1
+            z = sum/i
+            rms = math.sqrt(z)
+            print rms
+
             
         else:
             tests = db.GqlQuery("SELECT * FROM TestDB")
@@ -469,23 +503,45 @@ class OscopeData(InstrumentDataHandler):
         self.response.headers['Access-Control-Allow-Origin'] = '*'
         self.response.write(json.dumps([r.to_dict() for r in rows]))
 
+    #def post(self,name=""):
+    #    "store data by intstrument name and time slice name"
+    #    print "OscopeData: post: name =",name
+    #   oscope_data = json.loads(self.request.body)
+    #    print "oscope_data['slicename']=",oscope_data['slicename']
+    #    print "oscope_data['config']=",oscope_data['config']
+    #    for row in oscope_data['data']:
+    #        r = OscopeDB(parent = OscopeDB_key(name), name=name,
+    #                     slicename=oscope_data['slicename'],
+    #                     config=str(oscope_data['config']),
+    #                     TIME=float(row['TIME']),
+    #                     CH1=float(row['CH1']),
+    #                     CH2=float(row['CH2']),
+    #                     CH3=float(row['CH3']),
+    #                     CH4=float(row['CH4']))
+            #r.put()
+
     def post(self,name=""):
         "store data by intstrument name and time slice name"
         print "OscopeData: post: name =",name
         oscope_data = json.loads(self.request.body)
         print "oscope_data['slicename']=",oscope_data['slicename']
         print "oscope_data['config']=",oscope_data['config']
-        for row in oscope_data['data']:
+        def getKey(row):
+            return float(row['TIME'])
+        t = time.time()
+        for row in sorted(oscope_data['data'], key=getKey):
+            print row
+            dt = datetime.datetime.fromtimestamp(t + float(row['TIME']))
             r = OscopeDB(parent = OscopeDB_key(name), name=name,
                          slicename=oscope_data['slicename'],
                          config=str(oscope_data['config']),
-                         TIME=float(row['TIME']),
+                         TIME=dt,
                          CH1=float(row['CH1']),
                          CH2=float(row['CH2']),
                          CH3=float(row['CH3']),
                          CH4=float(row['CH4']))
             r.put()
-        
+
 
 app = webapp2.WSGIApplication([
     ('/', MainPage),
