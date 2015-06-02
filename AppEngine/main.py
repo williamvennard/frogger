@@ -104,8 +104,11 @@ class TestDB(DictModel):
     measurement_P2P = db.BooleanProperty(required = False)
     measurement_Peak = db.BooleanProperty(required = False)
     measurement_RMS = db.BooleanProperty(required = False)
+    RMS_time_start = db.FloatProperty(required = False)
+    RMS_time_stop = db.FloatProperty(required = False)
     measurement_RiseT = db.BooleanProperty(required = False)
     public = db.BooleanProperty(required = False)    
+    commence_test = db.BooleanProperty(required = False)
 
 def TestDB_key(name = 'default'):
     return db.Key.from_path('tests', name)
@@ -205,19 +208,6 @@ class Input(db.Model):
         self._render_text = self.inputdata.replace('\n', '<br>')
         return render_str("post.html", p = self)
 
-#class OscopeData(db.Model):
-#   """ Future DB code.
-
-#    I will write code for the handling of the data from the tek OSCOPE for it go into the DB."""
-
-#   time = db.FloatProperty(required = True)
-#   ch1 = db.FloatProperty(required = True)
-#   ch2 = db.FloatProperty(required = True)
-#   ch3 = db.FloatProperty(required = True)
-#   ch4 = db.FloatProperty(required = True)
-
-#def Oscope_key(name = 'default'):
-#   return db.Key.from_path('oscopedata', name)
 
 class OscopePage(InstrumentDataHandler):
     def get(self):
@@ -246,7 +236,19 @@ class InstrumentsPage(InstrumentDataHandler):
             return
         self.render('instruments.html')
 
-class TestConfigPage(InstrumentDataHandler):
+class TestResultsPage(InstrumentDataHandler):
+    def get(self, testplan_name=""):
+        if testplan_name:
+            print "test results here"
+            
+        else:
+            tests = db.GqlQuery("SELECT * FROM TestDB")
+            self.render('testresults.html', tests = tests)
+
+
+
+
+class TestConfigInputPage(InstrumentDataHandler):
     def get(self):
         self.render('testconfig.html')
 
@@ -258,11 +260,21 @@ class TestConfigPage(InstrumentDataHandler):
         measurement_P2P = self.request.get('measurement_P2P')
         measurement_Peak = self.request.get('measurement_Peak')
         mesaurement_RMS = self.request.get('measurement_RMS')
+        RMS_time_start = float(self.request.get('RMS_time_start'))
+        RMS_time_stop = float(self.request.get('RMS_time_stop'))
         measurement_RiseT = self.request.get('measurement_RiseT')
         public = self.request.get('public')
+        commence_test = self.request.get('commence_test')
+        print commence_test
+        print RMS_time_start
+        print RMS_time_stop
 
-        t = TestDB(parent = TestDB_key(), testplan_name = testplan_name, company_nickname = company_nickname, author = author, instrument_type = instrument_type)
+        t = TestDB(parent = TestDB_key(testplan_name), testplan_name = testplan_name, company_nickname = company_nickname, author = author, instrument_type = instrument_type, 
+            RMS_time_start = RMS_time_start, 
+            RMS_time_stop = RMS_time_stop,)
         t.put()
+        key = testplan_name
+        memcache.delete(key)
 
         checked_box = self.request.get("measurement_P2P")
         if checked_box:
@@ -299,6 +311,30 @@ class TestConfigPage(InstrumentDataHandler):
             t.public = False
         t.put()
 
+        checked_box = self.request.get("commence_test")
+        if checked_box:
+            t.commence_test = True
+        else:
+            t.commence_test = False
+        t.put()
+
+        self.redirect('/testresults')
+        #self.redirect('/testconfigoutput/'+testplan_name)
+
+class TestConfigOutputPage(InstrumentDataHandler):
+    def get(self,testplan_name=""):
+        print "testplan_name = ",testplan_name
+        key = 'testplan_' + testplan_name 
+        configs = memcache.get(key)
+        if configs is None :
+            logging.error("DB Query")
+            configs = db.GqlQuery("SELECT * FROM TestDB WHERE testplan_name =:1", testplan_name)
+            memcache.set(key, configs)
+        self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
+        self.response.headers['Access-Control-Allow-Origin'] = '*'
+        self.response.write(json.dumps([c.to_dict() for c in configs]))
+
+
 class ConfigInputPage(InstrumentDataHandler):
     def get(self):
         self.render('configinput.html')
@@ -315,37 +351,33 @@ class ConfigInputPage(InstrumentDataHandler):
         vertical_volts_per_divsision = float(self.request.get('vertical_volts_per_divsision'))
         trigger_type = self.request.get('trigger_type')
 
-        c = ConfigDB(parent = ConfigDB_key(), company_nickname = company_nickname, 
+        c = ConfigDB(parent = ConfigDB_key(instrument_name), company_nickname = company_nickname, 
             hardware_name = hardware_name, instrument_type = instrument_type, instrument_name = instrument_name, 
             source = source, horizontal_position = horizontal_position, 
             horizontal_seconds_per_div = horizontal_seconds_per_div, vertical_position = vertical_position, 
             vertical_volts_per_division = vertical_volts_per_divsision, trigger_type= trigger_type,)
         c.put() 
-        memcache.delete('top')
-        memcache.delete('timer')  
+        key = 'instrument_name = ', instrument_name
+        print key
+        memcache.delete(key)
+        self.redirect('/configoutput/'+instrument_name)
         
    
 class ConfigOutputPage(InstrumentDataHandler):
-    def get(self):
-        key = 'top'
-        key2 = 'timer'
+    def get(self,instrument_name=""):
+        key = 'instrument_name = ', instrument_name
         configs = memcache.get(key)
         if configs is None :
             logging.error("DB Query")
-            configs = ConfigDB.all()
-            query_time = time.time()
-            configs = list(configs)
+            configs = db.GqlQuery("SELECT * FROM ConfigDB WHERE instrument_name =:1", instrument_name)
             memcache.set(key, configs)
-            memcache.set(key2, query_time)
-        delta = time.time() - memcache.get(key2)
-
         #config_query = db.GqlQuery("SELECT * FROM ConfigDB")
         #q = db.Query(ConfigDB)
         #configs = ConfigDB.all()
         self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
         self.response.headers['Access-Control-Allow-Origin'] = '*'
         self.response.write(json.dumps([c.to_dict() for c in configs]))
-        print delta
+
         #dict_of_vars = dict((str(config.company_nickname), {'company_nickname': config.company_nickname, 'source': config.source, 'hardware_name': config.hardware_name, 'instrument_type': config.instrument_type, 'instrument_name': config.instrument_name, 'horizontal_position': config.horizontal_position, 'horizontal_seconds_per_div': config.horizontal_seconds_per_div, 'vertical_position': config.vertical_position, 'vertical_volts_per_division': config.vertical_volts_per_division, 'trigger_type': config.trigger_type}) for config in configs)
         
         #out = json.dumps(dict_of_vars)
@@ -443,15 +475,11 @@ class OscopeData(InstrumentDataHandler):
         oscope_data = json.loads(self.request.body)
         print "oscope_data['slicename']=",oscope_data['slicename']
         print "oscope_data['config']=",oscope_data['config']
-        def getKey(row):
-            return float(row['TIME'])
-        t = time.time()
-        for row in sorted(oscope_data['data'], key=getKey):
-            dt = datetime.datetime.fromtimestamp(t + float(row['TIME']))
+        for row in oscope_data['data']:
             r = OscopeDB(parent = OscopeDB_key(name), name=name,
                          slicename=oscope_data['slicename'],
                          config=str(oscope_data['config']),
-                         TIME=dt,
+                         TIME=float(row['TIME']),
                          CH1=float(row['CH1']),
                          CH2=float(row['CH2']),
                          CH3=float(row['CH3']),
@@ -469,10 +497,13 @@ app = webapp2.WSGIApplication([
     ('/listusers', ListUsersPage),
     ('/instruments', InstrumentsPage),
     ('/configinput', ConfigInputPage),
-    ('/configoutput.json', ConfigOutputPage),
+    ('/configoutput/([a-zA-Z0-9-]+)', ConfigOutputPage),
     ('/oscope.json', OscopePage),
-    ('/testconfig', TestConfigPage),
+    ('/testconfiginput', TestConfigInputPage),
+    ('/testconfigoutput/([a-zA-Z0-9-]+)', TestConfigOutputPage),
     ('/testnuc', TestJSON),
+    ('/testresults', TestResultsPage),
+    ('/testresults/([a-zA-Z0-9-]+)', TestResultsPage),
     ('/oscopedata/([a-zA-Z0-9-]+)', OscopeData),
     ('/oscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', OscopeData),
 ], debug=True)
