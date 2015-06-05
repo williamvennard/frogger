@@ -21,6 +21,7 @@ from google.appengine.api import oauth
 from google.appengine.api import users
 from google.appengine.ext import db
 from time import gmtime, strftime
+from collections import OrderedDict
 
 authorized_users = ['charlie@gradientone.com',
                     'nedwards@gradientone.com',
@@ -126,7 +127,11 @@ class ConfigDB(DictModel):
     vertical_position = db.FloatProperty(required = False)
     vertical_volts_per_division = db.FloatProperty(required = False)
     trigger_type = db.StringProperty(required = False)
-    #trigger_value = db.FloatProperty(required = False)
+    frequency_center = db.FloatProperty(required = False)
+    frequency_span = db.FloatProperty(required = False)
+    frequency_start = db.FloatProperty(required = False)
+    frequency_stop = db.FloatProperty(required = False)
+    power = db.FloatProperty(required = False)
 
 def ConfigDB_key(name = 'default'):
     return db.Key.from_path('company_nickname', name)
@@ -145,6 +150,28 @@ class OscopeDB(DictModel):
     CH2 = db.FloatProperty(required = True)
     CH3 = db.FloatProperty(required = True)
     CH4 = db.FloatProperty(required = True)
+
+def VNADB_key(name):
+    return db.Key.from_path('vna', name)
+
+class VNADB(DictModel):
+    name = db.StringProperty(required = True)
+    config = db.StringProperty(required = True)
+    #slicename = db.StringProperty(required = True)
+    FREQ = db.FloatProperty(required = True)
+    created_date_time = db.DateTimeProperty(auto_now_add = True)
+    #End_Date_Time = db.DateTimeProperty(required = False)
+    S11dB = db.FloatProperty(required = True)
+    S12dB = db.FloatProperty(required = True)
+    S21dB = db.FloatProperty(required = True)
+    S22dB = db.FloatProperty(required = True)
+    S11ph = db.FloatProperty(required = True)
+    S12ph = db.FloatProperty(required = True)
+    S21ph = db.FloatProperty(required = True)
+    S22ph = db.FloatProperty(required = True)
+    header = db.StringProperty(required = True)
+    options = db.StringProperty(required = True)
+
 
 class MainPage(InstrumentDataHandler):
 
@@ -267,32 +294,48 @@ def root_mean_squared(test_data, test):
 
 class TestPlanSummary(InstrumentDataHandler):
     "present to the user a list of all configured test plans"
-    def get(self):
-        tests = db.GqlQuery("SELECT * FROM TestDB")
-        self.render('testplansummary.html', tests = tests)
+    def get(self, testplan_name=""):
+        if testplan_name:
+            key = testplan_name
+            rows = memcache.get(key)
+            if rows is None:
+                rows = db.GqlQuery("SELECT * FROM TestDB WHERE testplan_name =:1", testplan_name)
+            memcache.set(key, rows)
+            test_config = json.dumps([r.to_dict() for r in rows])
+            memcache.set(key, rows)
+            self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
+            self.response.headers['Access-Control-Allow-Origin'] = '*'
+            self.response.write(test_config)
+        else:
+            tests = db.GqlQuery("SELECT * FROM TestDB")
+            self.render('testplansummary.html', tests = tests)
 
 
 class TestResultsPage(InstrumentDataHandler):
     "present to the user all of the completed tests, with a path that supports specific test entries"
     def get(self, testplan_name=""):
-        if testplan_name:
+        testplan_name_check = testplan_name.split('.')
+        testplan_name = testplan_name_check[0]
+
+
+        if testplan_name_check[-1] == 'json':
             key = 'oscope' + testplan_name
             rows = memcache.get(key)
             if rows is None:
                 rows = db.GqlQuery("SELECT * FROM OscopeDB ORDER BY TIME ASC")
             memcache.set(key, rows)
             test_data = [r.to_dict() for r in rows]
-            self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
-            self.response.headers['Access-Control-Allow-Origin'] = '*'
-            self.response.write(json.dumps(test_data))
+            #self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
+            #self.response.headers['Access-Control-Allow-Origin'] = '*'
+            #self.response.write(json.dumps(test_data))
             
             start_of_test = test_data[0]['TIME']
             length = len(test_data)
 
 
             test = db.GqlQuery("SELECT * FROM TestDB WHERE testplan_name =:1", testplan_name)
-            test = json.dumps([t.to_dict() for t in test])
-            test = json.loads(test)
+            test = [t.to_dict() for t in test]
+
   
             #RMS_time_start = float(test[0]["RMS_time_start"])
             #RMS_time_stop = float(test[0]["RMS_time_stop"])
@@ -311,6 +354,10 @@ class TestResultsPage(InstrumentDataHandler):
            
 
             rms = {"rms":root_mean_squared(test_data, test)}
+            self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
+            self.response.headers['Access-Control-Allow-Origin'] = '*'
+            test_result = {"data":test_data, "test_config":test, "measurement":rms}
+            self.response.write(json.dumps(test_result))
             #for entry in test_data[int(row_RMS_time_start):(1+int(row_RMS_time_stop))]:
             #    tempsq = float(entry['CH1'])*float(entry['CH1'])
             #    print tempsq
@@ -321,7 +368,12 @@ class TestResultsPage(InstrumentDataHandler):
             #print z
             #rms = math.sqrt(z)
             
-            self.response.write(json.dumps(rms))
+        elif testplan_name:
+           # f = open('static/testResultsPage.html')
+            f = open(os.path.join('static', 'testResultsPage.html'))
+            page_contents = f.read()
+            self.response.write(page_contents)
+
             
 
             
@@ -332,9 +384,20 @@ class TestResultsPage(InstrumentDataHandler):
             if rows is None:
                 rows = db.GqlQuery("SELECT * FROM OscopeDB ORDER BY TIME ASC")
             memcache.set(key, rows)
-            self.render('testresults.html', tests = tests, rows = rows)
+            f = open(os.path.join('static', 'index.html'))
+            page_contents = f.read()
+            self.response.write(page_contents)
+
+            #self.render('testresults.html', tests = tests, rows = rows)
 
 
+class CommunityTestsPage(InstrumentDataHandler):
+    def get(self):
+        rows = db.GqlQuery("SELECT * FROM TestDB WHERE public =:1", True)
+        community_tests = json.dumps([r.to_dict() for r in rows])
+        self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
+        self.response.headers['Access-Control-Allow-Origin'] = '*'
+        self.response.write(community_tests)
 
 
 class TestConfigInputPage(InstrumentDataHandler):
@@ -434,17 +497,24 @@ class ConfigInputPage(InstrumentDataHandler):
         instrument_type = self.request.get('instrument_type')
         instrument_name = self.request.get('instrument_name')
         source = self.request.get('source')
-        horizontal_position = float(self.request.get('horizontal_position'))
-        horizontal_seconds_per_div = float(self.request.get('horizontal_seconds_per_div'))
-        vertical_position = float(self.request.get('vertical_position'))
-        vertical_volts_per_divsision = float(self.request.get('vertical_volts_per_divsision'))
-        trigger_type = self.request.get('trigger_type')
+        #horizontal_position = float(self.request.get('horizontal_position'))
+        #horizontal_seconds_per_div = float(self.request.get('horizontal_seconds_per_div'))
+        #vertical_position = float(self.request.get('vertical_position'))
+        #vertical_volts_per_divsision = float(self.request.get('vertical_volts_per_divsision'))
+        #trigger_type = self.request.get('trigger_type')
+        frequency_center = float(self.request.get('frequency_center'))
+        frequency_span = float(self.request.get('frequency_span'))
+        #frequency_start = float(self.request.get('frequency_start'))
+        #frequency_stop = float(self.request.get('frequency_stop'))
+        power = float(self.request.get('power'))
+
 
         c = ConfigDB(parent = ConfigDB_key(instrument_name), company_nickname = company_nickname, 
             hardware_name = hardware_name, instrument_type = instrument_type, instrument_name = instrument_name, 
             source = source, horizontal_position = horizontal_position, 
             horizontal_seconds_per_div = horizontal_seconds_per_div, vertical_position = vertical_position, 
-            vertical_volts_per_division = vertical_volts_per_divsision, trigger_type= trigger_type,)
+            vertical_volts_per_division = vertical_volts_per_divsision, trigger_type= trigger_type, frequency_center = frequency_center,
+            frequency_span = frequency_span, frequency_start = frequency_start, frequency_stop = frequency_stop, power = power)
         c.put() 
         key = 'instrument_name = ', instrument_name
         print key
@@ -497,21 +567,21 @@ class InputPage(InstrumentDataHandler):
 
         if not self.authcheck():
             return  # redirect to login later?
-        print "you are in the InputPage posthandler"
+        #print "you are in the InputPage posthandler"
         description = self.request.get("description")
-        print "InputPage: post: description =", description
+        #print "InputPage: post: description =", description
         jsoninput = self.request.get("jsoninput")
         #print jsoninput
         decoded = json.loads(jsoninput)
-        print "InputPage:post decoded =",decoded
+        #print "InputPage:post decoded =",decoded
         new_decoded = {}
         for number_key, value_dict in decoded.iteritems():
-            print "InputPage:post decoded =",number_key,value_dict
+            #print "InputPage:post decoded =",number_key,value_dict
             sub_dict = {}
             for value_key, value in value_dict.iteritems():
                 sub_dict[value_key] = float(value)
             new_decoded[float(number_key)] = sub_dict
-
+        print new_decoded
         for k in new_decoded:
             frequency = new_decoded[k]['FREQ']
             S11dB = new_decoded[k]['dB(S11)']
@@ -534,9 +604,58 @@ class TestJSON(InstrumentDataHandler):
                    receiver = demo['receiver'], message = demo['message'])
         s.put()
 
+
+class VNAData(InstrumentDataHandler):
+    def get(self,name="", slicename=""):
+        "retrieve Vector Network Analzyer data by insrument name"
+        print "VNA Data: get: name =", name
+        print "VNA Data: get: slicename =", slicename
+        key = 'vna' + name + slicename
+        rows = memcache.get(key)
+        if rows is None:
+            logging.error("VNA:get: query")
+            rows = db.GqlQuery("SELECT * FROM VNADB WHERE name = '%(name)s' AND slicename = '%(slicename)s' ORDER BY TIME ASC; % {'name':name, 'slicename':slicename}")
+            memcache.set(key, rows)
+        print [r.to_dict() for r in rows]
+        self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
+        self.response.headers['Access-Control-Allow-Origin'] = '*'
+        self.response.write(json.dumps([r.to_dict() for r in rows]))
+
+    def post(self, name=""):
+        "store vector network analzyer data by name"
+        vna_content = json.loads(self.request.body)
+        vna_data = vna_content['data']
+        vna_options = vna_content['options']
+        vna_header = vna_content['header']
+        vna_config = vna_content['config']
+        i = 0
+        for k, v in vna_data.iteritems():
+            while i <= 100:
+                r = VNADB(parent = VNADB_key(name), name=name,
+                    FREQ = float(v['FREQ']),
+                    S11dB = float(v['dB(S11)']),
+                    S12dB = float(v['dB(S12)']),
+                    S21dB = float(v['dB(S21)']),
+                    S22dB = float(v['dB(S22)']),
+                    S11ph = float(v['PHS(S11)']),
+                    S12ph = float(v['PHS(S12)']),
+                    S21ph = float(v['PHS(S21)']),
+                    S22ph = float(v['PHS(S22)']),
+                    config = str(vna_config).strip('[]'),
+                    header = str(vna_header).strip('[]'),
+                    options = str(vna_options).strip('[]'),)
+
+                r.put()
+                i += 1
+            
+
+
+
+
+
 class OscopeData(InstrumentDataHandler):
     def get(self,name="",slicename=""):
-        "retrieve data by intstrument name and time slice name"
+        "retrieve Oscilloscope data by intstrument name and time slice name"
         print "OscopeData: get: name =",name
         print "OscopeData: get: slicename =",slicename
         key = 'oscope' + name + slicename
@@ -564,13 +683,19 @@ class OscopeData(InstrumentDataHandler):
     def post(self,name=""):
         "store data by intstrument name and time slice name"
         #print "OscopeData: post: name =",name
+        while True:
+            line = self.request.__file__.readline()
+            json.loads(line)
+
         oscope_data = json.loads(self.request.body)
+        #print oscope_data
         #print "oscope_data['slicename']=",oscope_data['slicename']
         #print "oscope_data['config']=",oscope_data['config']
+
         def getKey(row):
             return float(row['TIME'])
         sorted_data = sorted(oscope_data['data'], key=getKey)
-        #print "post:sorted_data =",sorted_data
+        print "post:sorted_data =",sorted_data
         t = time.time()
 
         sdt = datetime.datetime.fromtimestamp(t + float(sorted_data[0]['TIME']))
@@ -582,7 +707,7 @@ class OscopeData(InstrumentDataHandler):
         for row in sorted_data:
             #dt = datetime.datetime.fromtimestamp(t + float(row['TIME']))
             modified_time = 500.00 + float(row['TIME'])
-            print modified_time
+            #print modified_time
             r = OscopeDB(parent = OscopeDB_key(name), name=name,
                          slicename=oscope_data['slicename'],
                          config=str(oscope_data['config']),
@@ -611,8 +736,12 @@ app = webapp2.WSGIApplication([
     ('/testconfigoutput/([a-zA-Z0-9-]+)', TestConfigOutputPage),
     ('/testnuc', TestJSON),
     ('/testplansummary', TestPlanSummary),
+    ('/testplansummary/([a-zA-Z0-9-]+)', TestPlanSummary),
+    ('/communitytests', CommunityTestsPage),
     ('/testresults', TestResultsPage),
     ('/testresults/([a-zA-Z0-9-]+)', TestResultsPage),
+    ('/testresults/([a-zA-Z0-9-]+.json)', TestResultsPage),
+    ('/vnadata/([a-zA-Z0-9-]+)', VNAData),
     ('/oscopedata/([a-zA-Z0-9-]+)', OscopeData),
     ('/oscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', OscopeData),
 ], debug=True)
