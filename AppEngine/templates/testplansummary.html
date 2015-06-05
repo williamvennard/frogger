@@ -4,7 +4,7 @@
 
 <html>
   <head>
-    <title>Test Results </title>
+    <title>Test Plan Summary </title>
     <style type="text/css">
       .label {text-align: right}
       .error {color: red}
@@ -13,19 +13,16 @@
   </head>
 
   <body>
-    <h2>Test Results</h2>
+    <h2>Test Plan Summary </h2>
     <form method="post">
       <table>
         <tr>
         </tr>
 
         {% for t in tests %}
-
-          {% for r in rows[0:1] %}
-          
-          <a href ="testresults/{{t.testplan_name}}">{{ t.testplan_name }}</a><span style="padding-left:100px">{{ t.author }}<span style="padding-left:100px">{{r.Start_Date_Time}}
+        
+          <a href ="testresults/{{t.testplan_name}}">{{ t.testplan_name }}</a><span style="padding-left:100px">{{ t.author }} <span style="padding-left:100px"> {{ t.date_created }}
           <br><br>   
-          {% endfor %}
         {% endfor %}
       </table>
     </form>

@@ -101,6 +101,7 @@ class TestDB(DictModel):
     testplan_name = db.StringProperty(required = True)
     company_nickname = db.StringProperty(required = True)
     author = db.StringProperty(required = True)
+    date_created = db.DateTimeProperty(auto_now_add = True)
     instrument_type = db.StringProperty(required = True)
     measurement_P2P = db.BooleanProperty(required = False)
     measurement_Peak = db.BooleanProperty(required = False)
@@ -137,7 +138,9 @@ class OscopeDB(DictModel):
     name = db.StringProperty(required = True)
     config = db.StringProperty(required = True)
     slicename = db.StringProperty(required = True)
-    TIME = db.DateTimeProperty(required = True)
+    TIME = db.FloatProperty(required = True)
+    Start_Date_Time = db.DateTimeProperty(required = True)
+    End_Date_Time = db.DateTimeProperty(required = True)
     CH1 = db.FloatProperty(required = True)
     CH2 = db.FloatProperty(required = True)
     CH3 = db.FloatProperty(required = True)
@@ -237,45 +240,99 @@ class InstrumentsPage(InstrumentDataHandler):
             return
         self.render('instruments.html')
 
+def root_mean_squared(test_data, test):
+    "RMS measurement function that relies upon queries from test config and instrument data"
+
+    RMS_time_start = float(test[0]["RMS_time_start"])
+    RMS_time_stop = float(test[0]["RMS_time_stop"])
+            
+    sample_interval = 0.01
+    row_RMS_time_start = RMS_time_start/sample_interval
+    row_RMS_time_stop = RMS_time_stop/sample_interval
+    sum = 0
+    tempsq = 0
+    i = 0
+
+    for entry in test_data[int(row_RMS_time_start):(1+int(row_RMS_time_stop))]:
+        tempsq = float(entry['CH1'])*float(entry['CH1'])
+        #print entry
+        sum += tempsq
+        
+        i += 1
+    z = sum/i
+     
+    rms = math.sqrt(z)
+
+    return rms
+
+class TestPlanSummary(InstrumentDataHandler):
+    "present to the user a list of all configured test plans"
+    def get(self):
+        tests = db.GqlQuery("SELECT * FROM TestDB")
+        self.render('testplansummary.html', tests = tests)
+
+
 class TestResultsPage(InstrumentDataHandler):
     "present to the user all of the completed tests, with a path that supports specific test entries"
     def get(self, testplan_name=""):
         if testplan_name:
-            print "test results here"
             key = 'oscope' + testplan_name
             rows = memcache.get(key)
             if rows is None:
                 rows = db.GqlQuery("SELECT * FROM OscopeDB ORDER BY TIME ASC")
             memcache.set(key, rows)
-            self.response.write([r.to_dict() for r in rows])
-            #decoded = json.loads(entries)
-            #decoded_sorted = sorted(decoded, key=lambda item: item['TIME'])
-            #self.response.write(decoded_sorted)
+            test_data = [r.to_dict() for r in rows]
+            self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
+            self.response.headers['Access-Control-Allow-Origin'] = '*'
+            self.response.write(json.dumps(test_data))
+            
+            start_of_test = test_data[0]['TIME']
+            length = len(test_data)
+
 
             test = db.GqlQuery("SELECT * FROM TestDB WHERE testplan_name =:1", testplan_name)
             test = json.dumps([t.to_dict() for t in test])
             test = json.loads(test)
-            print test
-            #start_of_test = decoded_sorted[0]['TIME']
-            RMS_time_start = float(test[0]["RMS_time_start"])
-            RMS_time_stop = float(test[0]["RMS_time_stop"])
-            print RMS_time_start
-            print RMS_time_stop
-            sum = 0
-            tempsq = 0
-            i = 0
-            #for entry in decoded_sorted[0:10]:
+  
+            #RMS_time_start = float(test[0]["RMS_time_start"])
+            #RMS_time_stop = float(test[0]["RMS_time_stop"])
+            
+            #sample_interval = 0.01
+            #print start_of_test
+            #print RMS_time_start
+            #print RMS_time_stop
+            #row_RMS_time_start = RMS_time_start/sample_interval
+            #row_RMS_time_stop = RMS_time_stop/sample_interval
+            #print row_RMS_time_start
+            #print row_RMS_time_stop
+            #sum = 0
+            #tempsq = 0
+            #i = 0
+           
+
+            rms = {"rms":root_mean_squared(test_data, test)}
+            #for entry in test_data[int(row_RMS_time_start):(1+int(row_RMS_time_stop))]:
             #    tempsq = float(entry['CH1'])*float(entry['CH1'])
+            #    print tempsq
             #    sum += tempsq
+            #    print sum
             #    i += 1
-           # z = sum/i
+            #z = sum/i
+            #print z
             #rms = math.sqrt(z)
-            #print rms
+            
+            self.response.write(json.dumps(rms))
+            
 
             
         else:
             tests = db.GqlQuery("SELECT * FROM TestDB")
-            self.render('testresults.html', tests = tests)
+            key = 'oscope' + testplan_name
+            rows = memcache.get(key)
+            if rows is None:
+                rows = db.GqlQuery("SELECT * FROM OscopeDB ORDER BY TIME ASC")
+            memcache.set(key, rows)
+            self.render('testresults.html', tests = tests, rows = rows)
 
 
 
@@ -350,7 +407,7 @@ class TestConfigInputPage(InstrumentDataHandler):
             t.commence_test = False
         t.put()
 
-        self.redirect('/testresults')
+        self.redirect('/testplansummary')
         #self.redirect('/testconfigoutput/'+testplan_name)
 
 class TestConfigOutputPage(InstrumentDataHandler):
@@ -515,12 +572,23 @@ class OscopeData(InstrumentDataHandler):
         sorted_data = sorted(oscope_data['data'], key=getKey)
         #print "post:sorted_data =",sorted_data
         t = time.time()
+
+        sdt = datetime.datetime.fromtimestamp(t + float(sorted_data[0]['TIME']))
+        edt = datetime.datetime.fromtimestamp(t + float(sorted_data[-1]['TIME']))
+        #s = OscopeDB(parent = OscopeDB_key(name), name = name, Start_Date_Time = sdt, End_Date_Time = edt)
+        #s.put()
+        print sdt
+        print edt
         for row in sorted_data:
-            dt = datetime.datetime.fromtimestamp(t + float(row['TIME']))
+            #dt = datetime.datetime.fromtimestamp(t + float(row['TIME']))
+            modified_time = 500.00 + float(row['TIME'])
+            print modified_time
             r = OscopeDB(parent = OscopeDB_key(name), name=name,
                          slicename=oscope_data['slicename'],
                          config=str(oscope_data['config']),
-                         TIME=dt,
+                         Start_Date_Time = sdt,
+                         End_Date_Time = edt,
+                         TIME=modified_time,
                          CH1=float(row['CH1']),
                          CH2=float(row['CH2']),
                          CH3=float(row['CH3']),
@@ -542,6 +610,7 @@ app = webapp2.WSGIApplication([
     ('/testconfiginput', TestConfigInputPage),
     ('/testconfigoutput/([a-zA-Z0-9-]+)', TestConfigOutputPage),
     ('/testnuc', TestJSON),
+    ('/testplansummary', TestPlanSummary),
     ('/testresults', TestResultsPage),
     ('/testresults/([a-zA-Z0-9-]+)', TestResultsPage),
     ('/oscopedata/([a-zA-Z0-9-]+)', OscopeData),
