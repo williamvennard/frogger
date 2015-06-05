@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-{% block import %}
+<!--{% block import %}-->
 <html lang="en">
 <head>
     <title>iCanvas Page</title>
@@ -21,21 +21,21 @@
     <script type="text/javascript" src="js/addons/Grid.js"></script>
     <script src="js/addons/angular.min.js"></script>
     <script type="text/javascript" src="js/addons/clickadd.js"></script>
-    <link rel="stylesheet" type="text/css" href="testconfig.css">
-    <link rel="stylesheet" type="text/css" href="testResults.css">
+    <link rel="stylesheet" type="text/css" href="css/testConfig.css">
+    <link rel="stylesheet" type="text/css" href="css/testResults.css">
     <style type="text/css"></style>
 </head>
 
-<body data-ng-app="controller" background="images/triangles.png">
+<body data-ng-app="controller" id="mainBackground">
     <div data-ng-controller="SettingsController as settings" class="container">       
-        <nav class="navbar navbar-inverse navbar-collapse collapse">
+        <nav id="topNavBar" class="navbar navbar-inverse navbar-collapse collapse">
                 <div class="container-fluid">
                     <div class="navbar-header">
                         <img class="logo" src="images/Glogo.png" style="width:110px;" alt="Gradient One logo">
                     </div>
                     <div id="navbar">
                         <ul class="topmenu nav navbar-nav">
-                            <li><a href="index.html">CANVAS</a></li>
+                            <li><a class="currentPage" href="index.html" style="color: rgb(124,175,46);">CANVAS</a></li>
                             <li class="dots glyphicon glyphicon-option-vertical"></li>
                             <li><a href="instruments.html">INSTRUMENTS</a></li>
                             <li class="dots glyphicon glyphicon-option-vertical"></li>
@@ -50,13 +50,14 @@
                 </div>
         </nav>
         <div class="row">
-            <div class="col-md-12 well well-sm canv" style="margin-bottom: 10px;">
-                <h2 id="headr">GradientOne Canvas</h2>
+            <div class="col-md-12 canv" style="">
+                <h1 id="headr">GradientOne Canvas</h1>
                 <p></p>  
             </div>
         </div>
         <div class="row">
             <div class="col-md-3" style="width: 180px; margin-top: 20px;">
+            <button id="newTestBtn" style="" class="btn btn-default">NEW TEST</button>
                 <div class="panel-group" id="accordion" style="width: 140px;">
                     <div class="panel panel-default">
                         <div class="panel-heading">
@@ -112,7 +113,7 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <a>Adjacent Channel Power</a>
+                                            <a>RMS</a>
                                         </td>
                                     </tr>
                                     <tr>
@@ -188,10 +189,10 @@
                 </div>
             </div>    
             <fieldset class="col-md-12" id="canvasBox" style="width: 40%;">
-                <span class="spacer"></span><legend style="width: 100px;">Test Space</legend><span class="spacer"></span>
+                <span class="spacer"></span><legend class="text-uppercase" style="width: 110px;">Test Space</legend><span class="spacer"></span>
 <!--TEST PLAN CONFIGURATION-->
                 <div class="well well-sm" id="testPlanBox">
-                  <h2 style="text-align:center;">Test Plan Configuration</h2>
+                  <h2 style="text-align:center; color:white;">Test Plan Configuration</h2>
                   <hr id="breakLine">
                   <form method="post">
             <!--TEST PLAN NAME-->
@@ -201,7 +202,7 @@
                         <p class="configLabel" style="margin-left: px;">
                           Test Plan Name:
                         </p>
-                          <input class="textBlocks" type="text" name="testplan_name" placeholder="Billy_Bob's_Test" value="{{testplan_name}}">
+                          <input style="border-top-right-radius: 5px; border-top-left-radius: 5px;" class="textBlocks" type="text" name="testplan_name" placeholder="Billy_Bob's_Test" value="{{testplan_name}}">
                         </td>
                       </tr>
                     </div>
@@ -228,13 +229,13 @@
                       </tr>
                     </div>
             <!--INSTRUMENT TYPE-->
-                    <div class="row" style="margin-left:10px;">
+                    <div class="row" style="margin-left:10px; margin-bottom:15px;">
                       <tr>
                         <p class="configLabel" style="margin-left: px;">
                           Instrument Type:
                         </p>
                         <td>
-                          <input class="textBlocks" type="text" name="instrument_type" placeholder="Oscilloscope" value="{{instrument_type}}">
+                          <input style="border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;" class="textBlocks" type="text" name="instrument_type" placeholder="Oscilloscope" value="{{instrument_type}}">
                         </td>
                       </tr>
                     </div>
@@ -252,10 +253,10 @@
                         <div class="dropDownBox">
                             <tr>
                                 <td class="configLabel">
-                                    V<sub>pp</sub>
+                                   <p class="subLabel">V<sub>pp</sub></p> 
                                 </td>
                                 <td>
-                                    <input type="text" name="Vpp" placeholder="5 V" value="{{Vpp}}">
+                                    <input class="subTextBox" type="text" name="Vpp" placeholder="5 V" value="{{Vpp}}">
                                 </td>
                             </tr>
                         </div>
@@ -273,10 +274,10 @@
                         <div class="dropDownBox">
                             <tr>
                                 <td class="configLabel">
-                                    V<sub>p</sub>
+                                  <p class="subLabel">V<sub>p</sub></p>  
                                 </td>
                                 <td>
-                                    <input type="text" name="Vp" placeholder="2.5 V" value="{{Vp}}">
+                                    <input class="subTextBox" type="text" name="Vp" placeholder="2.5 V" value="{{Vp}}">
                                 </td>
                             </tr>
                         </div>
@@ -294,18 +295,18 @@
                         <div class="dropDownBox">
                             <tr>
                                 <td class="configLabel">
-                                    RMS Start Time                      
-                                    <input type="text" name="RMS_time_start" placeholder="200 sec" value="{{RMS_time_start}}">
+                                   <p class="subLabel">RMS Start Time</p>                    
+                                    <input class="subTextBox" type="text" name="RMS_time_start" placeholder="200 sec" value="{{RMS_time_start}}">
                                 </td>
                             </tr>
                         </div>
                         <div class="dropDownBox">
                             <tr style="">
                                 <td class="configLabel">
-                                    RMS Stop Time
+                                  <p class="subLabel">RMS Stop Time</p> 
                                 </td>
                                 <td>
-                                    <input type="text" name="RMS_time_stop" placeholder="400 sec" value="{{RMS_time_stop}}">
+                                    <input class="subTextBox" type="text" name="RMS_time_stop" placeholder="400 sec" value="{{RMS_time_stop}}">
                                 </td>
                             </tr>
                         </div>
@@ -325,7 +326,7 @@
                                 <td class="configLabel">
                                 </td>
                                 <td>
-                                    <input type="text" name="rise_time" placeholder="2 &mu;sec" value="{{rise_time}}">
+                                    <input class="subTextBox" type="text" name="rise_time" placeholder="2 &mu;sec" value="{{rise_time}}">
                                 </td>
                             </tr>
                         </div>
@@ -350,7 +351,7 @@
                       </tr> 
                     </div>
                       <button id="submitBtn" type="button" class="btn btn-default" style="text-align:center">
-                        Submit
+                        SUBMIT
                       </button>
                   </form>   
                 </div>  
@@ -388,10 +389,10 @@
                 </div>
             </fieldset>
             <fieldset class="col-md-12" id="resultsBox" style="width: 40%;">
-                    <span class="spacer"></span><legend style="width: 120px;">Test Results</legend><span class="spacer"></span>   
+                    <span class="spacer"></span><legend class="text-uppercase" style="width: 130px;">Test Results</legend><span class="spacer"></span>   
 <!--TEST RESULTS-->              
                 <div class="well well-sm testResultsBox">
-                    <h2 style="text-align:center">Test Results</h2>
+                    <h2 style="text-align:center; color:white;">Test Results</h2>
                     <hr id="breakLine">
                     <form method="post">
                       <table>
@@ -399,7 +400,7 @@
                         </tr>
 
                         {% for t in tests %}
-                        
+                         <a href ="testResultsPage.html">TEST RESULTS</a>
                           <a href ="testresults/{{t.testplan_name}}">{{ t.testplan_name }}</a>
                           <br><br>   
                         {% endfor %}
@@ -408,15 +409,16 @@
                 </div>
             </fieldset>
         </div>
-        <fieldset id='testReelTitle'><legend style="text-align:center; width: 120px; color:white;">Test Reel</legend></fieldset>
+<!--TEST REEL-->      
+        <fieldset id='testReelTitle'><legend style="text-align:center; width: 120px; color:white">Test Reel</legend></fieldset>
         <div class="row">
             <div id="chart1" class="col-md-4 hoverzoom"></div>   
             <div id="chart2" class="col-md-4 hoverzoom"></div>               
             <div id="chart3" class="col-md-4 hoverzoom" style="width: 350px"></div>             
         </div> 
-        <hr style="color:white;">
+        <hr>
     </div> 
     <script type="text/javascript">$('#collapseOne').collapse("hide");</script><!--stops accordion from loading open -->
 </body>
 </html>
-{% endblock %}
+<!--{% endblock %}-->
