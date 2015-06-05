@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!--{% block import %}-->
+
 <html lang="en">
 <head>
     <title>iCanvas Page</title>
@@ -398,12 +398,18 @@
                       <table>
                         <tr>
                         </tr>
+                        
+                        {% block import %}
 
-                        {% for t in tests %}
-                         <a href ="testResultsPage.html">TEST RESULTS</a>
-                          <a href ="testresults/{{t.testplan_name}}">{{ t.testplan_name }}</a>
-                          <br><br>   
-                        {% endfor %}
+        {% for t in tests %}
+
+          {% for r in rows[0:1] %}
+          
+          <a href ="testresults/{{t.testplan_name}}">{{ t.testplan_name }}</a><span style="padding-left:100px">{{ t.author }}<span style="padding-left:100px">{{r.Start_Date_Time}}
+          <br><br>   
+          {% endfor %}
+        {% endfor %}
+                        {% endblock %}
                       </table>
                     </form>
                 </div>
@@ -421,4 +427,3 @@
     <script type="text/javascript">$('#collapseOne').collapse("hide");</script><!--stops accordion from loading open -->
 </body>
 </html>
-<!--{% endblock %}-->
