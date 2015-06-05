@@ -1,14 +1,28 @@
+<<<<<<< HEAD
  <!DOCTYPE html>
+=======
+<!DOCTYPE html>
+<<<<<<< HEAD
+=======
+>>>>>>> refs/remotes/origin/master
 {% extends "base.html" %}
 {% block import %}
+>>>>>>> refs/remotes/origin/master
 <html>
 <head>
   <title>Results Page TEST</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<<<<<<< HEAD
+  <link rel="stylesheet" type="text/css" href="../static/bootstrap/css/bootstrap.min.css">  
+  <link rel="stylesheet" type="text/css" href="../static/css/custom.css">
+  <link type="text/css" rel="stylesheet" href="../static/css/testResultsPage.css" />
+
+=======
   <link rel="stylesheet" type="text/css" href="../static/bootstrap/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="../static/css/custom.css">
   <link rel="stylesheet" type="text/css" href="../static/css/testResultsPage.css">
+>>>>>>> refs/remotes/origin/master
 
   <script type="text/javascript">
  // load chart lib
@@ -18,6 +32,16 @@
 
        function doPoll(){
            
+<<<<<<< HEAD
+         var x = document.referrer;
+         console.log('past URL test:',x);
+         console.log(x.length);
+          //var urlPath = window.location.pathname;
+          var urlPath = window.location.pathname.split( '/' );
+          var newPathname = urlPath[urlPath.length - 1];
+          //console.log(urlPath);
+          //console.log(newPathname);
+=======
          //var x = document.referrer;
          //console.log('past URL test:',x);
          //console.log(x.length);
@@ -26,13 +50,19 @@
           var pathKey = urlPath[urlPath.length - 1];
           console.log(urlPath);
           console.log('Path Key:',pathKey);
+>>>>>>> refs/remotes/origin/master
           //^THIS READS THE CURRENT URL THAT IS OPEN ->file:///Users/william/Desktop/GradientOne/UI/testResultsPage.html
           // IF WE CAN SOMEONE GET THE NAME OF THE TEST IN THAT TAG WE WOULD BE IN BUSINESS
 
           //HARDCODE TEST PLAN 'RMS'
+<<<<<<< HEAD
+          var base_url = 'https://gradientone-dev.appspot.com/testresults/RMS';
+          var json_url = base_url + '';
+=======
           var base_url = 'https://gradientone-dev.appspot.com/testresults/';
           var json_url = base_url + pathKey; //change to pathKey
           console.log(json_url); 
+>>>>>>> refs/remotes/origin/master
           var jsonData = $.ajax({
              url: json_url,  
 
@@ -120,7 +150,11 @@
       <nav id="topNavBar" class="navbar navbar-inverse navbar-collapse collapse"> <!--NAVBAR-->
         <div class="container-fluid">
           <div class="navbar-header">
+<<<<<<< HEAD
+            <img class="logo" src="images/Glogo.png" style="width:110px;" alt="Gradient One logo">
+=======
             <img class="logo" src="../static/images/Glogo.png" style="width:110px;" alt="Gradient One logo">
+>>>>>>> refs/remotes/origin/master
           </div>
           <div id="navbar">
             <ul class="topmenu nav navbar-nav">
@@ -172,4 +206,3 @@
 
 </body>
 </html>
-{% endblock %}
