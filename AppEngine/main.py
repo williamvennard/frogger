@@ -210,7 +210,7 @@ class AdduserPage(InstrumentDataHandler):
             self.response.write(' you are not authorized to add users.')
             return
         admin_email = u.email()
-        self.render('adduser.html')
+        self.render('new_adduser.html')
 
     def post(self):
         username = self.request.get('email')
