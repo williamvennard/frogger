@@ -22,7 +22,7 @@
     <script src="../static/js/addons/angular.min.js"></script>
     <script type="text/javascript" src="../static/js/addons/clickadd.js"></script>
     <link rel="stylesheet" type="text/css" href="../static/css/testConfig.css">
-    <link rel="stylesheet" type="text/css" href="../static/css/testResults.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/testResultsList.css">
     <style type="text/css"></style>
 </head>
 
@@ -392,24 +392,30 @@
                     <span class="spacer"></span><legend class="text-uppercase" style="width: 130px;">Test Results</legend><span class="spacer"></span>   
 <!--TEST RESULTS-->              
                 <div class="well well-sm testResultsBox">
-                    <h2 style="text-align:center; color:white;">Test Results</h2>
+                    <h2 style="text-align:center; color:white; margin-bottom: 5px;">Test Results</h2>
+<h5 id="testResultsHeadr">Name <span style="padding-left:100px;">Author</span> <span style="padding-left:100px;">Date</span></h5>
                     <hr id="breakLine">
-                    <form method="post">
+                    <form method="post" id="resultsForm">
                       <table>
                         <tr>
                         </tr>
-                        
+<!--TEST CSS-->
+<!--
+ <a class="testName" href ="testresults/{{t.testplan_name}}">Wills Test 2.0</a>
+ <span class="testAuthor">Dan Gleesac </span>
+ <span class="testDate">12/27/2015</span> 
+        -->      
                         {% block import %}
 
-        {% for t in tests %}
+                        {% for t in tests %}
 
-          {% for r in rows[0:1] %}
+                        {% for r in rows[0:1] %}
           
-          <a href ="testresults/{{t.testplan_name}}">{{ t.testplan_name }}</a><span style="padding-left:100px">{{ t.author }}<span style="padding-left:100px">{{r.Start_Date_Time}}
-          <br><br>   
-          {% endfor %}
-        {% endfor %}
-                        {% endblock %}
+                          <a class="testName" href ="testresults/{{t.testplan_name}}">{{ t.testplan_name }}</a><span class="testAuthor">{{ t.author }}<span class="testDate">{{r.Start_Date_Time}}
+                          <br><br>   
+                          {% endfor %}
+                        {% endfor %}
+                        {% endblock %} 
                       </table>
                     </form>
                 </div>
