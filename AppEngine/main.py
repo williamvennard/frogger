@@ -210,7 +210,7 @@ class AdduserPage(InstrumentDataHandler):
             self.response.write(' you are not authorized to add users.')
             return
         admin_email = u.email()
-        self.render('adduser.html')
+        self.render('new_adduser.html')
 
     def post(self):
         username = self.request.get('email')
@@ -313,7 +313,10 @@ class TestPlanSummary(InstrumentDataHandler):
 
 class TestResultsPage(InstrumentDataHandler):
     "present to the user all of the completed tests, with a path that supports specific test entries"
+
     def get(self, testplan_name=""):
+        if not self.authcheck():
+            return
         testplan_name_check = testplan_name.split('.')
         testplan_name = testplan_name_check[0]
 
@@ -370,7 +373,8 @@ class TestResultsPage(InstrumentDataHandler):
             
         elif testplan_name:
            # f = open('static/testResultsPage.html')
-            f = open(os.path.join('static', 'testResultsPage.html'))
+            f = open(os.path.join('templates', 'testResultsPage.html'))
+            f = open(os.path.join('templates', 'testResultsPage.html'))
             page_contents = f.read()
             self.response.write(page_contents)
 
@@ -384,11 +388,11 @@ class TestResultsPage(InstrumentDataHandler):
             if rows is None:
                 rows = db.GqlQuery("SELECT * FROM OscopeDB ORDER BY TIME ASC")
             memcache.set(key, rows)
-            f = open(os.path.join('static', 'index.html'))
+            f = open(os.path.join('templates', 'index.html'))
             page_contents = f.read()
-            self.response.write(page_contents)
+            #self.response.write(page_contents)
 
-            #self.render('testresults.html', tests = tests, rows = rows)
+            self.render('index.html', tests = tests, rows = rows)
 
 
 class CommunityTestsPage(InstrumentDataHandler):
@@ -402,6 +406,8 @@ class CommunityTestsPage(InstrumentDataHandler):
 
 class TestConfigInputPage(InstrumentDataHandler):
     def get(self):
+        if not self.authcheck():
+            return
         self.render('testconfig.html')
 
     def post(self):
@@ -656,6 +662,8 @@ class VNAData(InstrumentDataHandler):
 class OscopeData(InstrumentDataHandler):
     def get(self,name="",slicename=""):
         "retrieve Oscilloscope data by intstrument name and time slice name"
+        if not self.authcheck():
+            return
         print "OscopeData: get: name =",name
         print "OscopeData: get: slicename =",slicename
         key = 'oscope' + name + slicename
