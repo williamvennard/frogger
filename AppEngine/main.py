@@ -25,6 +25,7 @@ from collections import OrderedDict
 
 authorized_users = ['charlie@gradientone.com',
                     'nedwards@gradientone.com',
+                    'nickedwards@gmail.com'
 #                    'nhannotte@gradientone.com',
 #                    'wvennard@gradientone.com',
                     'test@example.com',
@@ -629,31 +630,43 @@ class VNAData(InstrumentDataHandler):
 
     def post(self, name=""):
         "store vector network analzyer data by name"
+        start_time = time.time() 
         vna_content = json.loads(self.request.body)
+        jsonloads_time = time.time() 
+        total_json_time = jsonloads_time - start_time
+        print "the total time the jsonloads took is %f seconds" % total_json_time
         vna_data = vna_content['data']
         vna_options = vna_content['options']
         vna_header = vna_content['header']
         vna_config = vna_content['config']
-        i = 0
-        for k, v in vna_data.iteritems():
-            while i <= 100:
+        keys = list(vna_data.keys())
+        dbput_start_time = time.time() 
+        to_save = []
+        for k in keys[:10000]:
+           
                 r = VNADB(parent = VNADB_key(name), name=name,
-                    FREQ = float(v['FREQ']),
-                    S11dB = float(v['dB(S11)']),
-                    S12dB = float(v['dB(S12)']),
-                    S21dB = float(v['dB(S21)']),
-                    S22dB = float(v['dB(S22)']),
-                    S11ph = float(v['PHS(S11)']),
-                    S12ph = float(v['PHS(S12)']),
-                    S21ph = float(v['PHS(S21)']),
-                    S22ph = float(v['PHS(S22)']),
+                    FREQ = float(vna_data[k]['FREQ']),
+                    S11dB = float(vna_data[k]['dB(S11)']),
+                    S12dB = float(vna_data[k]['dB(S12)']),
+                    S21dB = float(vna_data[k]['dB(S21)']),
+                    S22dB = float(vna_data[k]['dB(S22)']),
+                    S11ph = float(vna_data[k]['PHS(S11)']),
+                    S12ph = float(vna_data[k]['PHS(S12)']),
+                    S21ph = float(vna_data[k]['PHS(S21)']),
+                    S22ph = float(vna_data[k]['PHS(S22)']),
                     config = str(vna_config).strip('[]'),
                     header = str(vna_header).strip('[]'),
                     options = str(vna_options).strip('[]'),)
 
-                r.put()
-                i += 1
-            
+                to_save.append(r) 
+
+        db.put(to_save)
+        
+        end_time = time.time()  
+        total_db_time = end_time - dbput_start_time
+        print "the total time the db took is %f seconds" % total_db_time      
+        total_time = end_time - start_time
+        print "the total time the handler took is %f seconds" % total_time
 
 
 
@@ -753,3 +766,6 @@ app = webapp2.WSGIApplication([
     ('/oscopedata/([a-zA-Z0-9-]+)', OscopeData),
     ('/oscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', OscopeData),
 ], debug=True)
+
+
+# danger!!  don't say it unless you mean it:  db.delete(VNADB.all(keys_only=True))  # deletes entire table!!
