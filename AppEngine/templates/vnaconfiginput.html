@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block import %}
+
+<html>
+  <head>
+    <title>VNA Config Input </title>
+    <style type="text/css">
+      .label {text-align: right}
+      .error {color: red}
+    </style>
+
+  </head>
+
+  <body>
+    <h2>VNA Configuration Input</h2>
+    <form method="post">
+      <table>
+        <tr>
+          <td class="label">
+            Company Nickname
+          </td>
+          <td>
+            <input type="text" name="company_nickname" value="{{company_nickname}}">
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            Hardware Name
+          </td>
+          <td>
+            <input type="text" name="hardware_name" value="{{hardware_name}}">
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            Instrument Type
+          </td>
+          <td>
+            <input type="text" name="instrument_type" value="{{instrument_type}}">
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            Instrument Name
+          </td>
+          <td>
+            <input type="text" name="instrument_name" value="{{instrument_name}}">
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            VNA Setting:  Start Frequency
+          </td>
+          <td>
+            <input type="text" name="frequency_start" value="{{frequency_start}}">
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            VNA Setting:  Stop Frequency
+          </td>
+          <td>
+            <input type="text" name="frequency_stop" value="{{frequency_stop}}">
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            VNA Setting:  Power Level
+          </td>
+          <td>
+            <input type="text" name="power" value="{{power}}">
+          </td>
+        </tr>
+
+
+
+
+      </table>
+
+      <input type="submit">
+    </form>
+  </body>
+
+</html>
+
+{% endblock %}

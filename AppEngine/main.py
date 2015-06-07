@@ -504,51 +504,67 @@ class ConfigInputPage(InstrumentDataHandler):
         instrument_type = self.request.get('instrument_type')
         instrument_name = self.request.get('instrument_name')
         source = self.request.get('source')
-        #horizontal_position = float(self.request.get('horizontal_position'))
-        #horizontal_seconds_per_div = float(self.request.get('horizontal_seconds_per_div'))
-        #vertical_position = float(self.request.get('vertical_position'))
-        #vertical_volts_per_divsision = float(self.request.get('vertical_volts_per_divsision'))
-        #trigger_type = self.request.get('trigger_type')
-        frequency_center = float(self.request.get('frequency_center'))
-        frequency_span = float(self.request.get('frequency_span'))
-        #frequency_start = float(self.request.get('frequency_start'))
-        #frequency_stop = float(self.request.get('frequency_stop'))
-        power = float(self.request.get('power'))
+        horizontal_position = float(self.request.get('horizontal_position'))
+        horizontal_seconds_per_div = float(self.request.get('horizontal_seconds_per_div'))
+        vertical_position = float(self.request.get('vertical_position'))
+        vertical_volts_per_divsision = float(self.request.get('vertical_volts_per_divsision'))
+        trigger_type = self.request.get('trigger_type')
+        
 
 
         c = ConfigDB(parent = ConfigDB_key(instrument_name), company_nickname = company_nickname, 
             hardware_name = hardware_name, instrument_type = instrument_type, instrument_name = instrument_name, 
             source = source, horizontal_position = horizontal_position, 
             horizontal_seconds_per_div = horizontal_seconds_per_div, vertical_position = vertical_position, 
-            vertical_volts_per_division = vertical_volts_per_divsision, trigger_type= trigger_type, frequency_center = frequency_center,
-            frequency_span = frequency_span, frequency_start = frequency_start, frequency_stop = frequency_stop, power = power)
+            vertical_volts_per_division = vertical_volts_per_divsision, trigger_type= trigger_type)
+
         c.put() 
         key = 'instrument_name = ', instrument_name
         print key
         memcache.delete(key)
         self.redirect('/configoutput/'+instrument_name)
         
+
+class VNAConfigInputPage(InstrumentDataHandler):
+    def get(self):
+        self.render('vnaconfiginput.html')
+
+    def post(self):
+        company_nickname = self.request.get('company_nickname')
+        hardware_name = self.request.get('hardware_name')
+        instrument_type = self.request.get('instrument_type')
+        instrument_name = self.request.get('instrument_name')
+
+        #frequency_center = float(self.request.get('frequency_center'))
+        #frequency_span = float(self.request.get('frequency_span'))
+        frequency_start = float(self.request.get('frequency_start'))
+        frequency_stop = float(self.request.get('frequency_stop'))
+        power = float(self.request.get('power'))
+
+
+        c = ConfigDB(parent = ConfigDB_key(instrument_name), company_nickname = company_nickname, 
+            hardware_name = hardware_name, instrument_type = instrument_type, instrument_name = instrument_name, 
+            #frequency_center = frequency_center, frequency_span = frequency_span, 
+            frequency_start = frequency_start, frequency_stop = frequency_stop, power = power)
+        c.put() 
+        key = 'instrument_type & instrument_name = ', instrument_type + instrument_name
+        print key
+        memcache.delete(key)
+        redirect_url = instrument_type + '/' + instrument_name
+        self.redirect('/configoutput/' + redirect_url)
+        
    
 class ConfigOutputPage(InstrumentDataHandler):
-    def get(self,instrument_name=""):
-        key = 'instrument_name = ', instrument_name
+    def get(self,instrument_type="", instrument_name=""):
+        key = 'instrument_type & instrument_name = ', instrument_type + instrument_name
         configs = memcache.get(key)
         if configs is None :
             logging.error("DB Query")
             configs = db.GqlQuery("SELECT * FROM ConfigDB WHERE instrument_name =:1", instrument_name)
             memcache.set(key, configs)
-        #config_query = db.GqlQuery("SELECT * FROM ConfigDB")
-        #q = db.Query(ConfigDB)
-        #configs = ConfigDB.all()
         self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
         self.response.headers['Access-Control-Allow-Origin'] = '*'
         self.response.write(json.dumps([c.to_dict() for c in configs]))
-
-        #dict_of_vars = dict((str(config.company_nickname), {'company_nickname': config.company_nickname, 'source': config.source, 'hardware_name': config.hardware_name, 'instrument_type': config.instrument_type, 'instrument_name': config.instrument_name, 'horizontal_position': config.horizontal_position, 'horizontal_seconds_per_div': config.horizontal_seconds_per_div, 'vertical_position': config.vertical_position, 'vertical_volts_per_division': config.vertical_volts_per_division, 'trigger_type': config.trigger_type}) for config in configs)
-        
-        #out = json.dumps(dict_of_vars)
-        #self.response.write(out)
-#dict_of_entities = dict((str(entity.key()), {'name': entity.name, 'size': entity.size}) for entity in entities)
 
         
 
@@ -642,7 +658,7 @@ class VNAData(InstrumentDataHandler):
         keys = list(vna_data.keys())
         dbput_start_time = time.time() 
         to_save = []
-        for k in keys[:10000]:
+        for k in keys[:50]:
            
                 r = VNADB(parent = VNADB_key(name), name=name,
                     FREQ = float(vna_data[k]['FREQ']),
@@ -751,7 +767,9 @@ app = webapp2.WSGIApplication([
     ('/listusers', ListUsersPage),
     ('/instruments', InstrumentsPage),
     ('/configinput', ConfigInputPage),
+    ('/vnaconfiginput', VNAConfigInputPage),
     ('/configoutput/([a-zA-Z0-9-]+)', ConfigOutputPage),
+    ('/configoutput/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', ConfigOutputPage),
     ('/oscope.json', OscopePage),
     ('/testconfiginput', TestConfigInputPage),
     ('/testconfigoutput/([a-zA-Z0-9-]+)', TestConfigOutputPage),
