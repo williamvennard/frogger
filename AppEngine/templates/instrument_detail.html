@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Instrument Page</title>
+    <title>Instrument Detail Page</title>
          
     <script src="../static/js/addons/jquery-1.11.3.js"></script>    
     <script src="../static/js/jquery-ui-1.11.4/jquery-ui.js"></script>
@@ -23,123 +23,51 @@
 
 
 </head>
-
 <body id="mainBackground">
     <div class="container">       
-        <nav class="navbar navbar-inverse navbar-collapse collapse">
-                <div class="container-fluid">
-                    <div class="navbar-header">
-                        <img class="logo" src="../static/images/Glogo.png" style="width:110px;">
-                    </div>
-                    <div id="navbar">
-                        <ul class="topmenu nav navbar-nav">
-                            <li><a href="index.html">CANVAS</a></li>
-                            <li class="dots glyphicon glyphicon-option-vertical"></li>
-                            <li><a style="color:rgb(124,175,46);" href="instruments.html">INSTRUMENTS</a></li>
-                            <li class="dots glyphicon glyphicon-option-vertical"></li>
-                            <li><a href="community.html">COMMUNITY</a></li>          
-                        </ul>
-                        <ul class="nav navbar-nav navbar-right">
-                          <li><a class="glyphicon glyphicon-envelope" href="../navbar-static-top/"></a></li>
-                          <li><a class="glyphicon glyphicon-bell" href="../navbar-static-top/"></a></li>
-                          <li><a class="glyphicon glyphicon-user" href="../navbar-fixed-top/">Profile</a></li>
-                        </ul>
-                    </div>
-                </div>
-        </nav>
+      <nav class="navbar navbar-inverse navbar-collapse collapse">
         <div class="container-fluid">
-            <div class="col-md-12 canv">
-                <h1 id="instHeader" class="headr">Instruments</h1> 
+          <div class="navbar-header">
+            <img class="logo" src="../static/images/Glogo.png" style="width:110px;">
+          </div>
+          <div id="navbar">
+            <ul class="topmenu nav navbar-nav">
+              <li><a href="index.html">CANVAS</a></li>
+              <li class="dots glyphicon glyphicon-option-vertical"></li>
+              <li><a style="color:rgb(124,175,46);" href="instruments.html">INSTRUMENTS</a></li>
+              <li class="dots glyphicon glyphicon-option-vertical"></li>
+              <li><a href="community.html">COMMUNITY</a></li>          
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a class="glyphicon glyphicon-envelope" href="../navbar-static-top/"></a></li>
+              <li><a class="glyphicon glyphicon-bell" href="../navbar-static-top/"></a></li>
+              <li><a class="glyphicon glyphicon-user" href="../navbar-fixed-top/">Profile</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <div class="container-fluid">
+        <div class="col-md-12 canv">
+          <h1 id="instHeader" class="headr">Instruments</h1> 
+        </div>
+      </div>                     
+<!--Oscilloscope--> 
+      <div class="row">   
+        <div class=" box"  style="margin-right: 30px;">
+          <h2 id="instName" class="instname">Oscilloscope</h2>
+          <div id="ochart"></div>
+          <div id="optionsBox">
+            <div id="optionsBoxTitle" class="boxTitle">
+              <h2>Options</h2>
             </div>
-        </div>     
-            <div class="row">
-                <div class="col-md-3" style="width: 170px;">
-                    <ul class="nav nav-pills nav-stacked instnav">
-                        <li class="side-menu" role="menu">
-                          <h4 id="sideHeader">Instruments</h4>
-                          <h6 id="myInstListHeader">My Instruments</h6>
-                          <!--MY INSTRUMENT LIST TEMPLATE-->
-                          <form method="post" id="resultsForm">
-                            <table>
-                              <tr>
-                              </tr>   
-                        {% block import %}
-
-                        {% for r in rows %}
-
-                       
-          
-                          <a class="testName" href ="instruments/{{r.author}}/{{r.instrument_type}}/{{r.instrument_name}}">{{ r.instrument_name }}</a><span class="testAuthor">{{ r.instrument_type }}
-                          <br><br>   
-         
-                        {% endfor %}
-                        {% endblock %}  
-                            </table>
-                          </form>
-                          <ul  id="isntrumentList" style="">
-                                  <li data-toggle="collapse" data-parent="#accordion" href="#collapseOne">O-Scope</li>
-                                    <button class="btn btn-default btn-xs addNewBtn">
-                                      <a class="configLink" href="https://fiberboardfreeway.appspot.com/configinput">New</a>
-                                    </button>
-                                    <div id="collapseOne" class="panel-collapse collapse in">
-                                      <div class="panel-body" style="padding-top: 0px; padding-left: 0px;">
-                                          <table class="savedList">
-                                          <p>Saved :</p>
-                                              <tr>
-                                                  <td>
-                                                      <a class="savedLink">John's</a>
-                                                  </td>
-                                              </tr>
-                                              <tr>
-                                                  <td>
-                                                      <a class="savedLink">Bob's</a>
-                                                  </td>
-                                              </tr>
-                                          </table>
-                                      </div>
-                                    </div>
-                                  <li data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">VNA</li>
-                                    <button class="btn btn-default btn-xs addNewBtn">
-                                    <a class="configLink" href="https://gradientone-dev.appspot.com/vnaconfiginput">New</a>
-                                    </button>
-                                    <div id="collapseTwo" class="panel-collapse collapse in">
-                                      <div class="panel-body" style="padding-top: 0px; padding-left: 0px;">
-                                          <table class="savedList">
-                                          <p>Saved :</p>
-                                              <tr>
-                                                  <td>
-                                                      <a class="savedLink">Will's</a>
-                                                  </td>
-                                              </tr>
-                                              <tr>
-                                                  <td>
-                                                      <a class="savedLink">Nick's</a>
-                                                  </td>
-                                              </tr>
-                                          </table>
-                                      </div>
-                                    </div>  
-                            </ul> 
-                        </li>
-                    </ul> 
-                </div>                           
-<!--Oscilloscope-->    
-              <div class=" box"  style="margin-right: 30px;">
-                  <h2 id="instName" class="instname">Oscilloscope</h2>
-                  <div id="ochart">
-                  </div>
-                  <div id="optionsBox">
-                      <div id="optionsBoxTitle" class="boxTitle">
-                          <h2>Options</h2>
-                      </div>
-                      <div id="buttons">
-                          <button type="button" id="start">Start</button>
-                          <button type="button" id="stop">Stop</button>
-                          <button type="button" id="start">Save</button>
-                          <button type="button" id="stop">Delete</button>
-                      </div>
-                      <div class="knobs">                          
-                          <div id="knob1">
+            <div id="buttons">
+              <button type="button" id="start">Start</button>
+              <button type="button" id="stop">Stop</button>
+              <button type="button" id="start">Save</button>
+              <button type="button" id="stop">Delete</button>
+            </div>
+            <div class="knobs">                          
+              <div id="knob1">
                             <p id="knob1Label">Volts/Div</p>
                             <input 
                             type="text" 
@@ -151,33 +79,33 @@
                             data-width="50"
                             data-fgColor="black"
                             data-thickness=".5"
-                            data-angleOffset="0"
+                            data-angleOffset="-125"
+                            data-angleArc="250"
                             data-bgColor="white">
 
-                          </div>
-
-                          <div id="knob2">
+              </div>
+              <div id="knob2">
                             <p id="knob2Label">Time/Div</p>
                             <input 
                             type="text" 
                             value="0"
-                            data-min="-100"
+                            data-min="0"
                             data-max="100" 
                             class="dial"
                             data-cursor= "10"
                             data-width="50"
                             data-fgColor="black"
                             data-thickness=".5"
-                            data-angleOffset="0"
+                            data-angleOffset="-125"
+                            data-angleArc="250"
                             data-bgColor="white">
-                          </div>
-                      </div>
-                  </div>
-              </div>  
+                </div>
+              </div>
+            </div>
           </div>  
+        </div>  
         <hr>
-    </div> 
-    
+    </div>   
     <script>
     $(".dial").knob({
         'change' : function (v) { 
@@ -187,8 +115,94 @@
       },
     });          
     </script>
+    <script type="text/javascript">
+     //LOAD KNOB VALUES
+  function values(val) {
+          //console.log('Knob HValue:',val);
+          hValue = val;
+          //console.log('TEST',hVal);
+              };
 
-    <script type="text/javascript" src="../static/js/ochart.js"></script>
+  // Load the Visualization API and the piechart package.
+      google.load('visualization', '1', {'packages':['corechart']});
+        
+      // Set a callback to run when the Google Visualization API is loaded.
+
+      function drawChart(val) {
+            //GETING AUTHOR INFO FROM URL
+         var urlPath = window.location.pathname.split( '/' );
+           var pathAuthor = urlPath[urlPath.length - 3];
+           var pathInst = urlPath[urlPath.length - 2];
+           var pathName = urlPath[urlPath.length - 1];
+        var pathKey = pathAuthor + '/' + pathInst + '/' + pathName;
+            
+            console.log('URL Path KEY', pathKey);
+            //http://localhost:18080/instruments/nedwards/Oscilloscope/Amp.json
+            var base_url = 'https://gradientone-dev.appspot.com/instruments/';
+            var json_url = base_url + pathKey +'.json';
+            console.log('JSON_URL:',json_url);
+
+            var jsonData = $.ajax({
+               url: json_url,            
+               dataType: 'json',
+            }).done(function (results) {
+               var data = new google.visualization.DataTable();
+               data.addColumn('number', 'Time');
+               data.addColumn('number', 'Ch1');
+               data.addColumn('number', 'Ch2');
+                 //GETING DATA
+               $.each(results['data'], function (i, row) {
+                 data.addRow([
+                   parseFloat(row.TIME),
+                   parseFloat(row.CH1),
+                   parseFloat(row.CH2), 
+                 ]);
+               });
+
+               //GET OBJECT 
+               //var config = results[''];
+               //var mesRes = results['measurement'];
+               //console.log('results:',data);
+               /*var index;
+                for (index = 0; index < config.length; ++index) {
+                    console.log(config[index]);
+                };*/
+
+                
+                //var arrayLength = mesRes.length;
+              
+                //CALL CONFIG SETTINGS
+                //document.getElementById("testPlanCompany").innerHTML=config[0].company_nickname + " Test Results";
+                //document.getElementById("testPlanName").innerHTML=config[0].testplan_name;
+
+               //DRAW CHART
+               var chart = new google.visualization.LineChart($('#ochart').get(0));      
+               chart.draw(data, options);
+              //setTimeout(doPoll,60000);
+            });           
+         
+
+            var hVal = val;
+  //console.log('Knob HValue TEST:',hVal);
+            var options = {
+              title: '',
+              titleTextStyle: {color:'black', fontSize: 15},
+              legend: 'none',
+              
+              hAxis: {title: '', baselineColor:'black', gridlines:{color: 'gray', count: 5}, minorGridlines:{color: 'gray', count: 1}, viewWindow:{max:hVal, min:0}},
+
+              vAxis: {title: 'Amp', baselineColor:'black', gridlines:{color: 'gray', count: 5}, minorGridlines:{color: 'gray', count: 1}, viewWindow:{max:10, min:-10}},
+
+              backgroundColor: {fill: 'none', stroke: 'silver', strokeWidth: 3,},  
+              colors: ['rgb(129,255,212)'], 
+              chartArea:{backgroundColor:'',left:50,top:50,width:425,height:300},
+              lineWidth: 2, 
+              explorer: { actions: ['dragToZoom', 'rightClickToReset'] },  
+              crosshair: {trigger: 'both', selected:{opacity: 0.8}, focused:{opacity:0.8}},   
+            };
+          };
+           google.setOnLoadCallback(drawChart);
+    </script>
     <script type="text/javascript">$('#collapseOne').collapse("hide");</script><!--stops accordion from loading open -->
     <script type="text/javascript">$('#collapseTwo').collapse("hide");</script>
 </body>
