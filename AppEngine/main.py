@@ -275,27 +275,34 @@ class OscopePage(InstrumentDataHandler):
         self.write.out(data)
 
 class InstrumentsPage(InstrumentDataHandler):
-    def get(self, instruments=""):
+    def get(self, author="", instrument_type="", instrument_name=""):
         #if not self.authcheck():
         #    return
+        print "inst handler"
         user = users.get_current_user()
         if user:
             active_user = user.email()
             active_user= active_user.split('@')
             author = active_user[0]
-        print instruments
-        instruments_name = instruments.split('.')
-        print instruments_name
+        
+        instrument_name = instrument_name.split('.')
+        print instrument_name
 
-        if instruments_name[-1] == 'json':
-            rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE author =:1", author)
+        if instrument_name[-1] == 'json':
+            rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE author =:1 and instrument_type =:2 and instrument_name =:3", author, instrument_type, instrument_name[0])
             out = json.dumps([r.to_dict() for r in rows])
             self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
             self.response.headers['Access-Control-Allow-Origin'] = '*'
             self.response.write(out)
 
+        elif author and instrument_type and instrument_name:
+            rows_inst_details = db.GqlQuery("SELECT * FROM ConfigDB WHERE author =:1 and instrument_type =:2 and instrument_name =:3", author, instrument_type, instrument_name[0])
+            self.render('instrument_detail.html')
+
+
         else:
-            self.render('instruments.html')
+            rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE author =:1", author)
+            self.render('instruments.html', rows = rows)
 
 
 
@@ -825,7 +832,8 @@ app = webapp2.WSGIApplication([
     ('/adduser', AdduserPage),
     ('/listusers', ListUsersPage),
     ('/instruments', InstrumentsPage),
-    ('/instruments/([a-zA-Z0-9-]+.json)', InstrumentsPage),
+    ('/instruments/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', InstrumentsPage),
+    ('/instruments/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+.json)', InstrumentsPage),
     ('/configinput', ConfigInputPage),
     ('/vnaconfiginput', VNAConfigInputPage),
     ('/configoutput/([a-zA-Z0-9-]+)', ConfigOutputPage),
