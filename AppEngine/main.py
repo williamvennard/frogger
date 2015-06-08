@@ -275,7 +275,7 @@ class OscopePage(InstrumentDataHandler):
         self.write.out(data)
 
 class InstrumentsPage(InstrumentDataHandler):
-    def get(self):
+    def get(self, instruments=""):
         #if not self.authcheck():
         #    return
         user = users.get_current_user()
@@ -283,14 +283,20 @@ class InstrumentsPage(InstrumentDataHandler):
             active_user = user.email()
             active_user= active_user.split('@')
             author = active_user[0]
-        rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE author =:1", author)
-        
-        out = json.dumps([r.to_dict() for r in rows])
-        print out
+        print instruments
+        instruments_name = instruments.split('.')
+        print instruments_name
 
-        self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
-        self.response.headers['Access-Control-Allow-Origin'] = '*'
-        self.response.write(out)
+        if instruments_name[-1] == 'json':
+            rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE author =:1", author)
+            out = json.dumps([r.to_dict() for r in rows])
+            self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
+            self.response.headers['Access-Control-Allow-Origin'] = '*'
+            self.response.write(out)
+
+        else:
+            self.render('instruments.html')
+
 
 
 
@@ -818,7 +824,8 @@ app = webapp2.WSGIApplication([
     ('/data/([a-zA-Z0-9-]+)', DataPage),
     ('/adduser', AdduserPage),
     ('/listusers', ListUsersPage),
-    ('/instruments.json', InstrumentsPage),
+    ('/instruments', InstrumentsPage),
+    ('/instruments/([a-zA-Z0-9-]+.json)', InstrumentsPage),
     ('/configinput', ConfigInputPage),
     ('/vnaconfiginput', VNAConfigInputPage),
     ('/configoutput/([a-zA-Z0-9-]+)', ConfigOutputPage),
