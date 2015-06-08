@@ -52,6 +52,7 @@ class InstrumentDataHandler(webapp2.RequestHandler):
 
     def authcheck(self, check_admin=False):
         user = users.get_current_user()
+        print user
         if user:
             if user.email() in authorized_users:
                 return True
@@ -76,12 +77,24 @@ class InstrumentDataHandler(webapp2.RequestHandler):
             self.redirect('/static/autherror.html')
         return authorized
 
+
+
+
+         
+
+
+
+
+class DictModel(db.Model):
+    def to_dict(self):
+       return dict([(p, unicode(getattr(self, p))) for p in self.properties()])
+
 def UserDB_key(name = 'default'):
     return db.Key.from_path('emails', name)
 
-class UserDB(db.Model):
+class UserDB(DictModel):
     email = db.StringProperty(required = True)
-    companyname = db.StringProperty(required = True)
+    company_nickname = db.StringProperty(required = True)
     admin = db.BooleanProperty(required = False)
 
 def DemoDB_key(name = 'default'):
@@ -95,9 +108,7 @@ class DemoDB(db.Model):
 def input_key(name = 'default'):
     return db.Key.from_path('inputs', name)
 
-class DictModel(db.Model):
-    def to_dict(self):
-       return dict([(p, unicode(getattr(self, p))) for p in self.properties()])
+
 
 class TestDB(DictModel):
     testplan_name = db.StringProperty(required = True)
@@ -120,6 +131,7 @@ def TestDB_key(name = 'default'):
 class ConfigDB(DictModel):
     company_nickname = db.StringProperty(required = True)
     hardware_name = db.StringProperty(required = True)
+    author = db.StringProperty(required = True)
     instrument_type = db.StringProperty(required = True)
     instrument_name = db.StringProperty(required = False)
     source = db.StringProperty(required = False)
@@ -264,9 +276,23 @@ class OscopePage(InstrumentDataHandler):
 
 class InstrumentsPage(InstrumentDataHandler):
     def get(self):
-        if not self.authcheck():
-            return
-        self.render('instruments.html')
+        #if not self.authcheck():
+        #    return
+        user = users.get_current_user()
+        if user:
+            active_user = user.email()
+            active_user= active_user.split('@')
+            author = active_user[0]
+        rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE author =:1", author)
+        
+        out = json.dumps([r.to_dict() for r in rows])
+        print out
+
+        self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
+        self.response.headers['Access-Control-Allow-Origin'] = '*'
+        self.response.write(out)
+
+
 
 def root_mean_squared(test_data, test):
     "RMS measurement function that relies upon queries from test config and instrument data"
@@ -316,11 +342,16 @@ class TestResultsPage(InstrumentDataHandler):
     "present to the user all of the completed tests, with a path that supports specific test entries"
 
     def get(self, testplan_name=""):
-        if not self.authcheck():
-            return
+        #if not self.authcheck():
+        #    return
+        user = users.get_current_user()
+        if user:
+            active_user = user.email()
+            active_user= active_user.split('@')
+            author = active_user[0]
+
         testplan_name_check = testplan_name.split('.')
         testplan_name = testplan_name_check[0]
-
 
         if testplan_name_check[-1] == 'json':
             key = 'oscope' + testplan_name
@@ -407,8 +438,8 @@ class CommunityTestsPage(InstrumentDataHandler):
 
 class TestConfigInputPage(InstrumentDataHandler):
     def get(self):
-        if not self.authcheck():
-            return
+        #if not self.authcheck():
+        #    return
         self.render('testconfig.html')
 
     def post(self):
@@ -496,9 +527,17 @@ class TestConfigOutputPage(InstrumentDataHandler):
 
 class ConfigInputPage(InstrumentDataHandler):
     def get(self):
+        #if not self.authcheck():
+         #   return
         self.render('configinput.html')
 
     def post(self):
+        user = users.get_current_user()
+        
+        if user:
+            active_user = user.email()
+
+
         company_nickname = self.request.get('company_nickname')
         hardware_name = self.request.get('hardware_name')
         instrument_type = self.request.get('instrument_type')
@@ -510,26 +549,36 @@ class ConfigInputPage(InstrumentDataHandler):
         vertical_volts_per_divsision = float(self.request.get('vertical_volts_per_divsision'))
         trigger_type = self.request.get('trigger_type')
         
+        active_user= active_user.split('@')
+        author = active_user[0]
 
 
         c = ConfigDB(parent = ConfigDB_key(instrument_name), company_nickname = company_nickname, 
             hardware_name = hardware_name, instrument_type = instrument_type, instrument_name = instrument_name, 
-            source = source, horizontal_position = horizontal_position, 
+            source = source, horizontal_position = horizontal_position, author = author,
             horizontal_seconds_per_div = horizontal_seconds_per_div, vertical_position = vertical_position, 
             vertical_volts_per_division = vertical_volts_per_divsision, trigger_type= trigger_type)
 
         c.put() 
-        key = 'instrument_name = ', instrument_name
+        key = 'author & instrument_type & instrument_name = ', author + instrument_type + instrument_name
         print key
         memcache.delete(key)
-        self.redirect('/configoutput/'+instrument_name)
-        
+        redirect_url = author + '/' + instrument_type + '/' + instrument_name
+        self.redirect('/configoutput/' + redirect_url)
 
 class VNAConfigInputPage(InstrumentDataHandler):
     def get(self):
+        #if not self.authcheck():
+        #    return
         self.render('vnaconfiginput.html')
 
     def post(self):
+        user = users.get_current_user()
+        
+        if user:
+            active_user = user.email()
+            active_user= active_user.split('@')
+            author = active_user[0]
         company_nickname = self.request.get('company_nickname')
         hardware_name = self.request.get('hardware_name')
         instrument_type = self.request.get('instrument_type')
@@ -542,21 +591,22 @@ class VNAConfigInputPage(InstrumentDataHandler):
         power = float(self.request.get('power'))
 
 
-        c = ConfigDB(parent = ConfigDB_key(instrument_name), company_nickname = company_nickname, 
+
+        c = ConfigDB(parent = ConfigDB_key(instrument_name), company_nickname = company_nickname, author = author,
             hardware_name = hardware_name, instrument_type = instrument_type, instrument_name = instrument_name, 
             #frequency_center = frequency_center, frequency_span = frequency_span, 
             frequency_start = frequency_start, frequency_stop = frequency_stop, power = power)
         c.put() 
-        key = 'instrument_type & instrument_name = ', instrument_type + instrument_name
+        key = 'author & instrument_type & instrument_name = ', author + instrument_type + instrument_name
         print key
         memcache.delete(key)
-        redirect_url = instrument_type + '/' + instrument_name
+        redirect_url = author + '/' + instrument_type + '/' + instrument_name
         self.redirect('/configoutput/' + redirect_url)
         
    
 class ConfigOutputPage(InstrumentDataHandler):
-    def get(self,instrument_type="", instrument_name=""):
-        key = 'instrument_type & instrument_name = ', instrument_type + instrument_name
+    def get(self, author="", instrument_type="", instrument_name=""):
+        key = 'author & instrument_type & instrument_name = ', author + instrument_type + instrument_name
         configs = memcache.get(key)
         if configs is None :
             logging.error("DB Query")
@@ -570,8 +620,8 @@ class ConfigOutputPage(InstrumentDataHandler):
 
 class DataPage(InstrumentDataHandler):
     def get(self,name=""):
-        if not self.authcheck():
-            return  # redirect to login later?
+        #if not self.authcheck():
+        #    return  # redirect to login later?
         query = """SELECT * FROM Input
                    WHERE description = '%s'
                    ORDER BY frequency ASC;""" % name
@@ -581,15 +631,15 @@ class DataPage(InstrumentDataHandler):
 
 class InputPage(InstrumentDataHandler):
     def get(self):
-        if not self.authcheck():
-            return  # redirect to login later?
+        #if not self.authcheck():
+        #    return  # redirect to login later?
         self.render("front.html")
         print "you are in the get handler"
 
     def post(self):
 
-        if not self.authcheck():
-            return  # redirect to login later?
+        #if not self.authcheck():
+        #    return  # redirect to login later?
         #print "you are in the InputPage posthandler"
         description = self.request.get("description")
         #print "InputPage: post: description =", description
@@ -720,9 +770,9 @@ class OscopeData(InstrumentDataHandler):
     def post(self,name=""):
         "store data by intstrument name and time slice name"
         #print "OscopeData: post: name =",name
-        while True:
-            line = self.request.__file__.readline()
-            json.loads(line)
+        #while True:
+        #    line = self.request.__file__.readline()
+        #    json.loads(line)
 
         oscope_data = json.loads(self.request.body)
         #print oscope_data
@@ -757,6 +807,9 @@ class OscopeData(InstrumentDataHandler):
                          CH4=float(row['CH4']))
             r.put()
 
+
+
+
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/help', MainPage),
@@ -765,11 +818,11 @@ app = webapp2.WSGIApplication([
     ('/data/([a-zA-Z0-9-]+)', DataPage),
     ('/adduser', AdduserPage),
     ('/listusers', ListUsersPage),
-    ('/instruments', InstrumentsPage),
+    ('/instruments.json', InstrumentsPage),
     ('/configinput', ConfigInputPage),
     ('/vnaconfiginput', VNAConfigInputPage),
     ('/configoutput/([a-zA-Z0-9-]+)', ConfigOutputPage),
-    ('/configoutput/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', ConfigOutputPage),
+    ('/configoutput/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', ConfigOutputPage),
     ('/oscope.json', OscopePage),
     ('/testconfiginput', TestConfigInputPage),
     ('/testconfigoutput/([a-zA-Z0-9-]+)', TestConfigOutputPage),
