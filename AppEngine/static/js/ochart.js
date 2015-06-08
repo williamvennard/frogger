@@ -1,10 +1,5 @@
 
     //LOAD KNOB VALUES
-function values(val) {
-        //console.log('Knob HValue:',val);
-        hValue = val;
-        //console.log('TEST',hVal);
-            };
 
 // Load the Visualization API and the piechart package.
     google.load('visualization', '1', {'packages':['corechart']});
@@ -13,7 +8,7 @@ function values(val) {
     google.setOnLoadCallback(drawChart);
 
 
-    function drawChart(val) {
+    function drawChart(h, v) {
           //GETING AUTHOR INFO FROM URL
           /*var urlPath = window.location.pathname.split( '/' );
           var pathKey = urlPath[urlPath.length - 1];
@@ -67,8 +62,13 @@ function values(val) {
          
           //var hVal = {val};
           //hVal = eval(hVal);
-          var hVal = val;
-//console.log('Knob HValue TEST:',hVal);
+          var hVal = h;
+          var vVal = v;          
+          
+  console.log('Knob HValue TEST:',hVal);
+  console.log('Knob VValue TEST:',vVal);
+
+
           var options = {
             title: '',
             titleTextStyle: {color:'black', fontSize: 15},
@@ -76,7 +76,7 @@ function values(val) {
             
             hAxis: {title: '', baselineColor:'black', gridlines:{color: 'gray', count: 5}, minorGridlines:{color: 'gray', count: 1}, viewWindow:{max:hVal, min:0}},
 
-            vAxis: {title: 'Amp', baselineColor:'black', gridlines:{color: 'gray', count: 5}, minorGridlines:{color: 'gray', count: 1}, viewWindow:{max:10, min:-10}},
+            vAxis: {title: 'Amp', baselineColor:'black', gridlines:{color: 'gray', count: 5}, minorGridlines:{color: 'gray', count: 1}, viewWindow:{max:vVal, min:-vVal}},
 
             backgroundColor: {fill: 'none', stroke: 'silver', strokeWidth: 3,},  
             colors: ['rgb(129,255,212)'], 

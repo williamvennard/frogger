@@ -8,8 +8,6 @@
     <script src="../static/js/jquery-ui-1.11.4/jquery-ui.js"></script>
     <script src="../static/bootstrap/js/bootstrap.min.js"></script>    
     <script src="../static/js/addons/lodash.js"></script>  
-    <script src="../static/js/addons/knockout.min.js"></script>
-    <script src="../static/js/addons/gridstack.js"></script>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript" src="../static/js/chart1.js"></script>
     <script type="text/javascript" src="../static/js/chart2.js"></script>
@@ -17,8 +15,6 @@
     <link rel="stylesheet" type="text/css" href="../static/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../static/css/custom.css">
     <link rel="stylesheet" type="text/css" href="../static/css/hoverzoom.css">
-    <link rel="stylesheet" href="../static/css/gridstack.css"/>
-    <script type="text/javascript" src="../static/js/addons/Grid.js"></script>
     <script src="../static/js/addons/angular.min.js"></script>
     <script type="text/javascript" src="../static/js/addons/clickadd.js"></script>
     <link rel="stylesheet" type="text/css" href="../static/css/testConfig.css">
@@ -35,7 +31,7 @@
                     </div>
                     <div id="navbar">
                         <ul class="topmenu nav navbar-nav">
-                            <li><a class="currentPage" href="index.html" style="color: rgb(124,175,46);">CANVAS</a></li>
+                            <li><a href="index.html" style="color: rgb(124,175,46);">CANVAS</a></li>
                             <li class="dots glyphicon glyphicon-option-vertical"></li>
                             <li><a href="instruments.html">INSTRUMENTS</a></li>
                             <li class="dots glyphicon glyphicon-option-vertical"></li>
@@ -57,7 +53,7 @@
         </div>
         <div class="row">
             <div class="col-md-3" style="width: 180px; margin-top: 20px;">
-            <button id="newTestBtn" style="" class="btn btn-default">NEW TEST</button>
+            <button id="newTestBtn" class="btn btn-default">NEW TEST</button>
                 <div class="panel-group" id="accordion" style="width: 140px;">
                     <div class="panel panel-default">
                         <div class="panel-heading">
@@ -189,7 +185,7 @@
                 </div>
             </div>    
             <fieldset class="col-md-12" id="canvasBox" style="width: 40%;">
-                <span class="spacer"></span><legend class="text-uppercase" style="width: 110px;">Test Space</legend><span class="spacer"></span>
+                <span class="spacer"></span><legend class="text-uppercase" style="width: 118px;">Test Space</legend><span class="spacer"></span>
 <!--TEST PLAN CONFIGURATION-->
                 <div class="well well-sm" id="testPlanBox">
                   <h2 style="text-align:center; color:white;">Test Plan Configuration</h2>
@@ -389,7 +385,7 @@
                 </div>
             </fieldset>
             <fieldset class="col-md-12" id="resultsBox" style="width: 40%;">
-                    <span class="spacer"></span><legend class="text-uppercase" style="width: 130px;">Test Results</legend><span class="spacer"></span>   
+                    <span class="spacer"></span><legend class="text-uppercase" style="width: 140px;">Test Results</legend><span class="spacer"></span>   
 <!--TEST RESULTS-->              
                 <div class="well well-sm testResultsBox">
                     <h2 style="text-align:center; color:white; margin-bottom: 5px;">Test Results</h2>
@@ -416,7 +412,7 @@
             </fieldset>
         </div>
 <!--TEST REEL-->      
-        <fieldset id='testReelTitle'><legend style="text-align:center; width: 120px; color:white">Test Reel</legend></fieldset>
+        <fieldset id='reelTitle'><legend style="text-align:center; width: 120px; color:white">Test Reel</legend></fieldset>
         <div class="row">
             <div id="chart1" class="col-md-4 hoverzoom"></div>   
             <div id="chart2" class="col-md-4 hoverzoom"></div>               

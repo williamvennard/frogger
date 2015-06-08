@@ -28,25 +28,32 @@ html, body {
     font-style: normal; 
 }
 
-h1 {
+p {
+    font-family: 'NexaLight';
 }
 
-h2 {font-family: 'NexaLight';
+h1 {
+    font-family: 'NexaBold';
+}
+
+h2 {
+    font-family: 'NexaLight';
     font-weight: 100;
     margin-top: 10px;
 }
 
 h3 {
+    font-family: 'NexaLight';
     color: lightgray;
     font-weight: 100;
 }
 
 h4 {
-    font-weight: 100;
+    font-family: 'NexaLight';
 }
 
 h5 {
-    font-weight: 200;
+    font-family: 'NexaLight';
 }
 
 #topNavBar {
@@ -61,15 +68,12 @@ h5 {
 }
 
 .nav {
+    font-family: 'NexaLight';
+    letter-spacing: 1px;
     float: none;
     display: inline-block;
     vertical-align: top;
 }
-
-.currentPage {
-    background-color: ;
-}
-
 .canv {
     font-family: 'NexaBold';
     margin-bottom: 0px;
@@ -172,6 +176,7 @@ h5 {
 }
 
 legend {
+    font-family: 'NexaLight';
     font-size: 16px;
     letter-spacing: 2px;
     margin-bottom: 10px;
@@ -286,10 +291,12 @@ legend {
 }
 
 #newTestBtn {
+    font-family: 'NexaLight';
     color: white;
     font-weight: 100;
     letter-spacing: 2px;
-    margin-bottom: 10px;
+    padding: 4px 0 0 0 ;
+    margin:0 0 10px 0;
     width: 140px;
     height: 40px;
     border-style: solid;
@@ -299,7 +306,9 @@ legend {
     background-color: rgb(0,0,0);
 }
 
-#ReelTitle {
+#reelTitle {
+    margin: 0 20px 0 0;
+    text-transform: uppercase;
     border-top: 1px;
     border-right: 0px;
     border-left: 0px;
@@ -307,9 +316,6 @@ legend {
     padding-top: 0px;
     border-style: solid;
     border-color: white;
-    margin-right: 20px;
-    margin-bottom: 0px;
-    margin-top: 0px;
 }
 
 .testResultsBox {
@@ -320,6 +326,19 @@ legend {
     border-radius: 4px;
     background-color: rgb(33,33,33);
     /*background-image: radial-gradient(#FFFFFF, #C0C0C0);*/
+}
+.panel-heading {
+    padding: 5px 5px 5px 7px;
+}
+.panel-title {
+    font-size: 100%;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 0 0 0;
+}
+.panel-body{
+    letter-spacing: 1px;
+    font-family: 'NexaLight';
 }
 
 

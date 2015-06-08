@@ -3,15 +3,10 @@ button {
     width: 90px;
     height: 30px;
 }
-
 h3 {
     color: black;
 }
-
 .box {
-    display: inline-block;
-    vertical-align: right;
-    width: 850px;
     border-style: solid;
     border-radius: 5px;
     border-width: 2px;
@@ -19,17 +14,14 @@ h3 {
     background-color: lightgray;
     margin:10px;
 }
-
 .instname {
     text-align: center;
     color:black;
 }
-
 #buttons {
     width: 190px;
     margin: 0 auto;
 }
-
 #container {
     position: relative;
     top: 50%;
@@ -37,7 +29,6 @@ h3 {
     display: inline-block;
     max-width: 1300px;
 }
-
 #optionsBox {
     width: 250px;
     height: 400px;
@@ -45,35 +36,27 @@ h3 {
     background-color: #DFE0DD;
     border-radius: 10px;
     border: 1px solid;
-    margin-right: 10px;
     margin-top: 10px;
     margin-left: -50px;
     margin-bottom: 10px;
 }
-
 #optionsBoxTitle {
-    width: 53px;
+    width: 93px;
 }
-
-#ochart{
-    height: 400px;
-    width:550px;
+#sachart{
     display: inline-block;
-    vertical-align: left;
     background-image: radial-gradient(#00C5B6, #00A984);
     border-radius: 8px;
     border: 5px inset #f4f4f4;
     -webkit-box-shadow: inset 6px 5px 55px 1px rgba(0,0,0,0.8);
     -moz-box-shadow: inset 6px 5px 55px 1px rgba(0,0,0,0.8);
     box-shadow: inset 6px 5px 55px 1px rgba(0,0,0,0.8);
-    margin: 10px 10px 10px 10px;
+    margin: 0 20px 20px 0;
 }
-
 .boxTitle {
     margin-left: 60px;
     background-color: #DFE0DD;
 }
-
 .boxTitle h2 {
     margin-left: 10px;
 }
@@ -82,31 +65,15 @@ h3 {
 .knob-sy { background-image: url(""); }
 
 .knobs { 
-    margin: 10px;
+    text-align: center;  
+    margin: 20px;
 }
-
-#knob1Label{
-    text-align: center;    
-}
-
-#knob2Label{
-    text-align: center;   
-}
-
 #knob1 {
-    margin: 0 0 0 10px;
-    float: left;
-    width: 50px;
-    height: 50px;
+    height: 75px;
 }
-
 #knob2 {
-    margin: 0 10px 0 0;
-    float: right;
-    width: 50px;
-    height: 50px;
+    height: 75px;
 }
-
 .knob-dx { background-image: url(""); }
 .knob-dy { background-image: url(""); }
 
@@ -121,7 +88,6 @@ h3 {
         top: 0;
         transform: none;
     }
-
     #optionsBox {
         float: none;
         width: 90%;
@@ -131,7 +97,6 @@ h3 {
         margin-right:0px;
         margin-bottom: 20px;
     }
-
     .knobs {
         display: inline-block;
         margin-top: 0;
@@ -139,31 +104,27 @@ h3 {
         vertical-align: top;
         margin-top: -14px;
     }
-
     #buttons {
         margin-right: 50px;
         margin-left:20px;
         display: inline-block;
     }
-
     #knob1 {
         height:75px;
         display: inline-block;
         text-align: right;
-    }
-
+    } 
     #knob2 {
         height:75px;
         display: inline-block;
         text-align: right;
     }
 }
-@media (max-width: 900px) {
+@media (max-width: 740px) {
     #container {
         top: 0;
         transform: none;
     }
-
     #optionsBox {
         float: none;
         width: 280px;
@@ -173,7 +134,6 @@ h3 {
         margin-right:0px;
         margin-bottom: 20px;
     }
-
     .knobs {
         display: none;       
     }  
