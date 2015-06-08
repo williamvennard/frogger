@@ -54,10 +54,11 @@
             title: 'MMIC Amplifier @ -45degC',
             titleTextStyle: {color:'black', fontSize: 15},
             legend: {alignment:'center'},
-            hAxis: {title: 'Frequency'},
-            vAxis: {title: 'dB'},
-            backgroundColor: {gradientfill: 'black', stroke: 'silver', strokeWidth: 3,},  
-            colors: ['rgb(72, 121, 162)'],          
+            hAxis: {title: 'Frequency', baselineColor:'gray', gridlines:{color: 'gray', count: 5}, minorGridlines:{color: 'lightgray', count: 1}, viewWindowMode:'pretty'},
+            vAxis: {title: 'dB', baselineColor:'gray', gridlines:{color: 'gray', count: 5}, minorGridlines:{color: 'lightgray', count: 1}, viewWindowMode:'pretty'},
+            backgroundColor: {fill: 'none', stroke: 'silver', strokeWidth: 0,},  
+            colors: ['rgb(255, 102, 255)'], 
+            lineWidth: 2,         
           };
 
 
