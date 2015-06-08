@@ -228,6 +228,13 @@ legend {
     letter-spacing: 2px;
 }
 
+#myInstListHeader {
+    text-align: center;
+    font-family: 'NexaLight';
+    margin: 0 0 5px 5px;
+
+}
+
 .addNewBtn {
     float: right;
     position: relative;

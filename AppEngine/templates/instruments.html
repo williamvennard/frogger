@@ -8,7 +8,7 @@
     <script src="../static/bootstrap/js/bootstrap.min.js"></script>    
     <script src="../static/js/addons/lodash.js"></script>  
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <script type="text/javascript" src="../static/js/ochart.js"></script>
+
     <script type="text/javascript" src="../static/js/sachart.js"></script>
     <script type="text/javascript" src="../static/js/chart3.js"></script>
     <link rel="stylesheet" type="text/css" href="../static/bootstrap/css/bootstrap.min.css">
@@ -18,6 +18,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.13/angular.min.js"></script>
     <script type="text/javascript" src="../static/js/addons/clickadd.js"></script>
     <script type="text/javascript" src="../static/js/addons/jquery.knob.min.js"></script>
+    <script type="text/javascript" src="../static/js/instConfig.js"></script>
     <style type="text/css"></style>
 
 
@@ -56,6 +57,25 @@
                     <ul class="nav nav-pills nav-stacked instnav">
                         <li class="side-menu" role="menu">
                           <h4 id="sideHeader">Instruments</h4>
+                          <h6 id="myInstListHeader">My Instruments</h6>
+                          <!--MY INSTRUMENT LIST TEMPLATE-->
+                          <form method="post" id="resultsForm">
+                            <table>
+                              <tr>
+                              </tr>   
+                              {% block import %}
+
+                              {% for t in tests %}
+
+                              {% for r in rows[0:1] %}
+                
+                                <a href ="testresults/{{t.testplan_name}}">{{ t.testplan_name }}</a><span>{{ t.author }}<span>{{r.Start_Date_Time}}
+                                <br><br>   
+                                {% endfor %}
+                              {% endfor %}
+                              {% endblock %} 
+                            </table>
+                          </form>
                           <ul  id="isntrumentList" style="">
                                   <li data-toggle="collapse" data-parent="#accordion" href="#collapseOne">O-Scope</li>
                                     <button class="btn btn-default btn-xs addNewBtn">
@@ -168,7 +188,7 @@
     });          
     </script>
 
-    <script type="text/javascript" src="js/ochart.js"></script>
+    <script type="text/javascript" src="../static/js/ochart.js"></script>
     <script type="text/javascript">$('#collapseOne').collapse("hide");</script><!--stops accordion from loading open -->
     <script type="text/javascript">$('#collapseTwo').collapse("hide");</script>
 </body>
