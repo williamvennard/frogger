@@ -290,10 +290,16 @@ class InstrumentsPage(InstrumentDataHandler):
 
         if instrument_name[-1] == 'json':
             rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE author =:1 and instrument_type =:2 and instrument_name =:3", author, instrument_type, instrument_name[0])
-            out = json.dumps([r.to_dict() for r in rows])
+            inst_config = [r.to_dict() for r in rows]
+            rows = db.GqlQuery("SELECT * FROM OscopeDB WHERE name ='default-scope' ORDER BY TIME ASC")
+            default_data = [r.to_dict() for r in rows]
+            inst_default = {"data":default_data, "inst_config":inst_config}
+
             self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
             self.response.headers['Access-Control-Allow-Origin'] = '*'
-            self.response.write(out)
+            self.response.write(json.dumps(inst_default))
+
+
 
         elif author and instrument_type and instrument_name:
             rows_inst_details = db.GqlQuery("SELECT * FROM ConfigDB WHERE author =:1 and instrument_type =:2 and instrument_name =:3", author, instrument_type, instrument_name[0])
@@ -303,6 +309,11 @@ class InstrumentsPage(InstrumentDataHandler):
         else:
             rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE author =:1", author)
             self.render('instruments.html', rows = rows)
+
+     
+
+ 
+
 
 
 
