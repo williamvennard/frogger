@@ -14,6 +14,10 @@ function values(val) {
 
 
     function drawChart(val) {
+          //GETING AUTHOR INFO FROM URL
+          /*var urlPath = window.location.pathname.split( '/' );
+          var pathKey = urlPath[urlPath.length - 1];
+          console.log(pathKey);*/
       
         var jsonData = {
           
@@ -64,7 +68,7 @@ function values(val) {
           //var hVal = {val};
           //hVal = eval(hVal);
           var hVal = val;
-console.log('Knob HValue TEST:',hVal);
+//console.log('Knob HValue TEST:',hVal);
           var options = {
             title: '',
             titleTextStyle: {color:'black', fontSize: 15},
