@@ -727,9 +727,11 @@ class VNAData(InstrumentDataHandler):
         print "the total time the jsonloads took is %f seconds" % total_json_time
         vna_data = vna_content['data']
         vna_options = vna_content['options']
+        print vna_data
         vna_header = vna_content['header']
         vna_config = vna_content['config']
         keys = list(vna_data.keys())
+        print keys
         dbput_start_time = time.time() 
         to_save = []
         for k in keys[:50]:
@@ -767,8 +769,8 @@ class OscopeData(InstrumentDataHandler):
         "retrieve Oscilloscope data by intstrument name and time slice name"
         if not self.authcheck():
             return
-        print "OscopeData: get: name =",name
-        print "OscopeData: get: slicename =",slicename
+        #print "OscopeData: get: name =",name
+        #print "OscopeData: get: slicename =",slicename
         key = 'oscope' + name + slicename
         rows = memcache.get(key)
         if rows is None:
@@ -791,37 +793,43 @@ class OscopeData(InstrumentDataHandler):
         self.response.headers['Access-Control-Allow-Origin'] = '*'
         self.response.write(json.dumps([r.to_dict() for r in rows]))
 
-    def post(self,name=""):
+    def post(self,name="",slicename=""):
         "store data by intstrument name and time slice name"
+        
+        key = 'oscope' + name + slicename
+        print key
         #print "OscopeData: post: name =",name
         #while True:
         #    line = self.request.__file__.readline()
         #    json.loads(line)
 
-        oscope_data = json.loads(self.request.body)
+        oscope_content = json.loads(self.request.body)
         #print oscope_data
         #print "oscope_data['slicename']=",oscope_data['slicename']
         #print "oscope_data['config']=",oscope_data['config']
+        oscope_data = oscope_content['data']
+        #print oscope_data
 
         def getKey(row):
             return float(row['TIME'])
-        sorted_data = sorted(oscope_data['data'], key=getKey)
-        print "post:sorted_data =",sorted_data
+        sorted_data = sorted(oscope_content['data'], key=getKey)
+        #print "post:sorted_data =",sorted_data
         t = time.time()
 
         sdt = datetime.datetime.fromtimestamp(t + float(sorted_data[0]['TIME']))
         edt = datetime.datetime.fromtimestamp(t + float(sorted_data[-1]['TIME']))
         #s = OscopeDB(parent = OscopeDB_key(name), name = name, Start_Date_Time = sdt, End_Date_Time = edt)
         #s.put()
-        print sdt
-        print edt
-        for row in sorted_data:
+        test = True
+        if test == True:
+            dbput_start_time = time.time() 
+            to_save = []
+            for row in sorted_data:
             #dt = datetime.datetime.fromtimestamp(t + float(row['TIME']))
-            modified_time = 500.00 + float(row['TIME'])
-            #print modified_time
-            r = OscopeDB(parent = OscopeDB_key(name), name=name,
-                         slicename=oscope_data['slicename'],
-                         config=str(oscope_data['config']),
+                modified_time = 500.00 + float(row['TIME'])
+                r = OscopeDB(parent = OscopeDB_key(name), name=name,
+                         slicename=oscope_content['slicename'],
+                         config=str(oscope_content['config']),
                          Start_Date_Time = sdt,
                          End_Date_Time = edt,
                          TIME=modified_time,
@@ -829,7 +837,36 @@ class OscopeData(InstrumentDataHandler):
                          CH2=float(row['CH2']),
                          CH3=float(row['CH3']),
                          CH4=float(row['CH4']))
-            r.put()
+
+                to_save.append(r) 
+                memcache.set(key, r)
+            db.put(to_save)
+            end_time = time.time()  
+            total_db_time = end_time - dbput_start_time
+            print "the total time the db took is %f seconds" % total_db_time
+
+        slowtest = False
+        if slowtest == True:
+            dbput_start_time = time.time() 
+            for row in sorted_data:
+            #    #dt = datetime.datetime.fromtimestamp(t + float(row['TIME']))
+                modified_time = 500.00 + float(row['TIME'])
+                #print modified_time
+                r = OscopeDB(parent = OscopeDB_key(name), name=name,
+                             slicename=oscope_content['slicename'],
+                             config=str(oscope_content['config']),
+                             Start_Date_Time = sdt,
+                             End_Date_Time = edt,
+                             TIME=modified_time,
+                             CH1=float(row['CH1']),
+                             CH2=float(row['CH2']),
+                             CH3=float(row['CH3']),
+                             CH4=float(row['CH4']))
+                r.put()
+            end_time = time.time()  
+            total_db_time = end_time - dbput_start_time
+            print "the total time the db took is %f seconds" % total_db_time
+
 
 
 
