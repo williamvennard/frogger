@@ -799,7 +799,7 @@ class OscopeData(InstrumentDataHandler):
 
     def post(self,name="",slicename=""):
         "store data by intstrument name and time slice name"
-        db.delete(OscopeDB.all(keys_only=True))
+        
         key = 'oscopedata' + name + slicename
         print key
         #print "OscopeData: post: name =",name
