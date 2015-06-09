@@ -22,6 +22,7 @@ from google.appengine.api import users
 from google.appengine.ext import db
 from time import gmtime, strftime
 from collections import OrderedDict
+#from rest_api_framework.pagination import Pagination
 
 authorized_users = ['charlie@gradientone.com',
                     'nedwards@gradientone.com',
@@ -149,7 +150,7 @@ class ConfigDB(DictModel):
 def ConfigDB_key(name = 'default'):
     return db.Key.from_path('company_nickname', name)
 
-def OscopeDB_key(name):
+def OscopeDB_key(name = 'default'):
     return db.Key.from_path('oscope', name)
 
 class OscopeDB(DictModel):
@@ -771,32 +772,35 @@ class OscopeData(InstrumentDataHandler):
             return
         #print "OscopeData: get: name =",name
         #print "OscopeData: get: slicename =",slicename
-        key = 'oscope' + name + slicename
+        key = 'oscopedata' + name + slicename
+        print key
+        get_start_time = time.time() 
         rows = memcache.get(key)
-        if rows is None:
-            logging.error("OscopeData:get: query")
-            query = """SELECT * FROM OscopeDB
-                         WHERE name = '%(name)s'
-                         AND slicename = '%(slicename)s'
-                         ORDER BY TIME ASC;
-                    """  % {'name':name,'slicename':slicename}
-            logging.error("OscopeData:get: query")
-            rows = db.GqlQuery(query)
-            memcache.set(key, rows)
+        
 
-        print [r.to_dict() for r in rows]
-
-        #config_query = db.GqlQuery("SELECT * FROM ConfigDB")
-        #q = db.Query(ConfigDB)
-        #configs = ConfigDB.all()
-        self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
-        self.response.headers['Access-Control-Allow-Origin'] = '*'
-        self.response.write(json.dumps([r.to_dict() for r in rows]))
+        pagetest = True
+        " to easily block out code for testing purposes"
+        if pagetest == True:    
+            if rows is None:
+                query = """SELECT * FROM OscopeDB
+                             WHERE name = '%(name)s'
+                             AND slicename = '%(slicename)s'
+                             ORDER BY TIME ASC;
+                        """  % {'name':name,'slicename':slicename}
+                logging.error("OscopeData:get: query")
+                rows = db.GqlQuery(query)
+                memcache.set(key, rows)
+            self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
+            self.response.headers['Access-Control-Allow-Origin'] = '*'
+            self.response.write(json.dumps([r.to_dict() for r in rows]))
+            end_time = time.time() 
+            total_get_time = end_time - get_start_time
+            print "the total time the GET took is %f seconds" % total_get_time
 
     def post(self,name="",slicename=""):
         "store data by intstrument name and time slice name"
-        
-        key = 'oscope' + name + slicename
+        db.delete(OscopeDB.all(keys_only=True))
+        key = 'oscopedata' + name + slicename
         print key
         #print "OscopeData: post: name =",name
         #while True:
@@ -822,7 +826,9 @@ class OscopeData(InstrumentDataHandler):
         #s.put()
         test = True
         if test == True:
+            " to easily block out code for testing purposes"
             dbput_start_time = time.time() 
+            print dbput_start_time
             to_save = []
             for row in sorted_data:
             #dt = datetime.datetime.fromtimestamp(t + float(row['TIME']))
@@ -839,14 +845,20 @@ class OscopeData(InstrumentDataHandler):
                          CH4=float(row['CH4']))
 
                 to_save.append(r) 
-                memcache.set(key, r)
+            rows = to_save
+            print [r.to_dict() for r in rows]
+            memcache.set(key, r)
+            memcache_finsih = time.time()
             db.put(to_save)
             end_time = time.time()  
             total_db_time = end_time - dbput_start_time
+            total_memcache_time = memcache_finsih - dbput_start_time
             print "the total time the db took is %f seconds" % total_db_time
+            print "the total time the handler took to store in memcache is %f seconds" % total_memcache_time
 
         slowtest = False
         if slowtest == True:
+            " to easily block out code for testing purposes"
             dbput_start_time = time.time() 
             for row in sorted_data:
             #    #dt = datetime.datetime.fromtimestamp(t + float(row['TIME']))
