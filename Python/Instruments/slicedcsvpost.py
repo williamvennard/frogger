@@ -1,7 +1,8 @@
 """
 This is the "slicedcsvpost" script.
 
-It opens a file, slices the desired # of rows to transmit, then uses the grouper function to 'chunk' the slice into amounts for a loop of HTTP POST.
+It opens a file, slices the desired # of rows to transmit, then uses the
+grouper function to 'chunk' the slice into amounts for a loop of HTTP POST.
 """
 import csv
 import itertools
@@ -22,7 +23,6 @@ def grouper(iterable, n, fillvalue=None):
 out = grouper(f, sample_chunk, 0)
 values = list(out)
 keys = ['TIME', 'CH1', 'CH2', 'CH3', 'CH4']
-
 for value in values:
     new = {}
     for item in value:
