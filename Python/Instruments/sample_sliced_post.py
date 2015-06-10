@@ -23,15 +23,13 @@ def rows_from_file(fname):
     return [row for row in reader]
 
 def post_rows(hostname, dataname, instrument, config, slicename, datarows):
-    window = {'config':config,'slicename':'18to100','data':datarows}
+    window = {'config':config,'slicename':slicename,'data':datarows}
     out = json.dumps(window)
-    print "post_rows: hostname=",hostname
     if hostname.find('localhost') < 0:
         url = "https://%(hostname)s/%(dataname)s/%(instrument)s" % locals()
     else:
-        print "post_rows: use http for local testing"
         url = "http://%(hostname)s/%(dataname)s/%(instrument)s" % locals()
-    print "post_rows: url=",url
+        print "post_rows: use http for local testing. url=",url
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
     r = requests.post(url, data=out, headers=headers)
     print "r.reason=%s,r.status=%s" % (r.reason,r.status_code)
@@ -59,15 +57,13 @@ datastart = 17 # need better way to figure this out later
 config = str(datarows[:datastart])
 config = config[:450]  # todo: need way to compress config
 datarows = sorted(datarows[datastart:], key=getKey)
-datarows = datarows[:1000] # for testing.
+datarows = datarows[:1000] # for testing. don't post the whole thing, yet.
 howmany = len(datarows)
-print "howmany=",howmany
 chunksize = int(0.01 * howmany)
 if chunksize < 10:
     chunksize = howmany  # just take them all in one chunk
 column_names = ['TIME', 'CH1', 'CH2', 'CH3', 'CH4']
 for chunk in chunks(datarows, chunksize):
-    #print chunk 
     first = float(chunk[0]['TIME'])
     last = float(chunk[-1]['TIME'])
     slicename = keys_to_slicename(first,last)
