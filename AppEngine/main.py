@@ -158,8 +158,8 @@ class OscopeDB(DictModel):
     config = db.StringProperty(required = True)
     slicename = db.StringProperty(required = True)
     TIME = db.FloatProperty(required = True)
-    Start_Date_Time = db.DateTimeProperty(required = True)
-    End_Date_Time = db.DateTimeProperty(required = True)
+    Start_Date_Time = db.DateTimeProperty(required = False)
+    End_Date_Time = db.DateTimeProperty(required = False)
     CH1 = db.FloatProperty(required = True)
     CH2 = db.FloatProperty(required = True)
     CH3 = db.FloatProperty(required = True)
@@ -752,7 +752,7 @@ class VNAData(InstrumentDataHandler):
                     options = str(vna_options).strip('[]'),)
 
                 to_save.append(r) 
-
+                print to_save
         db.put(to_save)
         
         end_time = time.time()  
@@ -801,60 +801,42 @@ class OscopeData(InstrumentDataHandler):
         "store data by intstrument name and time slice name"
         
         key = 'oscopedata' + name + slicename
-        print key
-        #print "OscopeData: post: name =",name
-        #while True:
-        #    line = self.request.__file__.readline()
-        #    json.loads(line)
-
         oscope_content = json.loads(self.request.body)
-        #print oscope_data
-        #print "oscope_data['slicename']=",oscope_data['slicename']
-        #print "oscope_data['config']=",oscope_data['config']
         oscope_data = oscope_content['data']
-        #print oscope_data
 
-        def getKey(row):
-            return float(row['TIME'])
-        sorted_data = sorted(oscope_content['data'], key=getKey)
-        #print "post:sorted_data =",sorted_data
         t = time.time()
+        keys = list(oscope_data.keys())
 
-        sdt = datetime.datetime.fromtimestamp(t + float(sorted_data[0]['TIME']))
-        edt = datetime.datetime.fromtimestamp(t + float(sorted_data[-1]['TIME']))
-        #s = OscopeDB(parent = OscopeDB_key(name), name = name, Start_Date_Time = sdt, End_Date_Time = edt)
-        #s.put()
         test = True
         if test == True:
             " to easily block out code for testing purposes"
             dbput_start_time = time.time() 
-            print dbput_start_time
+            #print dbput_start_time
             to_save = []
-            for row in sorted_data:
-            #dt = datetime.datetime.fromtimestamp(t + float(row['TIME']))
-                modified_time = 500.00 + float(row['TIME'])
+            for k in keys:
                 r = OscopeDB(parent = OscopeDB_key(name), name=name,
                          slicename=oscope_content['slicename'],
                          config=str(oscope_content['config']),
-                         Start_Date_Time = sdt,
-                         End_Date_Time = edt,
-                         TIME=modified_time,
-                         CH1=float(row['CH1']),
-                         CH2=float(row['CH2']),
-                         CH3=float(row['CH3']),
-                         CH4=float(row['CH4']))
+                         #Start_Date_Time = sdt,
+                         #End_Date_Time = edt,
+                         TIME=float(oscope_data[k]['TIME']),
+                         CH1=float(oscope_data[k]['CH1']),
+                         CH2=float(oscope_data[k]['CH2']),
+                         CH3=float(oscope_data[k]['CH3']),
+                         CH4=float(oscope_data[k]['CH4']))
+
 
                 to_save.append(r) 
             rows = to_save
-            print [r.to_dict() for r in rows]
+            #print [r.to_dict() for r in rows]
             memcache.set(key, r)
-            memcache_finsih = time.time()
+            memcache_finish = time.time()
             db.put(to_save)
             end_time = time.time()  
             total_db_time = end_time - dbput_start_time
-            total_memcache_time = memcache_finsih - dbput_start_time
-            print "the total time the db took is %f seconds" % total_db_time
-            print "the total time the handler took to store in memcache is %f seconds" % total_memcache_time
+            total_memcache_time = memcache_finish - dbput_start_time
+            #print "the total time the db took is %f seconds" % total_db_time
+            #print "the total time the handler took to store in memcache is %f seconds" % total_memcache_time
 
         slowtest = False
         if slowtest == True:
