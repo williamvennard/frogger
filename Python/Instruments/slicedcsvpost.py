@@ -1,7 +1,7 @@
 """
 This is the "slicedcsvpost" script.
 
-I opens a file, slices the desired # of rows to transmit, then uses the grouper function to 'chunk' the slice into amounts for a loop of HTTP POST.
+It opens a file, slices the desired # of rows to transmit, then uses the grouper function to 'chunk' the slice into amounts for a loop of HTTP POST.
 """
 import csv
 import itertools
@@ -11,28 +11,34 @@ import time
 from itertools import izip_longest
 from itertools import izip
 
-#f = open('../../DataFiles/tekcsv/default_scope.csv')
+
 f = open('../../DataFiles/tekcsv/tek0012ALL.csv')
-f = itertools.islice(f, 18, 30)
+f = itertools.islice(f, 330, 350)
+sample_chunk = 100
 
 def grouper(iterable, n, fillvalue=None):
     args = [iter(iterable)] * n
     return izip_longest(*args, fillvalue=fillvalue)
-out = grouper(f, 2, 0)
 
+out = grouper(f, sample_chunk, 0)
 values = list(out)
 keys = ['TIME', 'CH1', 'CH2', 'CH3', 'CH4']
+
 for value in values:
 	new = {}
 	for item in value:
+		print type(item)
 		if item != 0:
 			item = item.strip()
 			k = item.split(",")
 		time = k[0]
 		new[time] = dict(zip(keys,k))
-	window = {'config':{'TEK':'TODO'},'slicename':'18to100','data':new}
+	times = list(new.keys())
+	times = sorted(times, reverse=True)
+	slicename = "%s to %s" % (float(times[0]), float(times[-1]))
+	window = {'config':{'TEK':'TODO'},'slicename':slicename,'data':new}
 	out = json.dumps(window)
-	url = "http://localhost:18080/oscopedata/default-scope/18to100"
+	url = "http://localhost:18080/oscopedata/default-scope/slicenam"
 	headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 	r = requests.post(url, data=out, headers=headers)
 	print "dir(r)=",dir(r)
