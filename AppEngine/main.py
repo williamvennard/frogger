@@ -799,7 +799,6 @@ class OscopeData(InstrumentDataHandler):
 
     def post(self,name="",slicename=""):
         "store data by intstrument name and time slice name"
-        
         key = 'oscopedata' + name + slicename
         oscope_content = json.loads(self.request.body)
         oscope_data = oscope_content['data']
@@ -811,7 +810,7 @@ class OscopeData(InstrumentDataHandler):
         if test == True:
             " to easily block out code for testing purposes"
             dbput_start_time = time.time() 
-            #print dbput_start_time
+            print dbput_start_time
             to_save = []
             for k in keys:
                 r = OscopeDB(parent = OscopeDB_key(name), name=name,
@@ -829,14 +828,14 @@ class OscopeData(InstrumentDataHandler):
                 to_save.append(r) 
             rows = to_save
             #print [r.to_dict() for r in rows]
-            memcache.set(key, r)
+            memcache.set(key, to_save)
             memcache_finish = time.time()
             db.put(to_save)
             end_time = time.time()  
             total_db_time = end_time - dbput_start_time
             total_memcache_time = memcache_finish - dbput_start_time
-            #print "the total time the db took is %f seconds" % total_db_time
-            #print "the total time the handler took to store in memcache is %f seconds" % total_memcache_time
+            print "the total time the db took is %f seconds" % total_db_time
+            print "the total time the handler took to store in memcache is %f seconds" % total_memcache_time
 
         slowtest = False
         if slowtest == True:
@@ -892,7 +891,7 @@ app = webapp2.WSGIApplication([
     ('/testresults/([a-zA-Z0-9-]+.json)', TestResultsPage),
     ('/vnadata/([a-zA-Z0-9-]+)', VNAData),
     ('/oscopedata/([a-zA-Z0-9-]+)', OscopeData),
-    ('/oscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', OscopeData),
+    ('/oscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9-.]+)', OscopeData),
 ], debug=True)
 
 
