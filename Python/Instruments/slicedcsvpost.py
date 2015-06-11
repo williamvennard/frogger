@@ -13,7 +13,7 @@ from itertools import izip_longest
 from itertools import izip
 
 f = open('../../DataFiles/tekcsv/tek0012ALL.csv')
-f = itertools.islice(f, 18, 100)
+f = itertools.islice(f, 49990, 50030)
 sample_chunk = 10
 
 def grouper(iterable, n, fillvalue=None):
@@ -32,10 +32,14 @@ for value in values:
         time = k[0]
         new[time] = dict(zip(keys,k))
     times = list(new.keys())
-    times = sorted(times, reverse=True)
-    slicename = str("slice%sto%s" % (float(times[0]), float(times[-1])))
+    modified_time = []
+    for time in times:
+        modified_time.append(float(time))
+    modified_time = sorted(modified_time, reverse=True)
+    slicename = "slice%sto%s" % (modified_time[0], modified_time[-1])
     window = {'config':{'TEK':'TODO'},'slicename':slicename,'data':new}
     out = json.dumps(window)
+    url = "https://gradientone-test.appspot.com/oscopedata/amplifier/%s" % slicename
     url = "http://localhost:18080/oscopedata/amplifier/%s" % slicename
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
     r = requests.post(url, data=out, headers=headers)
@@ -43,6 +47,6 @@ for value in values:
     print "r.reason=",r.reason
     print "r.status_code=",r.status_code
 
-
+#https://gradientone-test.appspot.com/oscopedata/default-scope
 
 		
