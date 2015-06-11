@@ -764,16 +764,34 @@ class VNAData(InstrumentDataHandler):
 
 def paging_dict_creation(name, before, after):
     paging = {"cursors": {"before": before, "after":after}, 
+            #"prev":"http://gradientone-test.appspot.com/oscopedata/%s/%s" % (name,before),
+            #"next": "https://gradientone-test.appspot.com/oscopedata/%s/%s" % (name,after)}
              "prev":"http://localhost:18080/oscopedata/%s/%s" % (name,before),
              "next": "http://localhost:18080/oscopedata/%s/%s" % (name,after)}
     return paging 
+
+def query_to_dict(dbquery):
+    query_dict = [r.to_dict() for r in dbquery]
+    return query_dict
+
+def before_after_creation(slicename):
+    x = slicename.split('to')
+    y = x[0]
+    z = y.strip('to').split('slice')
+    after_endpt = float(x[1]) + 0.1
+    after_startpt = float(z[1]) + 0.1
+    before_endpt = float(x[1]) - 0.1
+    before_startpt = float(z[1]) - 0.1
+    before = "slice%sto%s" % (before_startpt, before_endpt)
+    after = "slice%sto%s" % (after_startpt, after_endpt)
+    return before, after
 
 class OscopeData(InstrumentDataHandler):
     def get(self,name="",slicename=""):
         "retrieve Oscilloscope data by intstrument name and time slice name"
         
-        if not self.authcheck():
-            return
+        #if not self.authcheck():
+        #    return
         #print "OscopeData: get: name =",name
         #print "OscopeData: get: slicename =",slicename
         key = 'oscopedata' + name + slicename
@@ -792,17 +810,17 @@ class OscopeData(InstrumentDataHandler):
                 memcache.set(key, rows)
                 myCursor = query.cursor()
                 afterquery = query.with_cursor(myCursor).fetch(1) 
-                afterlist = [r.to_dict() for r in afterquery]
+                afterlist = query_to_dict(afterquery)
                 memcache.set(after_key, afterquery)
                 after = afterlist[0]['slicename']
                 before = "Null"
-            afterlist = [r.to_dict() for r in afterquery]
+            afterlist = query_to_dict(afterquery)
             memcache.set(after_key, afterquery)
             after = afterlist[0]['slicename']  
             before = "Null"  
             self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
             self.response.headers['Access-Control-Allow-Origin'] = '*'
-            data = [r.to_dict() for r in rows]
+            data = query_to_dict(rows)
             self.response.write(json.dumps({"data":data, "paging": paging_dict_creation(name, before, after)}))
 
         else:
@@ -814,27 +832,19 @@ class OscopeData(InstrumentDataHandler):
                                     ASC""", name, slicename)
                 rows = query.fetch(10)
                 memcache.set(key, rows)
-            x = slicename.split('to')
-            y = x[0]
-            z = y.strip('to').split('slice')
-            after_endpt = float(x[1]) + 0.1
-            after_startpt = float(z[1]) + 0.1
-            before_endpt = float(x[1]) - 0.1
-            before_startpt = float(z[1]) - 0.1
-            before = "slice%sto%s" % (before_startpt, before_endpt)
-            after = "slice%sto%s" % (after_startpt, after_endpt)
-            before_check_key = 'oscopedata' + name + before
+            before_after = before_after_creation(slicename)
+            before_check_key = 'oscopedata' + name + before_after[0]
             before_check = memcache.get(before_check_key) 
             if before_check == None:
                 before = "Null"
-            end_check_key = 'oscopedata' + name + after
+            end_check_key = 'oscopedata' + name + before_after[1]
             after_check = memcache.get(end_check_key)
             if after_check == None:
                 after = "Null"
             self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
             self.response.headers['Access-Control-Allow-Origin'] = '*'
             data = [r.to_dict() for r in rows]
-            self.response.write(json.dumps({"data":data, "paging": paging_dict_creation(name, before, after)}))
+            self.response.write(json.dumps({"data":data, "paging": paging_dict_creation(name, before_after[0], before_after[1])}))
 
         pagetest = False
         " to easily block out code for testing purposes"
