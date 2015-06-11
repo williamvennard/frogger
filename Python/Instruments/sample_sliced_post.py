@@ -9,7 +9,7 @@ def key_to_string(k):
     if k < 0:
         s = "m"
         k = -k
-    return s + str(k)
+    return s + str(k).replace('.','p')
 
 def keys_to_slicename(first,last):
     return key_to_string(first) + "to" + key_to_string(last)
@@ -69,8 +69,5 @@ for chunk in chunks(datarows, chunksize):
     slicename = keys_to_slicename(first,last)
     row_dict = row_list_to_dict(chunk)
     post_rows(hostname, dataname, instrument, config, slicename, row_dict)
-    
-#post_rows(hostname, dataname, instrument, config, slicename, datarows)
 
-#url = "http://localhost:8080/oscopedata/tahoe-scope-2015-05-31-1500"
-#url = "https://gradientone-test.appspot.com/oscopedata/tahoe-scope-2015-05-31-1500"
+print "sample posts complete"
