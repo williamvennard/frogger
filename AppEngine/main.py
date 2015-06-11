@@ -946,8 +946,7 @@ app = webapp2.WSGIApplication([
     ('/testresults/([a-zA-Z0-9-]+.json)', TestResultsPage),
     ('/vnadata/([a-zA-Z0-9-]+)', VNAData),
     ('/oscopedata/([a-zA-Z0-9-]+)', OscopeData),
-    ('/oscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9-.]+)', OscopeData),
-    ('/oscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9-.]+)/([a-zA-Z0-9-.]+)', OscopeData),
+    ('/oscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)', OscopeData),
 ], debug=True)
 
 
