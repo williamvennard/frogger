@@ -823,9 +823,13 @@ class OscopeData(InstrumentDataHandler):
             before_startpt = float(z[1]) - 0.1
             before = "slice%sto%s" % (before_startpt, before_endpt)
             after = "slice%sto%s" % (after_startpt, after_endpt)
+            before_check_key = 'oscopedata' + name + before
+            before_check = memcache.get(before_check_key) 
+            if before_check == None:
+                before = "Null"
             end_check_key = 'oscopedata' + name + after
-            check = memcache.get(end_check_key)
-            if check == None:
+            after_check = memcache.get(end_check_key)
+            if after_check == None:
                 after = "Null"
             self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
             self.response.headers['Access-Control-Allow-Origin'] = '*'
@@ -853,7 +857,7 @@ class OscopeData(InstrumentDataHandler):
 
     def post(self,name="",slicename=""):
         "store data by intstrument name and time slice name"
-        #db.delete(OscopeDB.all(keys_only=True)) 
+        
         key = 'oscopedata' + name + slicename
         oscope_content = json.loads(self.request.body)
         oscope_data = oscope_content['data']
