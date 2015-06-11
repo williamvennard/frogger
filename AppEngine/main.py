@@ -762,23 +762,77 @@ class VNAData(InstrumentDataHandler):
         print "the total time the handler took is %f seconds" % total_time
 
 
-
-
+def paging_dict_creation(name, before, after):
+    paging = {"cursors": {"before": before, "after":after}, 
+             "prev":"http://localhost:18080/oscopedata/%s/%s" % (name,before),
+             "next": "http://localhost:18080/oscopedata/%s/%s" % (name,after)}
+    return paging 
 
 class OscopeData(InstrumentDataHandler):
     def get(self,name="",slicename=""):
         "retrieve Oscilloscope data by intstrument name and time slice name"
+        
         if not self.authcheck():
             return
         #print "OscopeData: get: name =",name
         #print "OscopeData: get: slicename =",slicename
         key = 'oscopedata' + name + slicename
-        print key
         get_start_time = time.time() 
         rows = memcache.get(key)
+        after_key = 'pagination' + key 
+        afterquery = memcache.get(after_key)
         
+        if slicename == "":
+            if rows is None:
+                logging.error("OscopeData:get: query")
+                query = db.GqlQuery("""SELECT * FROM OscopeDB 
+                                    WHERE name =:1 ORDER BY TIME 
+                                    ASC""", name)
+                rows = query.fetch(10)
+                memcache.set(key, rows)
+                myCursor = query.cursor()
+                afterquery = query.with_cursor(myCursor).fetch(1) 
+                afterlist = [r.to_dict() for r in afterquery]
+                memcache.set(after_key, afterquery)
+                after = afterlist[0]['slicename']
+                before = "Null"
+            afterlist = [r.to_dict() for r in afterquery]
+            memcache.set(after_key, afterquery)
+            after = afterlist[0]['slicename']  
+            before = "Null"  
+            self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
+            self.response.headers['Access-Control-Allow-Origin'] = '*'
+            data = [r.to_dict() for r in rows]
+            self.response.write(json.dumps({"data":data, "paging": paging_dict_creation(name, before, after)}))
 
-        pagetest = True
+        else:
+            if rows is None:
+                logging.error("OscopeData:get: query")
+                query = db.GqlQuery("""SELECT * FROM OscopeDB 
+                                    WHERE name =:1 AND slicename = :2
+                                    ORDER BY TIME 
+                                    ASC""", name, slicename)
+                rows = query.fetch(10)
+                memcache.set(key, rows)
+            x = slicename.split('to')
+            y = x[0]
+            z = y.strip('to').split('slice')
+            after_endpt = float(x[1]) + 0.1
+            after_startpt = float(z[1]) + 0.1
+            before_endpt = float(x[1]) - 0.1
+            before_startpt = float(z[1]) - 0.1
+            before = "slice%sto%s" % (before_startpt, before_endpt)
+            after = "slice%sto%s" % (after_startpt, after_endpt)
+            end_check_key = 'oscopedata' + name + after
+            check = memcache.get(end_check_key)
+            if check == None:
+                after = "Null"
+            self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
+            self.response.headers['Access-Control-Allow-Origin'] = '*'
+            data = [r.to_dict() for r in rows]
+            self.response.write(json.dumps({"data":data, "paging": paging_dict_creation(name, before, after)}))
+
+        pagetest = False
         " to easily block out code for testing purposes"
         if pagetest == True:    
             if rows is None:
@@ -799,6 +853,7 @@ class OscopeData(InstrumentDataHandler):
 
     def post(self,name="",slicename=""):
         "store data by intstrument name and time slice name"
+        #db.delete(OscopeDB.all(keys_only=True)) 
         key = 'oscopedata' + name + slicename
         oscope_content = json.loads(self.request.body)
         oscope_data = oscope_content['data']
@@ -892,6 +947,7 @@ app = webapp2.WSGIApplication([
     ('/vnadata/([a-zA-Z0-9-]+)', VNAData),
     ('/oscopedata/([a-zA-Z0-9-]+)', OscopeData),
     ('/oscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9-.]+)', OscopeData),
+    ('/oscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9-.]+)/([a-zA-Z0-9-.]+)', OscopeData),
 ], debug=True)
 
 
