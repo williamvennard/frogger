@@ -764,10 +764,10 @@ class VNAData(InstrumentDataHandler):
 
 def paging_dict_creation(name, before, after):
     paging = {"cursors": {"before": before, "after":after}, 
-            #"prev":"http://gradientone-test.appspot.com/oscopedata/%s/%s" % (name,before),
-            #"next": "https://gradientone-test.appspot.com/oscopedata/%s/%s" % (name,after)}
-             "prev":"http://localhost:18080/oscopedata/%s/%s" % (name,before),
-             "next": "http://localhost:18080/oscopedata/%s/%s" % (name,after)}
+            "prev":"http://gradientone-test.appspot.com/oscopedata/%s/%s" % (name,before),
+            "next": "https://gradientone-test.appspot.com/oscopedata/%s/%s" % (name,after)}
+            #"prev":"http://localhost:18080/oscopedata/%s/%s" % (name,before),
+            #"next": "http://localhost:18080/oscopedata/%s/%s" % (name,after)}
     return paging 
 
 def query_to_dict(dbquery):
@@ -784,6 +784,7 @@ def before_after_creation(slicename):
     before_startpt = float(z[1]) - 0.1
     before = "slice%sto%s" % (before_startpt, before_endpt)
     after = "slice%sto%s" % (after_startpt, after_endpt)
+    print before, after
     return before, after
 
 class OscopeData(InstrumentDataHandler):
@@ -835,12 +836,15 @@ class OscopeData(InstrumentDataHandler):
             before_after = before_after_creation(slicename)
             before_check_key = 'oscopedata' + name + before_after[0]
             before_check = memcache.get(before_check_key) 
+            print before_check
             if before_check == None:
-                before = "Null"
+                before_after = list(before_after)
+                before_after[0] = "Null"
             end_check_key = 'oscopedata' + name + before_after[1]
             after_check = memcache.get(end_check_key)
             if after_check == None:
-                after = "Null"
+                before_after = list(before_after)
+                before_after[1] = "Null"
             self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
             self.response.headers['Access-Control-Allow-Origin'] = '*'
             data = [r.to_dict() for r in rows]
