@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<!--{% block import %}-->
+<html>
+<head>
+  <title>Page TEST</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+  <script type="text/javascript" src="js/addons/jquery.knob.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="css/custom.css">
+  <link rel="stylesheet" type="text/css" href="css/testResultsPage.css">
+
+
+
+</head>
+<body id="mainBackground">
+  <div class="container">
+    <div class="row">
+      <nav id="topNavBar" class="navbar navbar-inverse navbar-collapse collapse"> <!--NAVBAR-->
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <img class="logo" src="images/Glogo.png" style="width:110px;" alt="Gradient One logo">
+          </div>
+          <div id="navbar">
+            <ul class="topmenu nav navbar-nav">
+              <li><a class="currentPage" href="index.html" style="color: rgb(124,175,46);">CANVAS</a></li>
+              <li class="dots glyphicon glyphicon-option-vertical"></li>
+              <li><a href="instruments.html">INSTRUMENTS</a></li>
+              <li class="dots glyphicon glyphicon-option-vertical"></li>
+              <li><a href="community.html">COMMUNITY</a></li>          
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a class="glyphicon glyphicon-envelope" href="../navbar-static-top/"></a></li>
+              <li><a class="glyphicon glyphicon-bell" href="../navbar-static-top/"></a></li>
+              <li><a class="glyphicon glyphicon-user" href="../navbar-fixed-top/">Profile</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </div>
+    <div> <!--HEADER-->
+        <div class="" style="min-width: 100px;" id="compHeader">
+         <span id="backButton" class="glyphicon glyphicon-chevron-left"></span>
+         <h1 class="compName" id="testPlanCompany">Test Results</h1> 
+        </div>
+      </div>
+    <div class="container">
+      <div class="row testResultsBox"><!--TEST RESULTS BOX -->
+          <div class="col-md-4" id="testPlanInfoBox">
+            <h1 class="testPlanInfo" id="testPlanName"></h1>  
+              <h3 class="testPlanInfo" id="testPlanAuthor"></h3>
+              <p class="testPlanInfo" id="testPlanDate"></p>
+              <div id="measurementsBox">
+                <h3><u>Test Measurements</u></h3>
+                <p>-horizontal-</p>
+                <div class="knobs">
+                        <section>
+                          <div id="knob1">
+                            <p id="knob1Label">Position</p>
+                            <input 
+                            type="text" 
+                            value="0"
+                            data-step="1"
+                            data-min="-10"
+                            data-max="10" 
+                            class="hPosition"
+                            data-cursor= "10"
+                            data-width="50"
+                            data-fgColor="black"
+                            data-thickness=".5"
+                            data-bgColor="white"
+                            data-angleOffset="-125"
+                            data-angleArc="250">
+
+                          </div>
+                        </section>
+                        <section id="horiz">
+                          <div id="knob2">
+                            <p id="knob2Label">Time/Div</p>
+                            <input 
+                            type="text" 
+                            value="0"
+                            data-min="0"
+                            data-max="10" 
+                            class="hZoom"
+                            data-cursor= "10"
+                            data-width="50"
+                            data-fgColor="black"
+                            data-thickness=".5"
+                            data-angleOffset="-125"
+                            data-angleArc="250"
+                            data-bgColor="white">
+                          </div>
+                        </section>
+                      </div>
+                <div  id="testMeasRes"></div>
+              </div>
+          </div>
+          <div class="row-md-7" id="dataDisplayBox">
+            <div class="row-md-6;" id="resultsChartCSS">
+              <div id="resultsChart" style="height: 385px; width: 575px;"></div>
+            </div>
+            <div class="row-md-3" style="" id="resultsTableCSS">
+              <div id="resultsTable"></div>
+            </div>
+          </div>
+          
+      </div>
+    </div>
+ 
+
+
+ <script type="text/javascript">
+ // load chart lib
+       google.load('visualization', '1', {
+          packages: ['corechart','table']
+       });
+
+       var hZoom = 1;
+       var hPosition = 0;    
+
+       function doPoll(v, h){
+          //var urlPath = window.location.pathname;
+          //var urlPath = window.location.pathname.split( '/' );
+          //var newPathname = urlPath[urlPath.length - 1];
+          //console.log(urlPath);
+          //console.log(newPathname);
+          //^THIS READS THE CURRENT URL THAT IS OPEN ->file:///Users/william/Desktop/GradientOne/UI/testResultsPage.html
+          
+          var data = new google.visualization.DataTable();
+          data.addColumn('number', 'Time');
+          data.addColumn('number', 'Ch1');
+          //data.addColumn('number', 'Ch2');
+            
+          function fetchData(){
+            //console.log(json_url);
+            var jsonData = $.ajax({
+               url: json_url,            
+               dataType: 'json',
+            }).done(function (results) {   
+                 //GETING DATA
+               $.each(results['data'], function (i, row) {
+                 data.addRow([
+                   parseFloat(row.TIME),
+                   parseFloat(row.CH1),
+                   //parseFloat(row.CH2), 
+                 ]);
+          });
+
+             /*var paging = results['paging'];
+              var checkNext = paging.next.split( '/' );
+              var checkNullNext = checkNext[checkNext.length - 1];
+              var checkPrev = paging.prev.split( '/' );
+              var checkNullPrev = checkPrev[checkPrev.length - 1];
+             console.log('should read null:',checkNullNext);*/
+ 
+            /*if(checkNullNext||checkNullPrev==='Null') {
+              console.log('End of Data')
+            } else {
+              json_url = base_url + 'paging.next'
+            };*/
+          
+             //DRAW CHART
+             var chart = new google.visualization.LineChart($('#resultsChart').get(0));      
+             chart.draw(data, chartOptions);
+             //DRAW TABLE
+             var table = new google.visualization.Table($('#resultsTable').get(0));
+             table.draw(data, tableOptions);
+            //setTimeout(doPoll,60000);
+          });
+          };
+       
+          var sliceNames = ['','/slice0.81to-0.18','/slice1.81to0.82'];
+          var base_url = 'https://gradientone-prod.appspot.com/oscopedata/amplifier';
+
+            var hMax = hZoom + hPosition;
+            var hMin = -hZoom + hPosition;
+            console.log('hMax:',hMax);
+            console.log('hMin:',hMin);
+
+       for(sliceName in sliceNames) {
+            json_url = base_url + sliceNames[0];
+            fetchData(json_url);
+
+            if(hMax > 0) {     
+            json_url = base_url + sliceNames[sliceName];
+            fetchData(json_url);
+          };  
+          };
+
+
+            
+
+            //console.log('horizontal Zoom dial:',hZoom);
+            //console.log('horizontal position dial:',hPosition);
+            
+          
+
+        var chartOptions = {
+            title: 'Oscope Data',
+            titleTextStyle: {color:'lightgray', fontSize: 18, fontName: 'NexaLight'},
+            legend: {alignment:'center', textStyle:{color:'lightgray'}},
+            hAxis: {title: 'Time({units})',titleTextStyle:{color:'lightgray', fontName: 'NexaLight'}, textStyle:{color:'lightgray'}, baselineColor:'gray', gridlines:{color: 'gray', count: 6}, minorGridlines:{color: 'gray', count: 1}, viewWindowMode:'explicit', viewWindow:{max: hMax, min:hMin}},
+            vAxis: {title: '', titleTextStyle:{color:'lightgray'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'gray', count: 6}, minorGridlines:{color: 'gray', count: 1}, format: '##.###', viewWindowMode:'explicit', viewWindow:{max:2.5, min:-2.5} },
+            backgroundColor: {fill:'rgb(40,45,45)', stroke: 'black', strokeWidth: 5,},                 
+            colors: ['rgb(2,255,253)','rgb(239,253,146)'],
+            chartArea:{backgroundColor:'', height:300, width:445},
+            lineWidth: 1.25,
+            curveType: 'function',
+            crosshair: {trigger: 'both', selected:{opacity: 0.8}, focused:{opacity:0.8}},
+          };
+          var tableOptions = {
+            showRowNumber: true,
+            oddTableRow:{color:'green'},
+          }
+        };
+       google.setOnLoadCallback(doPoll);
+
+
+       $(".hPosition").knob({
+        'release' : function (v) { 
+          //console.log('knob V value:',v);  
+          hPosition = v;
+          doPoll(hPosition);
+      },
+    }); 
+      $(".hZoom").knob({
+        'release' : function (h) { 
+          //console.log('knob H value:',h);
+          hZoom = h;
+          doPoll(hZoom);
+      },
+    }); 
+</script>
+
+</body>
+</html>
+<!--{% endblock %}-->
