@@ -197,7 +197,6 @@ def TestDB_key(name = 'default'):
 
 class TestDB(DictModel):
 
-
     testplan_name = db.StringProperty(required = True)
     company_nickname = db.StringProperty(required = True)
     author = db.StringProperty(required = True)
@@ -217,7 +216,6 @@ def ConfigDB_key(name = 'default'):
 
 
 class ConfigDB(DictModel):
-
 
     company_nickname = db.StringProperty(required = True)
     hardware_name = db.StringProperty(required = True)
@@ -451,69 +449,36 @@ class CommunityTestsPage(InstrumentDataHandler):
 
 class TestConfigInputPage(InstrumentDataHandler):
 
-
     def get(self):
         #if not self.authcheck():
         #    return
         self.render('testconfig.html')
 
+    def is_checked(self,t,param):
+        "Test checked and up date test object 't'."
+        checked = self.request.get(param)
+        if checked:
+            setattr(t,param,True)
+        else:
+            setattr(t,param,False)
+
     def post(self):
         testplan_name = self.request.get('testplan_name')
-        company_nickname = self.request.get('company_nickname')
-        author = self.request.get('author')
-        instrument_type = self.request.get('instrument_type')
-        measurement_P2P = self.request.get('measurement_P2P')
-        measurement_Peak = self.request.get('measurement_Peak')
-        mesaurement_RMS = self.request.get('measurement_RMS')
-        RMS_time_start = float(self.request.get('RMS_time_start'))
-        RMS_time_stop = float(self.request.get('RMS_time_stop'))
-        measurement_RiseT = self.request.get('measurement_RiseT')
-        public = self.request.get('public')
-        commence_test = self.request.get('commence_test')
         t = TestDB(parent = TestDB_key(testplan_name), 
             testplan_name = testplan_name, 
-            company_nickname = company_nickname, author = author, 
-            instrument_type = instrument_type, 
-            RMS_time_start = RMS_time_start, 
-            RMS_time_stop = RMS_time_stop,)
-        t.put()
+            company_nickname = self.request.get('company_nickname'), 
+            author = self.request.get('author'),
+            instrument_type = self.request.get('instrument_type'),
+            RMS_time_start = float(self.request.get('RMS_time_start')),
+            RMS_time_stop = float(self.request.get('RMS_time_stop')),)
+        t.put()  # might help with making plan show up on list?
         key = testplan_name
         memcache.delete(key)
-        checked_box = self.request.get("measurement_P2P")
-        if checked_box:
-            t.measurement_P2P = True
-        else:
-            t.measurement_P2P = False
-        t.put()
-        checked_box = self.request.get("measurement_Peak")
-        if checked_box:
-            t.measurement_Peak = True
-        else:
-            t.measurement_Peak = False
-        t.put()
-        checked_box = self.request.get("measurement_RMS")
-        if checked_box:
-            t.measurement_RMS = True
-        else:
-            t.measurement_RMS = False
-        t.put()
-        checked_box = self.request.get("measurement_RiseT")
-        if checked_box:
-            t.measurement_RiseT = True
-        else:
-            t.measurement_RiseT = False
-        t.put()
-        checked_box = self.request.get("public")
-        if checked_box:
-            t.public = True
-        else:
-            t.public = False
-        t.put()
-        checked_box = self.request.get("commence_test")
-        if checked_box:
-            t.commence_test = True
-        else:
-            t.commence_test = False
+        checkbox_names = ["measurement_P2P", "measurement_Peak",
+                          "measurement_RMS", "measurement_RiseT",
+                           "public", "commence_test"]
+        for name in checkbox_names:
+            self.is_checked(t,name)
         t.put()
         self.redirect('/testplansummary')
 
