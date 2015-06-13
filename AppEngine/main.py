@@ -74,8 +74,8 @@ def root_mean_squared(test_data, test):
     rms = math.sqrt(z)
     return rms
 
-def query_to_dict(dbquery):
-    query_dict = [r.to_dict() for r in dbquery]
+def query_to_dict(result):
+    query_dict = [r.to_dict() for r in result]
     return query_dict
 
 def before_after_creation(slicename, name, afterlist):
@@ -699,12 +699,12 @@ class OscopeData(InstrumentDataHandler):
         if slicename == "":
             if rows is None:
                 logging.error("OscopeData:get: query")
-                query = db.GqlQuery("""SELECT * FROM OscopeDB 
+                result = db.GqlQuery("""SELECT * FROM OscopeDB 
                                     WHERE name =:1 ORDER BY TIME ASC""", name)
-                rows = query.fetch(100)
+                rows = result.fetch(100)
                 memcache.set(key, rows)
-                mycursor = query.cursor()
-                afterquery = query.with_cursor(mycursor).fetch(1) 
+                mycursor = result.cursor()
+                afterquery = result.with_cursor(mycursor).fetch(1) 
                 memcache.set(after_key, afterquery)
             afterlist = query_to_dict(afterquery)
             before_after = before_after_creation(slicename, name, afterlist) 
@@ -714,9 +714,8 @@ class OscopeData(InstrumentDataHandler):
         else:
             if rows is None:
                 logging.error("OscopeData:get: query")
-                query = db.GqlQuery("""SELECT * FROM OscopeDB WHERE name =:1
+                rows = db.GqlQuery("""SELECT * FROM OscopeDB WHERE name =:1
                                     AND slicename = :2 ORDER BY TIME ASC""", name, slicename)
-                rows = query.fetch(100)
                 memcache.set(key, rows)
             afterlist = ""
             before_after = before_after_creation(slicename, name, afterlist)
