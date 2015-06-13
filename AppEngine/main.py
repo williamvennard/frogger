@@ -22,6 +22,7 @@ from google.appengine.api import users
 from google.appengine.ext import db
 from time import gmtime, strftime
 from collections import OrderedDict
+#from rest_api_framework.pagination import Pagination
 
 authorized_users = ['charlie@gradientone.com',
                     'nedwards@gradientone.com',
@@ -149,7 +150,7 @@ class ConfigDB(DictModel):
 def ConfigDB_key(name = 'default'):
     return db.Key.from_path('company_nickname', name)
 
-def OscopeDB_key(name):
+def OscopeDB_key(name = 'default'):
     return db.Key.from_path('oscope', name)
 
 class OscopeDB(DictModel):
@@ -157,8 +158,8 @@ class OscopeDB(DictModel):
     config = db.StringProperty(required = True)
     slicename = db.StringProperty(required = True)
     TIME = db.FloatProperty(required = True)
-    Start_Date_Time = db.DateTimeProperty(required = True)
-    End_Date_Time = db.DateTimeProperty(required = True)
+    Start_Date_Time = db.DateTimeProperty(required = False)
+    End_Date_Time = db.DateTimeProperty(required = False)
     CH1 = db.FloatProperty(required = True)
     CH2 = db.FloatProperty(required = True)
     CH3 = db.FloatProperty(required = True)
@@ -751,7 +752,7 @@ class VNAData(InstrumentDataHandler):
                     options = str(vna_options).strip('[]'),)
 
                 to_save.append(r) 
-
+                print to_save
         db.put(to_save)
         
         end_time = time.time()  
@@ -761,92 +762,157 @@ class VNAData(InstrumentDataHandler):
         print "the total time the handler took is %f seconds" % total_time
 
 
+def paging_dict_creation(name, before, after):
+    paging = {"cursors": {"before": before, "after":after}, 
+            "prev":"http://gradientone-test.appspot.com/oscopedata/%s/%s" % (name,before),
+            "next": "https://gradientone-test.appspot.com/oscopedata/%s/%s" % (name,after)}
+            #"prev":"http://localhost:18080/oscopedata/%s/%s" % (name,before),
+            #"next": "http://localhost:18080/oscopedata/%s/%s" % (name,after)}
+    return paging 
 
+def query_to_dict(dbquery):
+    query_dict = [r.to_dict() for r in dbquery]
+    return query_dict
 
+def before_after_creation(slicename):
+    x = slicename.split('to')
+    y = x[0]
+    z = y.strip('to').split('slice')
+    after_endpt = float(x[1]) + 0.1
+    after_startpt = float(z[1]) + 0.1
+    before_endpt = float(x[1]) - 0.1
+    before_startpt = float(z[1]) - 0.1
+    before = "slice%sto%s" % (before_startpt, before_endpt)
+    after = "slice%sto%s" % (after_startpt, after_endpt)
+    print before, after
+    return before, after
 
 class OscopeData(InstrumentDataHandler):
     def get(self,name="",slicename=""):
         "retrieve Oscilloscope data by intstrument name and time slice name"
-        if not self.authcheck():
-            return
+        
+        #if not self.authcheck():
+        #    return
         #print "OscopeData: get: name =",name
         #print "OscopeData: get: slicename =",slicename
-        key = 'oscope' + name + slicename
+        key = 'oscopedata' + name + slicename
+        get_start_time = time.time() 
         rows = memcache.get(key)
-        if rows is None:
-            logging.error("OscopeData:get: query")
-            query = """SELECT * FROM OscopeDB
-                         WHERE name = '%(name)s'
-                         AND slicename = '%(slicename)s'
-                         ORDER BY TIME ASC;
-                    """  % {'name':name,'slicename':slicename}
-            logging.error("OscopeData:get: query")
-            rows = db.GqlQuery(query)
-            memcache.set(key, rows)
+        after_key = 'pagination' + key 
+        afterquery = memcache.get(after_key)
+        
+        if slicename == "":
+            if rows is None:
+                logging.error("OscopeData:get: query")
+                query = db.GqlQuery("""SELECT * FROM OscopeDB 
+                                    WHERE name =:1 ORDER BY TIME 
+                                    ASC""", name)
+                rows = query.fetch(10)
+                memcache.set(key, rows)
+                myCursor = query.cursor()
+                afterquery = query.with_cursor(myCursor).fetch(1) 
+                afterlist = query_to_dict(afterquery)
+                memcache.set(after_key, afterquery)
+                after = afterlist[0]['slicename']
+                before = "Null"
+            afterlist = query_to_dict(afterquery)
+            memcache.set(after_key, afterquery)
+            after = afterlist[0]['slicename']  
+            before = "Null"  
+            self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
+            self.response.headers['Access-Control-Allow-Origin'] = '*'
+            data = query_to_dict(rows)
+            self.response.write(json.dumps({"data":data, "paging": paging_dict_creation(name, before, after)}))
 
-        print [r.to_dict() for r in rows]
+        else:
+            if rows is None:
+                logging.error("OscopeData:get: query")
+                query = db.GqlQuery("""SELECT * FROM OscopeDB 
+                                    WHERE name =:1 AND slicename = :2
+                                    ORDER BY TIME 
+                                    ASC""", name, slicename)
+                rows = query.fetch(10)
+                memcache.set(key, rows)
+            before_after = before_after_creation(slicename)
+            before_check_key = 'oscopedata' + name + before_after[0]
+            before_check = memcache.get(before_check_key) 
+            print before_check
+            if before_check == None:
+                before_after = list(before_after)
+                before_after[0] = "Null"
+            end_check_key = 'oscopedata' + name + before_after[1]
+            after_check = memcache.get(end_check_key)
+            if after_check == None:
+                before_after = list(before_after)
+                before_after[1] = "Null"
+            self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
+            self.response.headers['Access-Control-Allow-Origin'] = '*'
+            data = [r.to_dict() for r in rows]
+            self.response.write(json.dumps({"data":data, "paging": paging_dict_creation(name, before_after[0], before_after[1])}))
 
-        #config_query = db.GqlQuery("SELECT * FROM ConfigDB")
-        #q = db.Query(ConfigDB)
-        #configs = ConfigDB.all()
-        self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
-        self.response.headers['Access-Control-Allow-Origin'] = '*'
-        self.response.write(json.dumps([r.to_dict() for r in rows]))
+        pagetest = False
+        " to easily block out code for testing purposes"
+        if pagetest == True:    
+            if rows is None:
+                query = """SELECT * FROM OscopeDB
+                             WHERE name = '%(name)s'
+                             AND slicename = '%(slicename)s'
+                             ORDER BY TIME ASC;
+                        """  % {'name':name,'slicename':slicename}
+                logging.error("OscopeData:get: query")
+                rows = db.GqlQuery(query)
+                memcache.set(key, rows)
+            self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
+            self.response.headers['Access-Control-Allow-Origin'] = '*'
+            self.response.write(json.dumps([r.to_dict() for r in rows]))
+            end_time = time.time() 
+            total_get_time = end_time - get_start_time
+            print "the total time the GET took is %f seconds" % total_get_time
 
     def post(self,name="",slicename=""):
         "store data by intstrument name and time slice name"
         
-        key = 'oscope' + name + slicename
-        print key
-        #print "OscopeData: post: name =",name
-        #while True:
-        #    line = self.request.__file__.readline()
-        #    json.loads(line)
-
+        key = 'oscopedata' + name + slicename
         oscope_content = json.loads(self.request.body)
-        #print oscope_data
-        #print "oscope_data['slicename']=",oscope_data['slicename']
-        #print "oscope_data['config']=",oscope_data['config']
         oscope_data = oscope_content['data']
-        #print oscope_data
 
-        def getKey(row):
-            return float(row['TIME'])
-        sorted_data = sorted(oscope_content['data'], key=getKey)
-        #print "post:sorted_data =",sorted_data
         t = time.time()
+        keys = list(oscope_data.keys())
 
-        sdt = datetime.datetime.fromtimestamp(t + float(sorted_data[0]['TIME']))
-        edt = datetime.datetime.fromtimestamp(t + float(sorted_data[-1]['TIME']))
-        #s = OscopeDB(parent = OscopeDB_key(name), name = name, Start_Date_Time = sdt, End_Date_Time = edt)
-        #s.put()
         test = True
         if test == True:
+            " to easily block out code for testing purposes"
             dbput_start_time = time.time() 
+            print dbput_start_time
             to_save = []
-            for row in sorted_data:
-            #dt = datetime.datetime.fromtimestamp(t + float(row['TIME']))
-                modified_time = 500.00 + float(row['TIME'])
+            for k in keys:
                 r = OscopeDB(parent = OscopeDB_key(name), name=name,
                          slicename=oscope_content['slicename'],
                          config=str(oscope_content['config']),
-                         Start_Date_Time = sdt,
-                         End_Date_Time = edt,
-                         TIME=modified_time,
-                         CH1=float(row['CH1']),
-                         CH2=float(row['CH2']),
-                         CH3=float(row['CH3']),
-                         CH4=float(row['CH4']))
+                         #Start_Date_Time = sdt,
+                         #End_Date_Time = edt,
+                         TIME=float(oscope_data[k]['TIME']),
+                         CH1=float(oscope_data[k]['CH1']),
+                         CH2=float(oscope_data[k]['CH2']),
+                         CH3=float(oscope_data[k]['CH3']),
+                         CH4=float(oscope_data[k]['CH4']))
+
 
                 to_save.append(r) 
-                memcache.set(key, r)
+            rows = to_save
+            #print [r.to_dict() for r in rows]
+            memcache.set(key, to_save)
+            memcache_finish = time.time()
             db.put(to_save)
             end_time = time.time()  
             total_db_time = end_time - dbput_start_time
+            total_memcache_time = memcache_finish - dbput_start_time
             print "the total time the db took is %f seconds" % total_db_time
+            print "the total time the handler took to store in memcache is %f seconds" % total_memcache_time
 
         slowtest = False
         if slowtest == True:
+            " to easily block out code for testing purposes"
             dbput_start_time = time.time() 
             for row in sorted_data:
             #    #dt = datetime.datetime.fromtimestamp(t + float(row['TIME']))
@@ -898,7 +964,7 @@ app = webapp2.WSGIApplication([
     ('/testresults/([a-zA-Z0-9-]+.json)', TestResultsPage),
     ('/vnadata/([a-zA-Z0-9-]+)', VNAData),
     ('/oscopedata/([a-zA-Z0-9-]+)', OscopeData),
-    ('/oscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', OscopeData),
+    ('/oscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)', OscopeData),
 ], debug=True)
 
 
