@@ -9,29 +9,32 @@ import itertools
 import json
 import requests
 import time
+import datetime
+from time import gmtime, strftime
 from itertools import izip_longest
 from itertools import izip
+from collections import OrderedDict
 
 f = open('../../DataFiles/tekcsv/tek0012ALL.csv')
-f = itertools.islice(f, 49990, 50030)
+f = itertools.islice(f, 18, 58)
 sample_chunk = 10
 
 def grouper(iterable, n, fillvalue=None):
     args = [iter(iterable)] * n
     return izip_longest(*args, fillvalue=fillvalue)
 
-def slicename_creation(times):
-    modified_time = []
-    for time in times:
-        modified_time.append(float(time))
-    modified_time = sorted(modified_time, reverse=True)
-    slicename = "slice%sto%s" % (modified_time[0], modified_time[-1])
+def slicename_creation(data_dict):
+    slice_list = []
+    for d in data_dict:
+        slice_list.append(data_dict[d]['TSE'])
+    slice_list = sorted(slice_list)
+    slicename = "slice%sto%s" % (slice_list[0], slice_list[-1])
     return slicename
 
 def post_creation(window, slicename):
     out = json.dumps(window)
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-    #url = "https://gradientone-test.appspot.com/oscopedata/amplifier/%s" % slicename
+    #url = "https://gradientone-dev1.appspot.com/oscopedata/amplifier/%s" % slicename
     url = "http://localhost:18080/oscopedata/amplifier/%s" % slicename
     r = requests.post(url, data=out, headers=headers)
     print "dir(r)=",dir(r)
@@ -40,22 +43,21 @@ def post_creation(window, slicename):
 
 out = grouper(f, sample_chunk, 0)
 values = list(out)
-keys = ['TIME', 'CH1', 'CH2', 'CH3', 'CH4']
+keys = ['TIME', 'CH1', 'CH2', 'CH3', 'CH4', 'TSE']
 
 for value in values:
-    new = {}
+    data_dict = {}
     for item in value:
         if item != 0:
             item = item.strip()
             k = item.split(",")
-        time = k[0]
-        new[time] = dict(zip(keys,k))
-    times = list(new.keys())
-    slicename =  slicename_creation(times)
-    window = {'config':{'TEK':'TODO'},'slicename':slicename,'data':new}
+        tse = time.time() + (float(k[0]))
+        k.append(tse)
+        time_data = k[0]
+        data_dict[time_data] = dict(zip(keys,k))
+    slicename = slicename_creation(data_dict)
+    window = {'config':{'TEK':'TODO'},'slicename':slicename,'data':data_dict}
     post_creation(window, slicename)
 
-
-#https://gradientone-test.appspot.com/oscopedata/default-scope
 
 		
