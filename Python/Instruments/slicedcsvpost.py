@@ -18,10 +18,23 @@ from collections import OrderedDict
 f = open('../../DataFiles/tekcsv/tek0012ALL.csv')
 f = itertools.islice(f, 18, 58)
 sample_chunk = 10
+keys = ['TIME', 'CH1', 'CH2', 'CH3', 'CH4', 'TSE']
 
 def grouper(iterable, n, fillvalue=None):
     args = [iter(iterable)] * n
     return izip_longest(*args, fillvalue=fillvalue)
+
+def add_time_since_epoch(values):
+    reconstructed_values = []
+    for value in values:
+        for item in value:
+            if item !=0:
+                item = item.strip()
+                k = item.split(",")
+            tse = time.time() + (float(k[0]))
+            k.append(tse)
+            reconstructed_values.append(k)
+    return reconstructed_values
 
 def slicename_creation(data_dict):
     slice_list = []
@@ -43,21 +56,19 @@ def post_creation(window, slicename):
 
 out = grouper(f, sample_chunk, 0)
 values = list(out)
-keys = ['TIME', 'CH1', 'CH2', 'CH3', 'CH4', 'TSE']
-
+reconstructed_values = add_time_since_epoch(values)
+new_data = grouper(reconstructed_values, sample_chunk, 0)
+values = list(new_data)
 for value in values:
     data_dict = {}
     for item in value:
-        if item != 0:
-            item = item.strip()
-            k = item.split(",")
-        tse = time.time() + (float(k[0]))
-        k.append(tse)
-        time_data = k[0]
-        data_dict[time_data] = dict(zip(keys,k))
+        data_dict[item[0]] = dict(zip(keys, item))
     slicename = slicename_creation(data_dict)
     window = {'config':{'TEK':'TODO'},'slicename':slicename,'data':data_dict}
-    post_creation(window, slicename)
+    post_creation(window, slicename)   
 
 
-		
+
+
+
+
