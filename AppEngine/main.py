@@ -92,12 +92,17 @@ def before_after_creation(slicename):
 
 def paging_dict_creation(name, before, after):
     paging = {"cursors": {"before": before, "after":after}, 
-            #"prev":"http://gradientone-dev1.appspot.com/oscopedata/%s/%s" % (name,before),
-            #"next": "https://gradientone-dev1.appspot.com/oscopedata/%s/%s" % (name,after)}
-            "prev":"http://localhost:18080/oscopedata/%s/%s" % (name,before),
-            "next": "http://localhost:18080/oscopedata/%s/%s" % (name,after)}
+            "prev":"http://gradientone-dev1.appspot.com/oscopedata/%s/%s" % (name,before),
+            "next": "https://gradientone-dev1.appspot.com/oscopedata/%s/%s" % (name,after)}
+            #"prev":"http://localhost:18080/oscopedata/%s/%s" % (name,before),
+            #"next": "http://localhost:18080/oscopedata/%s/%s" % (name,after)}
     return paging 
 
+def sort_data(rows):
+    query_dict = [r.to_dict() for r in rows]
+    data = list(query_dict)
+    data = sorted(data, key=lambda item: float(item['TIME']))
+    return data 
 
 class InstrumentDataHandler(webapp2.RequestHandler):
 
@@ -672,11 +677,7 @@ class VNAData(InstrumentDataHandler):
         db.put(to_save)
 
 
-def sort_data(rows):
-    query_dict = [r.to_dict() for r in rows]
-    data = list(query_dict)
-    data = sorted(data, key=lambda item: float(item['TIME']))
-    return data 
+
 
 
 class OscopeData(InstrumentDataHandler):
