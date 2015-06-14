@@ -78,28 +78,16 @@ def query_to_dict(result):
     query_dict = [r.to_dict() for r in result]
     return query_dict
 
-def before_after_creation(slicename, name, afterlist):
-    if slicename == "":
-        before = "Null" 
-        after = afterlist[0]['slicename'] 
-    else:
-        x = slicename.split('to')
-        y = x[0]
-        z = y.strip('to').split('slice')
-        after_endpt = float(x[1]) + 1.0
-        after_startpt = float(z[1]) + 1.0
-        before_endpt = float(x[1]) - 1.0
-        before_startpt = float(z[1]) - 1.0
-        before = "slice%sto%s" % (before_startpt, before_endpt)
-        after = "slice%sto%s" % (after_startpt, after_endpt)
-        before_check_key = 'oscopedata' + name + before
-        before_check = memcache.get(before_check_key) 
-        end_check_key = 'oscopedata' + name + after
-        after_check = memcache.get(end_check_key)
-        if before_check == None:
-                before = "Null"
-        if after_check == None:
-                after = "Null"
+def before_after_creation(slicename): 
+    x = slicename.split('to')
+    y = x[0]
+    z = y.strip('to').split('slice')
+    after_endpt = float(x[1]) + 0.1
+    after_startpt = float(z[1]) + 0.1
+    before_endpt = float(x[1]) - 0.1
+    before_startpt = float(z[1]) - 0.1
+    before = "slice%sto%s" % (before_startpt, before_endpt)
+    after = "slice%sto%s" % (after_startpt, after_endpt)
     return before, after
 
 def paging_dict_creation(name, before, after):
@@ -251,6 +239,7 @@ class OscopeDB(DictModel):
     CH2 = db.FloatProperty(required = True)
     CH3 = db.FloatProperty(required = True)
     CH4 = db.FloatProperty(required = True)
+    TSE = db.FloatProperty(required = False)
 
 def VNADB_key(name):
     return db.Key.from_path('vna', name)
@@ -281,7 +270,7 @@ class MainPage(InstrumentDataHandler):
 
 
     def get(self):
-
+        db.delete(OscopeDB.all(keys_only=True))
         user = users.get_current_user()
         if user:
             self.response.headers['Content-Type'] = 'text/html; charset=utf-8'
@@ -683,6 +672,12 @@ class VNAData(InstrumentDataHandler):
         db.put(to_save)
 
 
+def sort_data(rows):
+    query_dict = [r.to_dict() for r in rows]
+    data = list(query_dict)
+    data = sorted(data, key=lambda item: float(item['TIME']))
+    return data 
+
 
 class OscopeData(InstrumentDataHandler):
 
@@ -692,36 +687,18 @@ class OscopeData(InstrumentDataHandler):
         #if not self.authcheck():
         #    return
         key = 'oscopedata' + name + slicename
-        get_start_time = time.time() 
-        rows = memcache.get(key)
         after_key = 'pagination' + key 
         afterquery = memcache.get(after_key)
-        if slicename == "":
-            if rows is None:
-                logging.error("OscopeData:get: query")
-                result = db.GqlQuery("""SELECT * FROM OscopeDB 
-                                    WHERE name =:1 ORDER BY TIME ASC""", name)
-                rows = result.fetch(100)
-                memcache.set(key, rows)
-                mycursor = result.cursor()
-                afterquery = result.with_cursor(mycursor).fetch(1) 
-                memcache.set(after_key, afterquery)
-            afterlist = query_to_dict(afterquery)
-            before_after = before_after_creation(slicename, name, afterlist) 
-            data = query_to_dict(rows)
-            output = {"data":data, "paging": paging_dict_creation(name, before_after[0], before_after[1])}
-            render_json(self, output)
-        else:
-            if rows is None:
-                logging.error("OscopeData:get: query")
-                rows = db.GqlQuery("""SELECT * FROM OscopeDB WHERE name =:1
-                                    AND slicename = :2 ORDER BY TIME ASC""", name, slicename)
-                memcache.set(key, rows)
-            afterlist = ""
-            before_after = before_after_creation(slicename, name, afterlist)
-            data = query_to_dict(rows)
-            output = {"data":data, "paging": paging_dict_creation(name, before_after[0], before_after[1])}
-            render_json(self, output)
+        rows = memcache.get(key)
+        if rows is None:
+            logging.error("OscopeData:get: query")
+            rows = db.GqlQuery("""SELECT * FROM OscopeDB WHERE name =:1
+                                AND slicename = :2 ORDER BY TIME ASC LIMIT 10""", name, slicename)
+            memcache.set(key, rows)
+        before_after = before_after_creation(slicename)
+        data = sort_data(rows)
+        output = {"data":data, "paging": paging_dict_creation(name, before_after[0], before_after[1])}
+        render_json(self, output)
 
 
     def post(self,name="",slicename=""):
@@ -741,7 +718,8 @@ class OscopeData(InstrumentDataHandler):
                          CH1=float(oscope_data[k]['CH1']),
                          CH2=float(oscope_data[k]['CH2']),
                          CH3=float(oscope_data[k]['CH3']),
-                         CH4=float(oscope_data[k]['CH4']))
+                         CH4=float(oscope_data[k]['CH4']),
+                         TSE =float(oscope_data[k]['TSE']),)
             to_save.append(r) 
         rows = to_save
         memcache.set(key, to_save)
@@ -777,6 +755,7 @@ app = webapp2.WSGIApplication([
     ('/oscopedata/([a-zA-Z0-9-]+)', OscopeData),
     ('/oscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)', OscopeData),
 ], debug=True)
+
 
 
 # danger!!  don't say it unless you mean it:  db.delete(VNADB.all(keys_only=True))  # deletes entire table!!
