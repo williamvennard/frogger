@@ -78,31 +78,6 @@ def query_to_dict(result):
     query_dict = [r.to_dict() for r in result]
     return query_dict
 
-def before_after_creation(slicename): 
-    x = slicename.split('to')
-    y = x[0]
-    z = y.strip('to').split('slice')
-    after_endpt = float(x[1]) + 0.1
-    after_startpt = float(z[1]) + 0.1
-    before_endpt = float(x[1]) - 0.1
-    before_startpt = float(z[1]) - 0.1
-    before = "slice%sto%s" % (before_startpt, before_endpt)
-    after = "slice%sto%s" % (after_startpt, after_endpt)
-    return before, after
-
-def paging_dict_creation(name, before, after):
-    paging = {"cursors": {"before": before, "after":after}, 
-            "prev":"http://gradientone-dev1.appspot.com/oscopedata/%s/%s" % (name,before),
-            "next": "https://gradientone-dev1.appspot.com/oscopedata/%s/%s" % (name,after)}
-            #"prev":"http://localhost:18080/oscopedata/%s/%s" % (name,before),
-            #"next": "http://localhost:18080/oscopedata/%s/%s" % (name,after)}
-    return paging 
-
-def sort_data(rows):
-    query_dict = [r.to_dict() for r in rows]
-    data = list(query_dict)
-    data = sorted(data, key=lambda item: float(item['TIME']))
-    return data 
 
 class InstrumentDataHandler(webapp2.RequestHandler):
 
@@ -244,7 +219,8 @@ class OscopeDB(DictModel):
     CH2 = db.FloatProperty(required = True)
     CH3 = db.FloatProperty(required = True)
     CH4 = db.FloatProperty(required = True)
-    TSE = db.FloatProperty(required = False)
+    DTE = db.IntegerProperty(required = True)
+ 
 
 def VNADB_key(name):
     return db.Key.from_path('vna', name)
@@ -275,7 +251,6 @@ class MainPage(InstrumentDataHandler):
 
 
     def get(self):
-        db.delete(OscopeDB.all(keys_only=True))
         user = users.get_current_user()
         if user:
             self.response.headers['Content-Type'] = 'text/html; charset=utf-8'
@@ -694,11 +669,11 @@ class OscopeData(InstrumentDataHandler):
         if rows is None:
             logging.error("OscopeData:get: query")
             rows = db.GqlQuery("""SELECT * FROM OscopeDB WHERE name =:1
-                                AND slicename = :2 ORDER BY TIME ASC LIMIT 10""", name, slicename)
+                                AND slicename = :2 ORDER BY DTE ASC""", name, slicename)
             memcache.set(key, rows)
-        before_after = before_after_creation(slicename)
-        data = sort_data(rows)
-        output = {"data":data, "paging": paging_dict_creation(name, before_after[0], before_after[1])}
+        
+        data = query_to_dict(rows)
+        output = {"data":data}
         render_json(self, output)
 
 
@@ -707,20 +682,19 @@ class OscopeData(InstrumentDataHandler):
         key = 'oscopedata' + name + slicename
         oscope_content = json.loads(self.request.body)
         oscope_data = oscope_content['data']
-        keys = list(oscope_data.keys())
         to_save = []
-        for k in keys:
+        for o in oscope_data:
+            print o
             r = OscopeDB(parent = OscopeDB_key(name), name=name,
-                         slicename=oscope_content['slicename'],
+                         slicename=slicename,
                          config=str(oscope_content['config']),
-                         #Start_Date_Time = sdt,
-                         #End_Date_Time = edt,
-                         TIME=float(oscope_data[k]['TIME']),
-                         CH1=float(oscope_data[k]['CH1']),
-                         CH2=float(oscope_data[k]['CH2']),
-                         CH3=float(oscope_data[k]['CH3']),
-                         CH4=float(oscope_data[k]['CH4']),
-                         TSE =float(oscope_data[k]['TSE']),)
+                         TIME=float(o['TIME']),
+                         CH1=float(o['CH1']),
+                         CH2=float(o['CH2']),
+                         CH3=float(o['CH3']),
+                         CH4=float(o['CH4']),
+                         DTE = o['DTE'],
+                         )
             to_save.append(r) 
         rows = to_save
         memcache.set(key, to_save)
