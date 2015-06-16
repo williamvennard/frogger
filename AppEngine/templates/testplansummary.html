@@ -21,7 +21,9 @@
 
         {% for t in tests %}
         
-          <a href ="testresults/{{t.testplan_name}}">{{ t.testplan_name }}</a><span style="padding-left:100px">{{ t.author }} <span style="padding-left:100px"> {{ t.date_created }}
+          <a href ="testplansummary/{{t.testplan_name}}">{{ t.testplan_name }}</a><span style="padding-left:100px">{{ t.author }} <span style="padding-left:100px"> {{ t.date_created }} 
+
+
           <br><br>   
         {% endfor %}
       </table>
