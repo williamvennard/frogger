@@ -76,7 +76,7 @@
                         </section>
                         <section id="horiz">
                           <div id="knob2">
-                            <p id="knob2Label">Time/Div</p>
+                            <p id="knob2Label">Zoom</p>
                             <input 
                             type="text" 
                             value="0"
@@ -111,13 +111,40 @@
 
 
  <script type="text/javascript">
+
+
+
+       $(".hPosition").knob({
+        'release' : function (v) { 
+          //console.log('knob V value:',v);  
+          hPosition = v;
+          doPoll(hPosition);
+      },
+    }); 
+
+
+
+      $(".hZoom").knob({
+        'release' : function (h) { 
+          //console.log('knob H value:',h);
+          hZoom = h;
+          doPoll(hZoom);
+      },
+    }); 
+
  // load chart lib
        google.load('visualization', '1', {
           packages: ['corechart','table']
        });
 
-       var hZoom = 1;
-       var hPosition = 0;    
+       var hZoom = 0;
+       var hPosition = 0;
+       var fetchDataCalls = 0;
+       var dataArray;
+       var getLast;
+       var getFirst;    
+       var dataArray = [];
+       var getFirsts = [];
 
        function doPoll(v, h){
           //var urlPath = window.location.pathname;
@@ -126,13 +153,16 @@
           //console.log(urlPath);
           //console.log(newPathname);
           //^THIS READS THE CURRENT URL THAT IS OPEN ->file:///Users/william/Desktop/GradientOne/UI/testResultsPage.html
+
+          
           
           var data = new google.visualization.DataTable();
           data.addColumn('number', 'Time');
           data.addColumn('number', 'Ch1');
           //data.addColumn('number', 'Ch2');
-            
+
           function fetchData(){
+            fetchDataCalls++;
             //console.log(json_url);
             var jsonData = $.ajax({
                url: json_url,            
@@ -147,19 +177,30 @@
                  ]);
           });
 
-             /*var paging = results['paging'];
-              var checkNext = paging.next.split( '/' );
-              var checkNullNext = checkNext[checkNext.length - 1];
-              var checkPrev = paging.prev.split( '/' );
-              var checkNullPrev = checkPrev[checkPrev.length - 1];
-             console.log('should read null:',checkNullNext);*/
- 
-            /*if(checkNullNext||checkNullPrev==='Null') {
-              console.log('End of Data')
-            } else {
-              json_url = base_url + 'paging.next'
-            };*/
+            //var testArray = dataArray[(dataArray.length-1)];
+            //console.log('data array:',dataArray);
+            //console.log('test:',testArray[0].TIME);
+            //console.log(results.data.sort());
+            //console.log('fetchData counter:',fetchDataCalls);
+            //if (dataArray.indexOf(dataArray) === -1) {
+             // dataArray.push(results.data);
+            //};
+            //$(arr1).not(arr2).length === 0 && $(arr2).not(arr1).length === 0
+        
+
+            if (getFirsts.indexOf(results.data[0].TIME) === -1) {
+              getFirsts.push(results.data[0].TIME);
+            };
+            
           
+            console.log('First TIMEs:',getFirsts);
+
+
+             //getLast = dataArray[dataArray.length-1].TIME;
+             //var timeSlice = getLast - getFirst;
+             //console.log('Time Slice:',timeSlice);
+             //console.log('Last TIME:',getLast);
+
              //DRAW CHART
              var chart = new google.visualization.LineChart($('#resultsChart').get(0));      
              chart.draw(data, chartOptions);
@@ -167,29 +208,76 @@
              var table = new google.visualization.Table($('#resultsTable').get(0));
              table.draw(data, tableOptions);
             //setTimeout(doPoll,60000);
+
           });
           };
-       
-          var sliceNames = ['','/slice0.81to-0.18','/slice1.81to0.82'];
-          var base_url = 'https://gradientone-prod.appspot.com/oscopedata/amplifier';
+            
+            //console.log('loaded data array:',dataArray);
+            //console.log('choose array:',dataArray[1]);
+            
 
-            var hMax = hZoom + hPosition;
-            var hMin = -hZoom + hPosition;
+
+          autoMaxPosition = (-498.80);
+          autoMinPosition = (-499.80);
+      //console.log('auto MAX position:',autoMaxPosition);
+      //console.log('auto MIN position:',autoMinPosition);
+
+            var hMax = (hZoom + hPosition + autoMaxPosition);
+            var hMin = (-hZoom + hPosition + autoMinPosition);
             console.log('hMax:',hMax);
             console.log('hMin:',hMin);
+            
+         
+          
+          
+          //var dateNow = new Date(parseInt(timeNow));
+          //var dateNow = new Date(timeNow *1000);
+        /*
+        //GET TIME AND CONVERT TO DATE
+          var timeNow = Date.now();
+          date = new Date(timeNow * 1000);
+          dateFormat = [
+             date.getFullYear(),
+             date.getMonth()+1,
+             date.getDate(),
+             date.getHours(),
+             date.getMinutes(),
+             date.getSeconds(),
+          ];
+          console.log('time now:', dateFormat)
+          */
 
-       for(sliceName in sliceNames) {
-            json_url = base_url + sliceNames[0];
-            fetchData(json_url);
 
-            if(hMax > 0) {     
-            json_url = base_url + sliceNames[sliceName];
-            fetchData(json_url);
-          };  
+ //BUILDING SLICE NAMES
+          //var slices = [];
+            //for(i=0;i<=();i+=100) {
+            //slices.push('/' + (i) + '-' + (i+99));
+            //};
+        
+          //console.log('Slices',slices);
+
+
+          var sliceNames = ['2015-06-17-14-09-28-200-299', '2015-06-17-14-09-28-300-399', '2015-06-17-14-09-28-400-499', '2015-06-17-14-09-28-500-599']
+          //var sliceNames = ['/2015-06-16-22-43-29-400-499','/2015-06-16-22-43-29-500-599','/2015-06-16-22-43-29-600-699'];
+
+          var first_url = 'http://gradientone-test.appspot.com/oscopedata/amplifier/2015-06-17-14-09-28-100-199';  
+          json_url = first_url; 
+          fetchData(json_url);
+
+          var base_url = 'http://gradientone-test.appspot.com/oscopedata/amplifier/';
+          for(i=0; i <= sliceNames.length; i++) {
+            var pageTrig = (parseFloat(getFirsts[i]))+0.99;
+            console.log('> test:', hMax > pageTrig);
+            
+            if(hMax > pageTrig) { 
+              json_url = base_url + sliceNames[i];
+              fetchData(json_url);
+            };   
           };
 
 
-            
+            //var hZoom =;
+            //var hPosition =;
 
             //console.log('horizontal Zoom dial:',hZoom);
             //console.log('horizontal position dial:',hPosition);
@@ -200,7 +288,7 @@
             title: 'Oscope Data',
             titleTextStyle: {color:'lightgray', fontSize: 18, fontName: 'NexaLight'},
             legend: {alignment:'center', textStyle:{color:'lightgray'}},
-            hAxis: {title: 'Time({units})',titleTextStyle:{color:'lightgray', fontName: 'NexaLight'}, textStyle:{color:'lightgray'}, baselineColor:'gray', gridlines:{color: 'gray', count: 6}, minorGridlines:{color: 'gray', count: 1}, viewWindowMode:'explicit', viewWindow:{max: hMax, min:hMin}},
+            hAxis: {title: 'Time({units})',titleTextStyle:{color:'lightgray', fontName: 'NexaLight'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'gray', count: 6}, minorGridlines:{color: 'gray', count: 1}, viewWindowMode:'explicit', viewWindow:{max: hMax, min:hMin}},
             vAxis: {title: '', titleTextStyle:{color:'lightgray'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'gray', count: 6}, minorGridlines:{color: 'gray', count: 1}, format: '##.###', viewWindowMode:'explicit', viewWindow:{max:2.5, min:-2.5} },
             backgroundColor: {fill:'rgb(40,45,45)', stroke: 'black', strokeWidth: 5,},                 
             colors: ['rgb(2,255,253)','rgb(239,253,146)'],
@@ -217,20 +305,7 @@
        google.setOnLoadCallback(doPoll);
 
 
-       $(".hPosition").knob({
-        'release' : function (v) { 
-          //console.log('knob V value:',v);  
-          hPosition = v;
-          doPoll(hPosition);
-      },
-    }); 
-      $(".hZoom").knob({
-        'release' : function (h) { 
-          //console.log('knob H value:',h);
-          hZoom = h;
-          doPoll(hZoom);
-      },
-    }); 
+
 </script>
 
 </body>
