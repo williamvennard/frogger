@@ -78,6 +78,8 @@ def query_to_dict(result):
     query_dict = [r.to_dict() for r in result]
     return query_dict
 
+def getKey(row):
+    return float(row.DTE)
 
 class InstrumentDataHandler(webapp2.RequestHandler):
 
@@ -621,6 +623,8 @@ class VNAData(InstrumentDataHandler):
                                 name =:1 AND slicename =:2 
                                 ORDER BY TIME ASC""", 
                                 name, slicename)
+            rows = list(rows)
+            rows = sorted(rows, key=getKey)
             memcache.set(key, rows)
         render_json(self, rows)
 
@@ -652,9 +656,6 @@ class VNAData(InstrumentDataHandler):
         db.put(to_save)
 
 
-
-
-
 class OscopeData(InstrumentDataHandler):
 
 
@@ -663,17 +664,14 @@ class OscopeData(InstrumentDataHandler):
         #if not self.authcheck():
         #    return
         key = 'oscopedata' + name + slicename
-        after_key = 'pagination' + key 
-        afterquery = memcache.get(after_key)
         rows = memcache.get(key)
         if rows is None:
             logging.error("OscopeData:get: query")
             rows = db.GqlQuery("""SELECT * FROM OscopeDB WHERE name =:1
                                 AND slicename = :2 ORDER BY DTE ASC""", name, slicename)
+            rows = list(rows)
+            rows = sorted(rows, key=getKey)
             memcache.set(key, rows)
-        #else:
-        #    rows = list(rows)
-        #    print rows
         data = query_to_dict(rows)
         output = {"data":data}
         render_json(self, output)

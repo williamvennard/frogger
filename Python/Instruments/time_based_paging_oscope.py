@@ -86,8 +86,8 @@ def slicename_creation(i, window, tr, start_ms):
 def post_creation(stuffing):
     out = json.dumps(stuffing)
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-    url = "https://gradientone-dev1.appspot.com/oscopedata/amplifier/%s" % slicename
-    #url = "http://localhost:18080/oscopedata/amplifier/%s" % slicename
+    #url = "https://gradientone-dev1.appspot.com/oscopedata/amplifier/%s" % slicename
+    url = "http://localhost:18080/oscopedata/amplifier/%s" % slicename
     r = requests.post(url, data=out, headers=headers)
     print "dir(r)=",dir(r)
     print "r.reason=",r.reason
