@@ -671,7 +671,9 @@ class OscopeData(InstrumentDataHandler):
             rows = db.GqlQuery("""SELECT * FROM OscopeDB WHERE name =:1
                                 AND slicename = :2 ORDER BY DTE ASC""", name, slicename)
             memcache.set(key, rows)
-        
+        #else:
+        #    rows = list(rows)
+        #    print rows
         data = query_to_dict(rows)
         output = {"data":data}
         render_json(self, output)
