@@ -68,25 +68,15 @@ def find_window(start_ms):
 
     return window, times
 
-def slicename_creation(i, window, tr, start_ms):
-    """creates slicenames with "%Y-%m-%d-%H-%M-%S-" followed by msec window"""
-    t = datetime.datetime.strftime(i, "%Y-%m-%d-%H-%M-%S-")
-    if tr == "":
-        slicename = "%s%s" % (t, window)
-    else:
-        new_dtms = dt2ms(i) + test_results.index(tr) 
-        new_dtms = datetime.datetime.fromtimestamp(new_dtms/1000.0)
-        start_ms = int(new_dtms.strftime('%f'))/1000
-        start_ms = start_ms - 1
-        window = find_window(start_ms)[0]
-        t = datetime.datetime.strftime(new_dtms, "%Y-%m-%d-%H-%M-%S-")
-        slicename = "%s%s" % (t, window) 
+def slicename_creation(tse):
+    """creates slicenames based off time since epoch, rounded down to nearest 100 msec"""
+    slicename = tse//100*100
     return slicename
 
 def post_creation(stuffing):
     out = json.dumps(stuffing)
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-    #url = "https://gradientone-dev1.appspot.com/oscopedata/amplifier/%s" % slicename
+    #url = "https://gradientone-test.appspot.com/oscopedata/amplifier/%s" % slicename
     url = "http://localhost:18080/oscopedata/amplifier/%s" % slicename
     r = requests.post(url, data=out, headers=headers)
     print "dir(r)=",dir(r)
@@ -96,6 +86,8 @@ def post_creation(stuffing):
 
 i = datetime.datetime.now()
 start_ms = int(i.strftime('%f'))/1000
+tse = dt2ms(i)
+print 'time since epoch = ', tse
 f = open('../../DataFiles/tekcsv/tek0012ALL.csv')
 f = itertools.islice(f, 18, 118)
 test_results = csv.DictReader(f, fieldnames = ("TIME", "CH1", "CH2", "CH3", "CH4"))
@@ -108,50 +100,35 @@ stuffing = []
 
 
 if start_ms + data_length < times[-1]:
-    """padding & stuffing routine for data contained in a signle 100 msec window"""
+    """stuffing routine for data contained in a single 100 msec window"""
     tr = ""
     z = (data_length+(start_ms-times[0]))
-    for t in times[:(delta_times)]:
-        beginning =  int(i.strftime('%s'))*1000
-        new_dtms = beginning + t
-        stuffing.append({'CH1':'0', "CH2": "0", "CH3": "0", "CH4": "0", "TIME": "0", "DTE": new_dtms})
     for tr in test_results:
         new_dtms = dt2ms(i) + test_results.index(tr) 
         tr['DTE'] = new_dtms
         stuffing.append(tr)
-    for t in times[z:]:
-        new_dtms = test_results[0]['DTE'] + t - start_ms 
-        stuffing.append({'CH1':'0', "CH2": "0", "CH3": "0", "CH4": "0", "TIME": "0", "DTE": new_dtms})
-    slicename = slicename_creation(i, window, tr, start_ms)
+    slicename = slicename_creation(tse)
     window = {'config':{'TEK':'TODO'},'slicename':slicename,'data':stuffing}
     post_creation(window)
-    print "mini-me posted"
+
 
 
 if start_ms + data_length > times[-1]:
-    """padding & slicing routine data that spills into adjacent 100msec window"""
-    for t in times[:delta_times]:
-        beginning =  int(i.strftime('%s'))*1000
-        new_dtms = beginning + t
-        stuffing.append({'CH1':'0', "CH2": "0", "CH3": "0", "CH4": "0", "TIME": "0", "DTE": new_dtms})
+    """stuffing routine for data that spills into adjacent 100msec window"""
+    slicename = slicename_creation(tse)
     for tr in test_results:
         new_dtms = dt2ms(i) + test_results.index(tr) 
         tr['DTE'] = new_dtms
         if (test_results.index(tr) + start_ms)%100 == 0:
-            slicename = slicename_creation(i, window, tr, start_ms)
             window = {'config':{'TEK':'TODO'},'slicename':slicename,'data':stuffing}
             post_creation(window)
             stuffing = []
             tr['DTE'] = new_dtms
+            slicename = slicename_creation(new_dtms)
             stuffing.append(tr)
             continue
         stuffing.append(tr)
-    last_stuffing = stuffing
-    fl = len(last_stuffing)
-    for t in times[fl:]:
-        new_dtms = test_results[-1]['DTE'] + t - start_ms +1
-        last_stuffing.append({'CH1':'0', "CH2": "0", "CH3": "0", "CH4": "0", "TIME": "0", "DTE": new_dtms})
-    slicename = slicename_creation(i, window, tr, start_ms)
+    slicename = slicename_creation(tr['DTE'])
     window = {'config':{'TEK':'TODO'},'slicename':slicename,'data':stuffing}
     post_creation(window)
 
