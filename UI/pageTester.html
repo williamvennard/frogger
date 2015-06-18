@@ -113,17 +113,17 @@
     var hZoom = 0;
     var hPosition = 0;
     $(".hPosKnob").knob({
-        'release' : function (v) { 
-          //console.log('knob V value:',v);  
-          hPosition = v;
+        'release' : function (hPos) { 
+          //console.log('knob V value:',hPos);  
+          hPosition = hPos;
           doPoll();
       },
     }); 
 
     $(".hZoomKnob").knob({
-      'release' : function (h) { 
-         //console.log('knob H value:',h);
-         hZoom = h;
+      'release' : function (hRange) { 
+         //console.log('knob H value:',hRange);
+         hZoom = hRange;
          doPoll();
       },
     }); 
@@ -142,6 +142,20 @@
        var resultsArray = [];
        var resultsCache = [];
 
+       function fetchData(base_url,sliceName,use_async){
+          json_url = base_url + sliceName;
+          $.ajax({
+             async: use_async,
+             url: json_url,            
+             dataType: 'json',
+          }).done(function (results) {
+             console.log("fetchData: json_url =", json_url);
+             console.log("fetchData: sliceName =", sliceName);
+             console.log("fetchData: results =", results);
+             resultsCache[sliceName] = results;
+             console.log("154:resultsCache[sliceName] =", resultsCache[sliceName]);
+          })  // need error handler
+       };
        function doPoll(){
           //var urlPath = window.location.pathname;
           //var urlPath = window.location.pathname.split( '/' );
@@ -154,38 +168,29 @@
           data.addColumn('number', 'Ch1');
           //data.addColumn('number', 'Ch2');
 
-          function gatherData(json_url){
+          function gatherData(base_url,sliceNames,first,last){
             gatherDataCalls++;
-            //console.log(json_url);
-            function fetchData(json_url){
-              $.ajax({
-                async: false,
-                url: json_url,            
-                dataType: 'json',
-              }).done(function (results) {
-                console.log("return results for json_url =", json_url);
-                resultsCache[json_url] = results;
-                console.log("166:resultsCache[json_url] =", resultsCache[json_url]);
-              })
-            };
-            console.log("172:json_url =", json_url);
-            if (!(json_url in resultsCache)) {
-              //resultsCache[json_url] = fetchData(json_url);
-              fetchData(json_url);
+            for (idx = first; idx < last; idx++) {
+               var sliceName = sliceNames[idx];
+               console.log("gatherData: sliceName =", sliceName);
+               console.log("gatherData: idx =", idx);
+               if (!(sliceName in resultsCache)) {
+                 json_url = base_url + sliceName;
+                 console.log("gatherData: cache miss: json_url =", json_url);
+                 fetchData(base_url,sliceName,false);
+               }
+               var gatheredResults = resultsCache[sliceName];
+               console.log("gatherData: resultsCache =", resultsCache);
+               console.log("gatherData: gatheredResults =", gatheredResults);
+               //GETING DATA
+               $.each(gatheredResults['data'], function (i, row) {
+                 data.addRow([
+                   parseFloat(row.TIME),
+                   parseFloat(row.CH1),
+                   //parseFloat(row.CH2), 
+                 ]);
+               });
             }
-            var results = resultsCache[json_url];
-            console.log("179:json_url =", json_url);
-            console.log("180:resultsArray =", resultsArray);
-            console.log("181:resultsCache =", resultsCache);
-            console.log("results =", results);
-            //GETING DATA
-            $.each(results['data'], function (i, row) {
-              data.addRow([
-                parseFloat(row.TIME),
-                parseFloat(row.CH1),
-                //parseFloat(row.CH2), 
-              ]);
-            });
             //var testArray = dataArray[(dataArray.length-1)];
             //console.log('data array:',dataArray);
             //console.log('test:',testArray[0].TIME);
@@ -195,10 +200,6 @@
              // dataArray.push(results.data);
             //};
             //$(arr1).not(arr2).length === 0 && $(arr2).not(arr1).length === 0
-            if (getFirsts.indexOf(results.data[0].TIME) === -1) {
-              getFirsts.push(results.data[0].TIME);
-            };
-            console.log('First TIMEs:',getFirsts);
             //getLast = dataArray[dataArray.length-1].TIME;
             //var timeSlice = getLast - getFirst;
             //console.log('Time Slice:',timeSlice);
@@ -211,7 +212,7 @@
             var table = new google.visualization.Table($('#resultsTable').get(0));
             table.draw(data, tableOptions);
             //setTimeout(doPoll,60000);
-            };
+          };
             
             //console.log('loaded data array:',dataArray);
             //console.log('choose array:',dataArray[1]);
@@ -249,32 +250,7 @@
           */
 
 
- //BUILDING SLICE NAMES
-          //var slices = [];
-            //for(i=0;i<=();i+=100) {
-            //slices.push('/' + (i) + '-' + (i+99));
-            //};
-        
-          //console.log('Slices',slices);
 
-
-          var sliceNames = ['2015-06-17-14-09-28-200-299', '2015-06-17-14-09-28-300-399', '2015-06-17-14-09-28-400-499', '2015-06-17-14-09-28-500-599']
-          //var sliceNames = ['/2015-06-16-22-43-29-400-499','/2015-06-16-22-43-29-500-599','/2015-06-16-22-43-29-600-699'];
-
-          var first_url = 'http://gradientone-test.appspot.com/oscopedata/amplifier/2015-06-17-14-09-28-100-199';  
-          json_url = first_url; 
-          gatherData(json_url);
-
-          var base_url = 'http://gradientone-test.appspot.com/oscopedata/amplifier/';
-          for(i=0; i <= sliceNames.length; i++) {
-            var pageTrig = (parseFloat(getFirsts[i]))+0.99;
-            console.log('> test:', hMax > pageTrig);
-            
-            if(hMax > pageTrig) { 
-              json_url = base_url + sliceNames[i];
-              gatherData(json_url);
-            };   
-          };
 
 
             //var hZoom =;
@@ -300,7 +276,25 @@
             showRowNumber: true,
             oddTableRow:{color:'green'},
           }
+          console.log("calling gatherData with name = ",sliceNames[1]);
+          gatherData(base_url,sliceNames,0,4);
        };
+
+// range: 1434606619000 -  1434606619400
+// center: 1434606619200 in absolute time is zero in relative time.
+// var ms_since_epoch = center + user_seconds * 1000;
+// var min_since_epoch = center + min_user_seconds *1000;
+// var max_since_epoch = center + max_user_seconds *1000;
+//
+       var sliceNames = ['1434606619000', '1434606619100', '1434606619200', '1434606619300'];
+ //hPostion will help us.
+
+       var base_url = 'http://gradientone-test.appspot.com/oscopedata/amplifier/';
+       for (idx in sliceNames) {
+          if (!(sliceNames[idx] in resultsCache)) {
+                fetchData(base_url,sliceNames[idx],true);
+          }
+       }
        google.setOnLoadCallback(doPoll);
 
 
