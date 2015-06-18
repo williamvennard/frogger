@@ -66,7 +66,7 @@
                             class="hPosKnob"
                             data-cursor= "10"
                             data-width="50"
-                            data-fgColor="black"
+                            data-fgColor="rgb(2,255,253)"
                             data-thickness=".5"
                             data-bgColor="white"
                             data-angleOffset="-125"
@@ -85,7 +85,7 @@
                             class="hZoomKnob"
                             data-cursor= "10"
                             data-width="50"
-                            data-fgColor="black"
+                            data-fgColor="rgb(2,255,253)"
                             data-thickness=".5"
                             data-angleOffset="-125"
                             data-angleArc="250"
@@ -99,7 +99,7 @@
           <br><br><br>
           <div class="row-md-7" id="dataDisplayBox">
             <div class="row-md-6;" id="resultsChartCSS">
-              <div id="resultsChart" style="height: 385px; width: 575px; margin-left: 10em;"></div>
+              <div id="resultsChart" style="height: 385px; width: 575px;"></div>
             </div>
             <div class="row-md-3" style="" id="resultsTableCSS">
               <div id="resultsTable"></div>
@@ -114,7 +114,7 @@
     var hPosition = 0;
     $(".hPosKnob").knob({
         'release' : function (hPos) { 
-          //console.log('knob V value:',hPos);  
+          //console.log('knob H pos value:',hPos);  
           hPosition = hPos;
           doPoll();
       },
@@ -133,13 +133,8 @@
           packages: ['corechart','table']
     });
 
-       var gatherDataCalls = 0;
-       var getLast;
-       var getFirst;    
-       var dataArray = [];
+       //var sliceNames = [];
        var resultsData = [];
-       var getFirsts = [];
-       var resultsArray = [];
        var resultsCache = [];
 
        function fetchData(base_url,sliceName,use_async){
@@ -153,23 +148,16 @@
              console.log("fetchData: sliceName =", sliceName);
              console.log("fetchData: results =", results);
              resultsCache[sliceName] = results;
-             console.log("154:resultsCache[sliceName] =", resultsCache[sliceName]);
+             console.log("152:resultsCache[sliceName] =", resultsCache[sliceName]);
           })  // need error handler
        };
        function doPoll(){
-          //var urlPath = window.location.pathname;
-          //var urlPath = window.location.pathname.split( '/' );
-          //var newPathname = urlPath[urlPath.length - 1];
-          //console.log(urlPath);
-          //console.log(newPathname);
-          //^THIS READS THE CURRENT URL THAT IS OPEN ->file:///Users/william/Desktop/GradientOne/UI/testResultsPage.html
           var data = new google.visualization.DataTable();
           data.addColumn('number', 'Time');
           data.addColumn('number', 'Ch1');
           //data.addColumn('number', 'Ch2');
 
           function gatherData(base_url,sliceNames,first,last){
-            gatherDataCalls++;
             for (idx = first; idx < last; idx++) {
                var sliceName = sliceNames[idx];
                console.log("gatherData: sliceName =", sliceName);
@@ -191,19 +179,7 @@
                  ]);
                });
             }
-            //var testArray = dataArray[(dataArray.length-1)];
-            //console.log('data array:',dataArray);
-            //console.log('test:',testArray[0].TIME);
-            //console.log(results.data.sort());
-            //console.log('gatherData counter:',gatherDataCalls);
-            //if (dataArray.indexOf(dataArray) === -1) {
-             // dataArray.push(results.data);
-            //};
-            //$(arr1).not(arr2).length === 0 && $(arr2).not(arr1).length === 0
-            //getLast = dataArray[dataArray.length-1].TIME;
-            //var timeSlice = getLast - getFirst;
-            //console.log('Time Slice:',timeSlice);
-            //console.log('Last TIME:',getLast);
+    
 
             //DRAW CHART
             var chart = new google.visualization.LineChart($('#resultsChart').get(0));      
@@ -213,47 +189,21 @@
             table.draw(data, tableOptions);
             //setTimeout(doPoll,60000);
           };
-            
-            //console.log('loaded data array:',dataArray);
-            //console.log('choose array:',dataArray[1]);
-            
 
-
-          autoMaxPosition = (-498.80);
-          autoMinPosition = (-499.80);
-      //console.log('auto MAX position:',autoMaxPosition);
-      //console.log('auto MIN position:',autoMinPosition);
+          autoMaxPosition = (-499.01);
+          autoMinPosition = (-500.00);
+          //console.log('auto MAX position:',autoMaxPosition);
+          //console.log('auto MIN position:',autoMinPosition);
 
             var hMax = (hZoom + hPosition + autoMaxPosition);
             var hMin = (-hZoom + hPosition + autoMinPosition);
             console.log('hMax:',hMax);
             console.log('hMin:',hMin);
-            
-         
-          
-          
-          //var dateNow = new Date(parseInt(timeNow));
-          //var dateNow = new Date(timeNow *1000);
-        /*
-        //GET TIME AND CONVERT TO DATE
-          var timeNow = Date.now();
-          date = new Date(timeNow * 1000);
-          dateFormat = [
-             date.getFullYear(),
-             date.getMonth()+1,
-             date.getDate(),
-             date.getHours(),
-             date.getMinutes(),
-             date.getSeconds(),
-          ];
-          console.log('time now:', dateFormat)
-          */
 
 
+            var triggerGatherData = hZoom + hPosition;
+            console.log('Slice Number?:', triggerGatherData)
 
-
-
-            //var hZoom =;
             //var hPosition =;
 
             //console.log('horizontal Zoom dial:',hZoom);
@@ -276,17 +226,25 @@
             showRowNumber: true,
             oddTableRow:{color:'green'},
           }
+
           console.log("calling gatherData with name = ",sliceNames[1]);
-          gatherData(base_url,sliceNames,0,4);
+          gatherData(base_url,sliceNames,0,(Math.abs(triggerGatherData)+3));
        };
 
-// range: 1434606619000 -  1434606619400
+// range: 1434648446000 -  1434648447000
 // center: 1434606619200 in absolute time is zero in relative time.
 // var ms_since_epoch = center + user_seconds * 1000;
 // var min_since_epoch = center + min_user_seconds *1000;
 // var max_since_epoch = center + max_user_seconds *1000;
-//
-       var sliceNames = ['1434606619000', '1434606619100', '1434606619200', '1434606619300'];
+// for every 100ms moved right load a slice
+
+// BUILD SLICES GIVEN FIRST SLICE
+/*var givenSlice
+      for (;;) {
+
+      };
+*/
+       var sliceNames = ['1434648446000', '1434648446100', '1434648446200', '1434648446300', '1434648446400', '1434648446500', '1434648446600', '1434648446700', '1434648446800', '1434648446900', '1434648447000'];
  //hPostion will help us.
 
        var base_url = 'http://gradientone-test.appspot.com/oscopedata/amplifier/';
