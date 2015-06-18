@@ -3,8 +3,7 @@ This is the "time_based_paging_oscope" script.
 
 It opens a file & slices the desired # of rows to transmit.  It 
 subseuqently looks for appropriate time windows to slot the data
-in, then pads with leading or trailing zeros as necessary to 
-fill in 100 msec of data.
+in.
 
 It adds the # of msec since the epoch as the DTE entry in 
 the data dictionary.
@@ -76,8 +75,8 @@ def slicename_creation(tse):
 def post_creation(stuffing):
     out = json.dumps(stuffing)
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-    #url = "https://gradientone-test.appspot.com/oscopedata/amplifier/%s" % slicename
-    url = "http://localhost:18080/oscopedata/amplifier/%s" % slicename
+    url = "https://gradientone-test.appspot.com/oscopedata/amplifier/%s" % slicename
+    #url = "http://localhost:18080/oscopedata/amplifier/%s" % slicename
     r = requests.post(url, data=out, headers=headers)
     print "dir(r)=",dir(r)
     print "r.reason=",r.reason
@@ -89,7 +88,7 @@ start_ms = int(i.strftime('%f'))/1000
 tse = dt2ms(i)
 print 'time since epoch = ', tse
 f = open('../../DataFiles/tekcsv/tek0012ALL.csv')
-f = itertools.islice(f, 18, 118)
+f = itertools.islice(f, 18, 1018)
 test_results = csv.DictReader(f, fieldnames = ("TIME", "CH1", "CH2", "CH3", "CH4"))
 test_results = [row for row in test_results]
 window = find_window(start_ms)[0]
