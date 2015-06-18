@@ -1,0 +1,83 @@
+#compHeader {
+    background-color: ;
+    height: 50px;
+}
+#backButton {
+    color: white;
+    position: absolute;
+    top:65px;
+    font-size: 250%;
+    margin-top: 0px;
+    margin-bottom: 10px;
+    margin-right: 10px;
+}
+.compName {
+    font-family: 'NexaBold';
+    color: white;
+    position: relative;
+    top:0px;
+    left: 30px;
+    margin-bottom: 0px;
+    margin-left: 20px;
+    margin-top: 5px;
+    min-width: 100px;
+}
+.testResultsBox {
+    min-height: 400px;
+    border-width: 2px;
+    border-style: solid;
+    border-color: black;
+    border-radius: 4px;
+    background-color: rgb(33,33,33);
+    /*background-image: radial-gradient(#FFFFFF, #C0C0C0);*/
+}
+.testPlanNameCSS { 
+    margin:5px;
+    font-family: 'NexaBold'
+}
+#testPlanInfoBox {
+    width:25%;
+    margin-left: 10px;
+    margin-right: 0px;
+    margin-top: 0px;
+    padding-top: 0px;
+    padding-bottom: 10px;
+    padding-left: 0px; 
+}
+.testPlanInfo {
+    margin-bottom: 5px;
+    margin-top:5px;
+    color: white;
+    width:200px;
+}
+#dataDisplayBox {
+    float:right;
+    height: 400px;
+}
+#resultsTableCSS {
+    overflow:auto;
+    position: relative;
+    left: px;
+    top:px;
+    margin-right: 5px;
+    margin-top: 5px;
+    margin-bottom:5px;
+    max-height: 385px;
+    border-style: solid;
+    border-width: 3px;
+    border-color: black;
+ 
+}
+#resultsChartCSS {
+    float: left;
+    position: relative;
+    top: px;
+    margin-top: 5px;
+    margin-right: 10px;
+    margin-left: 20px; 
+    
+}
+#measurementsBox {
+    color: white;
+
+}
