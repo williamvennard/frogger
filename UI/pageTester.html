@@ -110,11 +110,13 @@
     </div>
  
  <script type="text/javascript">
+    var hZoom = 0;
+    var hPosition = 0;
     $(".hPosKnob").knob({
         'release' : function (v) { 
           //console.log('knob V value:',v);  
           hPosition = v;
-          doPoll(hPosition);
+          doPoll();
       },
     }); 
 
@@ -122,7 +124,7 @@
       'release' : function (h) { 
          //console.log('knob H value:',h);
          hZoom = h;
-         doPoll(hZoom);
+         doPoll();
       },
     }); 
 
@@ -131,8 +133,6 @@
           packages: ['corechart','table']
     });
 
-       var hZoom = 0;
-       var hPosition = 0;
        var gatherDataCalls = 0;
        var getLast;
        var getFirst;    
@@ -142,7 +142,7 @@
        var resultsArray = [];
        var resultsCache = [];
 
-       function doPoll(v, h){
+       function doPoll(){
           //var urlPath = window.location.pathname;
           //var urlPath = window.location.pathname.split( '/' );
           //var newPathname = urlPath[urlPath.length - 1];
