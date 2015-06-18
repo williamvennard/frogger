@@ -63,7 +63,7 @@
                             data-step="1"
                             data-min="-10"
                             data-max="10" 
-                            class="hPosition"
+                            class="hPosKnob"
                             data-cursor= "10"
                             data-width="50"
                             data-fgColor="black"
@@ -82,7 +82,7 @@
                             value="0"
                             data-min="0"
                             data-max="10" 
-                            class="hZoom"
+                            class="hZoomKnob"
                             data-cursor= "10"
                             data-width="50"
                             data-fgColor="black"
@@ -96,9 +96,10 @@
                 <div  id="testMeasRes"></div>
               </div>
           </div>
+          <br><br><br>
           <div class="row-md-7" id="dataDisplayBox">
             <div class="row-md-6;" id="resultsChartCSS">
-              <div id="resultsChart" style="height: 385px; width: 575px;"></div>
+              <div id="resultsChart" style="height: 385px; width: 575px; margin-left: 10em;"></div>
             </div>
             <div class="row-md-3" style="" id="resultsTableCSS">
               <div id="resultsTable"></div>
@@ -108,13 +109,8 @@
       </div>
     </div>
  
-
-
  <script type="text/javascript">
-
-
-
-       $(".hPosition").knob({
+    $(".hPosKnob").knob({
         'release' : function (v) { 
           //console.log('knob V value:',v);  
           hPosition = v;
@@ -122,29 +118,29 @@
       },
     }); 
 
-
-
-      $(".hZoom").knob({
-        'release' : function (h) { 
-          //console.log('knob H value:',h);
-          hZoom = h;
-          doPoll(hZoom);
+    $(".hZoomKnob").knob({
+      'release' : function (h) { 
+         //console.log('knob H value:',h);
+         hZoom = h;
+         doPoll(hZoom);
       },
     }); 
 
  // load chart lib
-       google.load('visualization', '1', {
+    google.load('visualization', '1', {
           packages: ['corechart','table']
-       });
+    });
 
        var hZoom = 0;
        var hPosition = 0;
-       var fetchDataCalls = 0;
-       var dataArray;
+       var gatherDataCalls = 0;
        var getLast;
        var getFirst;    
        var dataArray = [];
+       var resultsData = [];
        var getFirsts = [];
+       var resultsArray = [];
+       var resultsCache = [];
 
        function doPoll(v, h){
           //var urlPath = window.location.pathname;
@@ -153,64 +149,69 @@
           //console.log(urlPath);
           //console.log(newPathname);
           //^THIS READS THE CURRENT URL THAT IS OPEN ->file:///Users/william/Desktop/GradientOne/UI/testResultsPage.html
-
-          
-          
           var data = new google.visualization.DataTable();
           data.addColumn('number', 'Time');
           data.addColumn('number', 'Ch1');
           //data.addColumn('number', 'Ch2');
 
-          function fetchData(){
-            fetchDataCalls++;
+          function gatherData(json_url){
+            gatherDataCalls++;
             //console.log(json_url);
-            var jsonData = $.ajax({
-               url: json_url,            
-               dataType: 'json',
-            }).done(function (results) {   
-                 //GETING DATA
-               $.each(results['data'], function (i, row) {
-                 data.addRow([
-                   parseFloat(row.TIME),
-                   parseFloat(row.CH1),
-                   //parseFloat(row.CH2), 
-                 ]);
-          });
-
+            function fetchData(json_url){
+              $.ajax({
+                async: false,
+                url: json_url,            
+                dataType: 'json',
+              }).done(function (results) {
+                console.log("return results for json_url =", json_url);
+                resultsCache[json_url] = results;
+                console.log("166:resultsCache[json_url] =", resultsCache[json_url]);
+              })
+            };
+            console.log("172:json_url =", json_url);
+            if (!(json_url in resultsCache)) {
+              //resultsCache[json_url] = fetchData(json_url);
+              fetchData(json_url);
+            }
+            var results = resultsCache[json_url];
+            console.log("179:json_url =", json_url);
+            console.log("180:resultsArray =", resultsArray);
+            console.log("181:resultsCache =", resultsCache);
+            console.log("results =", results);
+            //GETING DATA
+            $.each(results['data'], function (i, row) {
+              data.addRow([
+                parseFloat(row.TIME),
+                parseFloat(row.CH1),
+                //parseFloat(row.CH2), 
+              ]);
+            });
             //var testArray = dataArray[(dataArray.length-1)];
             //console.log('data array:',dataArray);
             //console.log('test:',testArray[0].TIME);
             //console.log(results.data.sort());
-            //console.log('fetchData counter:',fetchDataCalls);
+            //console.log('gatherData counter:',gatherDataCalls);
             //if (dataArray.indexOf(dataArray) === -1) {
              // dataArray.push(results.data);
             //};
             //$(arr1).not(arr2).length === 0 && $(arr2).not(arr1).length === 0
-        
-
             if (getFirsts.indexOf(results.data[0].TIME) === -1) {
               getFirsts.push(results.data[0].TIME);
             };
-            
-          
             console.log('First TIMEs:',getFirsts);
+            //getLast = dataArray[dataArray.length-1].TIME;
+            //var timeSlice = getLast - getFirst;
+            //console.log('Time Slice:',timeSlice);
+            //console.log('Last TIME:',getLast);
 
-
-             //getLast = dataArray[dataArray.length-1].TIME;
-             //var timeSlice = getLast - getFirst;
-             //console.log('Time Slice:',timeSlice);
-             //console.log('Last TIME:',getLast);
-
-             //DRAW CHART
-             var chart = new google.visualization.LineChart($('#resultsChart').get(0));      
-             chart.draw(data, chartOptions);
-             //DRAW TABLE
-             var table = new google.visualization.Table($('#resultsTable').get(0));
-             table.draw(data, tableOptions);
+            //DRAW CHART
+            var chart = new google.visualization.LineChart($('#resultsChart').get(0));      
+            chart.draw(data, chartOptions);
+            //DRAW TABLE
+            var table = new google.visualization.Table($('#resultsTable').get(0));
+            table.draw(data, tableOptions);
             //setTimeout(doPoll,60000);
-
-          });
-          };
+            };
             
             //console.log('loaded data array:',dataArray);
             //console.log('choose array:',dataArray[1]);
@@ -262,7 +263,7 @@
 
           var first_url = 'http://gradientone-test.appspot.com/oscopedata/amplifier/2015-06-17-14-09-28-100-199';  
           json_url = first_url; 
-          fetchData(json_url);
+          gatherData(json_url);
 
           var base_url = 'http://gradientone-test.appspot.com/oscopedata/amplifier/';
           for(i=0; i <= sliceNames.length; i++) {
@@ -271,7 +272,7 @@
             
             if(hMax > pageTrig) { 
               json_url = base_url + sliceNames[i];
-              fetchData(json_url);
+              gatherData(json_url);
             };   
           };
 
@@ -282,8 +283,6 @@
             //console.log('horizontal Zoom dial:',hZoom);
             //console.log('horizontal position dial:',hPosition);
             
-          
-
         var chartOptions = {
             title: 'Oscope Data',
             titleTextStyle: {color:'lightgray', fontSize: 18, fontName: 'NexaLight'},
@@ -301,7 +300,7 @@
             showRowNumber: true,
             oddTableRow:{color:'green'},
           }
-        };
+       };
        google.setOnLoadCallback(doPoll);
 
 
