@@ -253,6 +253,7 @@ class MainPage(InstrumentDataHandler):
 
 
     def get(self):
+        db.delete(OscopeDB.all(keys_only=True))
         user = users.get_current_user()
         if user:
             self.response.headers['Content-Type'] = 'text/html; charset=utf-8'
