@@ -80,8 +80,8 @@
                             <input 
                             type="text" 
                             value="0"
-                            data-min="0"
-                            data-max="10" 
+                            data-min="10"
+                            data-max="1000" 
                             class="hZoomKnob"
                             data-cursor= "10"
                             data-width="50"
@@ -110,7 +110,7 @@
     </div>
  
  <script type="text/javascript">
-    var hZoom = 0;
+    var hZoom = 100;
     var hPosition = 0;
     $(".hPosKnob").knob({
         'release' : function (hPos) { 
@@ -134,9 +134,12 @@
     });
 
        //var sliceNames = [];
-       var resultsData = [];
        var resultsCache = [];
-
+       var autoMaxPosition = 0;
+       var autoMinPosition = 0;
+       var hMax = 0;
+       var hMin = 0;
+       var chartOptions = {};
        function fetchData(base_url,sliceName,use_async){
           json_url = base_url + sliceName;
           $.ajax({
@@ -151,15 +154,33 @@
              console.log("152:resultsCache[sliceName] =", resultsCache[sliceName]);
           })  // need error handler
        };
+
        function doPoll(){
           var data = new google.visualization.DataTable();
           data.addColumn('number', 'Time');
           data.addColumn('number', 'Ch1');
           //data.addColumn('number', 'Ch2');
-
+    
           function gatherData(base_url,sliceNames,first,last){
+            var sliceName = sliceNames[first];
+            if (!(sliceName in resultsCache)) {
+                 json_url = base_url + sliceName;
+                 console.log("gatherData: cache miss: json_url =", json_url);
+                 fetchData(base_url,sliceName,false);
+               }
+            var gatheredResults = resultsCache[sliceName];
+            var firstRow = gatheredResults['data'][0];
+            if (autoMinPosition == 0) {
+              autoMinPosition = Number(firstRow.TIME);
+              autoMaxPosition = Number(firstRow.TIME)+range;
+              hMax = autoMaxPosition;
+              hMin = autoMinPosition;
+              console.log("chart options viewWindow:", chartOptions.hAxis.viewWindow);
+              chartOptions.hAxis.viewWindow.max = hMax;
+              chartOptions.hAxis.viewWindow.min = hMin;
+            };
             for (idx = first; idx < last; idx++) {
-               var sliceName = sliceNames[idx];
+               sliceName = sliceNames[idx];
                console.log("gatherData: sliceName =", sliceName);
                console.log("gatherData: idx =", idx);
                if (!(sliceName in resultsCache)) {
@@ -167,9 +188,10 @@
                  console.log("gatherData: cache miss: json_url =", json_url);
                  fetchData(base_url,sliceName,false);
                }
-               var gatheredResults = resultsCache[sliceName];
+               gatheredResults = resultsCache[sliceName];
                console.log("gatherData: resultsCache =", resultsCache);
                console.log("gatherData: gatheredResults =", gatheredResults);
+               console.log("gatherData: idx = ", idx);
                //GETING DATA
                $.each(gatheredResults['data'], function (i, row) {
                  data.addRow([
@@ -190,26 +212,29 @@
             //setTimeout(doPoll,60000);
           };
 
-          autoMaxPosition = (-499.01);
-          autoMinPosition = (-500.00);
+          //autoMaxPosition = (-499.01);
+          //autoMinPosition = (-500.00);
           //console.log('auto MAX position:',autoMaxPosition);
           //console.log('auto MIN position:',autoMinPosition);
-
-            var hMax = (hZoom + hPosition + autoMaxPosition);
-            var hMin = (-hZoom + hPosition + autoMinPosition);
+            var center = hPosition + (autoMinPosition + autoMaxPosition)/2;
+            var width = (autoMaxPosition - autoMinPosition)*(hZoom/100);
+            console.log('window width:', width);
+            console.log('window center:',center);
+            hMax = center + width/2;
+            hMin = center - width/2;
             console.log('hMax:',hMax);
             console.log('hMin:',hMin);
 
 
-            var triggerGatherData = hZoom + hPosition;
-            console.log('Slice Number?:', triggerGatherData)
+            //var triggerGatherData = hZoom + hPosition;
+            //console.log('Slice Number?:', triggerGatherData)
 
             //var hPosition =;
 
             //console.log('horizontal Zoom dial:',hZoom);
             //console.log('horizontal position dial:',hPosition);
             
-        var chartOptions = {
+        chartOptions = {
             title: 'Oscope Data',
             titleTextStyle: {color:'lightgray', fontSize: 18, fontName: 'NexaLight'},
             legend: {alignment:'center', textStyle:{color:'lightgray'}},
@@ -225,18 +250,12 @@
           var tableOptions = {
             showRowNumber: true,
             oddTableRow:{color:'green'},
-          }
+          };
 
           console.log("calling gatherData with name = ",sliceNames[1]);
-          gatherData(base_url,sliceNames,0,(Math.abs(triggerGatherData)+3));
+          gatherData(base_url,sliceNames,0,sliceNames.length);
        };
 
-// range: 1434648446000 -  1434648447000
-// center: 1434606619200 in absolute time is zero in relative time.
-// var ms_since_epoch = center + user_seconds * 1000;
-// var min_since_epoch = center + min_user_seconds *1000;
-// var max_since_epoch = center + max_user_seconds *1000;
-// for every 100ms moved right load a slice
 
 // BUILD SLICES GIVEN FIRST SLICE
 /*var givenSlice;
@@ -245,11 +264,21 @@
       };
 */
 // POLL FOR CURRENT TIME TO START PLOTTING DATA
-      //var formatTime = (Math.round(Date.now()/100))*100;
-      //console.log('current timestamp:',formatTime);
+      var formatTime = (Math.round(Date.now()/100))*100;
+      console.log('current timestamp:',formatTime);
 
        var sliceNames = ['1434648446000', '1434648446100', '1434648446200', '1434648446300', '1434648446400', '1434648446500', '1434648446600', '1434648446700', '1434648446800', '1434648446900', '1434648447000'];
  //hPostion will help us.
+
+      var range = (Number(sliceNames[sliceNames.length-1]) - Number(sliceNames[0]))/1000;
+      console.log('Range in Number:',range);
+
+      // range: 1434648446000 -  1434648447000
+      // center: 1434606619200 in absolute time is zero in relative time.
+      // var ms_since_epoch = center + user_seconds * 1000;
+      // var min_since_epoch = center + min_user_seconds *1000;
+      // var max_since_epoch = center + max_user_seconds *1000;
+      // for every 100ms moved right load a slice
 
        var base_url = 'http://gradientone-test.appspot.com/oscopedata/amplifier/';
        for (idx in sliceNames) {
