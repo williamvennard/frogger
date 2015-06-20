@@ -215,8 +215,6 @@ class OscopeDB(DictModel):
     config = db.StringProperty(required = True)
     slicename = db.StringProperty(required = True)
     TIME = db.FloatProperty(required = True)
-    Start_Date_Time = db.DateTimeProperty(required = False)
-    End_Date_Time = db.DateTimeProperty(required = False)
     CH1 = db.FloatProperty(required = True)
     CH2 = db.FloatProperty(required = True)
     CH3 = db.FloatProperty(required = True)
