@@ -1,0 +1,142 @@
+Bitscope API Syntax
+
+The overall framework for the API is:
+(1) Initialize -> (2) Setup -> (3) Trace -> (4) Acquire -> (5) Close
+
+
+1)  To initialize the bitscope and library, the two commands below are issued:
+
+    •   BL_Initialize - initializes the library
+    •   BL_Open - opens one or more bitscopes.  Calling BL_Open automatically performs the BL_Initialize function.
+
+    One a bitscope has been opened, the below info can be obtained by the API:
+
+    •   BL_Name  - return the device link name
+    •   BL_Version -  return version information
+    •   BL_ID -  return the selected device ID (a unique ID associated with a bitscope)
+    •   BL_Count — it counts the # of devices, channels it supports and ranges. 
+
+
+2)  After a device is opened, it must be set up for use.   
+
+    This is only required once, or when recovering from an error.  First se BL_Count to count devices and analog/logic channels or ranges, the BL_Select to select the specifics.
+
+    •   BL_Select to select the device, channel or signal source.
+
+    When the device is selected for the first time, its trace mode must also be selected.
+
+    •   BL_Mode - selects the trace mode.  
+
+
+    For example, to select the BNC source on channel 1 on device 0:
+
+    BL_Select(BL_SELECT_DEVICE,0);
+    BL_Mode(BL_MODE_FAST);
+    BL_Select(BL_SELECT_CHANNEL,1);
+    BL_Select(BL_SELECT_SOURCE,BL_SOURCE_BNC);
+
+    Once the device and mode are selected, each channel may be selected in turn and configured to choose a source, input offset, voltage range, signal coupling and whether to enable it for capture:
+
+    •   BL_Range - select the channel range
+    •   BL_Offset - assign channel offset
+    •   BL_Coupling - select the channel source coupling
+    •   BL_Enable - change channel enable status
+
+
+3)  Trace programming
+
+    After the device, mode and channels are configured, trace settings are programmed.
+
+    First the sample rate and capture size (specified in samples) are assigned:
+
+    •   BL_Rate - assign the sample rate (Hz)
+    •   BL_Size - assign the capture size (samples)
+
+
+    An alternative is to assign the duration directly:
+
+    •   BL_Time - assign the capture duration (seconds)
+    
+    In this case, the capture size and sample rate may be adjusted by the library automatically.
+
+    Second the trigger, if required, is established:
+
+    •   BL_Trigger - set up the trigger
+
+    This function accepts two arguments specifying the trigger level (which is applied to the currently selected channel) and the type of trigger.
+
+    If signals are to be captured before the trigger, or a delay is required after the trigger, these parameters are specified next using two functions:
+
+    •   BL_Intro - assign the pre-trigger size (intro region)
+    •   BL_Delay - assign post-trigger delay (delay before capture)
+
+    Both functions are optional (not required when tracing untriggered).
+
+    At this point the device is ready to capture waveforms and logic data.
+
+
+    To commence the trace and capture signals call:
+
+    •   BL_Trace - initiate capture
+
+    This function is the one that actually talks to BitScope and captures waveforms.
+
+    This function may take an arbitrarily long time to complete. Indeed it may never complete, so to avoid locking your program, it may be called asynchronously or it may be called with a specified timeout.
+
+    When called asynchronously BL_Trace always returns immediately, even if the trace has not yet completed. In this case call:
+
+    •   BL_State - return capture engine state
+
+    periodically after BL_Trace to monitor progress of the trace. BL_State returns a token reporting trace in progress, trace complete, timeout or an error code.
+
+    When an asynchronous trace is in progress it may be manually stopped with:
+
+    •   BL_Halt - all any pending or prevailing device activity
+
+    An alternative is to call BL_Trace synchronously with a specified timeout. In this case BL_Trace is guaranteed to return within the time specified but the trace may or may not have completed in that time; it returns TRUE if it has, FALSE otherwise.
+
+
+4)  Acquiring Data from the Device
+
+    Once the trace has completed, the data may be acquired:
+
+    •   BL_Acquire - acquire data from the device.
+
+    BL_Acquire uploads data from the device one channel at a time. Before it is called each time, select the channel (and optionally the device) to be acquired with BL_Select.
+
+    If acquiring from other than the first sample, the starting index may be specified:
+
+    •   BL_Index - assign the buffer offset (for acquisition)
+
+
+    If BL_Index is used it must be called before BL_Trace.
+
+    In any case, the return value of BL_Acquire specifies how many sample are actually acquired. The return value will not be greater than the number requested but it may be fewer:
+
+    If the number of samples captured is fewer than the number requested,
+    If the trace was terminated early, a timeout or error occured, or
+    A programming error (such as forgetting to enable the channel).
+    Typically one executes BL_Trace and cycles through a sequence of BL_Acquire, one for each channel (on each device), before executing the next BL_Trace.
+
+5) Closing Devices and the Library
+
+    When you're finished with the library, call BL_Close. This closes all open devices (it's not possible to close only one). If you wish to close one of several devices, close them all and reopen those you wish to continue using.
+
+
+
+Miscellaneous default related information:
+
+
+        BL_Mode(MY_MODE) # prefered capture mode
+        BL_Intro(BL_ZERO); # optional, default BL_ZERO
+        BL_Delay(BL_ZERO); # optional, default BL_ZERO
+        BL_Rate(MY_RATE); # optional, default BL_MAX_RATE
+        BL_Size(MY_SIZE); # optional default BL_MAX_SIZE
+        BL_Select(BL_SELECT_CHANNEL,MY_CHANNEL); # choose the channel
+        BL_Trigger(BL_ZERO,BL_TRIG_RISE); # optional when untriggered */
+        BL_Select(BL_SELECT_SOURCE,BL_SOURCE_POD); # use the POD input */
+        BL_Range(BL_Count(BL_COUNT_RANGE)); # maximum range
+        BL_Offset(BL_ZERO); # optional, default 0
+        BL_Enable(TRUE); # at least one channel must be initialised 
+
+
