@@ -28,8 +28,10 @@
           //^THIS READS THE CURRENT URL THAT IS OPEN ->file:///Users/william/Desktop/GradientOne/UI/testResultsPage.html
           // IF WE CAN SOMEONE GET THE NAME OF THE TEST IN THAT TAG WE WOULD BE IN BUSINESS
 
-          //HARDCODE TEST PLAN 'RMS'
-          var base_url = 'https://gradientone-test.appspot.com/testresults/';
+
+
+          var base_url = 'http://localhost:18080/testresults/';
+         // var base_url = 'https://gradientone-test.appspot.com/testresults/';
           var json_url = base_url + pathKey +'.json';
           console.log('JSON_URL:',json_url);
           var jsonData = $.ajax({
