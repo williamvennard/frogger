@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block import %}
+
+<html>
+  <head>
+    <title>BitScope Config Input </title>
+    <style type="text/css">
+      .label {text-align: right}
+      .error {color: red}
+    </style>
+
+  </head>
+
+  <body>
+    <h2>Bitscope Configuration Input</h2>
+    <form method="post">
+      <table>
+        <tr>
+          <td class="label">
+            Company Nickname
+          </td>
+          <td>
+            <input type="text" name="company_nickname" value="{{company_nickname}}">
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            Hardware Name
+          </td>
+          <td>
+            <input type="text" name="hardware_name" value="{{hardware_name}}">
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            Instrument Type
+          </td>
+          <td>
+            <input type="text" name="instrument_type" value="{{instrument_type}}">
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            Instrument Name
+          </td>
+          <td>
+            <input type="text" name="instrument_name" value="{{instrument_name}}">
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            Sample Rate (Hz):  
+          </td>
+          <td>
+            <input type="text" name="sample_rate" value="{{sample_rate}}">
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            Number of Samples:  
+          </td>
+          <td>
+            <input type="text" name="number_of_samples" value="{{number_of_samples}}">
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            Start Measurement:
+          </td>
+        <td>
+          <input type="checkbox" name="start_measurement">
+        </td>
+        </tr> 
+
+
+
+
+      </table>
+
+      <input type="submit">
+    </form>
+  </body>
+
+</html>
+
+{% endblock %}
