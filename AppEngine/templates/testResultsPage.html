@@ -29,7 +29,7 @@
           // IF WE CAN SOMEONE GET THE NAME OF THE TEST IN THAT TAG WE WOULD BE IN BUSINESS
 
           //HARDCODE TEST PLAN 'RMS'
-          var base_url = 'https://gradientone-dev.appspot.com/testresults/';
+          var base_url = 'https://gradientone-test.appspot.com/testresults/';
           var json_url = base_url + pathKey +'.json';
           console.log('JSON_URL:',json_url);
           var jsonData = $.ajax({
@@ -62,6 +62,13 @@
              //GET OBJECT 
              var config = results['test_config'];
              var mesRes = results['measurement'];
+/*
+            //READ IN INFO THEN START POLLING FOR DATA SLICES---DIF URL'S
+             var sliceBuild = config[0].firstslice
+             var numSlices = 
+             var startTIME = 
+             var endTime = 
+*/
              //console.log('results:',data);
              /*var index;
               for (index = 0; index < config.length; ++index) {
@@ -101,12 +108,10 @@
             lineWidth: 1.25,
             curveType: 'function',
             crosshair: {trigger: 'both', selected:{opacity: 0.8}, focused:{opacity:0.8}},
-          }
+          };
           var tableOptions = {
             showRowNumber: true,
-            oddTableRow:{color:'green'},
-
-          }
+          };
        google.setOnLoadCallback(doPoll);
 </script>
 
@@ -122,11 +127,11 @@
           </div>
           <div id="navbar">
             <ul class="topmenu nav navbar-nav">
-              <li><a class="currentPage" href="index.html" style="color: rgb(124,175,46);">CANVAS</a></li>
+              <li><a class="currentPage" href="http://gradientone-test.appspot.com/testresults" style="color: rgb(124,175,46);">CANVAS</a></li>
               <li class="dots glyphicon glyphicon-option-vertical"></li>
-              <li><a href="instruments.html">INSTRUMENTS</a></li>
+              <li><a href="http://gradientone-test.appspot.com/instruments">INSTRUMENTS</a></li>
               <li class="dots glyphicon glyphicon-option-vertical"></li>
-              <li><a href="community.html">COMMUNITY</a></li>          
+              <li><a href="http://gradientone-test.appspot.com/community">COMMUNITY</a></li>          
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a class="glyphicon glyphicon-envelope" href="../navbar-static-top/"></a></li>
