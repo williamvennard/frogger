@@ -400,11 +400,11 @@
 
                         {% for t in tests %}
 
-                        {% for r in rows[0:1] %}
+                       
           
-                          <a class="testName" href ="testresults/{{t.testplan_name}}">{{ t.testplan_name }}</a><span class="testAuthor">{{ t.author }}<span class="testDate">{{r.Start_Date_Time}}
+                          <a class="testName" href ="testresults/{{t.testplan_name}}">{{ t.testplan_name }}</a><span class="testAuthor">{{ t.author }}<span class="testDate">
                           <br><br>   
-                          {% endfor %}
+                          
                         {% endfor %}
                         {% endblock %} 
                       </table>
