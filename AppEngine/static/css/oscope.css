@@ -1,3 +1,18 @@
+/*FONTS*/
+@font-face {
+    font-family: NexusBold;
+    src: url(css/fonts/NexaBold) format('truetype');
+    font-weight: normal;
+    font-style: normal; 
+}
+
+@font-face {
+    font-family: NexusLight;
+    src: url(css/fonts/NexaLight) format('truetype');
+    font-weight: normal;
+    font-style: normal; 
+}
+
 button {
     margin-top: 10px;
     width: 90px;
@@ -8,26 +23,29 @@ h3 {
     color: black;
 }
 
-.box {
+#instBox {
+    border-color: black;
+    background-color: #DFE0DD;
     display: inline-block;
     vertical-align: right;
-    width: 850px;
+    min-width: 830px;
+    height: 465px;
     border-style: solid;
     border-radius: 5px;
     border-width: 2px;
-    border-color: white;
-    background-color: lightgray;
-    margin:10px;
+    margin:0 0 0 0;
 }
 
 .instname {
+    margin:10px 0 0 0;
     text-align: center;
-    color:black;
 }
 
 #buttons {
+    font-family: 'NexaBold';
+    font-size: 130%;
+    margin: 0 0 10px 0;
     width: 190px;
-    margin: 0 auto;
 }
 
 #container {
@@ -38,21 +56,30 @@ h3 {
     max-width: 1300px;
 }
 
-#optionsBox {
-    width: 250px;
+.oTable {
+    overflow:auto;
+    margin: 10px 40px 0 0;
+    padding: 0 0 0 0;
+    margin-left: 10px;
     height: 400px;
-    float: right;
-    background-color: #DFE0DD;
+    width: 160px;
+}
+
+#optionsBox {
+    width: 200px;
+    height: 400px;
+    position: relative;
+    background-color: rgb(30,30,30);
     border-radius: 10px;
     border: 1px solid;
-    margin-right: 10px;
-    margin-top: 10px;
-    margin-left: -50px;
-    margin-bottom: 10px;
+    margin: 0 20px 0 0;
 }
 
 #optionsBoxTitle {
-    width: 53px;
+    text-align: center;
+    margin:0 0 0 45px;
+    color: white;
+    background-color: rgb(50,50,50); 
 }
 
 #ochart{
@@ -66,7 +93,7 @@ h3 {
     -webkit-box-shadow: inset 6px 5px 55px 1px rgba(0,0,0,0.8);
     -moz-box-shadow: inset 6px 5px 55px 1px rgba(0,0,0,0.8);
     box-shadow: inset 6px 5px 55px 1px rgba(0,0,0,0.8);
-    margin: 10px 10px 10px 10px;
+    margin: 10px 0 10px 20px;
 }
 
 .boxTitle {
@@ -81,27 +108,40 @@ h3 {
 .knob-sx { background-image: url(""); }
 .knob-sy { background-image: url(""); }
 
-.knobs { 
-    margin: 10px;
+.Knobs { 
+    margin: 0 0 0 0;
 }
 
-#knob1Label{
+#knobBox {
+    padding-top: 0px;
+    border-style: solid;
+    border-color: rgb(197,44,72);
+    border-width: 1px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    margin-top: 0px;
+    margin-left: 10px;
+    min-height: 110px;
+    
+}
+
+#knobLabel{
+    color: white;
     text-align: center;    
 }
 
-#knob2Label{
-    text-align: center;   
-}
 
-#knob1 {
-    margin: 0 0 0 10px;
+#PosKnob {
+    margin: 0 0 0 0;
+    position: relative;
+    left:0;
     float: left;
     width: 50px;
     height: 50px;
 }
 
-#knob2 {
-    margin: 0 10px 0 0;
+#ZoomKnob {
+    margin: 0 0 0 0;
     float: right;
     width: 50px;
     height: 50px;
@@ -114,67 +154,4 @@ h3 {
     width: 40px;
 }
 
-
-/* ---------- Responsive ---------- */
-@media (max-width: 1000px) {
-    #container {
-        top: 0;
-        transform: none;
-    }
-
-    #optionsBox {
-        float: none;
-        width: 90%;
-        height: 190px;
-        display: inline-block;
-        margin-left: 20px;
-        margin-right:0px;
-        margin-bottom: 20px;
-    }
-
-    .knobs {
-        display: inline-block;
-        margin-top: 0;
-        margin-right: 50px;
-        vertical-align: top;
-        margin-top: -14px;
-    }
-
-    #buttons {
-        margin-right: 50px;
-        margin-left:20px;
-        display: inline-block;
-    }
-
-    #knob1 {
-        height:75px;
-        display: inline-block;
-        text-align: right;
-    }
-
-    #knob2 {
-        height:75px;
-        display: inline-block;
-        text-align: right;
-    }
-}
-@media (max-width: 900px) {
-    #container {
-        top: 0;
-        transform: none;
-    }
-
-    #optionsBox {
-        float: none;
-        width: 280px;
-        height: 150px;
-        display: inline-block;
-        margin-left: 20px;
-        margin-right:0px;
-        margin-bottom: 20px;
-    }
-
-    .knobs {
-        display: none;       
-    }  
-}
+/* ---------- Responsive ---------- 

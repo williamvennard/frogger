@@ -116,81 +116,116 @@
                     </ul> 
                 </div>                           
 <!--Oscilloscope-->    
-              <div class=" box"  style="margin-right: 30px;">
-                  <h2 id="instName" class="instname">Oscilloscope</h2>
-                  <div id="ochart">
-                  </div>
-                  <div id="optionsBox">
-                      <div id="optionsBoxTitle" class="boxTitle">
-                          <h2>Options</h2>
-                      </div>
-                      <div id="buttons">
-                          <button type="button" id="start">Start</button>
-                          <button type="button" id="start">Save</button>
-                      </div>
-                      <div class="knobs">
-                        <section>
-                          <div id="knob1">
-                            <p id="knob1Label">Volts/Div</p>
-                            <input 
-                            type="text" 
-                            value="0"
-                            data-min="0"
-                            data-max="100" 
-                            class="vDial"
-                            data-cursor= "10"
-                            data-width="50"
-                            data-fgColor="black"
-                            data-thickness=".5"
-                            data-bgColor="white"
-                            data-angleOffset="-125"
-                            data-angleArc="250">
-
+              <div id="instBox">
+                  <h2 id="instName" class="instname" style="color:black;">Oscilloscope</h2>
+                  <div class="row">
+                    <div class="col-md-6" id="ochart"></div> 
+                    <div id="collapseTable" class="col-md-2 collapse in oTable">
+                      <div id="oTable"></div><!--DATA TABLE-->
+                    </div>
+                    <div class="col-md-2" id="optionsBox" style="background-color: rgb(50,50,50);">
+                        <div id="optionsBoxTitle" class="boxTitle">
+                            <h2>Options</h2>
+                        </div>
+                        <div id="buttons" style="margin-bottom: 10px;">
+                            <button style="padding-top:5px;" class="text-uppercase" type="button" id="start">Start</button>
+                            <button style="padding-top:5px;" class="text-uppercase" type="button" id="save">Save</button>
+                            <button style="padding-top:5px;" class="text-uppercase" data-toggle="collapse" data-parent="#accordion" href="#collapseTable">Table</botton>
+                        </div>
+                        <fieldset class="col-md-12" id="knobBox" style="width: 90%;">
+                        <span class="spacer"></span><legend class="text-uppercase" style="width: 300px; padding-left: 5px;">Horizontal</legend><span class="spacer"></span>   
+                          <div class="Knobs">
+                            <section>
+                              <div id="PosKnob">
+                                <p id="knobLabel">Position</p>
+                                <input 
+                                type="text" 
+                                value="0"
+                                data-step="1"
+                                data-min="-10"
+                                data-max="10" 
+                                class="hPosKnob"
+                                data-cursor= "10"
+                                data-width="50"
+                                data-fgColor="rgb(2,255,253)"
+                                data-thickness=".5"
+                                data-bgColor="white"
+                                data-angleOffset="-125"
+                                data-angleArc="250">
+                              </div>
+                            </section>
+                            <section id="horiz">
+                              <div id="ZoomKnob">
+                                <p id="knobLabel">Zoom</p>
+                                <input 
+                                type="text" 
+                                value="0"
+                                data-min="10"
+                                data-max="1000" 
+                                class="hZoomKnob"
+                                data-cursor= "10"
+                                data-width="50"
+                                data-fgColor="rgb(2,255,253)"
+                                data-thickness=".5"
+                                data-angleOffset="-125"
+                                data-angleArc="250"
+                                data-bgColor="white">
+                              </div>
+                            </section>
                           </div>
-                        </section>
-                        <section id="horiz">
-                          <div id="knob2">
-                            <p id="knob2Label">Time/Div</p>
-                            <input 
-                            type="text" 
-                            value="0"
-                            data-min="0"
-                            data-max="100" 
-                            class="hDial"
-                            data-cursor= "10"
-                            data-width="50"
-                            data-fgColor="black"
-                            data-thickness=".5"
-                            data-angleOffset="-125"
-                            data-angleArc="250"
-                            data-bgColor="white">
+                        </fieldset>
+                        <fieldset class="col-md-12" id="knobBox" style="width: 90%;">
+                        <span class="spacer"></span><legend class="text-uppercase" style="width: 300px; padding-left: 5px;">Vertical</legend><span class="spacer"></span>   
+                          <div class="Knobs">
+                            <section>
+                              <div id="PosKnob">
+                                <p id="knobLabel">Position</p>
+                                <input 
+                                type="text" 
+                                value="0"
+                                data-step="1"
+                                data-min="-10"
+                                data-max="10" 
+                                class="vPosKnob"
+                                data-cursor= "10"
+                                data-width="50"
+                                data-fgColor="rgb(2,255,253)"
+                                data-thickness=".5"
+                                data-bgColor="white"
+                                data-angleOffset="-125"
+                                data-angleArc="250">
+                              </div>
+                            </section>
+                            <section id="vert">
+                              <div id="ZoomKnob">
+                                <p id="knobLabel">Zoom</p>
+                                <input 
+                                type="text" 
+                                value="0"
+                                data-min="10"
+                                data-max="1000" 
+                                class="vZoomKnob"
+                                data-cursor= "10"
+                                data-width="50"
+                                data-fgColor="rgb(2,255,253)"
+                                data-thickness=".5"
+                                data-angleOffset="-125"
+                                data-angleArc="250"
+                                data-bgColor="white">
+                              </div>
+                            </section>
                           </div>
-                        </section>
-                      </div>
+                        </fieldset>
+                    </div>
                   </div>
               </div>  
           </div>  
         <hr>
     </div> 
-    
-    <script>
-    $(".vDial").knob({
-        'change' : function (v) { 
-          //console.log('knob V value:',v);
-          drawChart(v);
-      },
-    }); 
-     $(".hDial").knob({
-        'change' : function (h) { 
-          //console.log('knob H value:',h);
-          drawChart(h);
-      },
-    });             
-    </script>
-
     <script type="text/javascript" src="../static/js/ochart.js"></script>
     <script type="text/javascript">$('#collapseOne').collapse("hide");</script><!--stops accordion from loading open -->
     <script type="text/javascript">$('#collapseTwo').collapse("hide");</script>
     <script type="text/javascript">$('#collapseThree').collapse("hide");</script>
+    <script type="text/javascript">$('#collapseTable').collapse("hide");</script>
 </body>
 </html>

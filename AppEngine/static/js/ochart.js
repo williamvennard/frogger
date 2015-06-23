@@ -1,98 +1,199 @@
+//VERTICAL KNOBS
+    var vZoom = 100;
+    var vPosition = 0;
+    $(".vPosKnob").knob({
+        'release' : function (vPos) { 
+          //console.log('knob H pos value:',hPos);  
+          vPosition = vPos;
+          doPoll();
+      },
+    }); 
 
-    //LOAD KNOB VALUES
+    $(".vZoomKnob").knob({
+      'release' : function (vRange) { 
+         //console.log('knob H value:',hRange);
+         vZoom = vRange;
+         doPoll();
+      },
+    }); 
+//HORIZONTAL KNOBS
+    var hZoom = 100;
+    var hPosition = 0;
+    $(".hPosKnob").knob({
+        'release' : function (hPos) { 
+          //console.log('knob H pos value:',hPos);  
+          hPosition = hPos;
+          doPoll();
+      },
+    }); 
 
-// Load the Visualization API and the piechart package.
-    google.load('visualization', '1', {'packages':['corechart']});
-      
-    // Set a callback to run when the Google Visualization API is loaded.
-    google.setOnLoadCallback(drawChart);
+    $(".hZoomKnob").knob({
+      'release' : function (hRange) { 
+         //console.log('knob H value:',hRange);
+         hZoom = hRange;
+         doPoll();
+      },
+    }); 
 
+ // load chart lib
+    google.load('visualization', '1', {
+          packages: ['corechart','table']
+    });
 
-    function drawChart(h, v) {
-          //GETING AUTHOR INFO FROM URL
-          /*var urlPath = window.location.pathname.split( '/' );
-          var pathKey = urlPath[urlPath.length - 1];
-          console.log(pathKey);*/
-      
-        var jsonData = {
-          
-    cols: [{id: 'freq', label: 'Frequency', type: 'number'},
-           {id: 'db', label: 'CH1', type: 'number'}],
-    rows: [{c:[{v: '0.0'}, {v: '0.04'}]},
-           {c:[{v: '7.0'}, {v: '2.335'}]},
-           {c:[{v: '10.0'}, {v: '4.332'}]},
-           {c:[{v: '13.0'}, {v: '5.566'}]},
-           {c:[{v: '15.0'}, {v: '6.564'}]},
-           {c:[{v: '18.0'}, {v: '5.507'}]},
-           {c:[{v: '21.0'}, {v: '3.533'}]},
-           {c:[{v: '23.0'}, {v: '2.475'}]},
-           {c:[{v: '26.0'}, {v: '1.848'}]},
-           {c:[{v: '29.0'}, {v: '-2.833'}]},
-           {c:[{v: '32.0'}, {v: '-3.832'}]},
-           {c:[{v: '34.0'}, {v: '-4.844'}]},
-           {c:[{v: '37.0'}, {v: '-4.909'}]},
-           {c:[{v: '40.0'}, {v: '-5.056'}]},
-           {c:[{v: '42.0'}, {v: '-5.217'}]},
-           {c:[{v: '45.0'}, {v: '-4.398'}]},
-           {c:[{v: '48.0'}, {v: '-3.651'}]},
-           {c:[{v: '50.0'}, {v: '-2.873'}]},
-           {c:[{v: '53.0'}, {v: '0.991'}]},
-           {c:[{v: '56.0'}, {v: '2.514'}]},
-           {c:[{v: '59.0'}, {v: '2.838'}]},
-           {c:[{v: '61.0'}, {v: '3.916'}]},
-           {c:[{v: '64.0'}, {v: '2.816'}]},
-           {c:[{v: '67.0'}, {v: '2.089'}]},
-           {c:[{v: '69.0'}, {v: '4.054'}]},
-           {c:[{v: '72.0'}, {v: '6.269'}]},
-           {c:[{v: '75.0'}, {v: '7.578'}]},
-           {c:[{v: '77.0'}, {v: '7.852'}]},
-           {c:[{v: '80.0'}, {v: '8.03'}]},
-           {c:[{v: '83.0'}, {v: '8.565'}]},
-           {c:[{v: '86.0'}, {v: '9.032'}]},
-           {c:[{v: '88.0'}, {v: '9.319'}]},
-           {c:[{v: '91.0'}, {v: '9.394'}]},
-           {c:[{v: '94.0'}, {v: '9.951'}]},
-           {c:[{v: '96.0'}, {v: '5.123'}]},
-           {c:[{v: '99.0'}, {v: '2.547'}]},
-           {c:[{v: '102.0'}, {v: '0.878'}]},
-              ]
-        } 
-        //jsonData = readTextFile("file:///Users/william/Desktop/GoogleCharts/freqDb.txt");
-         
-         
-          //var hVal = {val};
-          //hVal = eval(hVal);
-          var hVal = h;
-          var vVal = v;          
-          
-  console.log('Knob HValue TEST:',hVal);
-  console.log('Knob VValue TEST:',vVal);
+       var sliceNames = [];
+       var resultsCache = [];
+       var autoMaxPosition = 0;
+       var autoMinPosition = 0;
+       var hMax = 0;
+       var hMin = 0;
+       var chartOptions = {};
+       function fetchData(base_url,sliceName,use_async){
+          json_url = base_url + sliceName;
+          $.ajax({
+             async: use_async,
+             url: json_url,            
+             dataType: 'json',
+          }).done(function (results) {
+             //console.log("fetchData: json_url =", json_url);
+             //console.log("fetchData: sliceName =", sliceName);
+             //console.log("fetchData: results =", results);
+             resultsCache[sliceName] = results;
+             //console.log("152:resultsCache[sliceName] =", resultsCache[sliceName]);
+          })  // need error handler
+       };
 
+       function doPoll(){
+          var data = new google.visualization.DataTable();
+          data.addColumn('number', 'Time');
+          data.addColumn('number', 'Ch1');
+          //data.addColumn('number', 'Ch2');
 
-          var options = {
-            title: '',
-            titleTextStyle: {color:'black', fontSize: 15},
-            legend: 'none',
+          //var startTime = Date.now();
+     
+          function gatherData(base_url,sliceNames,first,last){
+            var sliceName = sliceNames[first];
+            if (!(sliceName in resultsCache)) {
+                 json_url = base_url + sliceName;
+                 //console.log("gatherData: cache miss: json_url =", json_url);
+                 fetchData(base_url,sliceName,false);
+               };
+            var gatheredResults = resultsCache[sliceName];
+            var firstRow = gatheredResults['data'][0];
+
+            if (autoMinPosition == 0) {
+              console.log('auto min and max:',firstRow.TIME)
+              console.log('range for auto max:',range);
+              autoMinPosition = Number(firstRow.TIME);
+              autoMaxPosition = Number(firstRow.TIME)+range;
+              hMax = autoMaxPosition;
+              hMin = autoMinPosition;
+              console.log("chart options viewWindow:", chartOptions.hAxis.viewWindow);
+              chartOptions.hAxis.viewWindow.max = hMax;
+              chartOptions.hAxis.viewWindow.min = hMin;
+            };
+            for (idx = first; idx < last; idx++) {
+               sliceName = sliceNames[idx];
+               //console.log("gatherData: sliceName =", sliceName);
+               //console.log("gatherData: idx =", idx);
+               if (!(sliceName in resultsCache)) {
+                 json_url = base_url + sliceName;
+                 //console.log("gatherData: cache miss: json_url =", json_url);
+                 fetchData(base_url,sliceName,false);
+               };
+               gatheredResults = resultsCache[sliceName];
+               //console.log("gatherData: resultsCache =", resultsCache);
+               //console.log("gatherData: gatheredResults =", gatheredResults);
+               //console.log("gatherData: idx = ", idx);
+               //GETING DATA
+               $.each(gatheredResults['data'], function (i, row) {
+                 data.addRow([
+                   parseFloat(row.TIME),
+                   parseFloat(row.CH1),
+                   //parseFloat(row.CH2), 
+                 ]);
+               });
+            };
+    
+            //var endTime = Date.now();
+            //console.log('Timer:', endTime - startTime);
+
+            //DRAW CHART
+            var chart = new google.visualization.LineChart($('#ochart').get(0));      
+            chart.draw(data, chartOptions);
+            //DRAW TABLE
+            var table = new google.visualization.Table($('#oTable').get(0));
+            table.draw(data, tableOptions);  
+          };
+
+            console.log('auto MAX position:',autoMaxPosition);
+            console.log('auto MIN position:',autoMinPosition);
+            var center = hPosition + (autoMinPosition + autoMaxPosition)/2;
+            var width = (autoMaxPosition - autoMinPosition)*(100.0/hZoom);
+            console.log('h zoom:',hZoom);
+
+            console.log('window width:', width);
+            console.log('window center:',center);
+            hMax = center + width/2;
+            hMin = center - width/2;
+            console.log('hMax:',hMax);
+            console.log('hMin:',hMin);
+
+            //console.log('horizontal Zoom dial:',hZoom);
+            //console.log('horizontal position dial:',hPosition);
             
-            hAxis: {title: '', baselineColor:'black', gridlines:{color: 'gray', count: 5}, minorGridlines:{color: 'gray', count: 1}, viewWindow:{max:hVal, min:0}},
-
-            vAxis: {title: 'Amp', baselineColor:'black', gridlines:{color: 'gray', count: 5}, minorGridlines:{color: 'gray', count: 1}, viewWindow:{max:vVal, min:-vVal}},
-
-            backgroundColor: {fill: 'none', stroke: 'silver', strokeWidth: 3,},  
-            colors: ['rgb(129,255,212)'], 
-            chartArea:{backgroundColor:'',left:50,top:50,width:425,height:300},
-            lineWidth: 2, 
-            explorer: { actions: ['dragToZoom', 'rightClickToReset'] },  
-            crosshair: {trigger: 'both', selected:{opacity: 0.8}, focused:{opacity:0.8}},   
+        chartOptions = {
+            title: 'Oscope Data',
+            titleTextStyle: {color:'lightgray', fontSize: 18, fontName: 'NexaLight'},
+            legend: {alignment:'center', textStyle:{color:'lightgray'}},
+            hAxis: {title: 'Time(sec)',titleTextStyle:{color:'lightgray', fontName: 'NexaLight'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'gray', count: 6}, minorGridlines:{color: 'gray', count: 1}, viewWindowMode:'explicit', viewWindow:{max: hMax, min:hMin}},
+            vAxis: {title: '', titleTextStyle:{color:'lightgray'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'gray', count: 6}, minorGridlines:{color: 'gray', count: 1}, format: '##.###', viewWindowMode:'explicit', viewWindow:{max:2.5, min:-2.5} },
+            backgroundColor: {fill:'none', stroke: 'black', strokeWidth: 0,},                 
+            colors: ['rgb(2,255,253)','rgb(239,253,146)'],
+            chartArea:{backgroundColor:'', height:300, width:445},
+            lineWidth: 2,
+            curveType: 'function',
+            crosshair: {trigger: 'both', selected:{opacity: 0.8}, focused:{opacity:0.8}},
+          };
+          var tableOptions = {
+            showRowNumber: true,
           };
 
 
-          // Create our data table out of JSON data loaded from server.
-          var data = new google.visualization.DataTable(jsonData);
-
-          // Instantiate and draw our chart, passing in some options.
-          var chart = new google.visualization.LineChart(document.getElementById('ochart'));
-          chart.draw(data, options);
-        };
+          //console.log("calling gatherData with name = ",sliceNames);
+          //console.log("calling gatherData with length = ",sliceNames.length);
 
 
+          var sliceBuild = Number('1434826041500');
+          sliceStop = sliceBuild + 11*100;
+          for (msec = sliceBuild+100; msec < sliceStop;msec += 100) {
+            name = String(msec);
+            if ($.inArray(name, sliceNames) == -1) {
+              sliceNames.push(String(msec));
+            };
+          };
+          var range = (Number(sliceNames[sliceNames.length-1]) - Number(sliceNames[0]))/1000;
+          console.log('Range in Number:',range);
+          console.log('sliceNames for range:',sliceNames);
+
+          gatherData(base_url,sliceNames,0,sliceNames.length);
+          //console.log('slice names:',sliceNames);
+          //console.log("after gatherData length = ",sliceNames.length);
+          for (idx in sliceNames) {
+            if (!(sliceNames[idx] in resultsCache)) {
+              fetchData(base_url,sliceNames[idx],true);
+            };
+          };
+       };
+
+// POLL FOR CURRENT TIME TO START PLOTTING DATA
+//setTimeout(doPoll,60000);
+     // var formatTime = (Math.round(Date.now()/100))*100;
+     // console.log('current timestamp:',formatTime);
+// BUILD SLICES GIVEN current Time
+
+      sliceNames.push('1434826041500');
+
+       var base_url = 'http://gradientone-test.appspot.com/oscopedata/amplifier/';
+       fetchData(base_url,sliceNames[0],true);
+       google.setOnLoadCallback(doPoll);
+       
