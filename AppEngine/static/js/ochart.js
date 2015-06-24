@@ -37,9 +37,9 @@
 
  // load chart lib
     google.load('visualization', '1', {
-          packages: ['corechart','table']
+      packages: ['corechart','table']
     });
-
+       var doPollCounter = 0;
        var sliceNames = [];
        var resultsCache = [];
        var autoMaxPosition = 0;
@@ -58,11 +58,12 @@
              //console.log("fetchData: sliceName =", sliceName);
              //console.log("fetchData: results =", results);
              resultsCache[sliceName] = results;
-             //console.log("152:resultsCache[sliceName] =", resultsCache[sliceName]);
+             //console.log("61:resultsCache[sliceName] =", resultsCache[sliceName]);
           })  // need error handler
        };
 
        function doPoll(){
+          doPollCounter++;
           var data = new google.visualization.DataTable();
           data.addColumn('number', 'Time');
           data.addColumn('number', 'Ch1');
@@ -133,11 +134,14 @@
 
             console.log('window width:', width);
             console.log('window center:',center);
-            hMax = center + width/2;
+
+            console.log('do poll counter:',doPollCounter);
+            
+            hMax = center + width/2 + range;
             hMin = center - width/2;
+
             console.log('hMax:',hMax);
             console.log('hMin:',hMin);
-
             //console.log('horizontal Zoom dial:',hZoom);
             //console.log('horizontal position dial:',hPosition);
             
@@ -158,24 +162,37 @@
             showRowNumber: true,
           };
 
-
           //console.log("calling gatherData with name = ",sliceNames);
           //console.log("calling gatherData with length = ",sliceNames.length);
 
+          //Drawing data test:
+          gatherData(base_url,sliceNames,0,doPollCounter);
 
-          var sliceBuild = Number('1434826041500');
-          sliceStop = sliceBuild + 11*100;
-          for (msec = sliceBuild+100; msec < sliceStop;msec += 100) {
+          //gatherData(base_url,sliceNames,0,sliceNames.length);
+
+          //var pagingTest = (doPollCounter+1)*10;
+          //console.log('do poll paging test:', pagingTest);
+          var sliceBuild = Number('1435092471100');
+
+          sliceStop = sliceBuild + 51*100;
+
+          for (msec = sliceBuild+200; msec < sliceStop;msec += 100) {
             name = String(msec);
             if ($.inArray(name, sliceNames) == -1) {
               sliceNames.push(String(msec));
             };
           };
-          var range = (Number(sliceNames[sliceNames.length-1]) - Number(sliceNames[0]))/1000;
-          console.log('Range in Number:',range);
-          console.log('sliceNames for range:',sliceNames);
+          //put var range here for back to how it was
+          if (doPollCounter < 52) {
+            range = (Number(sliceNames[doPollCounter]) - Number(sliceNames[0]))/1000;
+            console.log('Range in Number:',range);
+          }else{
+            range = 0;
+          };
+      //console.log('sliceNames for range:',sliceNames);
 
-          gatherData(base_url,sliceNames,0,sliceNames.length);
+          //gatherData used to go here
+
           //console.log('slice names:',sliceNames);
           //console.log("after gatherData length = ",sliceNames.length);
           for (idx in sliceNames) {
@@ -183,17 +200,30 @@
               fetchData(base_url,sliceNames[idx],true);
             };
           };
+          // use last TIME inplace of -495.00
+          if(doPollCounter < 52) {
+            setTimeout(doPoll,50);
+          };
        };
 
 // POLL FOR CURRENT TIME TO START PLOTTING DATA
-//setTimeout(doPoll,60000);
+
      // var formatTime = (Math.round(Date.now()/100))*100;
      // console.log('current timestamp:',formatTime);
 // BUILD SLICES GIVEN current Time
-
-      sliceNames.push('1434826041500');
+      console.log('this runs first!');
+      sliceNames.push('1435092471100');
+      sliceNames.push(String(Number('1435092471100')+100));
 
        var base_url = 'http://gradientone-test.appspot.com/oscopedata/amplifier/';
        fetchData(base_url,sliceNames[0],true);
+       fetchData(base_url,sliceNames[1],true);
+
+      var range = (Number(sliceNames[sliceNames.length-1]) - Number(sliceNames[0]))/1000;
+      console.log('Range in Number:',range);
+      console.log('sliceNames for range:',sliceNames);
+  
+
        google.setOnLoadCallback(doPoll);
        
+      
