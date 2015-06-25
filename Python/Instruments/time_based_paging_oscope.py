@@ -36,8 +36,8 @@ def post_creation(slicename, stuffing):
     window = {'config':{'TEK':'TODO'},'slicename':slicename,'data':stuffing}
     out = json.dumps(window)
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-    url = "https://gradientone-test.appspot.com/oscopedata/amplifier/%s" % slicename
-    #url = "http://localhost:18080/oscopedata/amplifier/%s" % slicename
+    url = "https://gradientone-dev1.appspot.com/oscopedata/LED/%s" % slicename
+    #url = "http://localhost:18080/oscopedata/LED/%s" % slicename
     r = requests.post(url, data=out, headers=headers)
     print "dir(r)=",dir(r)
     print "r.reason=",r.reason
@@ -46,7 +46,7 @@ def post_creation(slicename, stuffing):
 i = datetime.datetime.now()
 tse = dt2ms(i)
 f = open('../../DataFiles/tekcsv/tek0012ALL.csv')
-f = itertools.islice(f, 18, 118)
+f = itertools.islice(f, 18, 58)
 test_results = csv.DictReader(f, fieldnames = ("TIME", "CH1", "CH2", "CH3", "CH4"))
 test_results = [row for row in test_results]
 data_length = len(test_results)
@@ -55,8 +55,6 @@ new_dtms = tse
 stuffing = []
 
 def end_creation(new_dtms):
-    if str(new_dtms)[-2:] == '00':
-        new_dtms = new_dtms + 1
     end = int(roundup(new_dtms))
     return end
 
