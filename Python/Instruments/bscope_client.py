@@ -4,7 +4,7 @@ import time
 import datetime
 import threading
 from bitlib import *
-from test_bscopepost import BitScope
+from bscopepost import BitScope
 
 MY_DEVICE = 0 # one open device only
 MY_CHANNEL = 0 # channel to capture and display
@@ -34,6 +34,7 @@ def make_json(payload):
     return acq_dict
 
 def check_config_url():
+    """polls the configuration URL for a start signal @ 1sec intervals"""
     r = requests.get('http://gradientone-dev1.appspot.com/configoutput/nedwards/Bscope/LEDTESTER2')
     config = r.json()
     if check_start(config) == 'True':
@@ -44,6 +45,7 @@ def check_config_url():
     threading.Timer(1, check_config_url()).start()
 
 def make_data_dict(DATA, tse, time):
+    """ creates the dictionary of data from the bitscope"""
     new_data = []
     for datum in DATA:
         temp_dict = {}
@@ -56,8 +58,8 @@ def make_data_dict(DATA, tse, time):
     return new_data
 
 
-def bscope_acq(argv=None):
-    
+def bscope_acq(argv=None):    
+    """sets the configuration for the bitscope API and calls the BitScope class"""
     acq_dict = {}
     print "Starting: Attempting to open one device..."
     if BL_Open(MY_PROBE_FILE,1):
