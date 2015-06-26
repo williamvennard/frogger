@@ -58,8 +58,10 @@ def render_json(self, j):
 
 def root_mean_squared(test_data, test):
     "RMS measurement function that relies upon queries from test config and instrument data"
+    print test
     RMS_time_start = float(test[0]["RMS_time_start"])
     RMS_time_stop = float(test[0]["RMS_time_stop"])  
+    print 'rms stuff', RMS_time_start, RMS_time_stop
     sample_interval = 0.01
     row_RMS_time_start = RMS_time_start/sample_interval
     row_RMS_time_stop = RMS_time_stop/sample_interval
@@ -203,6 +205,9 @@ class ConfigDB(DictModel):
     frequency_start = db.FloatProperty(required = False)
     frequency_stop = db.FloatProperty(required = False)
     power = db.FloatProperty(required = False)
+    sample_rate = db.FloatProperty(required = False)
+    number_of_samples = db.FloatProperty(required = False)
+    start_measurement = db.BooleanProperty(required = False)
 
 def OscopeDB_key(name = 'default'):
     return db.Key.from_path('oscope', name)
@@ -221,6 +226,19 @@ class OscopeDB(DictModel):
     CH4 = db.FloatProperty(required = True)
     DTE = db.IntegerProperty(required = True)
  
+def BscopeDB_key(name = 'default'):
+    return db.Key.from_path('bscope', name)
+
+
+class BscopeDB(DictModel):
+
+    name = db.StringProperty(required = True)
+    config = db.StringProperty(required = True)
+    slicename = db.StringProperty(required = True)
+    TIME = db.FloatProperty(required = True)
+    CHA = db.FloatProperty(required = True)
+    DTE = db.IntegerProperty(required = True)
+
 
 def VNADB_key(name):
     return db.Key.from_path('vna', name)
@@ -251,7 +269,7 @@ class MainPage(InstrumentDataHandler):
 
 
     def get(self):
-        db.delete(OscopeDB.all(keys_only=True))
+        db.delete(BscopeDB.all(keys_only=True))
         user = users.get_current_user()
         if user:
             self.response.headers['Content-Type'] = 'text/html; charset=utf-8'
@@ -377,24 +395,35 @@ class TestPlanSummary(InstrumentDataHandler):
 class TestResultsPage(InstrumentDataHandler):
     "present to the user all of the completed tests, with a path that supports specific test entries"
 
-    def get(self, testplan_name=""):
+    def get(self, testplan_name="", name="", slicename=""):
+        print testplan_name, name, slicename
         #if not self.authcheck():
         #    return
         author = author_creation()
         testplan_name_check = testplan_name.split('.')
         testplan_name = testplan_name_check[0]
+        print testplan_name
         key = 'oscope' + testplan_name
+        name = 'LED'
+        slicename = str(1435107043000)
+        data_key = 'oscopedata' + name + slicename
         if testplan_name_check[-1] == 'json':
-            rows = memcache.get(key)
+            rows = memcache.get(data_key)
             if rows is None:
-                rows = db.GqlQuery("SELECT * FROM OscopeDB ORDER BY TIME ASC")
-            memcache.set(key, rows)
-            test_data = [r.to_dict() for r in rows]     
-            start_of_test = test_data[0]['TIME']
+                logging.error("OscopeData:get: query")
+                rows = db.GqlQuery("""SELECT * FROM OscopeDB WHERE name =:1
+                    AND slicename = :2 ORDER BY DTE ASC""", name, slicename)
+                rows = list(rows)
+                rows = sorted(rows, key=getKey)
+            memcache.set(data_key, rows)
+            test_data = [r.to_dict() for r in rows]  
+            print test_data
+            #start_of_test = test_data[0]['TIME']
             test = db.GqlQuery("SELECT * FROM TestDB WHERE testplan_name =:1", testplan_name)
             test = [t.to_dict() for t in test]
-            rms = {"rms":root_mean_squared(test_data, test)}
-            test_result = {"data":test_data, "test_config":test, "measurement":rms}
+            print test
+            #rms = {"rms":root_mean_squared(test_data, test)}
+            test_result = {"data":test_data, "test_config":test} #"measurement":rms}
             render_json(self, test_result) 
         elif testplan_name:
             f = open(os.path.join('templates', 'testResultsPage.html'))
@@ -402,12 +431,17 @@ class TestResultsPage(InstrumentDataHandler):
         else:
             tests = db.GqlQuery("SELECT * FROM TestDB")
             rows = memcache.get(key)
+            print "hi"
             if rows is None:
-                rows = db.GqlQuery("SELECT * FROM OscopeDB ORDER BY TIME ASC")
-            memcache.set(key, rows)
+                logging.error("OscopeData:get: query")
+                rows = db.GqlQuery("""SELECT * FROM OscopeDB WHERE name =:1
+                    AND slicename = :2 ORDER BY DTE ASC""", name, slicename)
+                rows = list(rows)
+                rows = sorted(rows, key=getKey)
+            memcache.set(data_key, rows)
             self.render('index.html', tests = tests, rows = rows)
 
-
+  
 class CommunityTestsPage(InstrumentDataHandler):
 
 
@@ -467,6 +501,42 @@ class TestConfigOutputPage(InstrumentDataHandler):
         configs_out = [c.to_dict() for c in configs]
         render_json(self, configs_out)
 
+
+class BscopeConfigInputPage(InstrumentDataHandler):
+
+    def get(self):
+        self.render('bscopeconfiginput.html')
+    
+    def is_checked(self,c,param):
+        "Mesurement checked and up date test object 'c'."
+        checked = self.request.get(param)
+        if checked:
+            setattr(c,param,True)
+        else:
+            setattr(c,param,False)
+    
+    def post(self):
+        author = author_creation()
+        company_nickname = self.request.get('company_nickname')
+        hardware_name = self.request.get('hardware_name')
+        instrument_type = self.request.get('instrument_type')
+        instrument_name = self.request.get('instrument_name')
+        sample_rate = float(self.request.get('sample_rate'))
+        number_of_samples = float(self.request.get('number_of_samples'))
+        c = ConfigDB(parent = ConfigDB_key(instrument_name), 
+            company_nickname = company_nickname, author = author,
+            hardware_name = hardware_name, instrument_type = instrument_type,
+            instrument_name = instrument_name,             
+            sample_rate = sample_rate, number_of_samples = number_of_samples,
+            )
+        c.put() 
+        checkbox_names = ["start_measurement"]
+        for name in checkbox_names:
+            self.is_checked(c,name)
+        c.put()
+        key = 'author & instrument_type & instrument_name = ', author + instrument_type + instrument_name
+        memcache.delete(key)
+        self.redirect('/configoutput/' + (author + '/' + instrument_type + '/' + instrument_name))
 
 class ConfigInputPage(InstrumentDataHandler):
 
@@ -540,6 +610,7 @@ class ConfigOutputPage(InstrumentDataHandler):
 
 
     def get(self, author="", instrument_type="", instrument_name=""):
+        print "ConfigOutputPage"
         key = 'author & instrument_type & instrument_name = ', author + instrument_type + instrument_name
         configs = memcache.get(key)
         if configs is None :
@@ -699,6 +770,47 @@ class OscopeData(InstrumentDataHandler):
         memcache.set(key, to_save)
         db.put(to_save)
 
+class BscopeData(InstrumentDataHandler):
+
+
+    def get(self,name="",slicename=""):
+        "retrieve BitScope data by intstrument name and time slice name"
+        #if not self.authcheck():
+        #    return
+        key = 'bscopedata' + name + slicename
+        rows = memcache.get(key)
+        if rows is None:
+            logging.error("OscopeData:get: query")
+            rows = db.GqlQuery("""SELECT * FROM BscopeDB WHERE name =:1
+                                AND slicename = :2 ORDER BY DTE ASC""", name, slicename)
+            rows = list(rows)
+            rows = sorted(rows, key=getKey)
+            memcache.set(key, rows)
+        data = query_to_dict(rows)
+        output = {"data":data}
+        render_json(self, output)
+
+
+    def post(self,name="",slicename=""):
+        "store data by intstrument name and time slice name"
+        key = 'bscopedata' + name + slicename
+        bscope_content = json.loads(self.request.body)
+        bscope_data = bscope_content['data']
+        to_save = []
+        for b in bscope_data:
+            print b
+            r = BscopeDB(parent = BscopeDB_key(name), name=name,
+                         slicename=slicename,
+                         config=str(bscope_content['config']),
+                         TIME=float(b['TIME']),
+                         CHA=float(b['CHA']),
+                         DTE = b['DTE'],
+                         )
+            to_save.append(r) 
+        rows = to_save
+        memcache.set(key, to_save)
+        db.put(to_save)
+
 
 app = webapp2.WSGIApplication([
     ('/', MainPage),
@@ -713,6 +825,7 @@ app = webapp2.WSGIApplication([
     ('/instruments/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+.json)', InstrumentsPage),
     ('/configinput', ConfigInputPage),
     ('/vnaconfiginput', VNAConfigInputPage),
+    ('/bscopeconfiginput', BscopeConfigInputPage),
     ('/configoutput/([a-zA-Z0-9-]+)', ConfigOutputPage),
     ('/configoutput/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', ConfigOutputPage),
     ('/oscope.json', OscopePage),
@@ -728,6 +841,8 @@ app = webapp2.WSGIApplication([
     ('/vnadata/([a-zA-Z0-9-]+)', VNAData),
     ('/oscopedata/([a-zA-Z0-9-]+)', OscopeData),
     ('/oscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)', OscopeData),
+    ('/bscopedata/([a-zA-Z0-9-]+)', BscopeData),
+    ('/bscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)', BscopeData),
 ], debug=True)
 
 
