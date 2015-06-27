@@ -811,6 +811,25 @@ class BscopeData(InstrumentDataHandler):
         memcache.set(key, to_save)
         db.put(to_save)
 
+class BscopeDataDec(InstrumentDataHandler):
+
+
+    def get(self,name="",slicename=""):
+        "retrieve BitScope data by intstrument name and time slice name"
+        #if not self.authcheck():
+        #    return
+        key = 'bscopedatadec' + name + slicename
+        bscope_payload = memcache.get(key)
+        self.write(bscope_payload)
+
+
+    def post(self,name="",slicename=""):
+        "store data by intstrument name and time slice name"
+        key = 'bscopedatadec' + name + slicename
+        bscope_payload = self.request.body
+        memcache.set(key, bscope_payload)
+
+
 
 app = webapp2.WSGIApplication([
     ('/', MainPage),
@@ -843,6 +862,8 @@ app = webapp2.WSGIApplication([
     ('/oscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)', OscopeData),
     ('/bscopedata/([a-zA-Z0-9-]+)', BscopeData),
     ('/bscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)', BscopeData),
+    ('/dec/bscopedata/([a-zA-Z0-9-]+)', BscopeDataDec),
+    ('/dec/bscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)', BscopeDataDec),
 ], debug=True)
 
 
