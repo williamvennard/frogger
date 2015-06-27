@@ -5,13 +5,16 @@ import datetime
 import threading
 from bitlib import *
 from bscopepost import BitScope
+import numpy
+import scipy.signal 
+
 
 MY_DEVICE = 0 # one open device only
 MY_CHANNEL = 0 # channel to capture and display
 MY_PROBE_FILE = "" # default probe file if unspecified 
 MY_MODE = BL_MODE_FAST # preferred capture mode
 MY_RATE = 1000000 # default sample rate we'll use for capture.
-MY_SIZE = 100 # number of samples we'll capture (simply a connectivity test)
+MY_SIZE = 500 # number of samples we'll capture (simply a connectivity test)
 TRUE = 1
 MODES = ("FAST","DUAL","MIXED","LOGIC","STREAM")
 SOURCES = ("POD","BNC","X10","X20","X50","ALT","GND")
@@ -92,7 +95,8 @@ def bscope_acq(argv=None):
         BL_Close()
         print "Finished: Library closed, resources released."    
         bits = BitScope(acq_dict)
-        bits.transmit()
+        bits.transmitdec()
+        bits.transmitraw()
     else:
         print "  FAILED: device not found (check your probe file)."
     

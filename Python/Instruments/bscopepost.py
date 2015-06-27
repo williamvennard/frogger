@@ -12,6 +12,8 @@ import math
 import itertools
 import json
 import requests
+import numpy as np
+import scipy.signal 
 
 class BitScope:
     """Parse BitScope output dictionary.
@@ -37,11 +39,14 @@ class BitScope:
         slicename = x//100*100
         return slicename
 
-    def post_creation(self, slicename, stuffing):
-        window = {'config':{'TEK':'TODO'},'slicename':slicename,'data':stuffing}
+    def post_creation(self, config_data, slicename, stuffing, parent):
+        window = {'config':config_data,'slicename':slicename,'data':stuffing}
         out = json.dumps(window)
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-        url = "https://gradientone-dev1.appspot.com/bscopedata/arduino/%s" % slicename
+        if parent == 'raw':    
+            url = "https://gradientone-dev1.appspot.com/bscopedata/arduino/%s" % slicename
+        else:
+            url = "https://gradientone-dev1.appspot.com/dec/bscopedata/arduino/%s" % slicename
         r = requests.post(url, data=out, headers=headers)
         print "dir(r)=",dir(r)
         print "r.reason=",r.reason
@@ -52,9 +57,35 @@ class BitScope:
         end = int(self.roundup(new_dtms))
         return end
 
-    def transmit(self):
-        
+
+    def transmitdec(self):
+        parent = 'dec'
         test_results = self.bscope_test_results['data']
+        config_data = self.bscope_test_results['Config']
+        tse = test_results[0]['DTE']
+        slicename = self.slicename_creation(tse)
+        new_results = []
+        for tr in test_results[:1000]:
+            temp = []
+            temp.append(tr['CHA'])
+            temp.append(tr['DTE'])
+            temp.append(tr['TIME'])
+            new_results.append(temp)
+        results_arr = np.array(new_results)
+        dec = scipy.signal.decimate(results_arr, 10, ftype='iir', axis = 0)
+        test_results = []
+        for row in dec:
+            temp = {}
+            temp['CHA'] = row[0]
+            temp['DTE'] = row[1]
+            temp['TIME'] = row[2]
+            test_results.append(temp)
+        self.post_creation(config_data, slicename, test_results, parent)
+
+    def transmitraw(self):
+        parent = 'raw'
+        test_results = self.bscope_test_results['data']
+        config_data = self.bscope_test_results['Config']
         print test_results
         data_length = len(test_results)
         tse = test_results[0]['DTE']
@@ -67,7 +98,7 @@ class BitScope:
             for tr in chunk:
                 new_dtms =  tr['DTE']
                 if float(tr['DTE']) >= end:
-                    self.post_creation(slicename, stuffing)
+                    self.post_creation(config_data, slicename, stuffing, parent)
                     stuffing = []
                     slicename = self.slicename_creation(new_dtms)  
                     stuffing.append(tr)
@@ -75,7 +106,7 @@ class BitScope:
                     continue
                 stuffing.append(tr)
             slicename = self.slicename_creation(new_dtms)
-            self.post_creation(slicename, stuffing)
+            self.post_creation(config_data, slicename, stuffing, parent)
             stuffing = []
         
 
