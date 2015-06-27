@@ -9,6 +9,7 @@ import numpy
 import scipy.signal 
 
 
+#Default settings.  MY_RATE & MY_SIZE are configurable.  This may change.
 MY_DEVICE = 0 # one open device only
 MY_CHANNEL = 0 # channel to capture and display
 MY_PROBE_FILE = "" # default probe file if unspecified 
@@ -28,6 +29,14 @@ def check_start(config):
     start_measurement = str(config[0]['start_measurement'])
     return start_measurement
 
+
+def check_config_vars(config):
+    if config[0]['number_of_samples'] != 'None':
+        MY_SIZE = config[0]['number_of_samples']
+    if config[0]['sample_rate'] != 'None':
+        MY_RATE = config[0]['sample_rate']
+    return MY_RATE, MY_SIZE
+
 def set_v_for_k(test_dict, k, v):
     test_dict[k] = v
     return test_dict
@@ -45,7 +54,7 @@ def check_config_url():
     config = r.json()
     if check_start(config) == 'True':
 	    print "Starting API"
-	    bscope_acq()
+	    bscope_acq(config)
     else:
         print "No start order found"
     threading.Timer(1, check_config_url()).start()
@@ -65,11 +74,14 @@ def make_data_dict(DATA, tse, time):
     return new_data
 
 
-def bscope_acq(argv=None):    
+def bscope_acq(config):    
     """sets the configuration for the bitscope API and calls the BitScope class"""
     acq_dict = {}
     print "Starting: Attempting to open one device..."
     if BL_Open(MY_PROBE_FILE,1):
+        config_vars = check_config_vars(config)
+        MY_RATE = config_vars[0]
+        MY_SIZE = config_vars[1]
         BL_Select(BL_SELECT_DEVICE,MY_DEVICE)
         BL_Mode(BL_MODE_LOGIC) == BL_MODE_LOGIC or BL_Mode(BL_MODE_FAST)
         BL_Range(BL_Count(BL_COUNT_RANGE))
