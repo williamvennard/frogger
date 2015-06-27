@@ -19,7 +19,8 @@ class BitScope:
     """Parse BitScope output dictionary.
 
     Returns a class that can parse a bitscope output dictionary 
-    and POST to the server via the transmit method.
+    and POST to the server.  The transmitdec class POSTs the 
+    decimated data.  The transmitraw class POSTs the raw data.
 
     """
 
@@ -71,8 +72,8 @@ class BitScope:
             temp.append(tr['DTE'])
             temp.append(tr['TIME'])
             new_results.append(temp)
-        results_arr = np.array(new_results)
-        dec = scipy.signal.decimate(results_arr, 10, ftype='iir', axis = 0)
+        results_arr = np.array(new_results)  #puts the test data in an array
+        dec = scipy.signal.decimate(results_arr, 10, ftype='iir', axis = 0)  #performs the decimation function
         test_results = []
         for row in dec:
             temp = {}
