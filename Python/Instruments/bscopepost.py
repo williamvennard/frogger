@@ -45,12 +45,12 @@ class BitScope:
         out = json.dumps(window)
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
         if parent == 'raw':    
-            url = "https://gradientone-dev1.appspot.com/bscopedata/arduino/%s" % slicename
+            url = "https://gradientone-test.appspot.com/bscopedata/arduino/%s" % slicename
         else:
-            url = "https://gradientone-dev1.appspot.com/dec/bscopedata/arduino/%s" % slicename
+            url = "https://gradientone-test.appspot.com/dec/bscopedata/arduino/%s" % slicename
         r = requests.post(url, data=out, headers=headers)
-        print "dir(r)=",dir(r)
-        print "r.reason=",r.reason
+        #print "dir(r)=",dir(r)
+        #print "r.reason=",r.reason
         print "r.status_code=",r.status_code
 
 
@@ -87,7 +87,7 @@ class BitScope:
         parent = 'raw'
         test_results = self.bscope_test_results['data']
         config_data = self.bscope_test_results['Config']
-        print test_results
+        #print test_results
         data_length = len(test_results)
         tse = test_results[0]['DTE']
         new_dtms = tse
@@ -100,15 +100,16 @@ class BitScope:
                 new_dtms =  tr['DTE']
                 if float(tr['DTE']) >= end:
                     self.post_creation(config_data, slicename, stuffing, parent)
+                    print stuffing
                     stuffing = []
                     slicename = self.slicename_creation(new_dtms)  
                     stuffing.append(tr)
                     end = self.end_creation(new_dtms)
                     continue
                 stuffing.append(tr)
-            slicename = self.slicename_creation(new_dtms)
-            self.post_creation(config_data, slicename, stuffing, parent)
-            stuffing = []
+            #slicename = self.slicename_creation(new_dtms)
+            #self.post_creation(config_data, slicename, stuffing, parent)
+            #stuffing = []
         
 
             

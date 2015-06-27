@@ -269,7 +269,7 @@ class MainPage(InstrumentDataHandler):
 
 
     def get(self):
-        db.delete(BscopeDB.all(keys_only=True))
+        
         user = users.get_current_user()
         if user:
             self.response.headers['Content-Type'] = 'text/html; charset=utf-8'
@@ -767,6 +767,8 @@ class OscopeData(InstrumentDataHandler):
                          )
             to_save.append(r) 
         rows = to_save
+        print 'to_save', to_save
+        print 'key', key
         memcache.set(key, to_save)
         db.put(to_save)
 

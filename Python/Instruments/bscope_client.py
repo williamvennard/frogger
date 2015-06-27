@@ -32,6 +32,9 @@ def set_v_for_k(test_dict, k, v):
     test_dict[k] = v
     return test_dict
 
+def roundup(x):
+    return int(((x//100) * 100) + 100)
+
 def make_json(payload):
     acq_dict = json.dumps(payload)
     return acq_dict
@@ -50,6 +53,7 @@ def check_config_url():
 def make_data_dict(DATA, tse, time):
     """ creates the dictionary of data from the bitscope"""
     new_data = []
+    tse = roundup(tse)
     for datum in DATA:
         temp_dict = {}
         temp_dict = set_v_for_k(temp_dict, 'CHA', datum)
@@ -94,6 +98,7 @@ def bscope_acq(argv=None):
         acq_dict = set_v_for_k(acq_dict, 'Config', config_dict)    
         BL_Close()
         print "Finished: Library closed, resources released."    
+        #print acq_dict
         bits = BitScope(acq_dict)
         bits.transmitdec()
         bits.transmitraw()
