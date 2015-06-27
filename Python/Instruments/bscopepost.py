@@ -73,7 +73,7 @@ class BitScope:
             temp.append(tr['TIME'])
             new_results.append(temp)
         results_arr = np.array(new_results)  #puts the test data in an array
-        dec = scipy.signal.decimate(results_arr, 10, ftype='iir', axis = 0)  #performs the decimation function
+        dec = scipy.signal.decimate(results_arr, 10, ftype='fir', axis = 0)  #performs the decimation function
         test_results = []
         for row in dec:
             temp = {}
