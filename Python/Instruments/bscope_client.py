@@ -1,6 +1,6 @@
 import json
 import requests
-import time
+import time   # time is a module here
 import datetime
 import threading
 from bitlib import *
@@ -15,12 +15,14 @@ MY_CHANNEL = 0 # channel to capture and display
 MY_PROBE_FILE = "" # default probe file if unspecified 
 MY_MODE = BL_MODE_FAST # preferred capture mode
 MY_RATE = 1000000 # default sample rate we'll use for capture.
+# 1 MHz?  Might be better to sample at a lower rate.  10 KHz?
+# Show off the high sample rate later when everything works.
 MY_SIZE = 500 # number of samples we'll capture (simply a connectivity test)
 TRUE = 1
 MODES = ("FAST","DUAL","MIXED","LOGIC","STREAM")
 SOURCES = ("POD","BNC","X10","X20","X50","ALT","GND")
-sample_interval = 10
-time = 0.00
+sample_interval = 10  # 10 what? milliseconds?
+time = 0.00  # now time is a global variable. seconds?
 
 def dt2ms(t):
     return int(t.strftime('%s'))*1000 + int(t.microsecond/1000)
@@ -69,7 +71,7 @@ def make_data_dict(DATA, tse, time):
         temp_dict = set_v_for_k(temp_dict, 'DTE', tse)
         temp_dict = set_v_for_k(temp_dict, 'TIME', time)
         tse = tse + sample_interval
-        time = round((time + 0.01),2)
+        time = round((time + 0.01),2)  # At 1 MHz?
         new_data.append(temp_dict)
     return new_data
 
@@ -82,6 +84,8 @@ def bscope_acq(config):
         config_vars = check_config_vars(config)
         MY_RATE = config_vars[0]
         MY_SIZE = config_vars[1]
+        # MY_RATE,MY_SIZE = config_vars is better
+        # MY_RATE,MY_SIZE = check_config_vars(config) is better still
         BL_Select(BL_SELECT_DEVICE,MY_DEVICE)
         BL_Mode(BL_MODE_LOGIC) == BL_MODE_LOGIC or BL_Mode(BL_MODE_FAST)
         BL_Range(BL_Count(BL_COUNT_RANGE))
