@@ -14,7 +14,7 @@
 
   <body>
     <h2>Test Library</h2>
-    BitScope Results
+    BitScope
     <br><br> 
      Start Time</a><span style="padding-left:138px">Details
      <br><br>  
@@ -24,8 +24,28 @@
         <tr>
         </tr>
 
-        {% for r in results %}
-           <a href ="testlibrary/bscopedata/{{results[r][1]}}/{{r}}">{{ r }}  </a><span style="padding-left:100px"> {{results[r]}}
+        {% for r in results_bscope %}
+           <a href ="testlibrary/bscopedata/{{results_bscope[r][1]}}/{{r}}">{{ r }}  </a><span style="padding-left:100px"> {{results_bscope[r]}}
+
+
+
+          <br><br>   
+        {% endfor %}
+      </table>
+    </form>
+
+    Tektronix Oscilloscope
+    <br><br> 
+     Start Time</a><span style="padding-left:138px">Details
+     <br><br>  
+    <form method="post">
+
+      <table>
+        <tr>
+        </tr>
+
+        {% for r in results_oscope %}
+           <a href ="testlibrary/oscopedata/{{results_oscope[r][1]}}/{{r}}">{{ r }}  </a><span style="padding-left:100px"> {{results_oscope[r]}}
 
 
 

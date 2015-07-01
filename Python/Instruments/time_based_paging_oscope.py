@@ -27,16 +27,12 @@ def dt2ms(t):
 def roundup(x):
     return int(math.ceil(x / 100.0)) * 100
 
-def slicename_creation(x):
-    """creates slicenames based off time since epoch, rounded down to nearest 100 msec"""
-    slicename = x//100*100
-    return slicename
 
 def post_creation(slicename, stuffing):
-    window = {'config':{'TEK':'TODO'},'slicename':slicename,'data':stuffing}
+    window = {'config':{'Sample_Size':data_length, 'Sample_Rate(Hz)':sample_rate, 'Slice_Size(msec)':slice_size,'slicename':slicename},'data':stuffing, 'start_tse':start_tse}
     out = json.dumps(window)
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-    url = "https://gradientone-dev1.appspot.com/oscopedata/LED/%s" % slicename
+    url = "https://gradientone-test.appspot.com/oscopedata/LED/%s" % slicename
     #url = "http://localhost:18080/oscopedata/LED/%s" % slicename
     r = requests.post(url, data=out, headers=headers)
     print "dir(r)=",dir(r)
@@ -44,54 +40,24 @@ def post_creation(slicename, stuffing):
     print "r.status_code=",r.status_code
 
 i = datetime.datetime.now()
-tse = dt2ms(i)
+start_tse = roundup(dt2ms(i))
 f = open('../../DataFiles/tekcsv/tek0012ALL.csv')
-f = itertools.islice(f, 18, 58)
+f = itertools.islice(f, 18, 518)
 test_results = csv.DictReader(f, fieldnames = ("TIME", "CH1", "CH2", "CH3", "CH4"))
 test_results = [row for row in test_results]
 data_length = len(test_results)
-
-new_dtms = tse
 stuffing = []
+sample_rate = 100 # fixed value from Tek csv files (Hz).  1 sample every 10 miliseconds.
+slice_size = 100 # miliseconds
+sample_per_slice = int((float(sample_rate)/1000)*float(slice_size))
 
-def end_creation(new_dtms):
-    end = int(roundup(new_dtms))
-    return end
 
-
-for i in range(0, data_length, 10):
-
-    chunk = test_results[i:i + 10]
-    end = end_creation(new_dtms)
-    slicename = slicename_creation(new_dtms)
-    
-    
-    for tr in chunk:
-        new_dtms =  int(tse - (-500.00 - float(tr['TIME']))*1000)
-        tr['DTE'] = new_dtms
-        if float(tr['DTE']) > end:
-            post_creation(slicename, stuffing)
-            stuffing = []
-            slicename = slicename_creation(new_dtms)  
-            stuffing.append(tr)
-            end = end_creation(new_dtms)
-            continue
-        stuffing.append(tr)
-    slicename = slicename_creation(new_dtms)
+for i in range(0, data_length, sample_per_slice):
+    chunk = str(test_results[i:i + sample_per_slice])
+    slicename = start_tse + i*sample_per_slice
+    stuffing = chunk
     post_creation(slicename, stuffing)
-    stuffing = []
-        
-
-            
-
-
-        
-
-
-       
-            
-
-        
+    
 
 
 

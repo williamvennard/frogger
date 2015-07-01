@@ -26,6 +26,8 @@ from collections import OrderedDict
 import numpy as np
 import appengine_config
 import decimate
+from google.appengine.ext import blobstore
+from google.appengine.ext.webapp import blobstore_handlers
 
 
 authorized_users = ['charlie@gradientone.com',
@@ -161,7 +163,6 @@ class UserDB(DictModel):
 def DemoDB_key(name = 'default'):
     return db.Key.from_path('messages', name)
 
-
 class DemoDB(db.Model):
 
 
@@ -238,12 +239,8 @@ class OscopeDB(DictModel):
     name = db.StringProperty(required = True)
     config = db.StringProperty(required = True)
     slicename = db.StringProperty(required = True)
-    TIME = db.FloatProperty(required = True)
-    CH1 = db.FloatProperty(required = True)
-    CH2 = db.FloatProperty(required = True)
-    CH3 = db.FloatProperty(required = True)
-    CH4 = db.FloatProperty(required = True)
-    DTE = db.IntegerProperty(required = True)
+    data = db.TextProperty(required = True)
+    start_tse = db.IntegerProperty(required = True)
  
 def BscopeDB_key(name = 'default'):
     return db.Key.from_path('bscope', name)
@@ -756,9 +753,9 @@ class OscopeData(InstrumentDataHandler):
         if rows is None:
             logging.error("OscopeData:get: query")
             rows = db.GqlQuery("""SELECT * FROM OscopeDB WHERE name =:1
-                                AND slicename = :2 ORDER BY DTE ASC""", name, slicename)
+                                AND slicename = :2""", name, slicename)  
             rows = list(rows)
-            rows = sorted(rows, key=getKey)
+            print rows
             memcache.set(key, rows)
         data = query_to_dict(rows)
         output = {"data":data}
@@ -776,15 +773,10 @@ class OscopeData(InstrumentDataHandler):
             r = OscopeDB(parent = OscopeDB_key(name), name=name,
                          slicename=slicename,
                          config=str(oscope_content['config']),
-                         TIME=float(o['TIME']),
-                         CH1=float(o['CH1']),
-                         CH2=float(o['CH2']),
-                         CH3=float(o['CH3']),
-                         CH4=float(o['CH4']),
-                         DTE = o['DTE'],
+                         data=(oscope_content['data']),
+                         start_tse=(oscope_content['start_tse'])
                          )
-            to_save.append(r) 
-        rows = to_save
+        to_save.append(r) 
         memcache.set(key, to_save)
         db.put(to_save)
 
@@ -827,27 +819,44 @@ class BscopeData(InstrumentDataHandler):
 
 class TestLibraryPage(InstrumentDataHandler):
 
-    def get(self, name="", start_tse=""):
+    def get(self, instrument="", name="", start_tse=""):
 
-        if start_tse:
-
-            raw = 'https://gradientone-test.appspot.com/bscopedata/' + name + '/' + start_tse
-            dec = 'https://gradientone-test.appspot.com/dec/bscopedata/' + name + '/' + start_tse
-            links = {"raw_data_url":raw, "dec_data_url":dec} 
-            render_json(self, links) 
-
-        else:
+        if instrument == "":
             rows = db.GqlQuery("SELECT * FROM BscopeDB")
             rows = list(rows)
-            results = {}
+            results_bscope = {}
             for r in rows:
                 summary = set()
                 summary.add((str(r.start_tse), str(r.name), str(r.config))) #make set to eliminate dupes
                 summary = list(summary) #convert set to list
                 summary = list(summary[0]) #breaks up list to individual items
-                results[str(r.start_tse)] = summary
-            self.render('testlibrary.html', results = results)
+                results_bscope[str(r.start_tse)] = summary
+            rows = db.GqlQuery("SELECT * FROM OscopeDB")
+            rows = list(rows)
+            results_oscope = {}
+            for r in rows:
+                summary = set()
+                summary.add((str(r.start_tse), str(r.name), str(r.config))) #make set to eliminate dupes
+                summary = list(summary) #convert set to list
+                summary = list(summary[0]) #breaks up list to individual items
+                results_oscope[str(r.start_tse)] = summary
+            self.render('testlibrary.html', results_bscope = results_bscope, results_oscope = results_oscope)
 
+        elif instrument == 'bscopedata':
+            raw = 'https://gradientone-test.appspot.com/bscopedata/' + name + '/' + start_tse
+            dec = 'https://gradientone-test.appspot.com/dec/bscopedata/' + name + '/' + start_tse
+            links = {"raw_data_url":raw, "dec_data_url":dec} 
+            render_json(self, links) 
+
+        elif instrument == 'oscopedata':
+            print instrument, name, start_tse
+            raw = 'https://gradientone-test.appspot.com/oscopedata/' + name + '/' + start_tse
+            #dec = 'https://gradientone-test.appspot.com/dec/oscopedata/' + name + '/' + start_tse
+            links = {"raw_data_url":raw} 
+            render_json(self, links) 
+
+        else:
+            print instrument, name
 
 
 
@@ -870,7 +879,7 @@ class BscopeDataDec(InstrumentDataHandler):
             test_results = create_decimation(data)
             bscope_payload = {'config':data[0]['config'],'slicename':data[0]['slicename'],'cha':test_results, 'start_tse':data[0]['start_tse']}
             memcache.set(key, bscope_payload)
-        self.write(bscope_payload)
+        render_json(self, bscope_payload)
 
 
     def post(self,name="",slicename=""):
@@ -908,7 +917,8 @@ app = webapp2.WSGIApplication([
     ('/testresults/([a-zA-Z0-9-]+)', TestResultsPage),
     ('/testresults/([a-zA-Z0-9-]+.json)', TestResultsPage),
     ('/testlibrary', TestLibraryPage),
-    ('/testlibrary/bscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', TestLibraryPage),
+    ('/testlibrary/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', TestLibraryPage),
+    ('/testlibrary/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', TestLibraryPage),
     ('/vnadata/([a-zA-Z0-9-]+)', VNAData),
     ('/oscopedata/([a-zA-Z0-9-]+)', OscopeData),
     ('/oscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)', OscopeData),
