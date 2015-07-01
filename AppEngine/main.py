@@ -3,6 +3,7 @@ This is the "data importer" module.
 
 It takes a http from input and stores it in the database.  It also allows you to display the results of the entry.
 """
+
 import collections
 import csv
 import datetime
@@ -22,7 +23,10 @@ from google.appengine.api import users
 from google.appengine.ext import db
 from time import gmtime, strftime
 from collections import OrderedDict
-#from rest_api_framework.pagination import Pagination
+import numpy as np
+import appengine_config
+import decimate
+
 
 authorized_users = ['charlie@gradientone.com',
                     'nedwards@gradientone.com',
@@ -79,6 +83,21 @@ def root_mean_squared(test_data, test):
 def query_to_dict(result):
     query_dict = [r.to_dict() for r in result]
     return query_dict
+
+def create_decimation(data):
+    new_results = []
+    print data
+    for d in data:
+        entries = d['cha'].split(',')
+        for entry in entries:
+            entry = entry.lstrip('[')
+            entry = entry.rstrip(']')
+            new_results.append(float(entry))
+    new_results = new_results[:1000]
+    results_arr = np.array(new_results)  #puts the test data in an array
+    dec = decimate.decimate(results_arr, 10, ftype='fir', axis=0)  #performs the decimation function
+    test_results = dec.tolist()
+    return test_results
 
 def getKey(row):
     return float(row.DTE)
@@ -235,9 +254,8 @@ class BscopeDB(DictModel):
     name = db.StringProperty(required = True)
     config = db.StringProperty(required = True)
     slicename = db.StringProperty(required = True)
-    TIME = db.FloatProperty(required = True)
-    CHA = db.FloatProperty(required = True)
-    DTE = db.IntegerProperty(required = True)
+    cha = db.TextProperty(required = True)
+    start_tse = db.IntegerProperty(required = True)
 
 
 def VNADB_key(name):
@@ -767,8 +785,6 @@ class OscopeData(InstrumentDataHandler):
                          )
             to_save.append(r) 
         rows = to_save
-        print 'to_save', to_save
-        print 'key', key
         memcache.set(key, to_save)
         db.put(to_save)
 
@@ -782,11 +798,10 @@ class BscopeData(InstrumentDataHandler):
         key = 'bscopedata' + name + slicename
         rows = memcache.get(key)
         if rows is None:
-            logging.error("OscopeData:get: query")
+            logging.error("BscopeData:get: query")
             rows = db.GqlQuery("""SELECT * FROM BscopeDB WHERE name =:1
-                                AND slicename = :2 ORDER BY DTE ASC""", name, slicename)
+                                AND slicename = :2""", name, slicename)  
             rows = list(rows)
-            rows = sorted(rows, key=getKey)
             memcache.set(key, rows)
         data = query_to_dict(rows)
         output = {"data":data}
@@ -796,32 +811,65 @@ class BscopeData(InstrumentDataHandler):
     def post(self,name="",slicename=""):
         "store data by intstrument name and time slice name"
         key = 'bscopedata' + name + slicename
+        print 'bscope raw post handler'
         bscope_content = json.loads(self.request.body)
-        bscope_data = bscope_content['data']
         to_save = []
-        for b in bscope_data:
-            print b
-            r = BscopeDB(parent = BscopeDB_key(name), name=name,
+        r = BscopeDB(parent = BscopeDB_key(name), name=name,
                          slicename=slicename,
                          config=str(bscope_content['config']),
-                         TIME=float(b['TIME']),
-                         CHA=float(b['CHA']),
-                         DTE = b['DTE'],
+                         cha=(bscope_content['data']),
+                         start_tse=(bscope_content['start_tse'])
                          )
-            to_save.append(r) 
-        rows = to_save
+        to_save.append(r) 
         memcache.set(key, to_save)
         db.put(to_save)
 
+
+class TestLibraryPage(InstrumentDataHandler):
+
+    def get(self, name="", start_tse=""):
+
+        if start_tse:
+
+            raw = 'https://gradientone-test.appspot.com/bscopedata/' + name + '/' + start_tse
+            dec = 'https://gradientone-test.appspot.com/dec/bscopedata/' + name + '/' + start_tse
+            links = {"raw_data_url":raw, "dec_data_url":dec} 
+            render_json(self, links) 
+
+        else:
+            rows = db.GqlQuery("SELECT * FROM BscopeDB")
+            rows = list(rows)
+            results = {}
+            for r in rows:
+                summary = set()
+                summary.add((str(r.start_tse), str(r.name), str(r.config))) #make set to eliminate dupes
+                summary = list(summary) #convert set to list
+                summary = list(summary[0]) #breaks up list to individual items
+                results[str(r.start_tse)] = summary
+            self.render('testlibrary.html', results = results)
+
+
+
+
 class BscopeDataDec(InstrumentDataHandler):
+   # work in progress
 
-
-    def get(self,name="",slicename=""):
-        "retrieve BitScope data by intstrument name and time slice name"
+    def get(self,name="",start_tse=""):
+        "retrieve decimated BitScope data by intstrument name and time slice name"
         #if not self.authcheck():
         #    return
-        key = 'bscopedatadec' + name + slicename
+        key = 'bscopedatadec' + name + start_tse
+        start_tse = int(start_tse)
         bscope_payload = memcache.get(key)
+        if bscope_payload is None:
+            logging.error("BscopeData:get: query")
+            rows = db.GqlQuery("""SELECT * FROM BscopeDB WHERE name =:1
+                                AND start_tse= :2 ORDER BY slicename ASC""", name, start_tse)  
+            rows = list(rows)
+            data = query_to_dict(rows)
+            test_results = create_decimation(data)
+            bscope_payload = {'config':data[0]['config'],'slicename':data[0]['slicename'],'data':test_results, 'start_tse':data[0]['start_tse']}
+            memcache.set(key, bscope_payload)
         self.write(bscope_payload)
 
 
@@ -859,6 +907,8 @@ app = webapp2.WSGIApplication([
     ('/testresults', TestResultsPage),
     ('/testresults/([a-zA-Z0-9-]+)', TestResultsPage),
     ('/testresults/([a-zA-Z0-9-]+.json)', TestResultsPage),
+    ('/testlibrary', TestLibraryPage),
+    ('/testlibrary/bscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', TestLibraryPage),
     ('/vnadata/([a-zA-Z0-9-]+)', VNAData),
     ('/oscopedata/([a-zA-Z0-9-]+)', OscopeData),
     ('/oscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)', OscopeData),
