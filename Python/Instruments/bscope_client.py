@@ -1,6 +1,6 @@
 import json
 import requests
-import time
+import time   # time is a module here
 import datetime
 import threading
 #from bitlib import *
@@ -59,18 +59,6 @@ def check_config_url():
         print "No start order found"
     threading.Timer(1, check_config_url()).start()
 
-def make_data_dict(DATA, tse):
-    """ creates the dictionary of data from the bitscope"""
-    new_data = []
-    tse = roundup(tse)
-    for datum in DATA:
-        temp_dict = {}
-        temp_dict = set_v_for_k(temp_dict, 'CHA', datum)
-        temp_dict = set_v_for_k(temp_dict, 'DTE', tse)
-        tse = tse + sample_interval
-        new_data.append(temp_dict)
-    return new_data
-
 
 def bscope_acq(config):    
     """sets the configuration for the bitscope API and calls the BitScope class"""
@@ -80,6 +68,8 @@ def bscope_acq(config):
         config_vars = check_config_vars(config)
         MY_RATE = config_vars[0]
         MY_SIZE = config_vars[1]
+        # MY_RATE,MY_SIZE = config_vars is better
+        # MY_RATE,MY_SIZE = check_config_vars(config) is better still
         BL_Select(BL_SELECT_DEVICE,MY_DEVICE)
         BL_Mode(BL_MODE_LOGIC) == BL_MODE_LOGIC or BL_Mode(BL_MODE_FAST)
         BL_Range(BL_Count(BL_COUNT_RANGE))
@@ -97,7 +87,6 @@ def bscope_acq(config):
         BL_Trace()
         tse = dt2ms(datetime.datetime.now())
         DATA = BL_Acquire()
-        new_data = make_data_dict(DATA, tse)
         config_dict = {'bitscope':'info'}
         config_dict = set_v_for_k(config_dict, 'Link', BL_Name(0))
         config_dict = set_v_for_k(config_dict, 'BitScope', (BL_Version(BL_VERSION_DEVICE), BL_ID()))
