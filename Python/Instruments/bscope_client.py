@@ -3,7 +3,7 @@ import requests
 import time   # time is a module here
 import datetime
 import threading
-#from bitlib import *
+from bitlib import *
 from bscopepost import BitScope
 import numpy
 import scipy.signal 
@@ -66,10 +66,8 @@ def bscope_acq(config):
     print "Starting: Attempting to open one device..."
     if BL_Open(MY_PROBE_FILE,1):
         config_vars = check_config_vars(config)
-        MY_RATE = config_vars[0]
-        MY_SIZE = config_vars[1]
-        # MY_RATE,MY_SIZE = config_vars is better
-        # MY_RATE,MY_SIZE = check_config_vars(config) is better still
+        MY_RATE = float(config_vars[0])
+        MY_SIZE = int(config_vars[1])
         BL_Select(BL_SELECT_DEVICE,MY_DEVICE)
         BL_Mode(BL_MODE_LOGIC) == BL_MODE_LOGIC or BL_Mode(BL_MODE_FAST)
         BL_Range(BL_Count(BL_COUNT_RANGE))

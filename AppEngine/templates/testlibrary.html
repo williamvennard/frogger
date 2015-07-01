@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block import %}
+
+<html>
+  <head>
+    <title>Test Library </title>
+    <style type="text/css">
+      .label {text-align: right}
+      .error {color: red}
+    </style>
+
+  </head>
+
+  <body>
+    <h2>Test Library</h2>
+    BitScope Results
+    <br><br> 
+     Start Time</a><span style="padding-left:138px">Details
+     <br><br>  
+    <form method="post">
+
+      <table>
+        <tr>
+        </tr>
+
+        {% for r in results %}
+           <a href ="testlibrary/bscopedata/{{results[r][1]}}/{{r}}">{{ r }}  </a><span style="padding-left:100px"> {{results[r]}}
+
+
+
+          <br><br>   
+        {% endfor %}
+      </table>
+    </form>
+  </body>
+
+</html>
+
+{% endblock %}
