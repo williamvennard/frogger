@@ -32,13 +32,6 @@ class BitScope:
     def dt2ms(self, t):
         return int(t.strftime('%s'))*1000 + int(t.microsecond/1000)
 
-    def roundup(self, x):
-        return int(((x//100) * 100) + 10)
-
-    def slicename_creation(self, x):
-
-        slicename = x//100*100
-        return slicename
 
     def post_creation(self, config_data, slicename, stuffing, start_tse, parent):
         window = {'config':config_data,'slicename':slicename,'data':stuffing, 'start_tse':start_tse}
@@ -54,11 +47,6 @@ class BitScope:
         #print "dir(r)=",dir(r)
         print "r.reason=",r.reason
         print "r.status_code=",r.status_code
-
-
-    def end_creation(self, new_dtms):
-        end = int(self.roundup(new_dtms))
-        return end
 
 
     def transmitdec(self):
@@ -78,6 +66,7 @@ class BitScope:
         test_results = self.bscope_test_results['data']
         config_data = self.bscope_test_results['Config']
         start_tse = int(self.bscope_test_results['Start_TSE'])
+        slice_size = int(config_data['Slice_Size(msec)'])
         data_length = len(test_results)
         tse = start_tse
         stuffing = []

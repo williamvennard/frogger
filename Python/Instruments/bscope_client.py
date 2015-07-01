@@ -16,10 +16,11 @@ MY_PROBE_FILE = "" # default probe file if unspecified
 MY_MODE = BL_MODE_FAST # preferred capture mode
 MY_RATE = 1000 # default sample rate we'll use for capture. (hertz)
 MY_SIZE = 500 # number of samples we'll capture (simply a connectivity test)
+SLICE_SIZE = 10 # miliseconds
 TRUE = 1
 MODES = ("FAST","DUAL","MIXED","LOGIC","STREAM")
 SOURCES = ("POD","BNC","X10","X20","X50","ALT","GND")
-sample_interval = 1 # (1 msec)
+
 
 
 def dt2ms(t):
@@ -42,7 +43,7 @@ def set_v_for_k(test_dict, k, v):
     return test_dict
 
 def roundup(x):
-    return int(((x//10) * 10) + 10)
+    return int(((x//SLICE_SIZE) * SLICE_SIZE) + SLICE_SIZE)
 
 def make_json(payload):
     acq_dict = json.dumps(payload)
@@ -85,12 +86,16 @@ def bscope_acq(config):
         BL_Trace()
         tse = dt2ms(datetime.datetime.now())
         DATA = BL_Acquire()
-        config_dict = {'bitscope':'info'}
+        SAMPLE_SIZE = len(DATA)
+        config_dict = {}
         config_dict = set_v_for_k(config_dict, 'Link', BL_Name(0))
         config_dict = set_v_for_k(config_dict, 'BitScope', (BL_Version(BL_VERSION_DEVICE), BL_ID()))
         config_dict = set_v_for_k(config_dict, 'Channels', (BL_Count(BL_COUNT_ANALOG) + BL_Count(BL_COUNT_LOGIC), 
                                                            BL_Count(BL_COUNT_ANALOG),BL_Count(BL_COUNT_LOGIC)))
         config_dict = set_v_for_k(config_dict, 'Library', (BL_Version(BL_VERSION_LIBRARY), BL_Version(BL_VERSION_BINDING))) 
+        config_dict = set_v_for_k(config_dict, 'Sample_Rate(Hz)', MY_RATE)
+        config_dict = set_v_for_k(config_dict, 'Sample_Size', SAMPLE_SIZE)
+        config_dict = set_v_for_k(config_dict, 'Slice_Size(msec)', SLICE_SIZE)
         acq_dict = set_v_for_k(acq_dict, 'data', DATA) 
         acq_dict = set_v_for_k(acq_dict, 'Config', config_dict)    
         acq_dict = set_v_for_k(acq_dict, 'Start_TSE', roundup(tse))
