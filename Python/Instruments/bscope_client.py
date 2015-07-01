@@ -3,7 +3,7 @@ import requests
 import time
 import datetime
 import threading
-from bitlib import *
+#from bitlib import *
 from bscopepost import BitScope
 import numpy
 import scipy.signal 
@@ -14,13 +14,13 @@ MY_DEVICE = 0 # one open device only
 MY_CHANNEL = 0 # channel to capture and display
 MY_PROBE_FILE = "" # default probe file if unspecified 
 MY_MODE = BL_MODE_FAST # preferred capture mode
-MY_RATE = 1000000 # default sample rate we'll use for capture.
+MY_RATE = 1000 # default sample rate we'll use for capture. (hertz)
 MY_SIZE = 500 # number of samples we'll capture (simply a connectivity test)
 TRUE = 1
 MODES = ("FAST","DUAL","MIXED","LOGIC","STREAM")
 SOURCES = ("POD","BNC","X10","X20","X50","ALT","GND")
-sample_interval = 10
-time = 0.00
+sample_interval = 1 # (1 msec)
+
 
 def dt2ms(t):
     return int(t.strftime('%s'))*1000 + int(t.microsecond/1000)
@@ -42,7 +42,7 @@ def set_v_for_k(test_dict, k, v):
     return test_dict
 
 def roundup(x):
-    return int(((x//100) * 100) + 100)
+    return int(((x//10) * 10) + 10)
 
 def make_json(payload):
     acq_dict = json.dumps(payload)
@@ -59,7 +59,7 @@ def check_config_url():
         print "No start order found"
     threading.Timer(1, check_config_url()).start()
 
-def make_data_dict(DATA, tse, time):
+def make_data_dict(DATA, tse):
     """ creates the dictionary of data from the bitscope"""
     new_data = []
     tse = roundup(tse)
@@ -67,9 +67,7 @@ def make_data_dict(DATA, tse, time):
         temp_dict = {}
         temp_dict = set_v_for_k(temp_dict, 'CHA', datum)
         temp_dict = set_v_for_k(temp_dict, 'DTE', tse)
-        temp_dict = set_v_for_k(temp_dict, 'TIME', time)
         tse = tse + sample_interval
-        time = round((time + 0.01),2)
         new_data.append(temp_dict)
     return new_data
 
@@ -99,18 +97,18 @@ def bscope_acq(config):
         BL_Trace()
         tse = dt2ms(datetime.datetime.now())
         DATA = BL_Acquire()
-        new_data = make_data_dict(DATA, tse, time)
-        config_dict = {}
+        new_data = make_data_dict(DATA, tse)
+        config_dict = {'bitscope':'info'}
         config_dict = set_v_for_k(config_dict, 'Link', BL_Name(0))
         config_dict = set_v_for_k(config_dict, 'BitScope', (BL_Version(BL_VERSION_DEVICE), BL_ID()))
         config_dict = set_v_for_k(config_dict, 'Channels', (BL_Count(BL_COUNT_ANALOG) + BL_Count(BL_COUNT_LOGIC), 
                                                            BL_Count(BL_COUNT_ANALOG),BL_Count(BL_COUNT_LOGIC)))
         config_dict = set_v_for_k(config_dict, 'Library', (BL_Version(BL_VERSION_LIBRARY), BL_Version(BL_VERSION_BINDING))) 
-        acq_dict = set_v_for_k(acq_dict, 'data', new_data) 
+        acq_dict = set_v_for_k(acq_dict, 'data', DATA) 
         acq_dict = set_v_for_k(acq_dict, 'Config', config_dict)    
+        acq_dict = set_v_for_k(acq_dict, 'Start_TSE', roundup(tse))
         BL_Close()
         print "Finished: Library closed, resources released."    
-        #print acq_dict
         bits = BitScope(acq_dict)
         bits.transmitdec()
         bits.transmitraw()
