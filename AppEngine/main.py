@@ -224,8 +224,8 @@ class ConfigDB(DictModel):
     frequency_start = db.FloatProperty(required = False)
     frequency_stop = db.FloatProperty(required = False)
     power = db.FloatProperty(required = False)
-    sample_rate = db.FloatProperty(required = False)
-    number_of_samples = db.FloatProperty(required = False)
+    sample_rate = db.IntegerProperty(required = False)
+    number_of_samples = db.IntegerProperty(required = False)
     start_measurement = db.BooleanProperty(required = False)
 
 def OscopeDB_key(name = 'default'):
@@ -868,7 +868,7 @@ class BscopeDataDec(InstrumentDataHandler):
             rows = list(rows)
             data = query_to_dict(rows)
             test_results = create_decimation(data)
-            bscope_payload = {'config':data[0]['config'],'slicename':data[0]['slicename'],'data':test_results, 'start_tse':data[0]['start_tse']}
+            bscope_payload = {'config':data[0]['config'],'slicename':data[0]['slicename'],'cha':test_results, 'start_tse':data[0]['start_tse']}
             memcache.set(key, bscope_payload)
         self.write(bscope_payload)
 
