@@ -67,11 +67,13 @@ class BitScope:
         config_data = self.bscope_test_results['Config']
         start_tse = int(self.bscope_test_results['Start_TSE'])
         slice_size = int(config_data['Slice_Size(msec)'])
+        sample_rate = int(config_data['Sample_Rate(Hz)'])
         data_length = len(test_results)
+        sample_per_slice = int((float(sample_rate)/1000)*float(slice_size))
         tse = start_tse
         stuffing = []
-        for i in range(0, data_length, 10):
-            chunk = str(test_results[i:i + 10])
+        for i in range(0, data_length, sample_per_slice):
+            chunk = str(test_results[i:i + sample_per_slice])
             slicename = tse + i
             stuffing = chunk
             self.post_creation(config_data, slicename, stuffing, start_tse, parent)
