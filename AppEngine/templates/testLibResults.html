@@ -293,9 +293,8 @@
 
                //Y AXIS VOLTAGE DATA "CHA"
                var rawData = gatheredResults['data'];
-               var rawList = rawData[0].cha;
-               var chaFormat = rawList.substr(1, rawList.length-2);
-               var rawCha = chaFormat.split(', ');
+               var rawCha = rawData[0].cha;
+               //console.log('cha data array: ',rawCha);
 
                var configOptions = rawData[0].config;
                var formatConfig = configOptions.substr(1, configOptions.length-2);
