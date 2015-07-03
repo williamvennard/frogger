@@ -3,7 +3,7 @@ This is the "data importer" module.
 
 It takes a http from input and stores it in the database.  It also allows you to display the results of the entry.
 """
-
+import ast
 import collections
 import csv
 import datetime
@@ -78,6 +78,22 @@ def root_mean_squared(test_data, test):
         tempsq = float(entry['CH1'])*float(entry['CH1'])
         sum += tempsq 
         i += 1
+    z = sum/i
+    rms = math.sqrt(z)
+    return rms
+
+
+def root_mean_squared_ta(test_data, RMS_time_start, RMS_time_stop, sample_interval):
+    "RMS measurement function that relies upon queries from test config and instrument data"
+    RMS_time_start = float(RMS_time_start)
+    RMS_time_stop = float(RMS_time_stop) 
+    sum = 0
+    tempsq = 0
+    i = 0
+    for entry in test_data[int(RMS_time_start/sample_interval):(1+int(RMS_time_stop/sample_interval))]:
+        tempsq = entry*entry
+        sum += tempsq 
+        i += 1  
     z = sum/i
     rms = math.sqrt(z)
     return rms
@@ -816,6 +832,35 @@ class BscopeData(InstrumentDataHandler):
         memcache.set(key, to_save)
         db.put(to_save)
 
+class TestAnalyzerPage(InstrumentDataHandler):
+
+    def get(self, instrument="", name="", start_tse=""):
+        self.render("testanalyzer.html")          
+
+    def post(self, instrument="", name="", start_tse=""):
+        if instrument == 'bscopedata':
+            key = 'bscopedata' + name + start_tse
+            start_tse = int(start_tse)
+            rows = memcache.get(key)
+            if rows is None:
+                logging.error("BscopeData:get: query")
+                rows = db.GqlQuery("""SELECT * FROM BscopeDB WHERE name =:1
+                                AND start_tse=:2 ORDER BY slicename ASC """, name, start_tse)  
+                rows = list(rows)
+                memcache.set(key, rows)
+            data = query_to_dict(rows)
+            z = data[0]['config']
+            z = ast.literal_eval(z)
+            sr = z['Sample_Rate(Hz)']
+            si = 1/sr
+            temp = []
+            for item in data:
+                z = ast.literal_eval(item['cha'])
+                temp.extend(z)
+            RMS_time_start = self.request.get('RMS_time_start')
+            RMS_time_stop = self.request.get('RMS_time_stop')
+            rms = root_mean_squared_ta(temp, RMS_time_start, RMS_time_stop, si)
+            self.render('testanalyzer.html', rms = rms)
 
 class TestLibraryPage(InstrumentDataHandler):
 
@@ -918,7 +963,7 @@ app = webapp2.WSGIApplication([
     ('/testresults/([a-zA-Z0-9-]+.json)', TestResultsPage),
     ('/testlibrary', TestLibraryPage),
     ('/testlibrary/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', TestLibraryPage),
-    ('/testlibrary/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', TestLibraryPage),
+    ('/testanalyzer/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', TestAnalyzerPage),
     ('/vnadata/([a-zA-Z0-9-]+)', VNAData),
     ('/oscopedata/([a-zA-Z0-9-]+)', OscopeData),
     ('/oscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)', OscopeData),
