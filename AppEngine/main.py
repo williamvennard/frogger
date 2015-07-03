@@ -30,6 +30,7 @@ from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
 
 
+
 authorized_users = ['charlie@gradientone.com',
                     'nedwards@gradientone.com',
                     'nickedwards@gmail.com'
@@ -189,6 +190,43 @@ class DemoDB(db.Model):
 def input_key(name = 'default'):
     return db.Key.from_path('inputs', name)
 
+
+class FileBlob(db.Model):
+
+    blob_key = blobstore.BlobReferenceProperty(required=True)
+
+class UploadURLGenerator(InstrumentDataHandler):
+
+
+    def get(self):
+        upload_url = blobstore.create_upload_url('/upload/upload_file')
+        self.response.out.write(upload_url)
+    def post(self):
+        UploadURLGenerator.get(self)
+
+
+class FileUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
+
+
+    def post(self):
+        try:
+            upload = self.get_uploads()[0] 
+            dbfile = FileBlob(blob_key=upload.key())
+            dbfile.put()
+            self.redirect('/upload/success')
+        except:
+            self.redirect('/upload_failure.html')
+
+
+class FileUploadSuccess(InstrumentDataHandler):
+
+    def get(self):
+        self.response.out.write("File Upload Successful")
+
+class FileUploadFailure(InstrumentDataHandler):
+
+    def get(self):
+        self.response.out.write("File Upload Failed")
 
 class Input(db.Model):
 
@@ -785,7 +823,6 @@ class OscopeData(InstrumentDataHandler):
         oscope_data = oscope_content['data']
         to_save = []
         for o in oscope_data:
-            print o
             r = OscopeDB(parent = OscopeDB_key(name), name=name,
                          slicename=slicename,
                          config=str(oscope_content['config']),
@@ -862,11 +899,38 @@ class TestAnalyzerPage(InstrumentDataHandler):
             rms = root_mean_squared_ta(temp, RMS_time_start, RMS_time_stop, si)
             self.render('testanalyzer.html', rms = rms)
 
+
+
 class TestLibraryPage(InstrumentDataHandler):
 
     def get(self, instrument="", name="", start_tse=""):
 
-        if instrument == "":
+        start_tse_check = start_tse.split('.')
+        start_tse = start_tse_check[0]
+
+        if instrument == 'bscopedata' and start_tse_check[-1] == 'json':
+            raw = 'https://gradientone-test.appspot.com/bscopedata/' + name + '/' + start_tse
+            dec = 'https://gradientone-test.appspot.com/dec/bscopedata/' + name + '/' + start_tse
+            links = {"raw_data_url":raw, "dec_data_url":dec} 
+            render_json(self, links) 
+
+        elif instrument == 'oscopedata' and start_tse_check[-1] == 'json':
+            print instrument, name, start_tse
+            raw = 'https://gradientone-test.appspot.com/oscopedata/' + name + '/' + start_tse
+            #dec = 'https://gradientone-test.appspot.com/dec/oscopedata/' + name + '/' + start_tse
+            links = {"raw_data_url":raw} 
+            render_json(self, links) 
+
+        elif instrument == 'bscopedata':
+            f = open(os.path.join('templates', 'testLibResults.html'))
+            self.response.write((f.read()))
+
+
+        elif instrument == 'oscopedata':
+            f = open(os.path.join('templates', 'testLibResults.html'))
+            self.response.write((f.read()))
+
+        else:
             rows = db.GqlQuery("SELECT * FROM BscopeDB")
             rows = list(rows)
             results_bscope = {}
@@ -887,21 +951,6 @@ class TestLibraryPage(InstrumentDataHandler):
                 results_oscope[str(r.start_tse)] = summary
             self.render('testlibrary.html', results_bscope = results_bscope, results_oscope = results_oscope)
 
-        elif instrument == 'bscopedata':
-            raw = 'https://gradientone-test.appspot.com/bscopedata/' + name + '/' + start_tse
-            dec = 'https://gradientone-test.appspot.com/dec/bscopedata/' + name + '/' + start_tse
-            links = {"raw_data_url":raw, "dec_data_url":dec} 
-            render_json(self, links) 
-
-        elif instrument == 'oscopedata':
-            print instrument, name, start_tse
-            raw = 'https://gradientone-test.appspot.com/oscopedata/' + name + '/' + start_tse
-            #dec = 'https://gradientone-test.appspot.com/dec/oscopedata/' + name + '/' + start_tse
-            links = {"raw_data_url":raw} 
-            render_json(self, links) 
-
-        else:
-            print instrument, name
 
 
 
@@ -963,6 +1012,7 @@ app = webapp2.WSGIApplication([
     ('/testresults/([a-zA-Z0-9-]+.json)', TestResultsPage),
     ('/testlibrary', TestLibraryPage),
     ('/testlibrary/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', TestLibraryPage),
+    ('/testlibrary/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+.json)', TestLibraryPage),
     ('/testanalyzer/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', TestAnalyzerPage),
     ('/vnadata/([a-zA-Z0-9-]+)', VNAData),
     ('/oscopedata/([a-zA-Z0-9-]+)', OscopeData),
@@ -971,6 +1021,10 @@ app = webapp2.WSGIApplication([
     ('/bscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)', BscopeData),
     ('/dec/bscopedata/([a-zA-Z0-9-]+)', BscopeDataDec),
     ('/dec/bscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)', BscopeDataDec),
+    ('/upload/geturl', UploadURLGenerator),
+    ('/upload/upload_file', FileUploadHandler),
+    ('/upload/success',FileUploadSuccess),
+    ('/upload/failure',FileUploadFailure),
 ], debug=True)
 
 
