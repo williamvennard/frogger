@@ -14,6 +14,11 @@ import json
 import requests
 import numpy as np
 import scipy.signal 
+import os, sys, stat
+import csv
+#import urllib3 
+#from urllib3.poolmanager import PoolManager
+#from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 class BitScope:
     """Parse BitScope output dictionary.
@@ -53,6 +58,7 @@ class BitScope:
         parent = 'dec'
         test_results = self.bscope_test_results['data']
         config_data = self.bscope_test_results['Config']
+        config_data['Dec_msec_btw_samples'] = 10
         start_tse = int(self.bscope_test_results['Start_TSE'])
         slicename = start_tse
         new_results = test_results[:1000]
@@ -65,6 +71,7 @@ class BitScope:
         parent = 'raw'
         test_results = self.bscope_test_results['data']
         config_data = self.bscope_test_results['Config']
+        config_data['Dec_msec_btw_samples'] = 10
         start_tse = int(self.bscope_test_results['Start_TSE'])
         slice_size = int(config_data['Slice_Size(msec)'])
         sample_rate = int(config_data['Sample_Rate(Hz)'])
@@ -78,6 +85,18 @@ class BitScope:
             stuffing = chunk
             self.post_creation(config_data, slicename, stuffing, start_tse, parent)
 
+    #def transmitblob(self):
+    #    f = open('/home/nedwards/BitScope/Examples/tempfile.csv', 'w')
+    #    w = csv.writer(f)
+    #    w.writerow(self.bscope_test_results.keys())
+    #    w.writerow(self.bscope_test_results.values())
+    #    blob_url = requests.get("https://gradientone-test.appspot.com/upload/geturl")
+    #    #m = MultipartEncoder(
+    #            fields={'field0': ('tek0012ALL', open('../../DataFiles/tekcsv/tek0012ALL.csv', 'rb'), 'text/plain')}
+    #            )
+    #    #b = requests.post(blob_url.text, data = m, headers={'Content-Type': m.content_type})
+    #    print "b.reason=",b.reason
+    #    print "b.status_code=",b.status_code
 
             
 if __name__ == "__main__":

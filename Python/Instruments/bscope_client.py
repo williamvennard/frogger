@@ -104,6 +104,7 @@ def bscope_acq(config):
         bits = BitScope(acq_dict)
         bits.transmitdec()
         bits.transmitraw()
+        #bits.transmitblob()
     else:
         print "  FAILED: device not found (check your probe file)."
     
