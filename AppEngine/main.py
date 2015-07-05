@@ -63,6 +63,12 @@ def render_json(self, j):
     self.response.headers['Access-Control-Allow-Origin'] = '*'
     self.response.write(json_txt)
 
+def render_json_cached(self,j):
+    self.response.headers['Content-Type'] = 'application/json; charset=UTF-8'
+    self.response.headers['Access-Control-Allow-Origin'] = '*'
+    self.response.write(j)
+
+
 def root_mean_squared(test_data, test):
     "RMS measurement function that relies upon queries from test config and instrument data"
     print test
@@ -976,7 +982,9 @@ class BscopeDataDec(InstrumentDataHandler):
             test_results = create_decimation(data)
             bscope_payload = {'config':data[0]['config'],'slicename':data[0]['slicename'],'cha':test_results, 'start_tse':data[0]['start_tse']}
             memcache.set(key, bscope_payload)
-        render_json(self, bscope_payload)
+            render_json(self, bscope_payload)
+        else:
+            render_json_cached(self, bscope_payload)
 
 
     def post(self,name="",slicename=""):
