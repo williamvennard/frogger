@@ -57,10 +57,8 @@ def render_str(template, **params):
     t = jinja_env.get_template(template)
     return t.render(params)
 
-def render_json(self, j, json_flag):
-    if json_flag == None:
-        json_txt = json.dumps(j)
-    json_txt = j
+def render_json(self, j):
+    json_txt = json.dumps(j)
     self.response.headers['Content-Type'] = 'application/json; charset=UTF-8'
     self.response.headers['Access-Control-Allow-Origin'] = '*'
     self.response.write(json_txt)
@@ -405,8 +403,7 @@ class OscopePage(InstrumentDataHandler):
         f = itertools.islice(f, 18, 100)
         reader = csv.DictReader(f, fieldnames = ("TIME", "CH1", "CH2", "CH3", "CH4"))
         out = [row for row in reader]
-        json_flag = None
-        render_json(self, out, json_flag)
+        render_json(self, out)
 
     def post(self, data):
         #if not self.authcheck():
@@ -433,8 +430,7 @@ class InstrumentsPage(InstrumentDataHandler):
                                 name ='default-scope' ORDER BY TIME ASC""")
             default_data = [r.to_dict() for r in rows]
             inst_default = {"data":default_data, "inst_config":inst_config}
-            json_flag = None
-            render_json(self, inst_default, json_flag)
+            render_json(self, inst_default)
         elif author and instrument_type and instrument_name:
             rows_inst_details = db.GqlQuery("""SELECT * FROM ConfigDB WHERE
                                              author =:1 and instrument_type 
@@ -459,8 +455,7 @@ class TestPlanSummary(InstrumentDataHandler):
             memcache.set(key, rows)
             test_config = [r.to_dict() for r in rows]
             memcache.set(key, rows)
-            json_flag = None
-            render_json(self, test_config, json_flag)
+            render_json(self, test_config)
         else:
             tests = db.GqlQuery("SELECT * FROM TestDB")
             self.render('testplansummary.html', tests = tests)
@@ -498,8 +493,7 @@ class TestResultsPage(InstrumentDataHandler):
             print test
             #rms = {"rms":root_mean_squared(test_data, test)}
             test_result = {"data":test_data, "test_config":test} #"measurement":rms}
-            json_flag = None
-            render_json(self, test_result, json_flag) 
+            render_json(self, test_result) 
         elif testplan_name:
             f = open(os.path.join('templates', 'testResultsPage.html'))
             self.response.write((f.read()))
@@ -523,8 +517,7 @@ class CommunityTestsPage(InstrumentDataHandler):
     def get(self):
         rows = db.GqlQuery("SELECT * FROM TestDB WHERE public =:1", True)
         community_tests = [r.to_dict() for r in rows]
-        json_flag = None
-        render_json(self, community_tests, json_flag)
+        render_json(self, community_tests)
 
 
 class TestConfigInputPage(InstrumentDataHandler):
@@ -575,8 +568,7 @@ class TestConfigOutputPage(InstrumentDataHandler):
             configs = db.GqlQuery("SELECT * FROM TestDB WHERE testplan_name =:1", testplan_name)
             memcache.set(key, configs)
         configs_out = [c.to_dict() for c in configs]
-        json_flag = None
-        render_json(self, configs_out, json_flag)
+        render_json(self, configs_out)
 
 
 class BscopeConfigInputPage(InstrumentDataHandler):
@@ -695,8 +687,7 @@ class ConfigOutputPage(InstrumentDataHandler):
             configs = db.GqlQuery("SELECT * FROM ConfigDB WHERE instrument_name =:1", instrument_name)
             memcache.set(key, configs)
         configs_out = [c.to_dict() for c in configs]
-        json_flag = None
-        render_json(self, configs_out, json_flag) 
+        render_json(self, configs_out) 
 
 
 class DataPage(InstrumentDataHandler):
@@ -774,8 +765,7 @@ class VNAData(InstrumentDataHandler):
             rows = list(rows)
             rows = sorted(rows, key=getKey)
             memcache.set(key, rows)
-            json_flag = None
-        render_json(self, rows, json_flag)
+        render_json(self, rows)
 
     def post(self, name=""):
         "store vector network analzyer data by name"
@@ -823,8 +813,7 @@ class OscopeData(InstrumentDataHandler):
             memcache.set(key, rows)
         data = query_to_dict(rows)
         output = {"data":data}
-        json_flag = None
-        render_json(self, output, json_flag)
+        render_json(self, output)
 
 
     def post(self,name="",slicename=""):
@@ -860,10 +849,11 @@ class BscopeData(InstrumentDataHandler):
             rows = list(rows)
             memcache.set(key, rows)
         data = query_to_dict(rows)
+        print type(data[0]['cha'])
         data[0]['cha'] = ast.literal_eval(data[0]['cha'])
+        print type(data[0]['cha'])
         output = {"data":data}
-        json_flag = None
-        render_json(self, output, json_flag)
+        render_json(self, output)
 
 
     def post(self,name="",slicename=""):
@@ -925,16 +915,14 @@ class TestLibraryPage(InstrumentDataHandler):
             raw = 'https://gradientone-test.appspot.com/bscopedata/' + name + '/' + start_tse
             dec = 'https://gradientone-test.appspot.com/dec/bscopedata/' + name + '/' + start_tse
             links = {"raw_data_url":raw, "dec_data_url":dec} 
-            json_flag = None
-            render_json(self, links, json_flag) 
+            render_json(self, links) 
 
         elif instrument == 'oscopedata' and start_tse_check[-1] == 'json':
             print instrument, name, start_tse
             raw = 'https://gradientone-test.appspot.com/oscopedata/' + name + '/' + start_tse
             #dec = 'https://gradientone-test.appspot.com/dec/oscopedata/' + name + '/' + start_tse
             links = {"raw_data_url":raw} 
-            json_flag = None
-            render_json(self, links, json_flag) 
+            render_json(self, links) 
 
         elif instrument == 'bscopedata':
             f = open(os.path.join('templates', 'testLibResults.html'))
@@ -987,11 +975,8 @@ class BscopeDataDec(InstrumentDataHandler):
             data = query_to_dict(rows)
             test_results = create_decimation(data)
             bscope_payload = {'config':data[0]['config'],'slicename':data[0]['slicename'],'cha':test_results, 'start_tse':data[0]['start_tse']}
-            json_flag = None
             memcache.set(key, bscope_payload)
-        else:
-            json_flag = True
-        render_json(self, bscope_payload, json_flag)
+        render_json(self, bscope_payload)
 
 
     def post(self,name="",slicename=""):
