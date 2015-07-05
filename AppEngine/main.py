@@ -111,7 +111,6 @@ def query_to_dict(result):
 
 def create_decimation(data):
     new_results = []
-    print data
     for d in data:
         entries = d['cha'].split(',')
         for entry in entries:
@@ -400,24 +399,6 @@ class AdduserPage(InstrumentDataHandler):
         self.redirect('/input')
 
 
-class OscopePage(InstrumentDataHandler):
-
-
-    def get(self):
-        #if not self.authcheck():
-        f = open('tek0012ALL.csv')
-        f = itertools.islice(f, 18, 100)
-        reader = csv.DictReader(f, fieldnames = ("TIME", "CH1", "CH2", "CH3", "CH4"))
-        out = [row for row in reader]
-        render_json(self, out)
-
-    def post(self, data):
-        #if not self.authcheck():
-        #    return
-        print "you posted in the oscope handler"
-        self.write.out(data)
-
-
 class InstrumentsPage(InstrumentDataHandler):
 
 
@@ -696,20 +677,6 @@ class ConfigOutputPage(InstrumentDataHandler):
         render_json(self, configs_out) 
 
 
-class DataPage(InstrumentDataHandler):
-
-
-    def get(self,name=""):
-        #if not self.authcheck():
-        #    return  # redirect to login later?
-        query = """SELECT * FROM Input
-                   WHERE description = '%s'
-                   ORDER BY frequency ASC;""" % name
-        print query
-        datasets = db.GqlQuery(query)
-        self.render('data.html', datasets = datasets)
-
-
 class InputPage(InstrumentDataHandler):
 
 
@@ -881,7 +848,24 @@ class BscopeData(InstrumentDataHandler):
 class TestAnalyzerPage(InstrumentDataHandler):
 
     def get(self, instrument="", name="", start_tse=""):
-        self.render("testanalyzer.html")          
+        if instrument == 'bscopedata':
+            key = 'bscopedata' + name + start_tse
+            start_tse = int(start_tse)
+            rows = memcache.get(key)
+            if rows is None:
+                logging.error("BscopeData:get: query")
+                rows = db.GqlQuery("""SELECT * FROM BscopeDB WHERE name =:1
+                                AND start_tse=:2 ORDER BY slicename ASC """, name, start_tse)  
+                rows = list(rows)
+                memcache.set(key, rows)
+            data = query_to_dict(rows)
+            z = data[0]['config']
+            z = ast.literal_eval(z)
+            sr = z['Sample_Rate(Hz)']
+            ns = z['Sample_Size']
+            start_time = 0 #miliseconds
+            stop_time = ns/sr*1000 #miliseconds
+            self.render('testanalyzer.html', test_sample = start_tse, start_time = start_time, stop_time = stop_time)        
 
     def post(self, instrument="", name="", start_tse=""):
         if instrument == 'bscopedata':
@@ -898,6 +882,9 @@ class TestAnalyzerPage(InstrumentDataHandler):
             z = data[0]['config']
             z = ast.literal_eval(z)
             sr = z['Sample_Rate(Hz)']
+            ns = z['Sample_Size']
+            start_time = 0 #miliseconds
+            stop_time = ns/sr*1000 #miliseconds
             si = 1/sr
             temp = []
             for item in data:
@@ -906,7 +893,7 @@ class TestAnalyzerPage(InstrumentDataHandler):
             RMS_time_start = self.request.get('RMS_time_start')
             RMS_time_stop = self.request.get('RMS_time_stop')
             rms = root_mean_squared_ta(temp, RMS_time_start, RMS_time_stop, si)
-            self.render('testanalyzer.html', rms = rms)
+            self.render('testanalyzer.html', test_sample = start_tse, start_time = start_time, stop_time = stop_time, rms = rms)
 
 
 
@@ -984,7 +971,9 @@ class BscopeDataDec(InstrumentDataHandler):
             memcache.set(key, bscope_payload)
             render_json(self, bscope_payload)
         else:
-            render_json_cached(self, bscope_payload)
+            bscope_payload = dict(bscope_payload)
+            render_json(self, bscope_payload)
+
 
 
     def post(self,name="",slicename=""):
@@ -999,8 +988,6 @@ app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/help', MainPage),
     ('/input', InputPage),
-    ('/data/?', DataPage),
-    ('/data/([a-zA-Z0-9-]+)', DataPage),
     ('/adduser', AdduserPage),
     ('/listusers', ListUsersPage),
     ('/instruments', InstrumentsPage),
@@ -1011,7 +998,6 @@ app = webapp2.WSGIApplication([
     ('/bscopeconfiginput', BscopeConfigInputPage),
     ('/configoutput/([a-zA-Z0-9-]+)', ConfigOutputPage),
     ('/configoutput/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', ConfigOutputPage),
-    ('/oscope.json', OscopePage),
     ('/testconfiginput', TestConfigInputPage),
     ('/testconfigoutput/([a-zA-Z0-9-]+)', TestConfigOutputPage),
     ('/testnuc', TestJSON),
