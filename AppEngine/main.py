@@ -68,13 +68,10 @@ def render_json_cached(self,j):
     self.response.headers['Access-Control-Allow-Origin'] = '*'
     self.response.write(j)
 
-
 def root_mean_squared(test_data, test):
     "RMS measurement function that relies upon queries from test config and instrument data"
-    print test
     RMS_time_start = float(test[0]["RMS_time_start"])
     RMS_time_stop = float(test[0]["RMS_time_stop"])  
-    print 'rms stuff', RMS_time_start, RMS_time_stop
     sample_interval = 0.01
     row_RMS_time_start = RMS_time_start/sample_interval
     row_RMS_time_stop = RMS_time_stop/sample_interval
@@ -123,21 +120,23 @@ def create_decimation(data):
     test_results = dec.tolist()
     return test_results
 
+def convert_str_to_cha_list(string):
+    sample_data = string[0]['cha']
+    bracket_free_data = sample_data[1:-1]
+    cha_list = bracket_free_data.split(',')
+    cha_list =  [float(x) for x in cha_list]
+    return cha_list
+
 def getKey(row):
     return float(row.DTE)
 
 class InstrumentDataHandler(webapp2.RequestHandler):
-
-
     authorized = False
     def write(self, *a, **kw): self.response.out.write(*a, **kw)
-
     def render_str(self, template, **params):
         return render_str(template, **params)
-
     def render(self, template, **kw):
         self.write(self.render_str(template, **kw))
-
     def authcheck(self, check_admin=False):
         user = users.get_current_user()
         if user:
@@ -165,44 +164,28 @@ class InstrumentDataHandler(webapp2.RequestHandler):
             self.redirect('/static/autherror.html')
         return authorized
 
+
 class DictModel(db.Model):
-
-
     def to_dict(self):
        return dict([(p, unicode(getattr(self, p))) for p in self.properties()])
 
 def UserDB_key(name = 'default'):
     return db.Key.from_path('emails', name)
 
-
 class UserDB(DictModel):
-
-
     email = db.StringProperty(required = True)
     company_nickname = db.StringProperty(required = True)
     admin = db.BooleanProperty(required = False)
 
-def DemoDB_key(name = 'default'):
-    return db.Key.from_path('messages', name)
-
-class DemoDB(db.Model):
-
-
-    receiver = db.StringProperty(required = True)
-    sender = db.StringProperty(required = True)
-    message = db.StringProperty(required = True)
 
 def input_key(name = 'default'):
     return db.Key.from_path('inputs', name)
 
-
 class FileBlob(db.Model):
-
     blob_key = blobstore.BlobReferenceProperty(required=True)
 
+
 class UploadURLGenerator(InstrumentDataHandler):
-
-
     def get(self):
         upload_url = blobstore.create_upload_url('/upload/upload_file')
         self.response.out.write(upload_url)
@@ -211,8 +194,6 @@ class UploadURLGenerator(InstrumentDataHandler):
 
 
 class FileUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
-
-
     def post(self):
         try:
             upload = self.get_uploads()[0] 
@@ -224,30 +205,27 @@ class FileUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
 
 
 class FileUploadSuccess(InstrumentDataHandler):
-
     def get(self):
         self.response.out.write("File Upload Successful")
 
-class FileUploadFailure(InstrumentDataHandler):
 
+class FileUploadFailure(InstrumentDataHandler):
     def get(self):
         self.response.out.write("File Upload Failed")
 
+
 class Input(db.Model):
-
-
     frequency = db.FloatProperty(required = True)
     S11dB = db.FloatProperty(required = True)
     S12dB = db.FloatProperty(required = True)
     description = db.StringProperty(required = True)
     created = db.DateTimeProperty(auto_now_add = True)
 
+
 def TestDB_key(name = 'default'):
     return db.Key.from_path('tests', name)
 
-
 class TestDB(DictModel):
-
     testplan_name = db.StringProperty(required = True)
     company_nickname = db.StringProperty(required = True)
     author = db.StringProperty(required = True)
@@ -262,12 +240,11 @@ class TestDB(DictModel):
     public = db.BooleanProperty(required = False)    
     commence_test = db.BooleanProperty(required = False)
 
+
 def ConfigDB_key(name = 'default'):
     return db.Key.from_path('company_nickname', name)
 
-
 class ConfigDB(DictModel):
-
     company_nickname = db.StringProperty(required = True)
     hardware_name = db.StringProperty(required = True)
     author = db.StringProperty(required = True)
@@ -288,25 +265,22 @@ class ConfigDB(DictModel):
     number_of_samples = db.IntegerProperty(required = False)
     start_measurement = db.BooleanProperty(required = False)
 
+
 def OscopeDB_key(name = 'default'):
     return db.Key.from_path('oscope', name)
 
-
 class OscopeDB(DictModel):
-
-
     name = db.StringProperty(required = True)
     config = db.StringProperty(required = True)
     slicename = db.StringProperty(required = True)
     data = db.TextProperty(required = True)
     start_tse = db.IntegerProperty(required = True)
  
+
 def BscopeDB_key(name = 'default'):
     return db.Key.from_path('bscope', name)
 
-
 class BscopeDB(DictModel):
-
     name = db.StringProperty(required = True)
     config = db.StringProperty(required = True)
     slicename = db.StringProperty(required = True)
@@ -317,10 +291,7 @@ class BscopeDB(DictModel):
 def VNADB_key(name):
     return db.Key.from_path('vna', name)
 
-
 class VNADB(DictModel):
-
-
     name = db.StringProperty(required = True)
     config = db.StringProperty(required = True)
     #slicename = db.StringProperty(required = True)
@@ -340,10 +311,7 @@ class VNADB(DictModel):
 
 
 class MainPage(InstrumentDataHandler):
-
-
-    def get(self):
-        
+    def get(self):  
         user = users.get_current_user()
         if user:
             self.response.headers['Content-Type'] = 'text/html; charset=utf-8'
@@ -353,8 +321,6 @@ class MainPage(InstrumentDataHandler):
 
 
 class ListUsersPage(InstrumentDataHandler):
-
-
     def get(self):
         users = db.GqlQuery("SELECT * FROM UserDB WHERE companyname = 'GradientOne'").fetch(None)
         print "ListUsersPage:get: users =",users
@@ -367,8 +333,6 @@ class ListUsersPage(InstrumentDataHandler):
 
 
 class AdduserPage(InstrumentDataHandler):
-
-
     def get(self):
         u = users.get_current_user()
         if not u:
@@ -400,8 +364,6 @@ class AdduserPage(InstrumentDataHandler):
 
 
 class InstrumentsPage(InstrumentDataHandler):
-
-
     def get(self, author="", instrument_type="", instrument_name=""):
         #if not self.authcheck():
         #    return
@@ -432,7 +394,6 @@ class InstrumentsPage(InstrumentDataHandler):
 
 class TestPlanSummary(InstrumentDataHandler):
     "present to the user a list of all configured test plans"
-    
     def get(self, testplan_name=""):
         if testplan_name:
             key = testplan_name
@@ -450,15 +411,12 @@ class TestPlanSummary(InstrumentDataHandler):
 
 class TestResultsPage(InstrumentDataHandler):
     "present to the user all of the completed tests, with a path that supports specific test entries"
-
     def get(self, testplan_name="", name="", slicename=""):
-        print testplan_name, name, slicename
         #if not self.authcheck():
         #    return
         author = author_creation()
         testplan_name_check = testplan_name.split('.')
         testplan_name = testplan_name_check[0]
-        print testplan_name
         key = 'oscope' + testplan_name
         name = 'LED'
         slicename = str(1435107043000)
@@ -473,11 +431,9 @@ class TestResultsPage(InstrumentDataHandler):
                 rows = sorted(rows, key=getKey)
             memcache.set(data_key, rows)
             test_data = [r.to_dict() for r in rows]  
-            print test_data
             #start_of_test = test_data[0]['TIME']
             test = db.GqlQuery("SELECT * FROM TestDB WHERE testplan_name =:1", testplan_name)
             test = [t.to_dict() for t in test]
-            print test
             #rms = {"rms":root_mean_squared(test_data, test)}
             test_result = {"data":test_data, "test_config":test} #"measurement":rms}
             render_json(self, test_result) 
@@ -499,8 +455,6 @@ class TestResultsPage(InstrumentDataHandler):
 
   
 class CommunityTestsPage(InstrumentDataHandler):
-
-
     def get(self):
         rows = db.GqlQuery("SELECT * FROM TestDB WHERE public =:1", True)
         community_tests = [r.to_dict() for r in rows]
@@ -508,12 +462,10 @@ class CommunityTestsPage(InstrumentDataHandler):
 
 
 class TestConfigInputPage(InstrumentDataHandler):
-
     def get(self):
         #if not self.authcheck():
         #    return
         self.render('testconfig.html')
-
     def is_checked(self,t,param):
         "Test checked and up date test object 't'."
         checked = self.request.get(param)
@@ -521,7 +473,6 @@ class TestConfigInputPage(InstrumentDataHandler):
             setattr(t,param,True)
         else:
             setattr(t,param,False)
-
     def post(self):
         testplan_name = self.request.get('testplan_name')
         t = TestDB(parent = TestDB_key(testplan_name), 
@@ -544,8 +495,6 @@ class TestConfigInputPage(InstrumentDataHandler):
 
 
 class TestConfigOutputPage(InstrumentDataHandler):
-
-
     def get(self,testplan_name=""):
         print "testplan_name = ",testplan_name
         key = 'testplan_' + testplan_name 
@@ -559,10 +508,8 @@ class TestConfigOutputPage(InstrumentDataHandler):
 
 
 class BscopeConfigInputPage(InstrumentDataHandler):
-
     def get(self):
         self.render('bscopeconfiginput.html')
-    
     def is_checked(self,c,param):
         "Mesurement checked and up date test object 'c'."
         checked = self.request.get(param)
@@ -570,7 +517,6 @@ class BscopeConfigInputPage(InstrumentDataHandler):
             setattr(c,param,True)
         else:
             setattr(c,param,False)
-    
     def post(self):
         author = author_creation()
         company_nickname = self.request.get('company_nickname')
@@ -594,14 +540,12 @@ class BscopeConfigInputPage(InstrumentDataHandler):
         memcache.delete(key)
         self.redirect('/configoutput/' + (author + '/' + instrument_type + '/' + instrument_name))
 
+
 class ConfigInputPage(InstrumentDataHandler):
-
-
     def get(self):
         #if not self.authcheck():
          #   return
         self.render('configinput.html')
-
     def post(self):
         author = author_creation()
         company_nickname = self.request.get('company_nickname')
@@ -630,13 +574,10 @@ class ConfigInputPage(InstrumentDataHandler):
 
 
 class VNAConfigInputPage(InstrumentDataHandler):
-
-
     def get(self):
         #if not self.authcheck():
         #    return
         self.render('vnaconfiginput.html')
-
     def post(self):
         author = author_creation()
         company_nickname = self.request.get('company_nickname')
@@ -663,8 +604,6 @@ class VNAConfigInputPage(InstrumentDataHandler):
         
    
 class ConfigOutputPage(InstrumentDataHandler):
-
-
     def get(self, author="", instrument_type="", instrument_name=""):
         print "ConfigOutputPage"
         key = 'author & instrument_type & instrument_name = ', author + instrument_type + instrument_name
@@ -678,14 +617,10 @@ class ConfigOutputPage(InstrumentDataHandler):
 
 
 class InputPage(InstrumentDataHandler):
-
-
     def get(self):
         #if not self.authcheck():
         #    return  # redirect to login later?
         self.render("front.html")
-        print "you are in the get handler"
-
     def post(self):
         #if not self.authcheck():
         #    return  # redirect to login later?
@@ -709,22 +644,7 @@ class InputPage(InstrumentDataHandler):
         self.redirect('/data/' + description)
         
 
-class TestJSON(InstrumentDataHandler):
-
-
-    def get(self):
-        print "InstrumentDataHandler: get: you are in the get handler"
-
-    def post(self):
-        demo = json.loads(self.request.body)
-        s = DemoDB(parent = DemoDB_key(), sender = demo['sender'], 
-                   receiver = demo['receiver'], message = demo['message'])
-        s.put()
-
-
 class VNAData(InstrumentDataHandler):
-
-
     def get(self,name="", slicename=""):
         "retrieve Vector Network Analzyer data by insrument name"
         key = 'vna' + name + slicename
@@ -739,7 +659,6 @@ class VNAData(InstrumentDataHandler):
             rows = sorted(rows, key=getKey)
             memcache.set(key, rows)
         render_json(self, rows)
-
     def post(self, name=""):
         "store vector network analzyer data by name"
         start_time = time.time() 
@@ -769,8 +688,6 @@ class VNAData(InstrumentDataHandler):
 
 
 class OscopeData(InstrumentDataHandler):
-
-
     def get(self,name="",slicename=""):
         "retrieve Oscilloscope data by intstrument name and time slice name"
         #if not self.authcheck():
@@ -782,13 +699,10 @@ class OscopeData(InstrumentDataHandler):
             rows = db.GqlQuery("""SELECT * FROM OscopeDB WHERE name =:1
                                 AND slicename = :2""", name, slicename)  
             rows = list(rows)
-            print rows
             memcache.set(key, rows)
         data = query_to_dict(rows)
         output = {"data":data}
         render_json(self, output)
-
-
     def post(self,name="",slicename=""):
         "store data by intstrument name and time slice name"
         key = 'oscopedata' + name + slicename
@@ -806,9 +720,8 @@ class OscopeData(InstrumentDataHandler):
         memcache.set(key, to_save)
         db.put(to_save)
 
+
 class BscopeData(InstrumentDataHandler):
-
-
     def get(self,name="",slicename=""):
         "retrieve BitScope data by intstrument name and time slice name"
         #if not self.authcheck():
@@ -822,13 +735,10 @@ class BscopeData(InstrumentDataHandler):
             rows = list(rows)
             memcache.set(key, rows)
         data = query_to_dict(rows)
-        print type(data[0]['cha'])
-        data[0]['cha'] = ast.literal_eval(data[0]['cha'])
-        print type(data[0]['cha'])
+        cha_list = convert_str_to_cha_list(data)
+        data[0]['cha'] = cha_list
         output = {"data":data}
         render_json(self, output)
-
-
     def post(self,name="",slicename=""):
         "store data by intstrument name and time slice name"
         key = 'bscopedata' + name + slicename
@@ -838,15 +748,15 @@ class BscopeData(InstrumentDataHandler):
         r = BscopeDB(parent = BscopeDB_key(name), name=name,
                          slicename=slicename,
                          config=str(bscope_content['config']),
-                         cha=(bscope_content['data']),
+                         cha=(bscope_content['cha']),
                          start_tse=(bscope_content['start_tse'])
                          )
         to_save.append(r) 
         memcache.set(key, to_save)
         db.put(to_save)
 
-class TestAnalyzerPage(InstrumentDataHandler):
 
+class TestAnalyzerPage(InstrumentDataHandler):
     def get(self, instrument="", name="", start_tse=""):
         if instrument == 'bscopedata':
             key = 'bscopedata' + name + start_tse
@@ -866,7 +776,6 @@ class TestAnalyzerPage(InstrumentDataHandler):
             start_time = 0 #miliseconds
             stop_time = ns/sr*1000 #miliseconds
             self.render('testanalyzer.html', test_sample = start_tse, start_time = start_time, stop_time = stop_time)        
-
     def post(self, instrument="", name="", start_tse=""):
         if instrument == 'bscopedata':
             key = 'bscopedata' + name + start_tse
@@ -896,36 +805,27 @@ class TestAnalyzerPage(InstrumentDataHandler):
             self.render('testanalyzer.html', test_sample = start_tse, start_time = start_time, stop_time = stop_time, rms = rms)
 
 
-
 class TestLibraryPage(InstrumentDataHandler):
-
     def get(self, instrument="", name="", start_tse=""):
-
         start_tse_check = start_tse.split('.')
         start_tse = start_tse_check[0]
-
         if instrument == 'bscopedata' and start_tse_check[-1] == 'json':
             raw = 'https://gradientone-test.appspot.com/bscopedata/' + name + '/' + start_tse
             dec = 'https://gradientone-test.appspot.com/dec/bscopedata/' + name + '/' + start_tse
             links = {"raw_data_url":raw, "dec_data_url":dec} 
             render_json(self, links) 
-
         elif instrument == 'oscopedata' and start_tse_check[-1] == 'json':
             print instrument, name, start_tse
             raw = 'https://gradientone-test.appspot.com/oscopedata/' + name + '/' + start_tse
             #dec = 'https://gradientone-test.appspot.com/dec/oscopedata/' + name + '/' + start_tse
             links = {"raw_data_url":raw} 
             render_json(self, links) 
-
         elif instrument == 'bscopedata':
             f = open(os.path.join('templates', 'testLibResults.html'))
             self.response.write((f.read()))
-
-
         elif instrument == 'oscopedata':
             f = open(os.path.join('templates', 'testLibResults.html'))
             self.response.write((f.read()))
-
         else:
             rows = db.GqlQuery("SELECT * FROM BscopeDB")
             rows = list(rows)
@@ -948,11 +848,7 @@ class TestLibraryPage(InstrumentDataHandler):
             self.render('testlibrary.html', results_bscope = results_bscope, results_oscope = results_oscope)
 
 
-
-
 class BscopeDataDec(InstrumentDataHandler):
-   # work in progress
-
     def get(self,name="",start_tse=""):
         "retrieve decimated BitScope data by intstrument name and time slice name"
         #if not self.authcheck():
@@ -971,17 +867,16 @@ class BscopeDataDec(InstrumentDataHandler):
             memcache.set(key, bscope_payload)
             render_json(self, bscope_payload)
         else:
-            bscope_payload = dict(bscope_payload)
-            render_json(self, bscope_payload)
-
-
-
+            if type(bscope_payload) == str:
+                render_json_cached(self, bscope_payload)
+            else:
+                #bscope_payload = dict(bscope_payload)
+                render_json(self, bscope_payload)
     def post(self,name="",slicename=""):
         "store data by intstrument name and time slice name"
         key = 'bscopedatadec' + name + slicename
         bscope_payload = self.request.body
         memcache.set(key, bscope_payload)
-
 
 
 app = webapp2.WSGIApplication([
@@ -1000,7 +895,6 @@ app = webapp2.WSGIApplication([
     ('/configoutput/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', ConfigOutputPage),
     ('/testconfiginput', TestConfigInputPage),
     ('/testconfigoutput/([a-zA-Z0-9-]+)', TestConfigOutputPage),
-    ('/testnuc', TestJSON),
     ('/testplansummary', TestPlanSummary),
     ('/testplansummary/([a-zA-Z0-9-]+)', TestPlanSummary),
     ('/communitytests', CommunityTestsPage),
