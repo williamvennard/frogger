@@ -40,7 +40,6 @@
     </div>
     <div> <!--HEADER-->
         <div class="" style="min-width: 100px;" id="compHeader">
-         <span id="backButton" class="glyphicon glyphicon-chevron-left"></span>
          <h1 class="compName" id="testPlanCompany">Test Results</h1> 
         </div>
       </div>
@@ -51,7 +50,6 @@
               <h3 class="testPlanInfo" id="testPlanAuthor"></h3>
               <p class="testPlanInfo" id="testPlanDate"></p>
               <div id="measurementsBox">
-                <h3><u>Test Measurements</u></h3>
                 <p>-horizontal-</p>
                 <div class="knobs">
                         <section>
@@ -99,16 +97,17 @@
           <br><br><br>
           <div class="row-md-7" id="dataDisplayBox">
             <div class="row-md-6;" id="resultsChartCSS">
-              <div id="decChart" style="height: 200px; width: 300px;"></div>
+              <div id="rawChart" style="height: 450px; width: 650px;"></div>
             </div>
-            <div class="row-md-3" style="" id="resultsTableCSS">
-              <div id="decTable"></div>
+            <div class="row-md-3"  id="resultsTableCSS">
+              <div id="rawTable" ></div>
             </div>
           </div>
           <div class="row" >
             <div class="col-md-12">
-              <div id="rawChart"></div>
-              <div id="rawTable"></div>
+              <div id="decChart" style="height: 200px; width: 300px;"></div>
+              <div id="decTable"></div>
+              
             </div>
           </div>
           
@@ -157,7 +156,6 @@
  // load chart lib
     google.load('visualization', '1', {packages: ['corechart','table']});
        var doPollCounter = 0;
-       var gatherDataCounter = 0;
        var sliceNames = [];
        var resultsCache = [];
        var autoMaxPosition = 0;
@@ -167,13 +165,27 @@
        var chartOptions = {};
        var data = [];
        var rawTime = [];
+       var sliceBuild = 0;
+       var endSlice = 0;
+       var numPages = 0;
+       var deltaFromStart = 0;
+       var sampleSize = 0;
+       var range = 0;
+      //LOADING URL
+          var urlPath = window.location.pathname.split( '/' );
+          var newPathname = urlPath[urlPath.length - 1];
+          console.log(urlPath);
+          console.log(newPathname);
 
        //DECIMATED DATA PLOT
        function fetchDecData(){
-          json_url = 'https://gradientone-test.appspot.com/dec/bscopedata/arduino/1435759475910';
+          dec_base_url = 'https://gradientone-test.appspot.com/dec/bscopedata/arduino/';
+          dec_urlPath = '1435775476910';
+          //dec_urlPath = newPathname;
+          dec_json_url = dec_base_url + dec_urlPath;
           $.ajax({
              async: true,
-             url: json_url,            
+             url: dec_json_url,            
              dataType: 'json',
           }).done(function (results) {
              //console.log("fetchDecData: json_url =", json_url);
@@ -181,9 +193,25 @@
              //console.log("results:", decData);
             //console.log('decData Test:',decData);
             var config = results.config;
-            var sampleRate = config
-            //console.log('Results:',config);
-            //console.log('sampleRate:',sampleRate);
+            var cleanConfig = config.substr(1, config.length-2);
+            var configArray = cleanConfig.split(', ');
+
+            var sampleSize = configArray[7].split(': ')[1];
+            var sampleRate = configArray[configArray.length-1].split(': ')[1];
+            console.log('Config:',configArray);
+            
+
+            var decPointSpacing = (1/Number(sampleRate))*10;
+            var offSet = (sampleSize/sampleRate)/2;
+
+            console.log('dec point spacing should be .01:',decPointSpacing);
+            console.log('off set = ',offSet);
+                           //var configOptions = rawData[0].config;
+               //console.log('config options: ',configOptions);
+              // var formatConfig = configOptions.substr(1, configOptions.length-2);
+              // var configArray = formatConfig.split(', ');
+                           //sampleSize = Number(configArray[7].split(': ')[1]);
+              // var sampleRate = configArray[configArray.length-1].split(': ')[1];
 
           data = new google.visualization.DataTable();
             data.addColumn('number', 'Time');
@@ -192,7 +220,7 @@
             //GETING DATA
             for (i=0; i<decData.length; i++) {
               data.addRow([
-                i, 
+                (i*decPointSpacing - offSet), 
                 decData[i],
                 ]);
             };
@@ -239,7 +267,6 @@
           //var startTime = Date.now();
      
           function gatherData(base_url,sliceNames,first,last){
-            gatherDataCounter++;
             var sliceName = sliceNames[first];
             if (!(sliceName in resultsCache)) {
                  json_url = base_url + sliceName;
@@ -248,10 +275,11 @@
                };
             var gatheredResults = resultsCache[sliceName];
             var firstRow = gatheredResults['data'][0];
-
+            //console.log('gatherData: First row: ',firstRow);
+            /*
             if (autoMinPosition == 0) {
-              console.log('auto min and max:',firstRow.TIME)
-              console.log('range for auto max:',range);
+              //console.log('auto min and max:',firstRow.TIME)
+              
               autoMinPosition = Number(firstRow.TIME);
               autoMaxPosition = Number(firstRow.TIME)+range;
               hMax = autoMaxPosition;
@@ -260,6 +288,7 @@
               chartOptions.hAxis.viewWindow.max = hMax;
               chartOptions.hAxis.viewWindow.min = hMin;
             };
+            */
             for (idx = first; idx < last; idx++) {
                sliceName = sliceNames[idx];
                //console.log("gatherData: sliceName =", sliceName);
@@ -271,60 +300,53 @@
                };
                gatheredResults = resultsCache[sliceName];
                //console.log("gatherData: resultsCache =", resultsCache);
-               
                //console.log("gatherData: idx = ", idx);
+
+               //Y AXIS VOLTAGE DATA "CHA"
                var rawData = gatheredResults['data'];
-               var rawList = rawData[0].cha;
-               var chaFormat = rawList.substr(1, rawList.length-2);
-               var rawCha = chaFormat.split(', ');
+               var rawCha = rawData[0].cha;
+               //console.log('cha data array: ',rawCha);
 
                var configOptions = rawData[0].config;
+               //console.log('config options: ',configOptions);
                var formatConfig = configOptions.substr(1, configOptions.length-2);
                var configArray = formatConfig.split(', ');
 
-               var sampleSize = configArray[7].split(': ')[1];
+               sampleSize = Number(configArray[7].split(': ')[1]);
                var sampleRate = configArray[configArray.length-1].split(': ')[1];
                var timeSlice = (1/(parseFloat(sampleRate)));
 
-
-
-               for (i=0; i<(parseFloat(sampleSize)*timeSlice); i+=timeSlice) {
-                time = i
-                if ($.inArray(time, rawTime) == -1) {
-                  rawTime.push(time);
-                };
-                  
-               };
+               endSlice = Number(rawData[0].start_tse)+ Number(sampleSize) -10;
+               numPages = (Number(sampleSize)/10);
+               
+ 
 
               //console.log('rawTime: ', rawTime);
               //console.log('config', configArray);
               //console.log('Sample Size: ', sampleSize);
               //console.log('Sample Rate: ', sampleRate);
 
-              //console.log("gatherData: gatheredResults =", gatheredResults['data']);
+               //console.log("gatherData: gatheredResults =", gatheredResults['data']);
                //GETING DATA
-               //console.log('Split data into Array:', rawCha);
-               console.log('Gather Data counter: ', gatherDataCounter);
+               //X AXIS TIME
+               start = sliceBuild;
+               //console.log('Start time:',start);
+               deltaFromStart = Number(sliceName) - start;
+               //console.log('slicename: ', sliceName);
+               adjust = start + (Number(sampleSize)/2);
+               deltaFromStart = Number(sliceName) - adjust;
+               //console.log('deltaFrom start=',deltaFromStart);
 
+               //d = Date(sliceName)-Date(sliceBuild)-width/2;
                
                //BUILD DATA TABLE ADDING ROWS TIME AND CHA
-            for (i=0; i<rawCha.length; i++) {
-              //console.log('raw time array value: ',rawTime[i+(gatherDataCounter-1)*10]);
-              data.addRow([
-                rawTime[i+(gatherDataCounter-1)*10], 
-                parseFloat(rawCha[i]),
-                ]);
-            };
+              for (i=0; i<rawCha.length; i++) {
+                data.addRow([
+                  (deltaFromStart + i)/1000, 
+                  parseFloat(rawCha[i]),
+                  ]);
+              };
             
-            /*
-               $.each(rawCha, function (i, row) {
-                 data.addRow([
-                   parseFloat(row.TIME),
-                   parseFloat(row.cha),
-                 ]);
-
-               });
-               */
 
             };
           
@@ -341,17 +363,20 @@
 
             //console.log('auto MAX position:',autoMaxPosition);
             //console.log('auto MIN position:',autoMinPosition);
-            var center = hPosition + (autoMinPosition + autoMaxPosition)/2;
-            var width = (autoMaxPosition - autoMinPosition)*(100.0/hZoom);
-            //console.log('h zoom:',hZoom);
+            //var center = hPosition + (autoMinPosition + autoMaxPosition)/2;
+            var center = hPosition;
+            //console.log('Center = ',center)
+            //var width = (autoMaxPosition - autoMinPosition)*(100.0/hZoom);
+            var width = (sampleSize/1000)*(100.0/hZoom);
+            //console.log('Width = ',width);
 
             //console.log('window width:', width);
             //console.log('window center:',center);
 
             //console.log('do poll counter:',doPollCounter);
-            
-            hMax = center + width/2 + range;
-            hMin = center - width/2;
+            //old way 
+            //hMax = center + width/2 + range;
+            //hMin = center - width/2;
 
             //console.log('hMax:',hMax);
             //console.log('hMin:',hMin);
@@ -366,7 +391,7 @@
             vAxis: {title: '', titleTextStyle:{color:'lightgray'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'gray', count: 6}, minorGridlines:{color: 'gray', count: 1}, format: '##.###', viewWindowMode:'explicit', viewWindow:{max:2.5, min:-2.5} },
             backgroundColor: {fill:'none', stroke: 'black', strokeWidth: 0,},                 
             colors: ['rgb(2,255,253)','rgb(239,253,146)'],
-            chartArea:{backgroundColor:'', height:300, width:445},
+            //chartArea:{backgroundColor:'', height:300, width:445},
             lineWidth: 2,
             curveType: 'function',
             crosshair: {trigger: 'both', selected:{opacity: 0.8}, focused:{opacity:0.8}},
@@ -386,26 +411,35 @@
           //var pagingTest = (doPollCounter+1)*10;
           //console.log('do poll paging test:', pagingTest);
           
-          var sliceBuild = Number('1435759475910');
+          sliceBuild = Number('1435775476910');
+          //sliceBuild = Number(newPathname);
 
-          sliceStop = sliceBuild + 51*10;
+          //sliceStop = sliceBuild + 10*10;
+          sliceStop = endSlice;
+          //console.log('End Slice : ',endSlice);
+          
 
-          for (msec = sliceBuild+10; msec < sliceStop;msec += 10) {
+          for (msec = sliceBuild+10; msec <= sliceStop;msec += 10) {
             name = String(msec);
             if ($.inArray(name, sliceNames) == -1) {
               sliceNames.push(String(msec));
             };
           };
-          //put var range here for back to how it was
+          //console.log(sliceNames);
+          //console.log('sample size?', numPages);
           //DYNAMIC RANGE AS PLOT GROWS
-          if (doPollCounter < 10) {
+          if (doPollCounter < numPages-1) {
+            hMax = range/2;
+            hMin = (- width/2);
             range = (Number(sliceNames[doPollCounter]) - Number(sliceNames[0]))/1000;
             //console.log('Range in Number:',range);
           }else{
             range = 0;
+            hMax = center + width/2;
+            hMin = center - width/2;        
           };
-          
-      //console.log('sliceNames for range:',sliceNames);
+          //console.log('range for auto max:',range);
+          //console.log('sliceNames for range:',sliceNames);
 
           //gatherData used to go here
 
@@ -418,10 +452,10 @@
             };
           };
           //EVERY 100MS CALL doPoll
-          if(doPollCounter < 10) {
+          if(doPollCounter < numPages) {
             setTimeout(doPoll,100);
           };
-          
+     
        };
 
 // POLL FOR CURRENT TIME TO START PLOTTING DATA
@@ -431,14 +465,15 @@
 // BUILD SLICES GIVEN current Time
 
       //console.log('this runs first!');
-      sliceNames.push('1435759475910');
+      sliceNames.push('1435775476910');
+      //sliceNames.push(newPathname);
       //sliceNames.push(String(Number('1435759475910')+10));
 
        var base_url = 'https://gradientone-test.appspot.com/bscopedata/arduino/';
        fetchData(base_url,sliceNames[0],true);
        //fetchData(base_url,sliceNames[1],true);
 
-      var range = (Number(sliceNames[sliceNames.length-1]) - Number(sliceNames[0]))/1000;
+      //var range = (Number(sliceNames[sliceNames.length-1]) - Number(sliceNames[0]))/1000;
       //console.log('Range in Number:',range);
       //console.log('sliceNames for range:',sliceNames);
 
