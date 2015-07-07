@@ -70,8 +70,8 @@
           </tr>
 
           {% for r in results_oscope %}
-             <a class="resultsLink" href ="testlibrary/oscopedata/{{results_oscope[r][1]}}/{{r}}">{{ r | date:'yyyy-MM-dd HH:mm:ss' }}  </a><span style="margin-right: 400px"></span><p class="configInfo">{{results_oscope[r]}}</p>
-
+             <a class="resultsLink" href ="testlibrary/oscopedata/{{results_oscope[r][1]}}/{{r}}">{{ r }}  </a><span style="margin-right: 400px"></span><p class="configInfo">{{results_oscope[r]}}</p>
+<!-- | date:'yyyy-MM-dd HH:mm:ss'-->
             <br><br>   
           {% endfor %}
         </table>
