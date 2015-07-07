@@ -26,7 +26,7 @@
       <nav id="topNavBar" class="navbar navbar-inverse navbar-collapse collapse"> <!--NAVBAR-->
         <div class="container-fluid">
           <div class="navbar-header">
-            <img class="logo" src="../../../static/images/Glogo.png" style="width:110px;" alt="Gradient One logo">
+            <img class="logo" src="../../../images/Glogo.png" style="width:110px;" alt="Gradient One logo">
           </div>
           <div id="navbar">
             <ul class="topmenu nav navbar-nav">
@@ -57,18 +57,17 @@
               <h3 class="testPlanInfo" id="testPlanAuthor"></h3>
               <p class="testPlanInfo" id="testPlanDate"></p>
               <div id="measurementsBox">
-                <h3><u>Test Measurements</u></h3>
                 <p>-horizontal-</p>
-                <div class="knobs">
+                <div class="knobs" style="width:100px;">
                         <section>
                           <div id="knob1">
                             <p id="knob1Label">Position</p>
                             <input 
                             type="text" 
                             value="0"
-                            data-step="1"
-                            data-min="-10"
-                            data-max="10" 
+                            data-step=".05"
+                            data-min="-1"
+                            data-max="1" 
                             class="hPosKnob"
                             data-cursor= "10"
                             data-width="50"
@@ -105,7 +104,8 @@
           <br><br><br>
           <div class="row-md-7" id="dataDisplayBox">
             <div class="row-md-6;" id="resultsChartCSS">
-              <div id="rawChart" style="height: 300px; width: 500px;"></div>
+              <div id="rawChart" style="height: 450px; width: 600px;"></div>
+              <div id="decChart" style="height: 200px; width: 600px;"></div>
             </div>
             <div class="row-md-3"  id="resultsTableCSS">
               <div id="rawTable" ></div>
@@ -113,9 +113,7 @@
           </div>
           <div class="row" >
             <div class="col-md-12">
-              <div id="decChart" style="height: 200px; width: 300px;"></div>
-              <div id="decTable"></div>
-              
+              <div id="decTable"></div>   
             </div>
           </div>
           
@@ -164,29 +162,40 @@
  // load chart lib
     google.load('visualization', '1', {packages: ['corechart','table']});
        var doPollCounter = 0;
-       var gatherDataCounter = 0;
        var sliceNames = [];
        var resultsCache = [];
        var autoMaxPosition = 0;
        var autoMinPosition = 0;
        var hMax = 0;
        var hMin = 0;
-       var chartOptions = {};
+       //var chartOptions = {};
        var data = [];
        var rawTime = [];
        var sliceBuild = 0;
+       var endSlice = 0;
+       var numPages = 0;
+       var deltaFromStart = 0;
+       var sampleSize = 0;
+       var range = 0;
+       var controlGatherData = 0;
+       var center = 0;
+       var width = 0;
+       var rangeArray = [];
 
       //LOADING URL
           var urlPath = window.location.pathname.split( '/' );
-          var newPathname = urlPath[urlPath.length - 1];
+          var decPathname = urlPath[urlPath.length - 3] + '/' + urlPath[urlPath.length - 2] + '/'  + urlPath[urlPath.length - 1];
+          var rawPathname = urlPath[urlPath.length - 3] + '/' + urlPath[urlPath.length - 2] + '/';
+          var timeKey = urlPath[urlPath.length - 1];
+
           console.log(urlPath);
-          console.log(newPathname);
+          console.log(rawPathname);
 
        //DECIMATED DATA PLOT
        function fetchDecData(){
-          dec_base_url = 'https://gradientone-test.appspot.com/dec/bscopedata/arduino/';
-          //dec_urlPath = '1435759475910';
-          dec_urlPath = newPathname;
+          dec_base_url = 'https://gradientone-test.appspot.com/dec/';
+          //dec_urlPath = 'bscopedata/arduino/1435775476910';
+          dec_urlPath = decPathname;
           dec_json_url = dec_base_url + dec_urlPath;
           $.ajax({
              async: true,
@@ -198,9 +207,25 @@
              //console.log("results:", decData);
             //console.log('decData Test:',decData);
             var config = results.config;
-            var sampleRate = config
-            //console.log('Results:',config);
-            //console.log('sampleRate:',sampleRate);
+            var cleanConfig = config.substr(1, config.length-2);
+            var configArray = cleanConfig.split(', ');
+
+            var sampleSize = configArray[7].split(': ')[1];
+            var sampleRate = configArray[configArray.length-1].split(': ')[1];
+            //console.log('Config:',configArray);
+            
+
+            var decPointSpacing = (1/Number(sampleRate))*10;
+            var offSet = (sampleSize/sampleRate)/2;
+
+            //console.log('dec point spacing should be .01:',decPointSpacing);
+            //console.log('off set = ',offSet);
+                           //var configOptions = rawData[0].config;
+               //console.log('config options: ',configOptions);
+              // var formatConfig = configOptions.substr(1, configOptions.length-2);
+              // var configArray = formatConfig.split(', ');
+                           //sampleSize = Number(configArray[7].split(': ')[1]);
+              // var sampleRate = configArray[configArray.length-1].split(': ')[1];
 
           data = new google.visualization.DataTable();
             data.addColumn('number', 'Time');
@@ -209,15 +234,24 @@
             //GETING DATA
             for (i=0; i<decData.length; i++) {
               data.addRow([
-                i, 
+                (i*decPointSpacing - offSet), 
                 decData[i],
                 ]);
             };
             //console.log('Data:',data);  
           //var dataTest = data;
               //console.log('DataTest:',dataTest);
-          var options = {
-            title: 'Decimated Data',
+        options = {
+            title: '',
+            titleTextStyle: {color:'lightgray', fontSize: 18, fontName: 'NexaLight'},
+            legend: {alignment:'center', textStyle:{color:'lightgray'}},
+            hAxis: {title: 'Time(sec)',titleTextStyle:{color:'lightgray', fontName: 'NexaLight'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'none', count: 5},viewWindowMode:'explicit'},
+            vAxis: {title: '', titleTextStyle:{color:'lightgray'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'none', count: 0}, format: '##.###', viewWindowMode:'explicit'},
+            backgroundColor: {fill:'none', stroke: 'black', strokeWidth: 0,},                 
+            colors: ['rgb(2,255,253)','rgb(239,253,146)'],
+            lineWidth: 2,
+            curveType: 'function',
+            crosshair: {trigger: 'both', selected:{opacity: 0.8}, focused:{opacity:0.8}},
           };
          //DRAW CHART
             var chart = new google.visualization.LineChart($('#decChart').get(0));      
@@ -256,7 +290,6 @@
           //var startTime = Date.now();
      
           function gatherData(base_url,sliceNames,first,last){
-            gatherDataCounter++;
             var sliceName = sliceNames[first];
             if (!(sliceName in resultsCache)) {
                  json_url = base_url + sliceName;
@@ -265,10 +298,11 @@
                };
             var gatheredResults = resultsCache[sliceName];
             var firstRow = gatheredResults['data'][0];
-
+            //console.log('gatherData: First row: ',firstRow);
+            /*
             if (autoMinPosition == 0) {
-              console.log('auto min and max:',firstRow.TIME)
-              console.log('range for auto max:',range);
+              //console.log('auto min and max:',firstRow.TIME)
+              
               autoMinPosition = Number(firstRow.TIME);
               autoMaxPosition = Number(firstRow.TIME)+range;
               hMax = autoMaxPosition;
@@ -277,6 +311,10 @@
               chartOptions.hAxis.viewWindow.max = hMax;
               chartOptions.hAxis.viewWindow.min = hMin;
             };
+            */
+            //Math.min(5, 10);
+            last = Math.min(last,sliceNames.length);
+
             for (idx = first; idx < last; idx++) {
                sliceName = sliceNames[idx];
                //console.log("gatherData: sliceName =", sliceName);
@@ -288,7 +326,6 @@
                };
                gatheredResults = resultsCache[sliceName];
                //console.log("gatherData: resultsCache =", resultsCache);
-               
                //console.log("gatherData: idx = ", idx);
 
                //Y AXIS VOLTAGE DATA "CHA"
@@ -297,61 +334,38 @@
                //console.log('cha data array: ',rawCha);
 
                var configOptions = rawData[0].config;
+               //console.log('config options: ',configOptions);
                var formatConfig = configOptions.substr(1, configOptions.length-2);
                var configArray = formatConfig.split(', ');
 
-               var sampleSize = configArray[7].split(': ')[1];
+               sampleSize = Number(configArray[7].split(': ')[1]);
                var sampleRate = configArray[configArray.length-1].split(': ')[1];
                var timeSlice = (1/(parseFloat(sampleRate)));
 
+               endSlice = Number(rawData[0].start_tse)+ Number(sampleSize) -10;
+               numPages = (Number(sampleSize)/10);
 
-/*
-               for (i=0; i<(parseFloat(sampleSize)*timeSlice); i+=timeSlice) {
-                time = i
-                if ($.inArray(time, rawTime) == -1) {
-                  rawTime.push(time);
-                };      
-               };
-*/
-              //console.log('rawTime: ', rawTime);
-              //console.log('config', configArray);
-              //console.log('Sample Size: ', sampleSize);
-              //console.log('Sample Rate: ', sampleRate);
-
-               //console.log("gatherData: gatheredResults =", gatheredResults['data']);
                //GETING DATA
-               //console.log('Split data into Array:', rawCha);
-               //console.log('Gather Data counter: ', gatherDataCounter);
                //X AXIS TIME
                start = sliceBuild;
                //console.log('Start time:',start);
                deltaFromStart = Number(sliceName) - start;
                //console.log('slicename: ', sliceName);
-               adjust = start + 250;
+               adjust = start + (Number(sampleSize)/2);
                deltaFromStart = Number(sliceName) - adjust;
-               //console.log(deltaFromStart);
+               //console.log('deltaFrom start=',deltaFromStart);
 
-               //d = Date(sliceName)-Date(sliceBuild)-width/2;
-               
+               //d = Date(deltaFromStart/1000);
+
+               //console.log('date testing = ',d);
                //BUILD DATA TABLE ADDING ROWS TIME AND CHA
-            for (i=0; i<rawCha.length; i++) {
-              //console.log('raw time array value: ',rawTime[i+(gatherDataCounter-1)*10]);
-              data.addRow([
-                (deltaFromStart + i)/1000,
-                //rawTime[i+(gatherDataCounter-1)*10], 
-                parseFloat(rawCha[i]),
-                ]);
-            };
-            
-            /*
-               $.each(rawCha, function (i, row) {
-                 data.addRow([
-                   parseFloat(row.TIME),
-                   parseFloat(row.cha),
-                 ]);
-
-               });
-               */
+              for (i=0; i<rawCha.length; i++) {
+                data.addRow([
+                  //new Date((deltaFromStart+i)/1000),
+                  (deltaFromStart + i)/1000, 
+                  parseFloat(rawCha[i]),
+                  ]);
+              };
 
             };
           
@@ -366,31 +380,13 @@
             table.draw(data, tableOptions);  
           };
 
-            //console.log('auto MAX position:',autoMaxPosition);
-            //console.log('auto MIN position:',autoMinPosition);
-            var center = hPosition + (autoMinPosition + autoMaxPosition)/2;
-            var width = (autoMaxPosition - autoMinPosition)*(100.0/hZoom);
-            //console.log('h zoom:',hZoom);
 
-            //console.log('window width:', width);
-            //console.log('window center:',center);
-
-            //console.log('do poll counter:',doPollCounter);
-            
-            hMax = center + width/2 + range;
-            hMin = center - width/2;
-
-            //console.log('hMax:',hMax);
-            //console.log('hMin:',hMin);
-            //console.log('horizontal Zoom dial:',hZoom);
-            //console.log('horizontal position dial:',hPosition);
-            
-        chartOptions = {
+         var chartOptions = {
             title: 'Raw Data',
             titleTextStyle: {color:'lightgray', fontSize: 18, fontName: 'NexaLight'},
             legend: {alignment:'center', textStyle:{color:'lightgray'}},
             hAxis: {title: 'Time(sec)',titleTextStyle:{color:'lightgray', fontName: 'NexaLight'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'gray', count: 6}, minorGridlines:{color: 'gray', count: 1}, viewWindowMode:'explicit', viewWindow:{max: hMax, min:hMin}},
-            vAxis: {title: '', titleTextStyle:{color:'lightgray'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'gray', count: 6}, minorGridlines:{color: 'gray', count: 1}, format: '##.###', viewWindowMode:'explicit', viewWindow:{max:2.5, min:-2.5} },
+            vAxis: {title: '', titleTextStyle:{color:'lightgray'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'gray', count: 6}, minorGridlines:{color: 'gray', count: 1}, format: '##.###', viewWindowMode:'explicit', },
             backgroundColor: {fill:'none', stroke: 'black', strokeWidth: 0,},                 
             colors: ['rgb(2,255,253)','rgb(239,253,146)'],
             //chartArea:{backgroundColor:'', height:300, width:445},
@@ -402,40 +398,108 @@
             showRowNumber: true,
           };
 
+
+          console.log("chart options viewWindow:", chartOptions.hAxis.viewWindow);            
+          
+          //viewWindow:{max:2.5, min:-2.5}
           //console.log("calling gatherData with name = ",sliceNames);
           //console.log("calling gatherData with length = ",sliceNames.length);
-
-          //Drawing data test:
-          gatherData(base_url,sliceNames,0,doPollCounter);
 
           //gatherData(base_url,sliceNames,0,sliceNames.length);
 
           //var pagingTest = (doPollCounter+1)*10;
           //console.log('do poll paging test:', pagingTest);
           
-          //sliceBuild = Number('1435759475910');
-          sliceBuild = Number(newPathname);
+         // sliceBuild = Number('1435775476910');
+          sliceBuild = Number(timeKey);
 
-          sliceStop = sliceBuild + 51*10;
+          sliceStop = endSlice;
+          //console.log('End Slice : ',endSlice);
 
-          for (msec = sliceBuild+10; msec < sliceStop;msec += 10) {
+          for (msec = sliceBuild+20; msec <= sliceStop;msec += 10) {
             name = String(msec);
             if ($.inArray(name, sliceNames) == -1) {
               sliceNames.push(String(msec));
             };
           };
-          //put var range here for back to how it was
-          //DYNAMIC RANGE AS PLOT GROWS
-          if (doPollCounter < 50) {
-            range = (Number(sliceNames[doPollCounter]) - Number(sliceNames[0]))/1000;
-            //console.log('Range in Number:',range);
-          }else{
-            range = 0;
-          };
-          
-      //console.log('sliceNames for range:',sliceNames);
 
-          //gatherData used to go here
+          //console.log(sliceNames);
+          //console.log('sample size?', numPages);
+
+          width = (sampleSize/1000);
+
+          //DYNAMIC RANGE AS PLOT GROWS
+          if (doPollCounter < numPages) {
+            range = (Number(sliceNames[doPollCounter]) - Number(sliceNames[0]))/1000;
+            hMax = range/2;
+            hMin = (- width/2);
+            //if ($.inArray(range, rangeArray) == -1) {
+              //rangeArray.push(range);
+            //};            
+          }else{
+            console.log('478: ELSE IS TRIGGERED');
+            range = 0;
+
+            width = (sampleSize/1000)*(100.0/hZoom);
+            console.log('Width for dials:',width);
+
+            hMax = hPosition + width/2;
+            hMin = hPosition - width/2;
+          };
+
+          //VIEW WINDOW POSITION
+
+            //center = hPosition;
+            console.log('Center for dials:',center);
+
+
+            console.log('doPoll: hMax = ',hMax);
+            console.log('doPoll: hMin = ',hMin);
+
+            //MUST GO BELLOW chartOptions
+            //chartOptions.hAxis.viewWindow.max = hMax;
+            //chartOptions.hAxis.viewWindow.min = hMin;
+            //console.log("chart options viewWindow:", chartOptions.hAxis.viewWindow);
+
+            //console.log('before options hMax:',hMax);
+            // console.log('before options hMin:',hMin);
+            // console.log('before options horizontal Zoom dial:',hZoom);
+            //console.log('before options horizontal position dial:',hPosition);
+
+            //width = (sampleSize/1000);
+            //console.log('auto MAX position:',autoMaxPosition);
+            //console.log('auto MIN position:',autoMinPosition);
+            //var center = hPosition + (autoMinPosition + autoMaxPosition)/2;
+
+            //console.log('Center = ',center)
+            //var width = (autoMaxPosition - autoMinPosition)*(100.0/hZoom);
+            
+            //console.log('Width = ',width);
+
+            //console.log('window width:', width);
+            //console.log('window center:',center);
+
+            //console.log('do poll counter:',doPollCounter);
+            //old way 
+            //hMax = center + width/2 + range;
+            //hMin = center - width/2;
+
+            //console.log('hMax:',hMax);
+            //console.log('hMin:',hMin);
+            //console.log('after horizontal Zoom dial:',hZoom);
+            //console.log('after horizontal position dial:',hPosition);
+        
+
+          //Drawing data:
+          //console.log(doPollCounter);
+
+            gatherData(base_url,sliceNames,0,doPollCounter);
+
+
+          // gatherData(base_url,sliceNames,0,1);
+
+          //console.log('range for auto max:',range);
+          //console.log('sliceNames for range:',sliceNames);
 
           //console.log('slice names:',sliceNames);
           //console.log("after gatherData length = ",sliceNames.length);
@@ -446,11 +510,11 @@
             };
           };
           //EVERY 100MS CALL doPoll
-          if(doPollCounter < 50) {
+          if(doPollCounter < numPages) {
             setTimeout(doPoll,100);
           };
-          
-       };
+     
+       }; //end of doPoll
 
 // POLL FOR CURRENT TIME TO START PLOTTING DATA
 
@@ -459,21 +523,21 @@
 // BUILD SLICES GIVEN current Time
 
       //console.log('this runs first!');
-      //sliceNames.push('1435759475910');
-      sliceNames.push(newPathname);
-      //sliceNames.push(String(Number('1435759475910')+10));
+      //sliceNames.push('1435775476910');
+      sliceNames.push(timeKey);
+      //sliceNames.push(String(Number('1435775476910')+10));
+      sliceNames.push(String(Number(timeKey)+10));
+       //var base_url = 'https://gradientone-test.appspot.com/bscopedata/arduino/'; //Hard code
+       var base_url = 'https://gradientone-test.appspot.com/' + rawPathname; //not hard code
 
-       var base_url = 'https://gradientone-test.appspot.com/bscopedata/arduino/';
        fetchData(base_url,sliceNames[0],true);
-       //fetchData(base_url,sliceNames[1],true);
+       fetchData(base_url,sliceNames[1],true);
 
-      var range = (Number(sliceNames[sliceNames.length-1]) - Number(sliceNames[0]))/1000;
+      //var range = (Number(sliceNames[sliceNames.length-1]) - Number(sliceNames[0]))/1000;
       //console.log('Range in Number:',range);
       //console.log('sliceNames for range:',sliceNames);
 
-
        google.setOnLoadCallback(doPoll);
-
 </script>
 
 </body>
