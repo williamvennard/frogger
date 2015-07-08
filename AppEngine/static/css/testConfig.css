@@ -15,11 +15,10 @@
 .error {
     color: red
 }
-#testPlanBox {
-    min-height: 365px;
-    width: 378px;
-    margin-bottom: 10px;
-    margin-left: 30px;
+#testConfigBox {
+    min-height: 400px;
+    width: 435px;
+    margin: 0 0 10px 0;
     border-style: solid;
     border-width: 2px;
     border-color: black;

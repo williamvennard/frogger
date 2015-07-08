@@ -6,12 +6,25 @@
     font-weight: normal;
     font-style: normal; 
 }
+
 @font-face {
     font-family: NexusLight;
     src: url(css/fonts/NexaLight) format('truetype');
     font-weight: normal;
     font-style: normal; 
 }
+
+.testResultsBox {
+    min-height: 400px;
+    width: 435px;
+    border-width: 2px;
+    border-style: solid;
+    border-color: black;
+    border-radius: 4px;
+    background-color: rgb(33,33,33);
+    /*background-image: radial-gradient(#FFFFFF, #C0C0C0);*/
+}
+
 #testResultsHeadr {
     text-align: center;
     color:white; 
@@ -21,6 +34,7 @@
     margin-bottom: 0px;
     margin-top: 0px;
 }
+
 #resultsForm {
     text-align: center;
     margin-top: 20px;
@@ -33,11 +47,13 @@
     float: left;
     padding-left: 0px;
 }
+
 .testAuthor {
     font-family: 'NexaLight';
     color: white;
     padding-left: 50px;
 }
+
 .testDate {
     padding-left: 50px;
     font-family: 'NexaLight';
