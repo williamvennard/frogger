@@ -2,58 +2,47 @@
 
 {% block import %}
 
+<!DOCTYPE html>
 <html>
-  <head>
-    <title>Add User ({{admin_email}})</title>
-    <style type="text/css">
-      .label {text-align: right}
-      .error {color: red}
-    </style>
+<head>
+<title>GradientOne Import</title>
 
-  </head>
-
-  <body>
-    <h2>Add User</h2>
-    <form method="post">
-      <table>
-        <tr>
-          <td class="label">
-            User Email
-          </td>
-          <td>
-            <input type="text" name="email" value="{{email}}">
-          </td>
-          <td class="error">
+  
+  <link rel="stylesheet" type="text/css" href="../static/bootstrap/css/bootstrap.min.css">  
+  <link type="text/css" rel="stylesheet" href="../static/css/adduser.css" />
+  
+</head>
+<body id="background">
+  <div class="">
+    <div id="headbar">
+    <img class="logo" src="../static/images/Glogo.png" style="width:110px; float:left;" alt="Gradient One logo"> 
+    <h1 style="float:left">Account Management</h1>
+    </div>     
+      <div class="" id="adduserbox">
+        <h2>Add User</h2>      
+        <form method="post">
+          <div>
+            <label class="admin">
+              <input type="checkbox" name="admin"> Admin
+            </label>
+          </div>    
+          <div class="form-group">
+            <input type="text" class="form-control" name="email" placeholder="Email" value="{{email}}">
+            <li class="error">
             {{error_email}}
-          </td>
-        </tr>
-
-        <tr>
-          <td class="label">
-            Company Name
-          </td>
-          <td>
-            <input type="text" name="companyname" value="{{companyname}}">
-          </td>
-          <td class="error">
+            </li>
+          </div>
+          <div class="form-group">
+            <input type="text" class="form-control" name="companyname" placeholder="Company" value="{{companyname}}">
+            <li class="error">
             {{error_companyname}}
-          </td>
-        </tr>
-
-        <tr>
-          <td>
-            Administrator
-          </td>
-        <td>
-          <input type="checkbox" name="admin">
-        </td>
-        </tr>
-      </table>
-
-      <input type="submit">
-    </form>
-  </body>
-
+            </li>
+          </div>
+          <button type="submit" class="btn btn-success">Submit</button>        
+        </form>
+      </div>
+  </div>
+</body>
 </html>
 
 {% endblock %}
