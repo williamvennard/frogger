@@ -1,68 +1,80 @@
-    // Load the Visualization API and the piechart package.
-    google.load('visualization', '1', {'packages':['corechart']});
-      
-    // Set a callback to run when the Google Visualization API is loaded.
-    google.setOnLoadCallback(drawChart);
- 
-    function drawChart() {
-    
-        var jsonData = {
-          
-    cols: [{id: 'freq', label: 'Frequency', type: 'number'},
-           {id: 'db11', label: 'S11', type: 'number'},{id: 'db12', label: 'S22', type: 'number'}],
-    rows: [{c:[{v: '50.0'}, {v: '25.04'}, {v: '20.154'}]},
-           {c:[{v: '77.0'}, {v: '24.335'}, {v: '19.554'}]},
-           {c:[{v: '104.0'}, {v: '24.332'}, {v: '19.357'}]},
-           {c:[{v: '131.0'}, {v: '24.566'}, {v: '19.652'}]},
-           {c:[{v: '158.0'}, {v: '24.564'}, {v: '19.764'}]},
-           {c:[{v: '185.0'}, {v: '24.507'}, {v: '20.151'}]},
-           {c:[{v: '212.0'}, {v: '24.533'}, {v: '20.343'}]},
-           {c:[{v: '239.0'}, {v: '24.475'}, {v: '20.555'}]},
-           {c:[{v: '266.0'}, {v: '24.848'}, {v: '20.646'}]},
-           {c:[{v: '293.0'}, {v: '24.833'}, {v: '20.752'}]},
-           {c:[{v: '320.0'}, {v: '24.832'}, {v: '20.956'}]},
-           {c:[{v: '347.0'}, {v: '24.844'}, {v: '21.176'}]},
-           {c:[{v: '374.0'}, {v: '24.909'}, {v: '21.266'}]},
-           {c:[{v: '401.0'}, {v: '25.056'}, {v: '21.451'}]},
-           {c:[{v: '428.0'}, {v: '25.217'}, {v: '21.658'}]},
-           {c:[{v: '455.0'}, {v: '25.398'}, {v: '22.746'}]},
-           {c:[{v: '482.0'}, {v: '25.651'}, {v: '22.76'}]},
-           {c:[{v: '509.0'}, {v: '25.873'}, {v: '22.853'}]},
-           {c:[{v: '536.0'}, {v: '25.991'}, {v: '22.95'}]},
-           {c:[{v: '563.0'}, {v: '26.514'}, {v: '23.251'}]},
-           {c:[{v: '590.0'}, {v: '26.838'}, {v: '23.458'}]},
-           {c:[{v: '617.0'}, {v: '26.916'}, {v: '23.554'}]},
-           {c:[{v: '644.0'}, {v: '26.816'}, {v: '24.564'}]},
-           {c:[{v: '671.0'}, {v: '27.089'}, {v: '24.66'}]},
-           {c:[{v: '698.0'}, {v: '27.054'}, {v: '24.767'}]},
-           {c:[{v: '725.0'}, {v: '27.269'}, {v: '24.753'}]},
-           {c:[{v: '752.0'}, {v: '27.578'}, {v: '24.865'}]},
-           {c:[{v: '779.0'}, {v: '27.852'}, {v: '24.956'}]},
-           {c:[{v: '806.0'}, {v: '28.03'}, {v: '24.991'}]},
-           {c:[{v: '833.0'}, {v: '28.565'}, {v: '25.371'}]},
-           {c:[{v: '860.0'}, {v: '29.032'}, {v: '25.77'}]},
-           {c:[{v: '887.0'}, {v: '29.319'}, {v: '26.369'}]},
-           {c:[{v: '914.0'}, {v: '29.394'}, {v: '26.775'}]},
-           ]
-        } 
+ // load chart lib
+    google.load('visualization', '1', {packages: ['corechart','table']});
+       //DECIMATED DATA PLOT
+    function fetchDecData(){
+       dec_base_url = 'https://gradientone-test.appspot.com/dec/';
+       dec_urlPath = 'bscopedata/arduino/1435775476910';
+       //dec_urlPath = decPathname;
+       dec_json_url = dec_base_url + dec_urlPath;
+       $.ajax({
+          async: true,
+          url: dec_json_url,            
+          dataType: 'json',
+       }).done(function (results) {
+          //console.log("fetchDecData: json_url =", json_url);
+         var decData = results.cha;
+          //console.log("results:", decData);
+         //console.log('decData Test:',decData);
+         var config = results.config;
+         var cleanConfig = config.substr(1, config.length-2);
+         var configArray = cleanConfig.split(', ');
 
-          var options = {
-            title: 'MMIC Amplifier @ +85degC',
-            titleTextStyle: {color:'black', fontSize: 15},
-            legend: {alignment:'center'},
-            hAxis: {title: 'Frequency'},
-            vAxis: {title: 'dB'},
-            backgroundColor: {color: 'white', stroke: 'silver', strokeWidth: 3,},                 
-            colors: ['rgb(248,157,0)','rgb(75,19,115)'],
-          }
-        //jsonData = readTextFile("file:///Users/william/Desktop/GoogleCharts/freqDb.txt");
+         var sampleSize = configArray[7].split(': ')[1];
+         var sampleRate = configArray[configArray.length-1].split(': ')[1];
+         //console.log('Config:',configArray);
+         
 
-          // Create our data table out of JSON data loaded from server.
-          var data = new google.visualization.DataTable(jsonData);
+         var decPointSpacing = (1/Number(sampleRate))*10;
+         var offset = (sampleSize/sampleRate)/2;
 
-          // Instantiate and draw our chart, passing in some options.
-          var chart = new google.visualization.LineChart(document.getElementById('chart1'));
-          chart.draw(data, {width: 300, height: 200});
-          chart.draw(data, options);
-        }
+         //console.log('dec point spacing should be .01:',decPointSpacing);
+         //console.log('offset = ',offset);
+                        //var configOptions = rawData[0].config;
+            //console.log('config options: ',configOptions);
+           // var formatConfig = configOptions.substr(1, configOptions.length-2);
+           // var configArray = formatConfig.split(', ');
+                        //sampleSize = Number(configArray[7].split(': ')[1]);
+           // var sampleRate = configArray[configArray.length-1].split(': ')[1];
+
+       data = new google.visualization.DataTable();
+         data.addColumn('number', 'Time');
+         data.addColumn('number', 'Ch1');
+
+         //GETING DATA
+         for (i=0; i<decData.length; i++) {
+           var num = i*decPointSpacing - offset;
+           num = Math.ceil(num * 100) / 100;
+           console.log("fetchDecData:num=",num);
+           data.addRow([
+             num, 
+             decData[i],
+             ]);
+         };
+         //console.log('Data:',data);  
+       //var dataTest = data;
+           //console.log('DataTest:',dataTest);
+      var options = {
+         title: 'MMIC Amplifier @ +25degC',
+         titleTextStyle: {color:'white', fontSize: 15, fontName: 'NexaBold'},
+         legend: {alignment:'center', textStyle:{color:'lightgray'}},
+         hAxis: {title: 'frequency',titleTextStyle:{color:'lightgray', fontName: 'NexaLight'}, textStyle:{color:'lightgray'}, baselineColor:'none', gridlines:{color: 'none', count: 5},viewWindowMode:'explicit'},
+         vAxis: {title: '', titleTextStyle:{color:'lightgray'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'none', count: 0}, format: '##.###', viewWindowMode:'explicit'},
+         backgroundColor: {fill: 'black', stroke: 'silver', strokeWidth: 3,},              
+         colors: ['rgb(2,255,253)','rgb(239,253,146)'],
+         lineWidth: 2,
+         curveType: 'function',
+         crosshair: {trigger: 'both', selected:{opacity: 0.8}, focused:{opacity:0.8}},
+         animation: {startup:true, duration: 400},
+       };
+      //DRAW CHART
+         var chart = new google.visualization.LineChart($('#chart1').get(0));      
+         chart.draw(data, options);
+      //DRAW TABLE
+         var table = new google.visualization.Table($('#decTable').get(0));
+         table.draw(data); 
+       });
+    };
+
+    //google.load("visualization", "1", {packages:["corechart"]});
+    google.setOnLoadCallback(fetchDecData);
 
