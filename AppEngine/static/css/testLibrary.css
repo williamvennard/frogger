@@ -60,10 +60,11 @@
 .resultsLink {
     float: left;
     margin-right: 10px; 
-    color: white;
+    color: rgb(197,44,72);
     font-family: 'NexaLight';
 }
 
-.configInfo {
-
+.resultsName {
+    color:white;
+    font-size: 110%;
 }

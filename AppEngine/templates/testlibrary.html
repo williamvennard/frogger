@@ -41,7 +41,7 @@
     </div>
     <div class="col-md-12" id="testListBox">
       <h3 class="instType">BitScope</h3>
-       <h5 class="colTitle text-uppercase">Start Time <span style="margin-right: 400px"></span> Details</h5>
+       <h5 class="colTitle text-uppercase">Start Time <span style="margin-right: 400px"></span> Preview</h5>
       <hr class="headerLine">
  
       <form method="post">
@@ -50,7 +50,8 @@
           </tr>
 
           {% for r in results_bscope %}
-            <a class="resultsLink" href ="testlibrary/bscopedata/{{r.name}}/{{r.start_tse}}">{{ r.start_tse }}  </a> <span style="padding-left:100px"> <a class="resultsLink" href ="testanalyzer/bscopedata/{{r.name}}/{{r.start_tse}}">analyze</a><span style="padding-left: 500px"></span> <p class="resultsLink"> {{r.name}}</p>
+            <p class="resultsName text-underline text-capitalize"> {{r.name}} -</p>
+            <a class="resultsLink" href ="testlibrary/bscopedata/{{r.name}}/{{r.start_tse}}">{{ r.start_tse }}  </a> <span style="padding-left:100px"> <a class="resultsLink" href ="testanalyzer/bscopedata/{{r.name}}/{{r.start_tse}}">analyze</a>
 
           <br><br>   
           {% endfor %}
@@ -60,7 +61,7 @@
 
     <div class="col-md-12" id="testListBox">
       <h3 class="instType">Tektronix Oscilloscope</h3>
-       <h5 class="colTitle text-uppercase">Start Time <span style="margin-right: 400px"></span> Details</h5>
+       <h5 class="colTitle text-uppercase">Start Time <span style="margin-right: 400px"></span> Preview</h5>
       <hr class="headerLine">
  
       <form method="post">
@@ -70,7 +71,8 @@
           </tr>
 
           {% for r in results_oscope %}
-             <a class="resultsLink" href ="testlibrary/oscopedata/{{r.name}}/{{r.start_tse}}">{{ r.start_tse }}  </a> <span style="padding-left:100px"> <a class="resultsLink" href ="testanalyzer/oscopedata/{{r.name}}/{{r.start_tse}}">analyze</a><span style="padding-left: 500px"></span> <p class="resultsLink"> {{r.name}}</p>
+             <p class="resultsName text-underline text-capitalize"> {{r.name}} -</p>
+             <a class="resultsLink" href ="testlibrary/oscopedata/{{r.name}}/{{r.start_tse}}">{{ r.start_tse }}  </a> <span style="padding-left:100px"> <a class="resultsLink" href ="testanalyzer/oscopedata/{{r.name}}/{{r.start_tse}}">analyze</a>
 <!-- | date:'yyyy-MM-dd HH:mm:ss'-->
             <br><br>   
           {% endfor %}
