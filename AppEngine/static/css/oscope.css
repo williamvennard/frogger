@@ -28,12 +28,12 @@ h3 {
     background-color: #DFE0DD;
     display: inline-block;
     vertical-align: right;
-    min-width: 830px;
-    height: 465px;
+    min-width: 840px;
+    height: 491px;
     border-style: solid;
     border-radius: 5px;
     border-width: 2px;
-    margin:0 0 0 0;
+    margin:0 0 0 10px;
 }
 
 .instname {
@@ -67,7 +67,7 @@ h3 {
 
 #optionsBox {
     width: 200px;
-    height: 400px;
+    height: 415px;
     position: relative;
     background-color: rgb(30,30,30);
     border-radius: 10px;
@@ -79,12 +79,13 @@ h3 {
     text-align: center;
     margin:0 0 0 45px;
     color: white;
-    background-color: rgb(50,50,50); 
+    background-color: black; 
 }
 
 #ochart{
-    height: 400px;
+    height: 420px;
     width:550px;
+    margin: 10px 0 5px 30px;
     display: inline-block;
     vertical-align: left;
     background-image: radial-gradient(#00C5B6, #00A984);
@@ -93,7 +94,7 @@ h3 {
     -webkit-box-shadow: inset 6px 5px 55px 1px rgba(0,0,0,0.8);
     -moz-box-shadow: inset 6px 5px 55px 1px rgba(0,0,0,0.8);
     box-shadow: inset 6px 5px 55px 1px rgba(0,0,0,0.8);
-    margin: 10px 0 10px 20px;
+
 }
 
 .boxTitle {
