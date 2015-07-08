@@ -326,7 +326,7 @@
 
             sampleSize = Number(configArray[7].split(': ')[1]);
             var sampleRate = configArray[configArray.length-1].split(': ')[1];
-            var timeSlice = (1/(parseFloat(sampleRate)));
+            // unused: var timeSlice = (1/(parseFloat(sampleRate)));
 
             endSlice = Number(rawData[0].start_tse)+ Number(sampleSize) -10;
             numPages = (Number(sampleSize)/10);
@@ -470,7 +470,7 @@
          };
        };
        //EVERY 100MS CALL doPoll
-       if (Date.now() - firstPoll < 4000) {
+       if (Date.now() - firstPoll < 5000) {
          setTimeout(doPoll,50);
        };
   
