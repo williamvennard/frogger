@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block import %}
+
+
+<html>
+  <head>
+    <title>Search </title>
+    <style type="text/css">
+      .label {text-align: right}
+      .error {color: red}
+    </style>
+
+  </head>
+
+
+  <body>
+    <h2>Search Page</h2>
+    <form method="post">
+    <select name ="instrument">
+              {% for d in dropdown %}
+      <option value ="{{d}}">{{d}}</option>
+          {% endfor %}
+    </select>
+      <br><br>
+      <table>
+        <tr>
+          <td class="label">
+            Name
+          </td>
+          <td>
+            <input type="text" name="name" value="{{name}}">
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            Slicename
+          </td>
+          <td>
+            <input type="text" name="slicename" value="{{slicename}}">
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            Start_Tse
+          </td>
+          <td>
+            <input type="text" name="start_tse" value="{{start_tse}}">
+          </td>
+        </tr>
+
+
+      </table>
+
+      <input type="submit">
+    </form>
+
+          {% for r in results%}
+            <a class="resultsLink" href ="testlibrary/oscopedata/{{r.name}}/{{r.start_tse}}">{{ r.start_tse }}  </a> <span style="padding-left:100px"> <a class="resultsLink" href ="testanalyzer/oscopedata/{{r.name}}/{{r.start_tse}}">analyze</a><span style="padding-left: 500px"></span> <p class="resultsLink"> {{r.name}}</p>
+          {% endfor %}
+
+
+  </body>
+
+</html>
+
+{% endblock %}

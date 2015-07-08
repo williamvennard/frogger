@@ -755,8 +755,44 @@ class BscopeData(InstrumentDataHandler):
         memcache.set(key, to_save)
         db.put(to_save)
 
+def dropdown_creation():
+    key = 'instrumentsDB' 
+    dropdown = memcache.get(key)
+    if dropdown == None:
+        logging.error("BscopeData:get: query")
+        b = db.GqlQuery("""SELECT DISTINCT FROM BscopeDB LIMIT 1""")
+        o = db.GqlQuery("""SELECT DISTINCT FROM OscopeDB LIMIT 1""")
+        dropdown = []
+        if b != None:    
+            dropdown.append('BitScope')
+        if o != None:
+            dropdown.append('Tektronix')
+        memcache.set(key, dropdown)
+    return dropdown
+
+
+class SearchPage(InstrumentDataHandler):
+    def get(self, name="", slicename="", start_tse=""):
+        dropdown = dropdown_creation()
+        self.render('search.html', dropdown = dropdown, name = name, slicename = slicename, start_tse = start_tse)
+    def post(self):
+        dropdown = dropdown_creation()
+        name = self.request.get('name')
+        start_tse = int(self.request.get('start_tse'))
+        slicename = self.request.get('slicename')
+        instrument = self.request.get('instrument')
+        if instrument == 'BitScope':
+            instrument = BscopeDB.gql
+        elif instrument == 'Tektronix':
+            instrument = OscopeDB.gql
+        query = instrument("where name = :1 and start_tse =:2 and slicename =:3", name, start_tse, slicename)
+        s = list(query)
+        results = query_to_dict(s)
+        self.render('search.html', results = results, dropdown = dropdown, name = name, slicename = slicename, start_tse = start_tse )
+
 
 class TestAnalyzerPage(InstrumentDataHandler):
+    #work in progress.  To do:  modularize parsing and measurment calls.
     def get(self, instrument="", name="", start_tse=""):
         if instrument == 'bscopedata':
             key = 'bscopedata' + name + start_tse
@@ -827,24 +863,20 @@ class TestLibraryPage(InstrumentDataHandler):
             f = open(os.path.join('templates', 'testLibResults.html'))
             self.response.write((f.read()))
         else:
-            rows = db.GqlQuery("SELECT * FROM BscopeDB")
-            rows = list(rows)
-            results_bscope = {}
-            for r in rows:
-                summary = set()
-                summary.add((str(r.start_tse), str(r.name), str(r.config))) #make set to eliminate dupes
-                summary = list(summary) #convert set to list
-                summary = list(summary[0]) #breaks up list to individual items
-                results_bscope[str(r.start_tse)] = summary
-            rows = db.GqlQuery("SELECT * FROM OscopeDB")
-            rows = list(rows)
-            results_oscope = {}
-            for r in rows:
-                summary = set()
-                summary.add((str(r.start_tse), str(r.name), str(r.config))) #make set to eliminate dupes
-                summary = list(summary) #convert set to list
-                summary = list(summary[0]) #breaks up list to individual items
-                results_oscope[str(r.start_tse)] = summary
+            key = 'library' 
+            library = memcache.get(key)
+            if library == None:
+                logging.error("BscopeData:get: query")
+                query = db.Query(BscopeDB, projection=['start_tse', 'name'], distinct=True).order('-start_tse').fetch(limit = 10)
+                rows = list(query)
+                results_bscope = rows
+                query = db.Query(OscopeDB, projection=['start_tse', 'name'], distinct=True).order('-start_tse').fetch(limit = 10)
+                rows = list(query)
+                results_oscope = rows
+                library = results_bscope, results_oscope
+                memcache.set(key, library)
+            results_bscope = library[0]
+            results_oscope = library[1]
             self.render('testlibrary.html', results_bscope = results_bscope, results_oscope = results_oscope)
 
 
@@ -898,6 +930,7 @@ app = webapp2.WSGIApplication([
     ('/testplansummary', TestPlanSummary),
     ('/testplansummary/([a-zA-Z0-9-]+)', TestPlanSummary),
     ('/communitytests', CommunityTestsPage),
+    ('/search', SearchPage),
     ('/testresults', TestResultsPage),
     ('/testresults/([a-zA-Z0-9-]+)', TestResultsPage),
     ('/testresults/([a-zA-Z0-9-]+.json)', TestResultsPage),
