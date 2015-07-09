@@ -153,6 +153,7 @@
     google.load('visualization', '1', {packages: ['corechart','table']});
 
     var testInfo = [];
+    var testSliceStart = '1436419781200'  //debug, was 1436419781200
     var lastSlice = 1;
     var firstPoll = 0;
     var sliceNames = [];
@@ -202,12 +203,53 @@
        var configInfo = testInfo['config'];
        // should have first slice, number of slices, sample rate, milliseconds span by each slice 
     };
-  getTestInfo();
+    // getTestInfo();  // call later when working
+
+    function drawDecChart(decData, decPointSpacing,offset) {
+        data = new google.visualization.DataTable();
+        data.addColumn('number', 'Time');
+        data.addColumn('number', 'Ch1');
+
+         //GETING DATA
+        for (i=0; i<decData.length; i++) {
+           var num = i*decPointSpacing - offset;
+           num = Math.ceil(num * 100) / 100;
+           //console.log("fetchDecData:num=",num);
+           data.addRow([
+             num, 
+             decData[i],
+             ]);
+        };
+/*
+        options = {
+         title: '',
+         titleTextStyle: {color:'lightgray', fontSize: 18, fontName: 'NexaLight'},
+         legend: {alignment:'center', textStyle:{color:'lightgray'}},
+         hAxis: {title: 'Time(sec)',titleTextStyle:{color:'lightgray', fontName: 'NexaLight'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'none', count: 5},viewWindowMode:'explicit'},
+         vAxis: {title: '', titleTextStyle:{color:'lightgray'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'none', count: 0}, format: '##.###', viewWindowMode:'explicit'},
+         backgroundColor: {fill:'none', stroke: 'black', strokeWidth: 0,},                 
+         colors: ['rgb(2,255,253)','rgb(239,253,146)'],
+         lineWidth: 2,
+         curveType: 'function',
+         crosshair: {trigger: 'both', selected:{opacity: 0.8}, focused:{opacity:0.8}},
+        };
+*/
+        options = {
+         title: '',
+        };
+      //DRAW CHART
+         var chart = new google.visualization.LineChart($('#decChart').get(0));      
+         chart.draw(data, options);
+      //DRAW TABLE
+         var table = new google.visualization.Table($('#decTable').get(0));
+         table.draw(data); 
+    };
+    // getTestInfo();
 
     //DECIMATED DATA PLOT
     function fetchDecData(){
        dec_base_url = 'https://gradientone-test.appspot.com/dec/';
-       dec_urlPath = 'bscopedata/arduino/1435775476910';
+       dec_urlPath = 'bscopedata/arduino/' + testSliceStart;
        //dec_urlPath = decPathname;
        dec_json_url = dec_base_url + dec_urlPath;
        $.ajax({
@@ -228,8 +270,10 @@
          //console.log('Config:',configArray);
          
 
-         var decPointSpacing = (1/Number(sampleRate))*10;
-         var offset = (sampleSize/sampleRate)/2;
+         // var decPointSpacing = (1/Number(sampleRate))*10;
+         var decPointSpacing = 0.01;
+         // var offset = (sampleSize/sampleRate)/2;
+         var offset = 0.25;
 
          //console.log('dec point spacing should be .01:',decPointSpacing);
          //console.log('offset = ',offset);
@@ -239,7 +283,8 @@
            // var configArray = formatConfig.split(', ');
                         //sampleSize = Number(configArray[7].split(': ')[1]);
            // var sampleRate = configArray[configArray.length-1].split(': ')[1];
-
+        drawDecChart(decData, decPointSpacing,offset);
+/* old code
        data = new google.visualization.DataTable();
          data.addColumn('number', 'Time');
          data.addColumn('number', 'Ch1');
@@ -275,6 +320,8 @@
       //DRAW TABLE
          var table = new google.visualization.Table($('#decTable').get(0));
          table.draw(data); 
+end of old draw code */  
+
        });
        firstPoll = Date.now()
        doPoll();
@@ -338,10 +385,15 @@
 
             var configOptions = rawData[0].config;
             //console.log('config options: ',configOptions);
+            //console.log('configOptions.PlotSettings: ',configOptions.PlotSettings);
             var formatConfig = configOptions.substr(1, configOptions.length-2);
             var configArray = formatConfig.split(', ');
+            //console.log('configArray: ',configArray);
 
-            sampleSize = Number(configArray[7].split(': ')[1]);
+            // sampleSize = Number(configArray[7].split(': ')[1]);
+            sampleSize = configArray.Total_Slices;
+            sampleSize = 50;  // debug
+            //console.log('gatherData: sampleSize=',sampleSize);
             var sampleRate = configArray[configArray.length-1].split(': ')[1];
             // unused: var timeSlice = (1/(parseFloat(sampleRate)));
 
@@ -397,7 +449,7 @@
        //console.log("calling gatherData with length = ",sliceNames.length);
        //console.log('do poll paging test:', pagingTest);
        
-       sliceBuild = Number('1435775476910'); //hardcode for testing
+       sliceBuild = Number(testSliceStart); //hardcode for testing
        //sliceBuild = Number(timeKey);  //live version
 
        sliceStop = endSlice;
@@ -498,9 +550,9 @@
    // console.log('current timestamp:',formatTime);
 
 // BUILD SLICES GIVEN current Time
-    sliceNames.push('1435775476910');
+    sliceNames.push(testSliceStart);
     //sliceNames.push(timeKey);
-    sliceNames.push(String(Number('1435775476910')+10));
+    sliceNames.push(String(Number(testSliceStart)+10));
     //sliceNames.push(String(Number(timeKey)+10));
     var base_url = 'https://gradientone-test.appspot.com/bscopedata/arduino/'; //Hard code
     //var base_url = 'https://gradientone-test.appspot.com/' + rawPathname; //not hard code
