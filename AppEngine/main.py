@@ -28,6 +28,7 @@ import appengine_config
 import decimate
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
+from string import maketrans
 
 
 
@@ -86,7 +87,6 @@ def root_mean_squared(test_data, test):
     rms = math.sqrt(z)
     return rms
 
-
 def root_mean_squared_ta(test_data, RMS_time_start, RMS_time_stop, sample_interval):
     "RMS measurement function that relies upon queries from test config and instrument data"
     RMS_time_start = float(RMS_time_start)
@@ -127,6 +127,44 @@ def convert_str_to_cha_list(string):
     cha_list =  [float(x) for x in cha_list]
     return cha_list
 
+def dropdown_creation():
+    key = 'instrumentsDB' 
+    dropdown = memcache.get(key)
+    if dropdown == None:
+        logging.error("BscopeData:get: query")
+        b = db.GqlQuery("""SELECT * FROM BscopeDB LIMIT 1""")
+        o = db.GqlQuery("""SELECT * FROM OscopeDB LIMIT 1""")
+        rows_b = list(b)
+        rows_o = list(o)
+        results_b = query_to_dict(rows_b)
+        results_o = query_to_dict(rows_o)
+        dropdown = []
+        if results_b != []: 
+            dropdown.append('BitScope')
+        if results_o != []:
+            dropdown.append('Tektronix')
+        memcache.set(key, dropdown)
+    return dropdown
+
+def create_psettings(data):
+    data = str(data[0]['config'])
+    data = data.split(',')
+    temp_list = []
+    for d in data[:5]:
+        temp_list.append(d)
+    temp_dict = {}
+    for item in temp_list[1:-1]:
+        item = item.split(':')
+        temp_dict[item[0].strip().strip('u').strip('\'')] = int((item[1].strip().strip('L')))
+    t = temp_list[0]
+    t = t.split(':')
+    del t[0]
+    temp_dict[t[0].strip().strip('{').strip('u').strip('\'')] = int((t[1].strip()))
+    t = temp_list[-1]
+    t = t.split(':')
+    temp_dict[t[0].strip().strip('u').strip('\'')] = int((t[1].strip().strip('}')))
+    return temp_dict
+    
 def getKey(row):
     return float(row.DTE)
 
@@ -755,40 +793,36 @@ class BscopeData(InstrumentDataHandler):
         memcache.set(key, to_save)
         db.put(to_save)
 
-def dropdown_creation():
-    key = 'instrumentsDB' 
-    dropdown = memcache.get(key)
-    if dropdown == None:
-        logging.error("BscopeData:get: query")
-        b = db.GqlQuery("""SELECT DISTINCT FROM BscopeDB LIMIT 1""")
-        o = db.GqlQuery("""SELECT DISTINCT FROM OscopeDB LIMIT 1""")
-        dropdown = []
-        if b != None:    
-            dropdown.append('BitScope')
-        if o != None:
-            dropdown.append('Tektronix')
-        memcache.set(key, dropdown)
-    return dropdown
-
 
 class SearchPage(InstrumentDataHandler):
     def get(self, name="", slicename="", start_tse=""):
         dropdown = dropdown_creation()
-        self.render('search.html', dropdown = dropdown, name = name, slicename = slicename, start_tse = start_tse)
+        self.render('search.html', dropdown = dropdown)
     def post(self):
         dropdown = dropdown_creation()
         name = self.request.get('name')
         start_tse = int(self.request.get('start_tse'))
         slicename = self.request.get('slicename')
         instrument = self.request.get('instrument')
+        config = self.request.get('config')
         if instrument == 'BitScope':
             instrument = BscopeDB.gql
         elif instrument == 'Tektronix':
             instrument = OscopeDB.gql
-        query = instrument("where name = :1 and start_tse =:2 and slicename =:3", name, start_tse, slicename)
-        s = list(query)
-        results = query_to_dict(s)
-        self.render('search.html', results = results, dropdown = dropdown, name = name, slicename = slicename, start_tse = start_tse )
+        #query = instrument("where name = :1 and start_tse =:2 and slicename =:3 and config =:4", name, start_tse, slicename, config)
+
+        results = set()
+               #summary.add((str(r.start_tse), str(r.name), str(r.config))) #make set to eliminate dupes
+        query=BscopeDB.all()
+        start_tse_query = query.filter("start_tse =",start_tse).run()
+        for i in start_tse_query:
+            results.add((str(i.start_tse), str(i.name)))
+        config_query = query.filter("config =",config).run()
+        for i in config_query:
+            results.add((str(i.start_tse), str(i.name)))
+        results = list(results)
+        print results
+        self.render('search.html', results = results, dropdown = dropdown, name = name, slicename = slicename, start_tse = start_tse, config = config )
 
 
 class TestAnalyzerPage(InstrumentDataHandler):
@@ -805,12 +839,10 @@ class TestAnalyzerPage(InstrumentDataHandler):
                 rows = list(rows)
                 memcache.set(key, rows)
             data = query_to_dict(rows)
-            z = data[0]['config']
-            z = ast.literal_eval(z)
-            sr = z['Sample_Rate(Hz)']
-            ns = z['Sample_Size']
+            config_settings = create_psettings(data)
             start_time = 0 #miliseconds
-            stop_time = ns/sr*1000 #miliseconds
+            stop_time = config_settings['Total_Slices'] * config_settings['Slice_Size(msec)'] * config_settings['Raw_msec_btw_samples']#miliseconds
+            si = config_settings['Raw_msec_btw_samples']
             self.render('testanalyzer.html', test_sample = start_tse, start_time = start_time, stop_time = stop_time)        
     def post(self, instrument="", name="", start_tse=""):
         if instrument == 'bscopedata':
@@ -824,13 +856,10 @@ class TestAnalyzerPage(InstrumentDataHandler):
                 rows = list(rows)
                 memcache.set(key, rows)
             data = query_to_dict(rows)
-            z = data[0]['config']
-            z = ast.literal_eval(z)
-            sr = z['Sample_Rate(Hz)']
-            ns = z['Sample_Size']
+            config_settings = create_psettings(data)
             start_time = 0 #miliseconds
-            stop_time = ns/sr*1000 #miliseconds
-            si = 1/sr
+            stop_time = config_settings['Total_Slices'] * config_settings['Slice_Size(msec)'] * config_settings['Raw_msec_btw_samples']#miliseconds
+            si = config_settings['Raw_msec_btw_samples']
             temp = []
             for item in data:
                 z = ast.literal_eval(item['cha'])
@@ -846,9 +875,18 @@ class TestLibraryPage(InstrumentDataHandler):
         start_tse_check = start_tse.split('.')
         start_tse = start_tse_check[0]
         if instrument == 'bscopedata' and start_tse_check[-1] == 'json':
+            key = 'psettings' + name + start_tse
+            psettings = memcache.get(key)
+            if psettings == None:
+                logging.error("BscopeData:get: query")
+                query = db.GqlQuery("""SELECT * FROM BscopeDB WHERE start_tse = :1 LIMIT 1""", int(start_tse))
+                rows = list(query)
+                data = query_to_dict(rows)
+                psettings = create_psettings(data)
+                memcache.set(key, psettings)
             raw = 'https://gradientone-test.appspot.com/bscopedata/' + name + '/' + start_tse
             dec = 'https://gradientone-test.appspot.com/dec/bscopedata/' + name + '/' + start_tse
-            links = {"raw_data_url":raw, "dec_data_url":dec} 
+            links = {"raw_data_url":raw, "dec_data_url":dec, 'p_settings':psettings}
             render_json(self, links) 
         elif instrument == 'oscopedata' and start_tse_check[-1] == 'json':
             print instrument, name, start_tse
@@ -863,18 +901,13 @@ class TestLibraryPage(InstrumentDataHandler):
             f = open(os.path.join('templates', 'testLibResults.html'))
             self.response.write((f.read()))
         else:
-            key = 'library' 
-            library = memcache.get(key)
-            if library == None:
-                logging.error("BscopeData:get: query")
-                query = db.Query(BscopeDB, projection=['start_tse', 'name'], distinct=True).order('-start_tse').fetch(limit = 10)
-                rows = list(query)
-                results_bscope = rows
-                query = db.Query(OscopeDB, projection=['start_tse', 'name'], distinct=True).order('-start_tse').fetch(limit = 10)
-                rows = list(query)
-                results_oscope = rows
-                library = results_bscope, results_oscope
-                memcache.set(key, library)
+            query = db.Query(BscopeDB, projection=['start_tse', 'name'], distinct=True).order('-start_tse').fetch(limit = 10)
+            rows = list(query)
+            results_bscope = rows
+            query = db.Query(OscopeDB, projection=['start_tse', 'name'], distinct=True).order('-start_tse').fetch(limit = 10)
+            rows = list(query)
+            results_oscope = rows
+            library = results_bscope, results_oscope
             results_bscope = library[0]
             results_oscope = library[1]
             self.render('testlibrary.html', results_bscope = results_bscope, results_oscope = results_oscope)
