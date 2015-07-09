@@ -193,7 +193,7 @@
 
                   <!--LOCAL AND LIVE VERSIONS-->
                 <!--<form method="post" action="https://gradientone-dev1.appspot.com/testconfiginput">-->
-                  <form method="post" action="http://localhost:18080/testconfiginput">
+                  <form id="testConfig" method="post" action="http://localhost:18080/testconfiginput">
 
             <!--TEST PLAN NAME-->
                     <div class="row configRow" style="margin-left:10px;">
@@ -426,10 +426,13 @@
     <script type="text/javascript">
     $(document).ready(function(){
         var $form = $('form');
-        $form.submit(function(){
-            $.post($(this).attr('action'), $(this).serialize(), function(response){
+        $("#testConfig").submit(function(){
+            $.post($(this).attr('action'),
+            $(this).serialize(),
+            function(response){
+            setTimeout(function () { window.location.reload(); }, 10)
             // do something here on success
-        },'json');
+            },'json');
       return false;
    });
 });
