@@ -21,7 +21,7 @@
           </div>
           <div id="navbar">
             <ul class="topmenu nav navbar-nav">
-              <li><a class="currentPage" href="index.html" style="color: rgb(124,175,46);">CANVAS</a></li>
+              <li><a class="currentPage" href="index.html">CANVAS</a></li>
               <li class="dots glyphicon glyphicon-option-vertical"></li>
               <li><a href="instruments.html">INSTRUMENTS</a></li>
               <li class="dots glyphicon glyphicon-option-vertical"></li>
@@ -96,18 +96,13 @@
           <br><br><br>
           <div class="row-md-7" id="dataDisplayBox">
             <div class="row-md-6;" id="resultsChartCSS">
-              <div id="rawChart" style="height: 450px; width: 600px;"></div>
               <div id="decChart" style="height: 200px; width: 600px;"></div>
+              <div id="rawChart" style="height: 450px; width: 600px;"></div>
             </div>
             <div class="row-md-3"  id="resultsTableCSS">
               <div id="rawTable" ></div>
             </div>
-          </div>
-          <div class="row" >
-            <div class="col-md-12">
-              <div id="decTable"></div>   
-            </div>
-          </div>    
+          </div>   
       </div>
     </div>
 
@@ -135,6 +130,7 @@
     var hZoom = 100;
     var hPosition = 0;
     $(".hPosKnob").knob({
+        'value':0,
         'min':-0.25,
         'max':0.25,
         'step':0.05,
@@ -155,6 +151,8 @@
 
  // load chart lib
     google.load('visualization', '1', {packages: ['corechart','table']});
+
+    var testInfo = [];
     var lastSlice = 1;
     var firstPoll = 0;
     var sliceNames = [];
@@ -183,9 +181,28 @@
     var decPathname = urlPath[urlPath.length - 3] + '/' + urlPath[urlPath.length - 2] + '/'  + urlPath[urlPath.length - 1];
     var rawPathname = urlPath[urlPath.length - 3] + '/' + urlPath[urlPath.length - 2] + '/';
     var timeKey = urlPath[urlPath.length - 1];
-
     console.log(urlPath);
     console.log(rawPathname);
+
+    //LOAD TEST INFO
+    function getTestInfo() {
+      json_url = 'https://gradientone-test.appspot.com/testlibrary/bscopedata/arduino/1436196757060.json';
+
+      $.ajax({
+          async: true,
+          url: json_url,            
+          dataType: 'json',
+       }).done(function (results) {
+        testInfo = results;
+        console.log('getTestInfo: testInfo = ', testInfo);
+       });
+       //console.log('getTestInfo: testInfo = ', testInfo);
+       //dec_json_url = testInfo[''];
+       //raw_json_url = testInfo{''};
+       var configInfo = testInfo['config'];
+       // should have first slice, number of slices, sample rate, milliseconds span by each slice 
+    };
+  getTestInfo();
 
     //DECIMATED DATA PLOT
     function fetchDecData(){
@@ -231,7 +248,7 @@
          for (i=0; i<decData.length; i++) {
            var num = i*decPointSpacing - offset;
            num = Math.ceil(num * 100) / 100;
-           console.log("fetchDecData:num=",num);
+           //console.log("fetchDecData:num=",num);
            data.addRow([
              num, 
              decData[i],
@@ -404,12 +421,12 @@
          hMax = range/2;
          hMin = (- width/2); 
        }else{
-         console.log('478: ELSE IS TRIGGERED');
+         //console.log('478: ELSE IS TRIGGERED');
          range = 0;
          width = (sampleSize/1000)*(100.0/hZoom);
          width = Math.ceil(width * 100) / 100;
-         console.log('Width for dials:',width);
-         console.log('doPoll: hPosition = ', hPosition);
+         //console.log('Width for dials:',width);
+         //console.log('doPoll: hPosition = ', hPosition);
 
 /*  Probably not needed
          //Ajust horizoontal dial step based on window size. Always step by 1/10 of window.
@@ -447,7 +464,7 @@
          //console.log('doPoll: hMin = ',hMin);
          chartOptions.hAxis.viewWindow.max = hMax;
          chartOptions.hAxis.viewWindow.min = hMin;
-         console.log("doPoll: chartOptions hAxis viewWindow = ", chartOptions.hAxis.viewWindow);
+         //console.log("doPoll: chartOptions hAxis viewWindow = ", chartOptions.hAxis.viewWindow);
        };
 
        //VIEW WINDOW POSITION
