@@ -414,8 +414,8 @@ class InstrumentsPage(InstrumentDataHandler):
 
 class TestPlanSummary(InstrumentDataHandler):
     "present to the user a list of all configured test plans"
-    def get(self, testplan_name=""):
-        if testplan_name:
+    def get(self, hardwarename="", testplan_name=""):
+        if hardwarename and testplan_name:
             rows = db.GqlQuery("SELECT * FROM TestDB WHERE testplan_name =:1", testplan_name)
             test_config = query_to_dict(rows)
             rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE testplan_name =:1", testplan_name)
@@ -539,7 +539,7 @@ class TestConfigInputPage(InstrumentDataHandler):
         for name in checkbox_names:
             self.is_checked(t,name)
         t.put()
-        self.redirect('/testplansummary')
+        self.redirect('/testplansummary/' + hardware_name)
 
 
 class TestConfigOutputPage(InstrumentDataHandler):
@@ -927,8 +927,8 @@ app = webapp2.WSGIApplication([
     ('/configoutput/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', ConfigOutputPage),
     ('/testconfiginput', TestConfigInputPage),
     ('/testconfigoutput/([a-zA-Z0-9-]+)', TestConfigOutputPage),
-    ('/testplansummary', TestPlanSummary),
     ('/testplansummary/([a-zA-Z0-9-]+)', TestPlanSummary),
+    ('/testplansummary/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', TestPlanSummary),
     ('/communitytests', CommunityTestsPage),
     ('/search', SearchPage),
     ('/testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)', TestCompletePage),
