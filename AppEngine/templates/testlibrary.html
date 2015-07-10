@@ -9,8 +9,43 @@
     <link rel="stylesheet" type="text/css" href="../static/css/custom.css">
     <link rel="stylesheet" type="text/css" href="../static/css/testLibrary.css">
     <link rel="stylesheet" type="text/css" href="../static/bootstrap/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="../static/js/addons/angular.min.js"></script>
   </head>
+  <script type="text/javascript">
+  function fetchTestLib(){
+      dec_json_url = 'http://gradientone-test.appspot.com/testlibrary.json';
+        $.ajax({
+          async: true,
+          url: dec_json_url,            
+          dataType: 'json',
+       }).done(function (results) {
+        var testArray = results;
+        var testTable = "<table>";
+
+        var date = new Date(testArray[0].start_tse);
+console.log('TSE time stamp:',testArray[0].start_tse)
+        var dateFormat = date.getDate();
+        console.log('date:',date.getFullYear());
+
+        for (i=0;i<=testArray.length-1;i++) {
+            testTable+="<tr class'resultsName'>" + testArray[i].testplan_name + " - " + "</tr>";
+            testTable+="<tr>" + Date(testArray[i].start_tse) + "</tr>";
+            testTable+="<br>";
+            testTable+="<a href='https://gradientone-test.appspot.com/testresults/" + testArray[i].testplan_name  + "'>results</a>";
+            testTable+="<br><br>";
+
+        testStart = testArray[i].start_tse;
+        console.log('fetchTestLib: test Lib = ', testStart);
+        };
+        testTable+="</table>";
+        document.getElementById("testTable").innerHTML = testTable;
+        console.log('testTable',testTable);
+        console.log('fetchTestLib: test array = ', testArray.length);
+        });
+      };
+    fetchTestLib();
+  </script>
 
   <body id="mainBackground">
     <div class="container">
@@ -41,20 +76,21 @@
     </div>
     <div class="col-md-12" id="testListBox">
       <h3 class="instType">BitScope</h3>
-       <h5 class="colTitle text-uppercase">Start Time <span style="margin-right: 400px"></span> Preview</h5>
+       <h5 class="colTitle text-uppercase">Test Name <span style="margin-right: 400px"></span> Preview</h5>
       <hr class="headerLine">
  
       <form method="post">
         <table>
-          <tr>
-          </tr>
+          <tr id="testTable" style="color:white;" class="text-capitalize"></tr>
 
+          <!--
           {% for r in results_bscope %}
             <p class="resultsName text-underline text-capitalize"> {{r.name}} -</p>
             <a class="resultsLink" href ="testlibrary/bscopedata/{{r.name}}/{{r.start_tse}}">{{ r.start_tse }}  </a> <span style="padding-left:100px"> <a class="resultsLink" href ="testanalyzer/bscopedata/{{r.name}}/{{r.start_tse}}">analyze</a>
 
           <br><br>   
           {% endfor %}
+          -->
         </table>
       </form>
     </div>
