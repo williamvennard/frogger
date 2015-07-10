@@ -87,24 +87,36 @@ def bscope_acq(config):
         tse = dt2ms(datetime.datetime.now())
         DATA = BL_Acquire()
         SAMPLE_SIZE = len(DATA)
+        MY_SAMPLE_INTERVAL = int(1/MY_RATE*1000) #interval between sample in msec
+        Total_Slices = SAMPLE_SIZE/SLICE_SIZE
         config_dict = {}
-        config_dict = set_v_for_k(config_dict, 'Link', BL_Name(0))
-        config_dict = set_v_for_k(config_dict, 'BitScope', (BL_Version(BL_VERSION_DEVICE), BL_ID()))
-        config_dict = set_v_for_k(config_dict, 'Channels', (BL_Count(BL_COUNT_ANALOG) + BL_Count(BL_COUNT_LOGIC), 
+        plot_dict = {}
+        inst_dict ={}
+        inst_dict = set_v_for_k(inst_dict, 'Link', BL_Name(0))
+        inst_dict = set_v_for_k(inst_dict, 'BitScope', (BL_Version(BL_VERSION_DEVICE), BL_ID()))
+        inst_dict = set_v_for_k(inst_dict, 'Channels', (BL_Count(BL_COUNT_ANALOG) + BL_Count(BL_COUNT_LOGIC), 
                                                            BL_Count(BL_COUNT_ANALOG),BL_Count(BL_COUNT_LOGIC)))
-        config_dict = set_v_for_k(config_dict, 'Library', (BL_Version(BL_VERSION_LIBRARY), BL_Version(BL_VERSION_BINDING))) 
-        config_dict = set_v_for_k(config_dict, 'Sample_Rate(Hz)', MY_RATE)
-        config_dict = set_v_for_k(config_dict, 'Sample_Size', SAMPLE_SIZE)
-        config_dict = set_v_for_k(config_dict, 'Slice_Size(msec)', SLICE_SIZE)
+        inst_dict = set_v_for_k(inst_dict, 'Library', (BL_Version(BL_VERSION_LIBRARY), BL_Version(BL_VERSION_BINDING))) 
+        inst_dict = set_v_for_k(inst_dict, 'Sample_Rate_Hz', MY_RATE)
+        inst_dict = set_v_for_k(inst_dict, 'Sample_Size', SAMPLE_SIZE)
+        plot_dict = set_v_for_k(plot_dict, 'Total_Slices', Total_Slices)
+        plot_dict = set_v_for_k(plot_dict, 'Slice_Size_msec', SLICE_SIZE)
+        plot_dict = set_v_for_k(plot_dict, 'Raw_msec_btw_samples', MY_SAMPLE_INTERVAL)
+        plot_dict = set_v_for_k(plot_dict, 'Start_TSE', str(roundup(tse)))
+        config_dict = set_v_for_k(config_dict,'Plot_Settings', plot_dict)
+        config_dict = set_v_for_k(config_dict,'Inst_Settings', inst_dict)
         acq_dict = set_v_for_k(acq_dict, 'data', DATA) 
-        acq_dict = set_v_for_k(acq_dict, 'Config', config_dict)    
-        acq_dict = set_v_for_k(acq_dict, 'Start_TSE', roundup(tse))
+        acq_dict = set_v_for_k(acq_dict, 'i_settings', inst_dict)    
+        acq_dict = set_v_for_k(acq_dict, 'p_settings', plot_dict)
+        acq_dict = set_v_for_k(acq_dict, 'Start_TSE', (roundup(tse)))
+        print acq_dict
         BL_Close()
         print "Finished: Library closed, resources released."    
         bits = BitScope(acq_dict)
         bits.transmitdec()
         bits.transmitraw()
         #bits.transmitblob()
+        bits.testcomplete()
     else:
         print "  FAILED: device not found (check your probe file)."
     

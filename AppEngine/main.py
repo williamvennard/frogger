@@ -273,11 +273,16 @@ def TestResultsDB_key(name = 'default'):
 
 class TestResultsDB(DictModel):
     testplan_name = db.StringProperty(required = False)
-    plot_settings = db.StringProperty(required = False)
+    Total_Slices = db.IntegerProperty(required = False)
+    Dec_msec_btw_samples = db.IntegerProperty(required = False)
+    Raw_msec_btw_samples = db.IntegerProperty(required = False)
+    Slice_Size_msec = db.IntegerProperty(required = False)
     dec_data_url = db.StringProperty(required = False)
     raw_data_url = db.StringProperty(required = False)
     start_tse = db.IntegerProperty(required = False)
     test_complete = db.IntegerProperty(required = False)
+
+{u'Total_Slices': 50, u'Start_TSE': u'1436485178340', u'Dec_msec_btw_samples': 10, u'Raw_msec_btw_samples': 1, u'Slice_Size_msec': 10}
 
 def ConfigDB_key(name = 'default'):
     return db.Key.from_path('company_nickname', name)
@@ -426,16 +431,18 @@ class TestPlanSummary(InstrumentDataHandler):
             rows = db.GqlQuery("SELECT * FROM TestDB WHERE commence_test =:1", True)
             rows = list(rows)            
             test_config = query_to_dict(rows)
-            rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE test_plan =:1", True)
+            rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE test_plan =:1 and hardware_name =:2", True, hardwarename)
             rows = list(rows)
             inst_config = query_to_dict(rows)
             for t in test_config:
-                #print t['testplan_name']
                 for i in inst_config: 
-                    #print i['testplan_name']
                     if i['testplan_name'] == t['testplan_name']:
                         t['inst_config'] = i
-            render_json(self, test_config)
+            rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE start_measurement =:1 and hardware_name =:2", True, hardwarename)
+            rows = list(rows)
+            meas_config = query_to_dict(rows)
+            config = {'test_config':test_config, 'meas_config':meas_config}
+            render_json(self, config)
 
 
 
@@ -694,7 +701,10 @@ class TestResultsData(InstrumentDataHandler):
         testresults_content = json.loads(self.request.body)
         to_save = []
         r = TestResultsDB(parent = TestResultsDB_key(testplan_name), testplan_name=testplan_name,
-                    plot_settings=str(testresults_content['p_settings']),
+                    Total_Slices=(testresults_content['p_settings']['Total_Slices']),
+                    Dec_msec_btw_samples=(testresults_content['p_settings']['Dec_msec_btw_samples']),
+                    Raw_msec_btw_samples=(testresults_content['p_settings']['Raw_msec_btw_samples']),
+                    Slice_Size_msec=(testresults_content['p_settings']['Slice_Size_msec']),
                     dec_data_url=str(testresults_content['dec_data_url']),
                     raw_data_url=str(testresults_content['raw_data_url']),
                     start_tse=(testresults_content['start_tse'])
@@ -866,7 +876,7 @@ class TestCompletePage(InstrumentDataHandler):
         stop_tse = test_complete_content['stop_tse']
         result = db.GqlQuery("SELECT * FROM TestResultsDB WHERE testplan_name =:1", testplan_name)
         for r in result:
-            r.stop_tse = stop_tse
+            r.test_complete = stop_tse
             r.put()   
         result = db.GqlQuery("SELECT * FROM TestDB WHERE testplan_name =:1", testplan_name)
         for r in result:
