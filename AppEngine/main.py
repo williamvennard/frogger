@@ -216,9 +216,6 @@ class UserDB(DictModel):
     admin = db.BooleanProperty(required = False)
 
 
-def input_key(name = 'default'):
-    return db.Key.from_path('inputs', name)
-
 class FileBlob(db.Model):
     blob_key = blobstore.BlobReferenceProperty(required=True)
 
@@ -252,23 +249,15 @@ class FileUploadFailure(InstrumentDataHandler):
         self.response.out.write("File Upload Failed")
 
 
-class Input(db.Model):
-    frequency = db.FloatProperty(required = True)
-    S11dB = db.FloatProperty(required = True)
-    S12dB = db.FloatProperty(required = True)
-    description = db.StringProperty(required = True)
-    created = db.DateTimeProperty(auto_now_add = True)
-
-
 def TestDB_key(name = 'default'):
     return db.Key.from_path('tests', name)
 
 class TestDB(DictModel):
-    testplan_name = db.StringProperty(required = True)
-    company_nickname = db.StringProperty(required = True)
-    author = db.StringProperty(required = True)
-    date_created = db.DateTimeProperty(auto_now_add = True)
-    instrument_type = db.StringProperty(required = True)
+    testplan_name = db.StringProperty(required = False)
+    company_nickname = db.StringProperty(required = False)
+    author = db.StringProperty(required = False)
+    date_created = db.DateTimeProperty(auto_now_add = False)
+    instrument_type = db.StringProperty(required = False)
     measurement_P2P = db.BooleanProperty(required = False)
     measurement_Peak = db.BooleanProperty(required = False)
     measurement_RMS = db.BooleanProperty(required = False)
@@ -278,6 +267,17 @@ class TestDB(DictModel):
     public = db.BooleanProperty(required = False)    
     commence_test = db.BooleanProperty(required = False)
 
+
+def TestResultsDB_key(name = 'default'):
+    return db.Key.from_path('testresults', name)
+
+class TestResultsDB(DictModel):
+    testplan_name = db.StringProperty(required = False)
+    plot_settings = db.StringProperty(required = False)
+    dec_data_url = db.StringProperty(required = False)
+    raw_data_url = db.StringProperty(required = False)
+    start_tse = db.IntegerProperty(required = False)
+    test_complete = db.IntegerProperty(required = False)
 
 def ConfigDB_key(name = 'default'):
     return db.Key.from_path('company_nickname', name)
@@ -302,6 +302,9 @@ class ConfigDB(DictModel):
     sample_rate = db.IntegerProperty(required = False)
     number_of_samples = db.IntegerProperty(required = False)
     start_measurement = db.BooleanProperty(required = False)
+    test_plan = db.BooleanProperty(required = True)
+    testplan_name = db.StringProperty(required = False)
+
 
 
 def OscopeDB_key(name = 'default'):
@@ -320,32 +323,11 @@ def BscopeDB_key(name = 'default'):
 
 class BscopeDB(DictModel):
     name = db.StringProperty(required = True)
-    config = db.StringProperty(required = True)
+    i_settings = db.StringProperty(required = True)
+    p_settings = db.StringProperty(required = True)
     slicename = db.StringProperty(required = True)
     cha = db.TextProperty(required = True)
     start_tse = db.IntegerProperty(required = True)
-
-
-def VNADB_key(name):
-    return db.Key.from_path('vna', name)
-
-class VNADB(DictModel):
-    name = db.StringProperty(required = True)
-    config = db.StringProperty(required = True)
-    #slicename = db.StringProperty(required = True)
-    FREQ = db.FloatProperty(required = True)
-    created_date_time = db.DateTimeProperty(auto_now_add = True)
-    #End_Date_Time = db.DateTimeProperty(required = False)
-    S11dB = db.FloatProperty(required = True)
-    S12dB = db.FloatProperty(required = True)
-    S21dB = db.FloatProperty(required = True)
-    S22dB = db.FloatProperty(required = True)
-    S11ph = db.FloatProperty(required = True)
-    S12ph = db.FloatProperty(required = True)
-    S21ph = db.FloatProperty(required = True)
-    S22ph = db.FloatProperty(required = True)
-    header = db.StringProperty(required = True)
-    options = db.StringProperty(required = True)
 
 
 class MainPage(InstrumentDataHandler):
@@ -434,17 +416,27 @@ class TestPlanSummary(InstrumentDataHandler):
     "present to the user a list of all configured test plans"
     def get(self, testplan_name=""):
         if testplan_name:
-            key = testplan_name
-            rows = memcache.get(key)
-            if rows is None:
-                rows = db.GqlQuery("SELECT * FROM TestDB WHERE testplan_name =:1", testplan_name)
-            memcache.set(key, rows)
-            test_config = [r.to_dict() for r in rows]
-            memcache.set(key, rows)
-            render_json(self, test_config)
+            rows = db.GqlQuery("SELECT * FROM TestDB WHERE testplan_name =:1", testplan_name)
+            test_config = query_to_dict(rows)
+            rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE testplan_name =:1", testplan_name)
+            inst_config = query_to_dict(rows)
+            config = {'test_config':test_config, 'inst_config':inst_config}
+            render_json(self, config)
         else:
-            tests = db.GqlQuery("SELECT * FROM TestDB")
-            self.render('testplansummary.html', tests = tests)
+            rows = db.GqlQuery("SELECT * FROM TestDB WHERE commence_test =:1", True)
+            rows = list(rows)            
+            test_config = query_to_dict(rows)
+            rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE test_plan =:1", True)
+            rows = list(rows)
+            inst_config = query_to_dict(rows)
+            for t in test_config:
+                #print t['testplan_name']
+                for i in inst_config: 
+                    #print i['testplan_name']
+                    if i['testplan_name'] == t['testplan_name']:
+                        t['inst_config'] = i
+            render_json(self, test_config)
+
 
 
 class TestResultsPage(InstrumentDataHandler):
@@ -513,14 +505,32 @@ class TestConfigInputPage(InstrumentDataHandler):
             setattr(t,param,False)
     def post(self):
         testplan_name = self.request.get('testplan_name')
+        company_nickname = self.request.get('company_nickname')
+        author = self.request.get('author')
+        instrument_type = self.request.get('instrument_type')
+        instrument_name = self.request.get('instrument_name')
+        hardware_name = self.request.get('hardware_name')
+        RMS_time_start = float(self.request.get('RMS_time_start'))
+        RMS_time_stop = float(self.request.get('RMS_time_stop'))
+        sample_rate = int(self.request.get('sample_rate'))
+        number_of_samples = int(self.request.get('number_of_samples'))
         t = TestDB(parent = TestDB_key(testplan_name), 
             testplan_name = testplan_name, 
-            company_nickname = self.request.get('company_nickname'), 
-            author = self.request.get('author'),
-            instrument_type = self.request.get('instrument_type'),
-            RMS_time_start = float(self.request.get('RMS_time_start')),
-            RMS_time_stop = float(self.request.get('RMS_time_stop')),)
+            company_nickname = company_nickname, 
+            author = author,
+            instrument_type = instrument_type,
+            RMS_time_start = RMS_time_start,
+            RMS_time_stop = RMS_time_stop,)
         t.put()  # might help with making plan show up on list?
+        c = ConfigDB(parent = ConfigDB_key(instrument_name), 
+            company_nickname = company_nickname, author = author,
+            hardware_name = hardware_name, instrument_type = instrument_type,
+            instrument_name = instrument_name,             
+            sample_rate = sample_rate, number_of_samples = number_of_samples,
+            test_plan = True,
+            testplan_name = testplan_name,
+            )
+        c.put() 
         key = testplan_name
         memcache.delete(key)
         checkbox_names = ["measurement_P2P", "measurement_Peak",
@@ -561,13 +571,14 @@ class BscopeConfigInputPage(InstrumentDataHandler):
         hardware_name = self.request.get('hardware_name')
         instrument_type = self.request.get('instrument_type')
         instrument_name = self.request.get('instrument_name')
-        sample_rate = float(self.request.get('sample_rate'))
-        number_of_samples = float(self.request.get('number_of_samples'))
+        sample_rate = int(self.request.get('sample_rate'))
+        number_of_samples = int(self.request.get('number_of_samples'))
         c = ConfigDB(parent = ConfigDB_key(instrument_name), 
             company_nickname = company_nickname, author = author,
             hardware_name = hardware_name, instrument_type = instrument_type,
             instrument_name = instrument_name,             
             sample_rate = sample_rate, number_of_samples = number_of_samples,
+            test_plan = False,
             )
         c.put() 
         checkbox_names = ["start_measurement"]
@@ -610,36 +621,6 @@ class ConfigInputPage(InstrumentDataHandler):
         memcache.delete(key)
         self.redirect('/configoutput/' + (author + '/' + instrument_type + '/' + instrument_name))
 
-
-class VNAConfigInputPage(InstrumentDataHandler):
-    def get(self):
-        #if not self.authcheck():
-        #    return
-        self.render('vnaconfiginput.html')
-    def post(self):
-        author = author_creation()
-        company_nickname = self.request.get('company_nickname')
-        hardware_name = self.request.get('hardware_name')
-        instrument_type = self.request.get('instrument_type')
-        instrument_name = self.request.get('instrument_name')
-        #frequency_center = float(self.request.get('frequency_center'))
-        #frequency_span = float(self.request.get('frequency_span'))
-        frequency_start = float(self.request.get('frequency_start'))
-        frequency_stop = float(self.request.get('frequency_stop'))
-        power = float(self.request.get('power'))
-        c = ConfigDB(parent = ConfigDB_key(instrument_name), 
-            company_nickname = company_nickname, author = author,
-            hardware_name = hardware_name, instrument_type = instrument_type,
-            instrument_name = instrument_name, 
-            #frequency_center = frequency_center, frequency_span = frequency_span, 
-            frequency_start = frequency_start, frequency_stop = frequency_stop,
-            power = power)
-        c.put() 
-        key = 'author & instrument_type & instrument_name = ', author + instrument_type + instrument_name
-        memcache.delete(key)
-        redirect_url = author + '/' + instrument_type + '/' + instrument_name
-        self.redirect('/configoutput/' + redirect_url)
-        
    
 class ConfigOutputPage(InstrumentDataHandler):
     def get(self, author="", instrument_type="", instrument_name=""):
@@ -652,77 +633,6 @@ class ConfigOutputPage(InstrumentDataHandler):
             memcache.set(key, configs)
         configs_out = [c.to_dict() for c in configs]
         render_json(self, configs_out) 
-
-
-class InputPage(InstrumentDataHandler):
-    def get(self):
-        #if not self.authcheck():
-        #    return  # redirect to login later?
-        self.render("front.html")
-    def post(self):
-        #if not self.authcheck():
-        #    return  # redirect to login later?
-        description = self.request.get("description")
-        jsoninput = self.request.get("jsoninput")
-        decoded = json.loads(jsoninput)
-        new_decoded = {}
-        for number_key, value_dict in decoded.iteritems():
-            sub_dict = {}
-            for value_key, value in value_dict.iteritems():
-                sub_dict[value_key] = float(value)
-            new_decoded[float(number_key)] = sub_dict
-        for k in new_decoded:
-            frequency = new_decoded[k]['FREQ']
-            S11dB = new_decoded[k]['dB(S11)']
-            S12dB = new_decoded[k]['dB(S12)']
-            i = Input(parent = input_key(description), 
-                frequency = frequency, S11dB = S11dB, 
-                S12dB = S12dB, description = description)
-            i.put()   
-        self.redirect('/data/' + description)
-        
-
-class VNAData(InstrumentDataHandler):
-    def get(self,name="", slicename=""):
-        "retrieve Vector Network Analzyer data by insrument name"
-        key = 'vna' + name + slicename
-        rows = memcache.get(key)
-        if rows is None:
-            logging.error("VNA:get: query")
-            rows = db.GqlQuery("""SELECT * FROM VNADB WHERE 
-                                name =:1 AND slicename =:2 
-                                ORDER BY TIME ASC""", 
-                                name, slicename)
-            rows = list(rows)
-            rows = sorted(rows, key=getKey)
-            memcache.set(key, rows)
-        render_json(self, rows)
-    def post(self, name=""):
-        "store vector network analzyer data by name"
-        start_time = time.time() 
-        vna_content = json.loads(self.request.body)
-        vna_data = vna_content['data']
-        vna_options = vna_content['options']
-        vna_header = vna_content['header']
-        vna_config = vna_content['config']
-        keys = list(vna_data.keys()) 
-        to_save = []
-        for k in keys[:50]:
-                r = VNADB(parent = VNADB_key(name), name=name,
-                    FREQ = float(vna_data[k]['FREQ']),
-                    S11dB = float(vna_data[k]['dB(S11)']),
-                    S12dB = float(vna_data[k]['dB(S12)']),
-                    S21dB = float(vna_data[k]['dB(S21)']),
-                    S22dB = float(vna_data[k]['dB(S22)']),
-                    S11ph = float(vna_data[k]['PHS(S11)']),
-                    S12ph = float(vna_data[k]['PHS(S12)']),
-                    S21ph = float(vna_data[k]['PHS(S21)']),
-                    S22ph = float(vna_data[k]['PHS(S22)']),
-                    config = str(vna_config).strip('[]'),
-                    header = str(vna_header).strip('[]'),
-                    options = str(vna_options).strip('[]'),)
-                to_save.append(r) 
-        db.put(to_save)
 
 
 class OscopeData(InstrumentDataHandler):
@@ -759,6 +669,41 @@ class OscopeData(InstrumentDataHandler):
         db.put(to_save)
 
 
+class TestResultsData(InstrumentDataHandler):
+
+    def get(self,testplan_name="",start_tse=""):
+        "retrieve BitScope data by intstrument name and time slice name"
+        #if not self.authcheck():
+        #    return
+        key = 'testresults' + testplan_name + start_tse
+        rows = memcache.get(key)
+        if rows is None:
+            logging.error("BscopeData:get: query")
+            rows = db.GqlQuery("""SELECT * FROM TestResultsDB WHERE testplan_name =:1
+                            AND start_tse = :2""", testplan_name, start_tse)  
+            rows = list(rows)
+            memcache.set(key, rows)
+        data = query_to_dict(rows)
+        output = {"data":data}
+        render_json(self, output)
+
+    def post(self,testplan_name="",start_tse=""):
+        "store data by intstrument name and time slice name"
+        key = 'testresults' + testplan_name + start_tse
+        print 'test plan raw post handler'
+        testresults_content = json.loads(self.request.body)
+        to_save = []
+        r = TestResultsDB(parent = TestResultsDB_key(testplan_name), testplan_name=testplan_name,
+                    plot_settings=str(testresults_content['p_settings']),
+                    dec_data_url=str(testresults_content['dec_data_url']),
+                    raw_data_url=str(testresults_content['raw_data_url']),
+                    start_tse=(testresults_content['start_tse'])
+                    )
+        to_save.append(r) 
+        memcache.set(key, to_save)
+        db.put(to_save)
+
+
 class BscopeData(InstrumentDataHandler):
     def get(self,name="",slicename=""):
         "retrieve BitScope data by intstrument name and time slice name"
@@ -785,7 +730,8 @@ class BscopeData(InstrumentDataHandler):
         to_save = []
         r = BscopeDB(parent = BscopeDB_key(name), name=name,
                          slicename=slicename,
-                         config=str(bscope_content['config']),
+                         p_settings=str(bscope_content['p_settings']),
+                         i_settings=str(bscope_content['i_settings']),
                          cha=(bscope_content['cha']),
                          start_tse=(bscope_content['start_tse'])
                          )
@@ -882,7 +828,7 @@ class TestLibraryPage(InstrumentDataHandler):
                 query = db.GqlQuery("""SELECT * FROM BscopeDB WHERE start_tse = :1 LIMIT 1""", int(start_tse))
                 rows = list(query)
                 data = query_to_dict(rows)
-                psettings = create_psettings(data)
+                psettings = data[0]['p_settings']
                 memcache.set(key, psettings)
             raw = 'https://gradientone-test.appspot.com/bscopedata/' + name + '/' + start_tse
             dec = 'https://gradientone-test.appspot.com/dec/bscopedata/' + name + '/' + start_tse
@@ -913,6 +859,29 @@ class TestLibraryPage(InstrumentDataHandler):
             self.render('testlibrary.html', results_bscope = results_bscope, results_oscope = results_oscope)
 
 
+class TestCompletePage(InstrumentDataHandler):
+    def post(self, testplan_name="", stop_tse=""):
+        test_complete_content = json.loads(self.request.body)
+        testplan_name = test_complete_content['testplan_name']
+        stop_tse = test_complete_content['stop_tse']
+        result = db.GqlQuery("SELECT * FROM TestResultsDB WHERE testplan_name =:1", testplan_name)
+        for r in result:
+            r.stop_tse = stop_tse
+            r.put()   
+        result = db.GqlQuery("SELECT * FROM TestDB WHERE testplan_name =:1", testplan_name)
+        for r in result:
+            r.commence_test = False
+            r.put()
+
+
+class NewTestLibraryPage(InstrumentDataHandler):
+    def get(self):
+        rows = db.GqlQuery("SELECT * FROM TestResultsDB")
+        rows = list(rows)            
+        test_results = query_to_dict(rows)
+        render_json(self, test_results)
+
+
 class BscopeDataDec(InstrumentDataHandler):
     def get(self,name="",start_tse=""):
         "retrieve decimated BitScope data by intstrument name and time slice name"
@@ -928,7 +897,7 @@ class BscopeDataDec(InstrumentDataHandler):
             rows = list(rows)
             data = query_to_dict(rows)
             test_results = create_decimation(data)
-            bscope_payload = {'config':data[0]['config'],'slicename':data[0]['slicename'],'cha':test_results, 'start_tse':data[0]['start_tse']}
+            bscope_payload = {'i_settings':data[0]['i_settings'], 'p_settings':data[0]['p_settings'] ,'slicename':data[0]['slicename'],'cha':test_results, 'start_tse':data[0]['start_tse']}
             memcache.set(key, bscope_payload)
             render_json(self, bscope_payload)
         else:
@@ -947,14 +916,12 @@ class BscopeDataDec(InstrumentDataHandler):
 app = webapp2.WSGIApplication([
     ('/', MainPage),
     ('/help', MainPage),
-    ('/input', InputPage),
     ('/adduser', AdduserPage),
     ('/listusers', ListUsersPage),
     ('/instruments', InstrumentsPage),
     ('/instruments/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', InstrumentsPage),
     ('/instruments/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+.json)', InstrumentsPage),
     ('/configinput', ConfigInputPage),
-    ('/vnaconfiginput', VNAConfigInputPage),
     ('/bscopeconfiginput', BscopeConfigInputPage),
     ('/configoutput/([a-zA-Z0-9-]+)', ConfigOutputPage),
     ('/configoutput/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', ConfigOutputPage),
@@ -964,20 +931,22 @@ app = webapp2.WSGIApplication([
     ('/testplansummary/([a-zA-Z0-9-]+)', TestPlanSummary),
     ('/communitytests', CommunityTestsPage),
     ('/search', SearchPage),
+    ('/testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)', TestCompletePage),
     ('/testresults', TestResultsPage),
     ('/testresults/([a-zA-Z0-9-]+)', TestResultsPage),
     ('/testresults/([a-zA-Z0-9-]+.json)', TestResultsPage),
+    ('/testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)', TestResultsData),
     ('/testlibrary', TestLibraryPage),
+    ('/testlibrary.json', NewTestLibraryPage),
     ('/testlibrary/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', TestLibraryPage),
     ('/testlibrary/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+.json)', TestLibraryPage),
     ('/testanalyzer/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', TestAnalyzerPage),
-    ('/vnadata/([a-zA-Z0-9-]+)', VNAData),
     ('/oscopedata/([a-zA-Z0-9-]+)', OscopeData),
     ('/oscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)', OscopeData),
     ('/bscopedata/([a-zA-Z0-9-]+)', BscopeData),
     ('/bscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)', BscopeData),
-    ('/dec/bscopedata/([a-zA-Z0-9-]+)', BscopeDataDec),
-    ('/dec/bscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)', BscopeDataDec),
+    ('/bscopedata/dec/([a-zA-Z0-9-]+)', BscopeDataDec),
+    ('/bscopedata/dec/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)', BscopeDataDec),
     ('/upload/geturl', UploadURLGenerator),
     ('/upload/upload_file', FileUploadHandler),
     ('/upload/success',FileUploadSuccess),
