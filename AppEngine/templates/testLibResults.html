@@ -121,7 +121,6 @@
     </div>
 
  <script type="text/javascript">
-
     //VERTICAL KNOBS
     var vZoom = 100;
     var vPosition = 0;
@@ -129,7 +128,7 @@
         'release' : function (vPos) { 
           //console.log('knob H pos value:',hPos);  
           vPosition = vPos;
-          doPoll();
+          moveWindow();
       },
     }); 
 
@@ -137,17 +136,21 @@
       'release' : function (vRange) { 
          //console.log('knob H value:',hRange);
          vZoom = vRange;
-         doPoll();
+         moveWindow();
       },
     }); 
 //HORIZONTAL KNOBS
     var hZoom = 100;
     var hPosition = 0;
     $(".hPosKnob").knob({
+        'value':0,
+        'min':-0.25,
+        'max':0.25,
+        'step':0.05,
         'release' : function (hPos) { 
           //console.log('knob H pos value:',hPos);  
           hPosition = hPos;
-          doPoll();
+          moveWindow();
       },
     }); 
 
@@ -155,390 +158,204 @@
       'release' : function (hRange) { 
          //console.log('knob H value:',hRange);
          hZoom = hRange;
-         doPoll();
+         moveWindow();
       },
     }); 
 
  // load chart lib
     google.load('visualization', '1', {packages: ['corechart','table']});
-       var doPollCounter = 0;
-       var sliceNames = [];
-       var resultsCache = [];
-       var autoMaxPosition = 0;
-       var autoMinPosition = 0;
-       var hMax = 0;
-       var hMin = 0;
-       //var chartOptions = {};
-       var data = [];
-       var rawTime = [];
-       var sliceBuild = 0;
-       var endSlice = 0;
-       var numPages = 0;
-       var deltaFromStart = 0;
-       var sampleSize = 0;
-       var range = 0;
-       var controlGatherData = 0;
-       var center = 0;
-       var width = 0;
-       var rangeArray = [];
 
-      //LOADING URL
-          var urlPath = window.location.pathname.split( '/' );
-          var decPathname = urlPath[urlPath.length - 3] + '/' + urlPath[urlPath.length - 2] + '/'  + urlPath[urlPath.length - 1];
-          var rawPathname = urlPath[urlPath.length - 3] + '/' + urlPath[urlPath.length - 2] + '/';
-          var timeKey = urlPath[urlPath.length - 1];
+    var testInfo = [];
+    var sliceNames = [];
+    var resultsCache = [];
+    var hMax = 0;
+    var hMin = 0;
+    var rawChartOptions = {};
+    var numPages = 0;
+    var range = 0;
+    var decPointSpacing;
+    var decOffset;
+    var base_url;
+    var dec_url;
+    var testSliceStart;
+    var rawWidth;
+    var test_info_url;
+    
+    //LOADING URL
+    test_info_url = window.location.pathname + '.json';
+    console.log(test_info_url);
 
-          console.log(urlPath);
-          console.log(rawPathname);
+    function getTestInfo() {
 
-       //DECIMATED DATA PLOT
-       function fetchDecData(){
-          dec_base_url = 'https://gradientone-test.appspot.com/dec/';
-          //dec_urlPath = 'bscopedata/arduino/1435775476910';
-          dec_urlPath = decPathname;
-          dec_json_url = dec_base_url + dec_urlPath;
-          $.ajax({
-             async: true,
-             url: dec_json_url,            
-             dataType: 'json',
-          }).done(function (results) {
-             //console.log("fetchDecData: json_url =", json_url);
-            var decData = results.cha;
-             //console.log("results:", decData);
-            //console.log('decData Test:',decData);
-            var config = results.config;
-            var cleanConfig = config.substr(1, config.length-2);
-            var configArray = cleanConfig.split(', ');
+      //var test_info_url = 'https://gradientone-test.appspot.com/testlibrary/acme/lab/1436574830850.json';
+      $.ajax({
+          async: true,
+          url: test_info_url,
+          dataType: 'json',
+       }).done(function (results) {
+        testInfo = results[0];
 
-            var sampleSize = configArray[7].split(': ')[1];
-            var sampleRate = configArray[configArray.length-1].split(': ')[1];
-            //console.log('Config:',configArray);
-            
+        //URLS DEC/RAW
+        dec_url = testInfo.dec_data_url;
+        raw_urlPath = testInfo.raw_data_url;
+        //Test Info DEC/RAW
+        testSliceStart = testInfo.start_tse;    
+        decPointSpacing = (testInfo.Dec_msec_btw_samples)/1000;    
+        numPages = testInfo.Total_Slices;
+        rawPointSpacing = (testInfo.Raw_msec_btw_samples)/1000;
+        sliceSize = testInfo.Slice_Size_msec;
 
-            var decPointSpacing = (1/Number(sampleRate))*10;
-            var offSet = (sampleSize/sampleRate)/2;
+        rawUrlSplit = raw_urlPath.split(testSliceStart);
+        base_url = rawUrlSplit[0];
+        sliceEnd = (Number(testSliceStart) + (numPages*sliceSize))-10;
+        decOffset = (((Number(numPages) * Number(sliceSize))/10)*decPointSpacing)/2;
+        rawOffset = Number(testSliceStart) + ((Number(numPages) * Number(sliceSize))/2);
+        rawWidth = (Number(numPages) *Number(sliceSize))*rawPointSpacing;
 
-            //console.log('dec point spacing should be .01:',decPointSpacing);
-            //console.log('off set = ',offSet);
-                           //var configOptions = rawData[0].config;
-               //console.log('config options: ',configOptions);
-              // var formatConfig = configOptions.substr(1, configOptions.length-2);
-              // var configArray = formatConfig.split(', ');
-                           //sampleSize = Number(configArray[7].split(': ')[1]);
-              // var sampleRate = configArray[configArray.length-1].split(': ')[1];
-
-          data = new google.visualization.DataTable();
-            data.addColumn('number', 'Time');
-            data.addColumn('number', 'Ch1');
-
-            //GETING DATA
-            for (i=0; i<decData.length; i++) {
-              data.addRow([
-                (i*decPointSpacing - offSet), 
-                decData[i],
-                ]);
-            };
-            //console.log('Data:',data);  
-          //var dataTest = data;
-              //console.log('DataTest:',dataTest);
-        options = {
-            title: '',
-            titleTextStyle: {color:'lightgray', fontSize: 18, fontName: 'NexaLight'},
-            legend: {alignment:'center', textStyle:{color:'lightgray'}},
-            hAxis: {title: 'Time(sec)',titleTextStyle:{color:'lightgray', fontName: 'NexaLight'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'none', count: 5},viewWindowMode:'explicit'},
-            vAxis: {title: '', titleTextStyle:{color:'lightgray'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'none', count: 0}, format: '##.###', viewWindowMode:'explicit'},
-            backgroundColor: {fill:'none', stroke: 'black', strokeWidth: 0,},                 
-            colors: ['rgb(2,255,253)','rgb(239,253,146)'],
-            lineWidth: 2,
-            curveType: 'function',
-            crosshair: {trigger: 'both', selected:{opacity: 0.8}, focused:{opacity:0.8}},
+        for (msec = Number(testSliceStart); msec <= Number(sliceEnd);msec += 10) {
+          name = String(msec);
+          if ($.inArray(name, sliceNames) == -1) {
+            sliceNames.push(name);
           };
-         //DRAW CHART
-            var chart = new google.visualization.LineChart($('#decChart').get(0));      
-            chart.draw(data, options);
-         //DRAW TABLE
-            var table = new google.visualization.Table($('#decTable').get(0));
-            table.draw(data); 
-          });
-       };
-
-       //google.load("visualization", "1", {packages:["corechart"]});
-       google.setOnLoadCallback(fetchDecData);
-
-//RAW DATA PLOT
-       function fetchData(base_url,sliceName,use_async){
-          json_url = base_url + sliceName;
-          $.ajax({
-             async: use_async,
-             url: json_url,            
-             dataType: 'json',
-          }).done(function (results) {
-             //console.log("fetchData: json_url =", json_url);
-             //console.log("fetchData: sliceName =", sliceName);
-             //console.log("fetchData: results =", results);
-             resultsCache[sliceName] = results;
-             //console.log("61:resultsCache[sliceName] =", resultsCache[sliceName]);
-          })  // need error handler
-       };
-
-       function doPoll(){
-          doPollCounter++;
-          var data = new google.visualization.DataTable();
-          data.addColumn('number', 'Time');
-          data.addColumn('number', 'Ch1');
-
-          //var startTime = Date.now();
-     
-          function gatherData(base_url,sliceNames,first,last){
-            var sliceName = sliceNames[first];
-            if (!(sliceName in resultsCache)) {
-                 json_url = base_url + sliceName;
-                 //console.log("gatherData: cache miss: json_url =", json_url);
-                 fetchData(base_url,sliceName,false);
-               };
-            var gatheredResults = resultsCache[sliceName];
-            var firstRow = gatheredResults['data'][0];
-            //console.log('gatherData: First row: ',firstRow);
-            /*
-            if (autoMinPosition == 0) {
-              //console.log('auto min and max:',firstRow.TIME)
-              
-              autoMinPosition = Number(firstRow.TIME);
-              autoMaxPosition = Number(firstRow.TIME)+range;
-              hMax = autoMaxPosition;
-              hMin = autoMinPosition;
-              //console.log("chart options viewWindow:", chartOptions.hAxis.viewWindow);
-              chartOptions.hAxis.viewWindow.max = hMax;
-              chartOptions.hAxis.viewWindow.min = hMin;
-            };
-            */
-            //Math.min(5, 10);
-            last = Math.min(last,sliceNames.length);
-
-            for (idx = first; idx < last; idx++) {
-               sliceName = sliceNames[idx];
-               //console.log("gatherData: sliceName =", sliceName);
-               //console.log("gatherData: idx =", idx);
-               if (!(sliceName in resultsCache)) {
-                 json_url = base_url + sliceName;
-                 //console.log("gatherData: cache miss: json_url =", json_url);
-                 fetchData(base_url,sliceName,false);
-               };
-               gatheredResults = resultsCache[sliceName];
-               //console.log("gatherData: resultsCache =", resultsCache);
-               //console.log("gatherData: idx = ", idx);
-
-               //Y AXIS VOLTAGE DATA "CHA"
-               var rawData = gatheredResults['data'];
-               var rawCha = rawData[0].cha;
-               //console.log('cha data array: ',rawCha);
-
-               var configOptions = rawData[0].config;
-               //console.log('config options: ',configOptions);
-               var formatConfig = configOptions.substr(1, configOptions.length-2);
-               var configArray = formatConfig.split(', ');
-
-               sampleSize = Number(configArray[7].split(': ')[1]);
-               var sampleRate = configArray[configArray.length-1].split(': ')[1];
-               var timeSlice = (1/(parseFloat(sampleRate)));
-
-               endSlice = Number(rawData[0].start_tse)+ Number(sampleSize) -10;
-               numPages = (Number(sampleSize)/10);
-
-               //GETING DATA
-               //X AXIS TIME
-               start = sliceBuild;
-               //console.log('Start time:',start);
-               deltaFromStart = Number(sliceName) - start;
-               //console.log('slicename: ', sliceName);
-               adjust = start + (Number(sampleSize)/2);
-               deltaFromStart = Number(sliceName) - adjust;
-               //console.log('deltaFrom start=',deltaFromStart);
-
-               //d = Date(deltaFromStart/1000);
-
-               //console.log('date testing = ',d);
-               //BUILD DATA TABLE ADDING ROWS TIME AND CHA
-              for (i=0; i<rawCha.length; i++) {
-                data.addRow([
-                  //new Date((deltaFromStart+i)/1000),
-                  (deltaFromStart + i)/1000, 
-                  parseFloat(rawCha[i]),
-                  ]);
-              };
-
-            };
-          
-            //var endTime = Date.now();
-            //console.log('Timer:', endTime - startTime);
-
-            //DRAW CHART
-            var chart = new google.visualization.LineChart($('#rawChart').get(0));      
-            chart.draw(data, chartOptions);
-            //DRAW TABLE
-            var table = new google.visualization.Table($('#rawTable').get(0));
-            table.draw(data, tableOptions);  
-          };
-
-
-         var chartOptions = {
-            title: 'Raw Data',
-            titleTextStyle: {color:'lightgray', fontSize: 18, fontName: 'NexaLight'},
-            legend: {alignment:'center', textStyle:{color:'lightgray'}},
-            hAxis: {title: 'Time(sec)',titleTextStyle:{color:'lightgray', fontName: 'NexaLight'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'gray', count: 6}, minorGridlines:{color: 'gray', count: 1}, viewWindowMode:'explicit', viewWindow:{max: hMax, min:hMin}},
-            vAxis: {title: '', titleTextStyle:{color:'lightgray'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'gray', count: 6}, minorGridlines:{color: 'gray', count: 1}, format: '##.###', viewWindowMode:'explicit', },
-            backgroundColor: {fill:'none', stroke: 'black', strokeWidth: 0,},                 
-            colors: ['rgb(2,255,253)','rgb(239,253,146)'],
-            //chartArea:{backgroundColor:'', height:300, width:445},
-            lineWidth: 2,
-            curveType: 'function',
-            crosshair: {trigger: 'both', selected:{opacity: 0.8}, focused:{opacity:0.8}},
-          };
-          var tableOptions = {
-            showRowNumber: true,
-          };
-
-
-          console.log("chart options viewWindow:", chartOptions.hAxis.viewWindow);            
-          
-          //viewWindow:{max:2.5, min:-2.5}
-          //console.log("calling gatherData with name = ",sliceNames);
-          //console.log("calling gatherData with length = ",sliceNames.length);
-
-          //gatherData(base_url,sliceNames,0,sliceNames.length);
-
-          //var pagingTest = (doPollCounter+1)*10;
-          //console.log('do poll paging test:', pagingTest);
-          
-         // sliceBuild = Number('1435775476910');
-          sliceBuild = Number(timeKey);
-
-          sliceStop = endSlice;
-          //console.log('End Slice : ',endSlice);
-
-          for (msec = sliceBuild+20; msec <= sliceStop;msec += 10) {
-            name = String(msec);
-            if ($.inArray(name, sliceNames) == -1) {
-              sliceNames.push(String(msec));
-            };
-          };
-
-          //console.log(sliceNames);
-          //console.log('sample size?', numPages);
-
-          width = (sampleSize/1000);
-
-          //DYNAMIC RANGE AS PLOT GROWS
-          if (doPollCounter < numPages) {
-            range = (Number(sliceNames[doPollCounter]) - Number(sliceNames[0]))/1000;
-            hMax = range/2;
-            hMin = (- width/2);
-            //if ($.inArray(range, rangeArray) == -1) {
-              //rangeArray.push(range);
-            //};            
-          }else{
-            console.log('478: ELSE IS TRIGGERED');
-            range = 0;
-
-            width = (sampleSize/1000)*(100.0/hZoom);
-            console.log('Width for dials:',width);
-
-            hMax = hPosition + width/2;
-            hMin = hPosition - width/2;
-          };
-
-          //VIEW WINDOW POSITION
-
-            //center = hPosition;
-            console.log('Center for dials:',center);
-
-
-            console.log('doPoll: hMax = ',hMax);
-            console.log('doPoll: hMin = ',hMin);
-
-            //MUST GO BELLOW chartOptions
-            //chartOptions.hAxis.viewWindow.max = hMax;
-            //chartOptions.hAxis.viewWindow.min = hMin;
-            //console.log("chart options viewWindow:", chartOptions.hAxis.viewWindow);
-
-            //console.log('before options hMax:',hMax);
-            // console.log('before options hMin:',hMin);
-            // console.log('before options horizontal Zoom dial:',hZoom);
-            //console.log('before options horizontal position dial:',hPosition);
-
-            //width = (sampleSize/1000);
-            //console.log('auto MAX position:',autoMaxPosition);
-            //console.log('auto MIN position:',autoMinPosition);
-            //var center = hPosition + (autoMinPosition + autoMaxPosition)/2;
-
-            //console.log('Center = ',center)
-            //var width = (autoMaxPosition - autoMinPosition)*(100.0/hZoom);
-            
-            //console.log('Width = ',width);
-
-            //console.log('window width:', width);
-            //console.log('window center:',center);
-
-            //console.log('do poll counter:',doPollCounter);
-            //old way 
-            //hMax = center + width/2 + range;
-            //hMin = center - width/2;
-
-            //console.log('hMax:',hMax);
-            //console.log('hMin:',hMin);
-            //console.log('after horizontal Zoom dial:',hZoom);
-            //console.log('after horizontal position dial:',hPosition);
-        
-
-          //Drawing data:
-          //console.log(doPollCounter);
-
-            gatherData(base_url,sliceNames,0,doPollCounter);
-
-
-          // gatherData(base_url,sliceNames,0,1);
-
-          //console.log('range for auto max:',range);
-          //console.log('sliceNames for range:',sliceNames);
-
-          //console.log('slice names:',sliceNames);
-          //console.log("after gatherData length = ",sliceNames.length);
-          
-          for (idx in sliceNames) {
+        };
+        for (idx in sliceNames) {
             if (!(sliceNames[idx] in resultsCache)) {
-              fetchData(base_url,sliceNames[idx],true);
-            };
-          };
-          //EVERY 100MS CALL doPoll
-          if(doPollCounter < numPages) {
-            setTimeout(doPoll,100);
-          };
-     
-       }; //end of doPoll
+               fetchData(base_url,sliceNames[idx],true);
+           };
+        };
+        //console.log('slice names = ',sliceNames);
+        //console.log('decOffset = ',decOffset);
+        //console.log('getTestInfo: testInfo = ', testInfo);
+        //console.log('getTestInfo: testInfo.start_tse = ', testSliceStart);
+        //console.log('getTestInfo: sliceEnd = ', sliceEnd);        
+        //console.log('getTestInfo: testInfo.Total_Slices = ', numPages);
+        //console.log('getTestInfo: testInfo.Dec_msec_btw_samples = ', decPointSpacing);  
+        //console.log('getTestInfo: sliceSize = ', sliceSize);     
+       });
+    };
+    getTestInfo();
 
-// POLL FOR CURRENT TIME TO START PLOTTING DATA
+    // DEC CHART CODE //
 
-     // var formatTime = (Math.round(Date.now()/100))*100;
-     // console.log('current timestamp:',formatTime);
-// BUILD SLICES GIVEN current Time
+    // BUILD DEC DATA TABLE AND DRAW DEC CHART
+    function drawDecChart(decData) {
+        var data = new google.visualization.DataTable();
+        data.addColumn('number', 'Time');
+        data.addColumn('number', 'Ch1');
 
-      //console.log('this runs first!');
-      //sliceNames.push('1435775476910');
-      sliceNames.push(timeKey);
-      //sliceNames.push(String(Number('1435775476910')+10));
-      sliceNames.push(String(Number(timeKey)+10));
-       //var base_url = 'https://gradientone-test.appspot.com/bscopedata/arduino/'; //Hard code
-       var base_url = 'https://gradientone-test.appspot.com/' + rawPathname; //not hard code
+        for (i=0; i<decData.length; i++) {
+           var num = i*decPointSpacing - decOffset;
+           num = Math.ceil(num * 100) / 100;
+           data.addRow([
+             num, 
+             decData[i],
+             ]);
+        };
+        decChartOptions = {
+         title: 'Preview',
+         titleTextStyle: {color:'lightgray', fontSize: 18, fontName: 'NexaLight'},
+         legend: {alignment:'center', textStyle:{color:'lightgray'}},
+         hAxis: {title: 'Time(sec)',titleTextStyle:{color:'lightgray', fontName: 'NexaLight'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'none', count: 5},viewWindowMode:'explicit'},
+         vAxis: {title: '', titleTextStyle:{color:'lightgray'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'none', count: 0}, format: '##.###', viewWindowMode:'explicit'},
+         backgroundColor: {fill:'none', stroke: 'black', strokeWidth: 0,},
+         colors: ['rgb(2,255,253)','rgb(239,253,146)'],
+         lineWidth: 2,
+         curveType: 'function',
+        };
+      //DRAW CHART
+         var chart = new google.visualization.LineChart($('#decChart').get(0));      
+         chart.draw(data, decChartOptions);
+      //DRAW TABLE
+         var table = new google.visualization.Table($('#decTable').get(0));
+         table.draw(data); 
+    };
 
-       fetchData(base_url,sliceNames[0],true);
-       fetchData(base_url,sliceNames[1],true);
+    // FETCH DECIMATED DATA 
+    function fetchDecData(){
+       dec_json_url = dec_url;
+       $.ajax({
+          async: true,
+          url: dec_json_url,            
+          dataType: 'json',
+       }).done(function (results) {
+         var chaData = results.cha;
+         drawDecChart(chaData);
+      });
+    };
+    google.setOnLoadCallback(fetchDecData);
 
-      //var range = (Number(sliceNames[sliceNames.length-1]) - Number(sliceNames[0]))/1000;
-      //console.log('Range in Number:',range);
-      //console.log('sliceNames for range:',sliceNames);
+// RAW CHART CODE //
+    // Connected to knobs
+    // WILL BE USED TO MOVE THE PLOT WINDOW TO GIVE THE FEELING OF MOVEMENT
+    function moveWindow(){
+    //rawChartOptions.hAxis.viewWindow.max = 1;
+    }; 
 
-       google.setOnLoadCallback(doPoll);
+// BUILD RAW DATA TABLE AND DRAW RAW CHART+TABLE
+    function drawRawChart(){   
+      var data = new google.visualization.DataTable();
+       data.addColumn('number', 'Time');
+       data.addColumn('number', 'Ch1');
+
+       for (idx = 0; idx < numPages; idx++) {
+            sliceName = sliceNames[idx];
+            var gatheredResults = resultsCache[sliceName];
+            //console.log('drawRawChart: gatheredResults = ',resultsCache[sliceName]);
+            //var rawData = gatheredResults['data'];
+            var rawData = gatheredResults.data;
+            var rawCha = rawData[0].cha;
+            
+            //BUILD DATA TABLE ADDING ROWS TIME AND CHA
+           for (i=0; i<rawCha.length; i++) {
+             data.addRow([
+               ((Number(sliceName) - rawOffset) + i)/1000,
+               parseFloat(rawCha[i]),
+               ]);
+           };
+         };
+      
+         range = (Number(sliceNames[numPages]) - Number(sliceNames[0]))/1000;
+         hMax = range/2;
+         hMin = (- rawWidth/2); 
+
+      rawChartOptions = {
+         title: 'Raw Data',
+         titleTextStyle: {color:'lightgray', fontSize: 18, fontName: 'NexaLight'},
+         legend: {alignment:'center', textStyle:{color:'lightgray'}},
+         hAxis: {title: 'Time(sec)',titleTextStyle:{color:'lightgray', fontName: 'NexaLight'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'gray', count: 6}, minorGridlines:{color: 'gray', count: 1}, viewWindowMode:'explicit', viewWindow:{max: hMax, min: hMin}},
+         vAxis: {title: '', titleTextStyle:{color:'lightgray'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'gray', count: 6}, minorGridlines:{color: 'gray', count: 1}, format: '##.###', viewWindowMode:'explicit', },
+         backgroundColor: {fill:'none', stroke: 'black', strokeWidth: 0,},                 
+         colors: ['rgb(2,255,253)','rgb(239,253,146)'],
+         //chartArea:{backgroundColor:'', height:300, width:445},
+         lineWidth: 2,
+         curveType: 'function',
+         crosshair: {trigger: 'both', selected:{opacity: 0.8}, focused:{opacity:0.8}},
+      };
+      var tableOptions = {
+         showRowNumber: true,
+      };           
+         //DRAW CHART
+         var chart = new google.visualization.LineChart($('#rawChart').get(0));      
+         chart.draw(data, rawChartOptions);
+         //DRAW TABLE
+         var table = new google.visualization.Table($('#rawTable').get(0));
+         table.draw(data, tableOptions);  
+    };
+        google.setOnLoadCallback(drawRawChart);
+    // FETCH RAW DATA 
+    function fetchData(base_url,sliceName,use_async){
+        json_url = base_url + sliceName;
+        $.ajax({
+          async: use_async,
+          url: json_url,            
+          dataType: 'json',
+        }).done(function (results) {
+          resultsCache[sliceName] = results;
+          drawRawChart();
+        });  
+    };
 </script>
+
 
 </body>
 </html>
