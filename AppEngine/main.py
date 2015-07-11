@@ -256,7 +256,7 @@ class TestDB(DictModel):
     testplan_name = db.StringProperty(required = False)
     company_nickname = db.StringProperty(required = False)
     author = db.StringProperty(required = False)
-    date_created = db.DateTimeProperty(auto_now_add = False)
+    date_created = db.DateTimeProperty(auto_now_add = True)
     instrument_type = db.StringProperty(required = False)
     measurement_P2P = db.BooleanProperty(required = False)
     measurement_Peak = db.BooleanProperty(required = False)
@@ -289,6 +289,7 @@ def ConfigDB_key(name = 'default'):
 
 class ConfigDB(DictModel):
     company_nickname = db.StringProperty(required = True)
+    date_created = db.DateTimeProperty(auto_now_add = True)
     hardware_name = db.StringProperty(required = True)
     author = db.StringProperty(required = True)
     instrument_type = db.StringProperty(required = True)
@@ -428,6 +429,7 @@ class TestPlanSummary(InstrumentDataHandler):
             config = {'test_config':test_config, 'inst_config':inst_config}
             render_json(self, config)
         else:
+            configs = []
             rows = db.GqlQuery("SELECT * FROM TestDB WHERE commence_test =:1", True)
             rows = list(rows)            
             test_config = query_to_dict(rows)
@@ -438,13 +440,20 @@ class TestPlanSummary(InstrumentDataHandler):
                 for i in inst_config: 
                     if i['testplan_name'] == t['testplan_name']:
                         t['inst_config'] = i
+            for t in test_config:
+                configs.append(t)
             rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE start_measurement =:1 and hardware_name =:2", True, hardwarename)
             rows = list(rows)
             meas_config = query_to_dict(rows)
-            config = {'test_config':test_config, 'meas_config':meas_config}
+            for m in meas_config:
+                configs.append(m)
+            config_list = sorted(configs, key=getTestKey)
+
+            config = {'configs':config_list}
             render_json(self, config)
 
-
+def getTestKey(tconfigs):
+    return tconfigs['date_created']
 
 class TestResultsPage(InstrumentDataHandler):
     "present to the user all of the completed tests, with a path that supports specific test entries"
@@ -737,11 +746,15 @@ class BscopeData(InstrumentDataHandler):
         key = 'bscopedata' + name + slicename
         print 'bscope raw post handler'
         bscope_content = json.loads(self.request.body)
+        original_p = bscope_content['p_settings']
+        original_i = bscope_content['i_settings']
+        new_p = unic_to_ascii(original_p)
+        new_i = unic_to_ascii(original_i)
         to_save = []
         r = BscopeDB(parent = BscopeDB_key(name), name=name,
                          slicename=slicename,
-                         p_settings=str(bscope_content['p_settings']),
-                         i_settings=str(bscope_content['i_settings']),
+                         p_settings=str(new_p),
+                         i_settings=str(new_i),
                          cha=(bscope_content['cha']),
                          start_tse=(bscope_content['start_tse'])
                          )
@@ -749,6 +762,16 @@ class BscopeData(InstrumentDataHandler):
         memcache.set(key, to_save)
         db.put(to_save)
 
+def unic_to_ascii(input_uni):
+    new = {}
+    for i in input_uni:
+        k = i.encode('ascii')
+        if type(input_uni[i]) == unicode:
+            v = input_uni[i].encode('ascii')
+        else:
+            v = input_uni[i]
+        new[k] = v
+    return new
 
 class SearchPage(InstrumentDataHandler):
     def get(self, name="", slicename="", start_tse=""):
@@ -827,46 +850,28 @@ class TestAnalyzerPage(InstrumentDataHandler):
 
 
 class TestLibraryPage(InstrumentDataHandler):
-    def get(self, instrument="", name="", start_tse=""):
-        start_tse_check = start_tse.split('.')
-        start_tse = start_tse_check[0]
-        if instrument == 'bscopedata' and start_tse_check[-1] == 'json':
-            key = 'psettings' + name + start_tse
-            psettings = memcache.get(key)
-            if psettings == None:
-                logging.error("BscopeData:get: query")
-                query = db.GqlQuery("""SELECT * FROM BscopeDB WHERE start_tse = :1 LIMIT 1""", int(start_tse))
-                rows = list(query)
-                data = query_to_dict(rows)
-                psettings = data[0]['p_settings']
-                memcache.set(key, psettings)
-            raw = 'https://gradientone-test.appspot.com/bscopedata/' + name + '/' + start_tse
-            dec = 'https://gradientone-test.appspot.com/dec/bscopedata/' + name + '/' + start_tse
-            links = {"raw_data_url":raw, "dec_data_url":dec, 'p_settings':psettings}
-            render_json(self, links) 
-        elif instrument == 'oscopedata' and start_tse_check[-1] == 'json':
-            print instrument, name, start_tse
-            raw = 'https://gradientone-test.appspot.com/oscopedata/' + name + '/' + start_tse
-            #dec = 'https://gradientone-test.appspot.com/dec/oscopedata/' + name + '/' + start_tse
-            links = {"raw_data_url":raw} 
-            render_json(self, links) 
-        elif instrument == 'bscopedata':
-            f = open(os.path.join('templates', 'testLibResults.html'))
-            self.response.write((f.read()))
-        elif instrument == 'oscopedata':
-            f = open(os.path.join('templates', 'testLibResults.html'))
-            self.response.write((f.read()))
+    def get(self, company_name="", testplan_name="", start_tse=""):
+        if company_name:
+            company_name_check = company_name.split('.')
+            company_name = company_name_check[0]
+        if start_tse:
+            start_tse_check = start_tse.split('.')
+            start_tse = int(start_tse_check[0])
+        if company_name and testplan_name and start_tse and start_tse_check[-1] == 'json':
+            rows = db.GqlQuery("SELECT * FROM TestResultsDB WHERE testplan_name =:1 and start_tse =:2", testplan_name, start_tse)
+            rows = list(rows)            
+            test_results = query_to_dict(rows)
+            render_json(self, test_results)
+        elif company_name and testplan_name and start_tse:
+            self.render('testLibResults.html')
+        elif company_name and company_name_check[-1] == 'json':
+            rows = db.GqlQuery("SELECT * FROM TestResultsDB")
+            rows = list(rows)            
+            test_results = query_to_dict(rows)
+            render_json(self, test_results)
         else:
-            query = db.Query(BscopeDB, projection=['start_tse', 'name'], distinct=True).order('-start_tse').fetch(limit = 10)
-            rows = list(query)
-            results_bscope = rows
-            query = db.Query(OscopeDB, projection=['start_tse', 'name'], distinct=True).order('-start_tse').fetch(limit = 10)
-            rows = list(query)
-            results_oscope = rows
-            library = results_bscope, results_oscope
-            results_bscope = library[0]
-            results_oscope = library[1]
-            self.render('testlibrary.html', results_bscope = results_bscope, results_oscope = results_oscope)
+            self.render('testlibrary.html')
+
 
 
 class TestCompletePage(InstrumentDataHandler):
@@ -883,13 +888,6 @@ class TestCompletePage(InstrumentDataHandler):
             r.commence_test = False
             r.put()
 
-
-class NewTestLibraryPage(InstrumentDataHandler):
-    def get(self):
-        rows = db.GqlQuery("SELECT * FROM TestResultsDB")
-        rows = list(rows)            
-        test_results = query_to_dict(rows)
-        render_json(self, test_results)
 
 
 class BscopeDataDec(InstrumentDataHandler):
@@ -946,8 +944,8 @@ app = webapp2.WSGIApplication([
     ('/testresults/([a-zA-Z0-9-]+)', TestResultsPage),
     ('/testresults/([a-zA-Z0-9-]+.json)', TestResultsPage),
     ('/testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)', TestResultsData),
-    ('/testlibrary', TestLibraryPage),
-    ('/testlibrary.json', NewTestLibraryPage),
+    ('/testlibrary/([a-zA-Z0-9-]+)', TestLibraryPage),
+    ('/testlibrary/([a-zA-Z0-9-]+.json)', TestLibraryPage),
     ('/testlibrary/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', TestLibraryPage),
     ('/testlibrary/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+.json)', TestLibraryPage),
     ('/testanalyzer/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', TestAnalyzerPage),
