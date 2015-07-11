@@ -33,48 +33,29 @@
         </div>
       </nav>
     </div>
-    <div class="col-md-12">
-      <h1 id="libTitle">Test Library</h1>
-    </div>
-    <div class="col-md-12" id="testListBox">
-      <h3 class="instType">BitScope</h3>
-       <h5 class="colTitle text-uppercase">Test Name <span style="margin-right: 400px"></span> Preview</h5>
+    <div  ng-app="" class="col-md-12" id="testListBox">
+      <h2 class="instType">Test Library</h2>
+       <h4 class="colTitle text-uppercase">Test Plan <span style="margin-right: 400px"></span> Preview<span style="margin-right: 300px"></span> Options</h4>
       <hr class="headerLine">
-        <table id="testTable" style="color:white;" class="text-capitalize"></table>
+        <table id="testTable" style="color:white;" class=""></table>
     </div>
-
-    <div class="col-md-12" id="testListBox">
-      <h3 class="instType">Tektronix Oscilloscope</h3>
-       <h5 class="colTitle text-uppercase">Start Time <span style="margin-right: 400px"></span> Preview</h5>
-      <hr class="headerLine">
-        <table>
-          <tr>
-          </tr>
-
-            <br><br>   
-        </table>
-    </div>
-    <p></p>
 
 <script type="text/javascript">
   // load chart lib
   google.load('visualization', '1', {packages: ['corechart']})
   google.setOnLoadCallback(fetchTestLib);
 
-  //LOADING URL
-    var urlPath = window.location.pathname.split( '/' );
-    var decPathname = urlPath[urlPath.length - 3] + '/' + urlPath[urlPath.length - 2] + '/'  + urlPath[urlPath.length - 1];
-    var rawPathname = urlPath[urlPath.length - 3] + '/' + urlPath[urlPath.length - 2] + '/';
-    var timeKey = urlPath[urlPath.length - 1];
-    //console.log(urlPath);
-    //console.log(rawPathname);
+    //LOADING URL
+    test_lib_url = window.location.pathname + '.json';
+    //console.log(test_lib_url);
 
   var index = 0;
   function fetchTestLib(){
-      dec_json_url = 'https://gradientone-test.appspot.com/testlibrary/acme.json';
+      //var test_lib_url = 'https://gradientone-test.appspot.com/testlibrary/acme.json'; 
+      //comment out for live version ^
         $.ajax({
           async: true,
-          url: dec_json_url,            
+          url: test_lib_url,            
           dataType: 'json',
        }).done(function (results) {
         var testArray = results;
@@ -82,11 +63,20 @@
         var testTable = "<table>";
 
         for (i=0;i<testArray.length;i++) {
+            var starttse = Number(testArray[i].start_tse);
+            var endtse = Number(testArray[i].test_complete)
+            var sd = new Date(starttse);
+            var ed = new Date(endtse)
+            var formatStartDate = (sd.getMonth()+1) + "/" + sd.getDate() + "/" + sd.getFullYear() + " " + sd.getHours() + ":" + sd.getMinutes() + ":" + sd.getSeconds() + "." + sd.getMilliseconds();
+            var formatEndDate = (ed.getMonth()+1) + "/" + ed.getDate() + "/" + ed.getFullYear() + " " + ed.getHours() + ":" + ed.getMinutes() + ":" + ed.getSeconds() + "." + ed.getMilliseconds();
+            console.log('formated date = ',formatStartDate);
             index = i;
-            console.log('start tse = ',testArray[i].start_tse);
-            testTable+="<tr class='resultsName'>" + testArray[i].testplan_name + " - " + "</tr>";
+
+            testTable+= "<tr>" + "<span class='name'>" + "Name: "  + "</span>" + testArray[i].testplan_name + "</tr>";
             testTable+="<br>";
-            testTable+="<tr>" + Date(testArray[i].start_tse) + "</tr>";
+            testTable+="<span class='startTime'>" + "Start Time: " + "</span>" + "<tr>" + formatStartDate + "</tr>";
+            testTable+="<br>";
+            testTable+="<span class='endTime'>" + "End Time: " + "</span>" + "<tr>" + formatEndDate + "</tr>";
             testTable+="<br>";
             testTable+="<a href='https://gradientone-test.appspot.com/testlibrary/acme/" + testArray[i].testplan_name + "/" + testArray[i].start_tse + "'>results</a>";
             testTable+="<div class='decChart' id='decChart" + index + "'></div>";
