@@ -167,16 +167,14 @@
     var dec_url;
     var testSliceStart;
     var rawWidth;
-
+    var test_info_url;
+    
     //LOADING URL
-    var urlPath = window.location.pathname.split( '/' );
-    var decPathname = urlPath[urlPath.length - 3] + '/' + urlPath[urlPath.length - 2] + '/'  + urlPath[urlPath.length - 1];
-    var rawPathname = urlPath[urlPath.length - 3] + '/' + urlPath[urlPath.length - 2] + '/';
-    var timeKey = urlPath[urlPath.length - 1];
-    console.log(urlPath);
-    console.log(rawPathname);
+    test_info_url = window.location.pathname + '.json';
+    console.log(test_info_url);
 
     function getTestInfo() {
+
       var test_info_url = 'https://gradientone-test.appspot.com/testlibrary/acme/lab/1436574830850.json';
       $.ajax({
           async: true,
@@ -197,7 +195,6 @@
 
         rawUrlSplit = raw_urlPath.split(testSliceStart);
         base_url = rawUrlSplit[0];
-        console.log('base_url = ',base_url);
         sliceEnd = (Number(testSliceStart) + (numPages*sliceSize))-10;
         decOffset = (((Number(numPages) * Number(sliceSize))/10)*decPointSpacing)/2;
         rawOffset = Number(testSliceStart) + ((Number(numPages) * Number(sliceSize))/2);
