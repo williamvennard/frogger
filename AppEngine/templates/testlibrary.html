@@ -1,8 +1,4 @@
 
-{% extends "base.html" %}
-
-{% block import %}
-
 <html>
   <head>
     <title> New Test Library </title>
@@ -10,43 +6,9 @@
     <link rel="stylesheet" type="text/css" href="../static/css/testLibrary.css">
     <link rel="stylesheet" type="text/css" href="../static/bootstrap/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script src="../static/js/addons/angular.min.js"></script>
   </head>
-  <script type="text/javascript">
-  function fetchTestLib(){
-      dec_json_url = 'http://gradientone-test.appspot.com/testlibrary.json';
-        $.ajax({
-          async: true,
-          url: dec_json_url,            
-          dataType: 'json',
-       }).done(function (results) {
-        var testArray = results;
-        var testTable = "<table>";
-
-        var date = new Date(testArray[0].start_tse);
-console.log('TSE time stamp:',testArray[0].start_tse)
-        var dateFormat = date.getDate();
-        console.log('date:',date.getFullYear());
-
-        for (i=0;i<=testArray.length-1;i++) {
-            testTable+="<tr class'resultsName'>" + testArray[i].testplan_name + " - " + "</tr>";
-            testTable+="<tr>" + Date(testArray[i].start_tse) + "</tr>";
-            testTable+="<br>";
-            testTable+="<a href='https://gradientone-test.appspot.com/testresults/" + testArray[i].testplan_name  + "'>results</a>";
-            testTable+="<br><br>";
-
-        testStart = testArray[i].start_tse;
-        console.log('fetchTestLib: test Lib = ', testStart);
-        };
-        testTable+="</table>";
-        document.getElementById("testTable").innerHTML = testTable;
-        console.log('testTable',testTable);
-        console.log('fetchTestLib: test array = ', testArray.length);
-        });
-      };
-    fetchTestLib();
-  </script>
-
   <body id="mainBackground">
     <div class="container">
       <nav id="topNavBar" class="navbar navbar-inverse navbar-collapse collapse">
@@ -78,46 +40,120 @@ console.log('TSE time stamp:',testArray[0].start_tse)
       <h3 class="instType">BitScope</h3>
        <h5 class="colTitle text-uppercase">Test Name <span style="margin-right: 400px"></span> Preview</h5>
       <hr class="headerLine">
- 
-      <form method="post">
-        <table>
-          <tr id="testTable" style="color:white;" class="text-capitalize"></tr>
-
-          <!--
-          {% for r in results_bscope %}
-            <p class="resultsName text-underline text-capitalize"> {{r.name}} -</p>
-            <a class="resultsLink" href ="testlibrary/bscopedata/{{r.name}}/{{r.start_tse}}">{{ r.start_tse }}  </a> <span style="padding-left:100px"> <a class="resultsLink" href ="testanalyzer/bscopedata/{{r.name}}/{{r.start_tse}}">analyze</a>
-
-          <br><br>   
-          {% endfor %}
-          -->
-        </table>
-      </form>
+        <table id="testTable" style="color:white;" class="text-capitalize"></table>
     </div>
 
     <div class="col-md-12" id="testListBox">
       <h3 class="instType">Tektronix Oscilloscope</h3>
        <h5 class="colTitle text-uppercase">Start Time <span style="margin-right: 400px"></span> Preview</h5>
       <hr class="headerLine">
- 
-      <form method="post">
-
         <table>
           <tr>
           </tr>
 
-          {% for r in results_oscope %}
-             <p class="resultsName text-underline text-capitalize"> {{r.name}} -</p>
-             <a class="resultsLink" href ="testlibrary/oscopedata/{{r.name}}/{{r.start_tse}}">{{ r.start_tse }}  </a> <span style="padding-left:100px"> <a class="resultsLink" href ="testanalyzer/oscopedata/{{r.name}}/{{r.start_tse}}">analyze</a>
-<!-- | date:'yyyy-MM-dd HH:mm:ss'-->
             <br><br>   
-          {% endfor %}
         </table>
-      </form>
     </div>
     <p></p>
 
+<script type="text/javascript">
+  // load chart lib
+  google.load('visualization', '1', {packages: ['corechart']})
+  google.setOnLoadCallback(fetchTestLib);
+
+  //LOADING URL
+    var urlPath = window.location.pathname.split( '/' );
+    var decPathname = urlPath[urlPath.length - 3] + '/' + urlPath[urlPath.length - 2] + '/'  + urlPath[urlPath.length - 1];
+    var rawPathname = urlPath[urlPath.length - 3] + '/' + urlPath[urlPath.length - 2] + '/';
+    var timeKey = urlPath[urlPath.length - 1];
+    //console.log(urlPath);
+    //console.log(rawPathname);
+
+  var index = 0;
+  function fetchTestLib(){
+      dec_json_url = 'https://gradientone-test.appspot.com/testlibrary/acme.json';
+        $.ajax({
+          async: true,
+          url: dec_json_url,            
+          dataType: 'json',
+       }).done(function (results) {
+        var testArray = results;
+
+        var testTable = "<table>";
+
+        for (i=0;i<testArray.length;i++) {
+            index = i;
+            console.log('start tse = ',testArray[i].start_tse);
+            testTable+="<tr class='resultsName'>" + testArray[i].testplan_name + " - " + "</tr>";
+            testTable+="<br>";
+            testTable+="<tr>" + Date(testArray[i].start_tse) + "</tr>";
+            testTable+="<br>";
+            testTable+="<a href='https://gradientone-test.appspot.com/testlibrary/acme/" + testArray[i].testplan_name + "/" + testArray[i].start_tse + "'>results</a>";
+            testTable+="<div class='decChart' id='decChart" + index + "'></div>";
+            fetchDecData(testArray[i],index)
+            console.log('fetchTestLib: test Lib = ', testArray[i].start_tse);
+        };
+        testTable+="</table>";
+        console.log('testTable',testTable);
+        document.getElementById("testTable").innerHTML = testTable;
+        });
+      };
+
+    function fetchDecData(testArray,index){
+       //console.log('fetchDecData: testArray = ',testArray);
+       dec_urlPath = testArray.dec_data_url;
+       //console.log('fetchDecData: dec_urlPath = ',dec_urlPath);
+       $.ajax({
+          async: true,
+          url: dec_urlPath,            
+          dataType: 'json',
+       }).done(function (results) {
+          //console.log("fetchDecData: json_url =", json_url);
+         var decData = results.cha;
+         var decPointSpacing = testArray.Raw_msec_btw_samples;
+         var offset = 0;
+         // var offset = (sampleSize/sampleRate)/2;
+
+         //console.log('fetchDecData: decPointSpacing =',decPointSpacing);
+         //console.log('decData :',decData);
+         //console.log('Index = ', index);
+       drawDecChart(decData, decPointSpacing, offset, index);
+      });
+    };
+
+    // BUILD DEC DATA TABLE AND DRAW DEC CHART
+    function drawDecChart(decData, decPointSpacing,offset,index) {
+      console.log('drawDecChart: index',index);
+      chartID = "#decChart" + index
+      var data = new google.visualization.DataTable();
+        data.addColumn('number', 'Time');
+        data.addColumn('number', 'Ch1');
+
+        for (i=0; i<decData.length; i++) {
+           var num = i*decPointSpacing - offset;
+           num = Math.ceil(num * 100) / 100;
+           data.addRow([
+             num, 
+             decData[i],
+             ]);
+        };
+        decChartOptions = {
+         title: 'Preview',
+         titleTextStyle: {color:'lightgray', fontSize: 18, fontName: 'NexaLight'},
+         legend: 'none',
+         hAxis: {title: 'Time(sec)',titleTextStyle:{color:'lightgray', fontName: 'NexaLight'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'none', count: 5},viewWindowMode:'explicit'},
+         vAxis: {title: '', titleTextStyle:{color:'lightgray'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'none', count: 0}, format: '##.###', viewWindowMode:'explicit'},
+         backgroundColor: {fill:'none', stroke: 'black', strokeWidth: 0,},
+         colors: ['rgb(2,255,253)','rgb(239,253,146)'],
+         lineWidth: 2,
+         curveType: 'function',
+        };
+      //DRAW CHART
+         var chart = new google.visualization.LineChart($(chartID).get(0));      
+         chart.draw(data, decChartOptions);
+    };
+
+</script>
+
   </body>
 </html>
-
-{% endblock %}
