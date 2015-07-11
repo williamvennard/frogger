@@ -154,28 +154,19 @@
     google.load('visualization', '1', {packages: ['corechart','table']});
 
     var testInfo = [];
-    var lastSlice = 1;
-    var firstPoll = 0;
     var sliceNames = [];
     var resultsCache = [];
-    var autoMaxPosition = 0;
-    var autoMinPosition = 0;
     var hMax = 0;
     var hMin = 0;
-    //var chartOptions = {};
-    var data = [];
-    var rawTime = [];
-    var sliceBuild = 0;
-    var endSlice = 0;
+    var rawChartOptions = {};
     var numPages = 0;
-    var deltaFromStart = 0;
-    var sampleSize = 0;
     var range = 0;
-    var controlGatherData = 0;
-    var center = 0;
-    var width = 0;
-    var posStepArray = [];
-    var negStepArray = [];
+    var decPointSpacing;
+    var decOffset;
+    var base_url;
+    var dec_url;
+    var testSliceStart;
+    var rawWidth;
 
     //LOADING URL
     var urlPath = window.location.pathname.split( '/' );
@@ -185,30 +176,55 @@
     console.log(urlPath);
     console.log(rawPathname);
 
- // IN PLACE OF getTestInfo HARDCODED FOR NOW
-    //DEC
-    var decPointSpacing = 0.01;
-    var decOffset = 0.25;
+    function getTestInfo() {
+      var test_info_url = 'https://gradientone-test.appspot.com/testlibrary/acme/lab/1436574830850.json';
+      $.ajax({
+          async: true,
+          url: test_info_url,
+          dataType: 'json',
+       }).done(function (results) {
+        testInfo = results[0];
 
-    //RAW
-    var base_url = 'https://gradientone-test.appspot.com/bscopedata/LED/'; //Hard code
-    var testSliceStart = '1436551570090'  //debug, was 1436419781200
-    //sliceBuild = Number(testSliceStart); //hardcode for testing
-    sliceBuild = Number('1436551570090');
-    sliceStop = Number('1436551570580');
-    //sliceStop = endSlice;
-    for (msec = sliceBuild; msec <= sliceStop;msec += 10) {
-      name = String(msec);
-      if ($.inArray(name, sliceNames) == -1) {
-        sliceNames.push(name);
-      };
+        //URLS DEC/RAW
+        dec_url = testInfo.dec_data_url;
+        raw_urlPath = testInfo.raw_data_url;
+        //Test Info DEC/RAW
+        testSliceStart = testInfo.start_tse;    
+        decPointSpacing = (testInfo.Dec_msec_btw_samples)/1000;    
+        numPages = testInfo.Total_Slices;
+        rawPointSpacing = (testInfo.Raw_msec_btw_samples)/1000;
+        sliceSize = testInfo.Slice_Size_msec;
+
+        rawUrlSplit = raw_urlPath.split(testSliceStart);
+        base_url = rawUrlSplit[0];
+        console.log('base_url = ',base_url);
+        sliceEnd = (Number(testSliceStart) + (numPages*sliceSize))-10;
+        decOffset = (((Number(numPages) * Number(sliceSize))/10)*decPointSpacing)/2;
+        rawOffset = Number(testSliceStart) + ((Number(numPages) * Number(sliceSize))/2);
+        rawWidth = (Number(numPages) *Number(sliceSize))*rawPointSpacing;
+
+        for (msec = Number(testSliceStart); msec <= Number(sliceEnd);msec += 10) {
+          name = String(msec);
+          if ($.inArray(name, sliceNames) == -1) {
+            sliceNames.push(name);
+          };
+        };
+        for (idx in sliceNames) {
+            if (!(sliceNames[idx] in resultsCache)) {
+               fetchData(base_url,sliceNames[idx],true);
+           };
+        };
+        //console.log('slice names = ',sliceNames);
+        //console.log('decOffset = ',decOffset);
+        //console.log('getTestInfo: testInfo = ', testInfo);
+        //console.log('getTestInfo: testInfo.start_tse = ', testSliceStart);
+        //console.log('getTestInfo: sliceEnd = ', sliceEnd);        
+        //console.log('getTestInfo: testInfo.Total_Slices = ', numPages);
+        //console.log('getTestInfo: testInfo.Dec_msec_btw_samples = ', decPointSpacing);  
+        //console.log('getTestInfo: sliceSize = ', sliceSize);     
+       });
     };
-    //console.log(' sliceNames =',sliceNames);
-    var totalSlices = 50;
-    var sampleSize = 500;  
-    var sampleRate = 1000;
-    var numPages = (Number(sampleSize)/10);
-// IN PLACE OF getTestInfo HARDCODED FOR NOW
+    getTestInfo();
 
     // DEC CHART CODE //
 
@@ -247,16 +263,12 @@
 
     // FETCH DECIMATED DATA 
     function fetchDecData(){
-       dec_base_url = 'https://gradientone-test.appspot.com/';
-       dec_urlPath = 'bscopedata/dec/LED/' + testSliceStart;
-       //dec_urlPath = decPathname;
-       dec_json_url = dec_base_url + dec_urlPath;
+       dec_json_url = dec_url;
        $.ajax({
           async: true,
           url: dec_json_url,            
           dataType: 'json',
        }).done(function (results) {
-          //console.log("fetchDecData: json_url =", json_url);
          var chaData = results.cha;
          drawDecChart(chaData);
       });
@@ -264,46 +276,40 @@
     google.setOnLoadCallback(fetchDecData);
 
 // RAW CHART CODE //
-    for (idx in sliceNames) {
-        if (!(sliceNames[idx] in resultsCache)) {
-           fetchData(base_url,sliceNames[idx],true);
-       };
-    };
+    // Connected to knobs
+    // WILL BE USED TO MOVE THE PLOT WINDOW TO GIVE THE FEELING OF MOVEMENT
+    function moveWindow(){
+    //rawChartOptions.hAxis.viewWindow.max = 1;
+    }; 
 
 // BUILD RAW DATA TABLE AND DRAW RAW CHART+TABLE
     function drawRawChart(){   
       var data = new google.visualization.DataTable();
        data.addColumn('number', 'Time');
        data.addColumn('number', 'Ch1');
-       // '50' is hard coded but will be given later
-       for (idx = 0; idx < 50; idx++) {
-            sliceName = sliceNames[idx];
 
-            //Y AXIS VOLTAGE DATA "CHA"
+       for (idx = 0; idx < numPages; idx++) {
+            sliceName = sliceNames[idx];
             var gatheredResults = resultsCache[sliceName];
             //console.log('drawRawChart: gatheredResults = ',resultsCache[sliceName]);
-            var rawData = gatheredResults['data'];
+            //var rawData = gatheredResults['data'];
+            var rawData = gatheredResults.data;
             var rawCha = rawData[0].cha;
-            //console.log('drawRawChart: rawCha = ',rawCha);
-            //X AXIS TIME
-            start = sliceBuild;
-            offset = start + (Number(sampleSize)/2);
             
             //BUILD DATA TABLE ADDING ROWS TIME AND CHA
            for (i=0; i<rawCha.length; i++) {
              data.addRow([
-               ((Number(sliceName) - offset) + i)/1000,
+               ((Number(sliceName) - rawOffset) + i)/1000,
                parseFloat(rawCha[i]),
                ]);
            };
          };
-
-         width = (sampleSize/1000);
-         range = (Number(sliceNames[50]) - Number(sliceNames[0]))/1000;
+      
+         range = (Number(sliceNames[numPages]) - Number(sliceNames[0]))/1000;
          hMax = range/2;
-         hMin = (- width/2); 
+         hMin = (- rawWidth/2); 
 
-      var chartOptions = {
+      rawChartOptions = {
          title: 'Raw Data',
          titleTextStyle: {color:'lightgray', fontSize: 18, fontName: 'NexaLight'},
          legend: {alignment:'center', textStyle:{color:'lightgray'}},
@@ -321,7 +327,7 @@
       };           
          //DRAW CHART
          var chart = new google.visualization.LineChart($('#rawChart').get(0));      
-         chart.draw(data, chartOptions);
+         chart.draw(data, rawChartOptions);
          //DRAW TABLE
          var table = new google.visualization.Table($('#rawTable').get(0));
          table.draw(data, tableOptions);  
@@ -337,14 +343,8 @@
         }).done(function (results) {
           resultsCache[sliceName] = results;
           drawRawChart();
-        })  
-
+        });  
     };
-    // WILL BE USED TO MOVE THE PLOT WINDOW TO GIVE THE FEELING OF MOVEMENT
-    function moveWindow(){
- 
-    }; 
-
 </script>
 
 </body>
