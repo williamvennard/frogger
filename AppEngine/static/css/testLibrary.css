@@ -68,3 +68,12 @@
     color:white;
     font-size: 110%;
 }
+
+.decChart {
+    position: relative;
+    left: 450px;
+    bottom: 80px;
+    margin-bottom: 0;
+    height:100px;
+    width: 150px;
+}
