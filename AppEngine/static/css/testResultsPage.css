@@ -52,7 +52,7 @@
 }
 #dataDisplayBox {
     float:right;
-    height: 400px;
+    min-height: 400px;
 }
 #resultsTableCSS {
     overflow:auto;
