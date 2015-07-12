@@ -161,6 +161,7 @@
     var rawChartOptions = {};
     var numPages = 0;
     var range = 0;
+    var decData;
     var decPointSpacing;
     var decOffset;
     var base_url;
@@ -169,6 +170,19 @@
     var rawWidth;
     var test_info_url;
     
+    
+    function fetchDecData(){
+       dec_json_url = dec_url;
+       $.ajax({
+          async: true,
+          url: dec_json_url,            
+          dataType: 'json',
+       }).done(function (results) {
+         var chaData = results.cha;
+         drawDecChart(chaData);
+      });
+    };
+
     //LOADING URL
     test_info_url = window.location.pathname + '.json';
     console.log(test_info_url);
@@ -206,11 +220,13 @@
             sliceNames.push(name);
           };
         };
+/*
         for (idx in sliceNames) {
             if (!(sliceNames[idx] in resultsCache)) {
                fetchData(base_url,sliceNames[idx],true);
            };
         };
+*/
         //console.log('slice names = ',sliceNames);
         //console.log('decOffset = ',decOffset);
         //console.log('getTestInfo: testInfo = ', testInfo);
@@ -258,18 +274,6 @@
          table.draw(data); 
     };
 
-    // FETCH DECIMATED DATA 
-    function fetchDecData(){
-       dec_json_url = dec_url;
-       $.ajax({
-          async: true,
-          url: dec_json_url,            
-          dataType: 'json',
-       }).done(function (results) {
-         var chaData = results.cha;
-         drawDecChart(chaData);
-      });
-    };
     google.setOnLoadCallback(fetchDecData);
 
 // RAW CHART CODE //
@@ -287,6 +291,7 @@
 
        for (idx = 0; idx < numPages; idx++) {
             sliceName = sliceNames[idx];
+            if (!(sliceName in resultsCache)) { return; }
             var gatheredResults = resultsCache[sliceName];
             //console.log('drawRawChart: gatheredResults = ',resultsCache[sliceName]);
             //var rawData = gatheredResults['data'];
@@ -329,7 +334,14 @@
          var table = new google.visualization.Table($('#rawTable').get(0));
          table.draw(data, tableOptions);  
     };
-        google.setOnLoadCallback(drawRawChart);
+    function fetchSliceNames() {
+        for (idx in sliceNames) {
+            if (!(sliceNames[idx] in resultsCache)) {
+               fetchData(base_url,sliceNames[idx],true);
+           };
+        };
+    };
+    google.setOnLoadCallback(fetchSliceNames);
     // FETCH RAW DATA 
     function fetchData(base_url,sliceName,use_async){
         json_url = base_url + sliceName;
