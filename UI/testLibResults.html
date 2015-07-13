@@ -108,7 +108,10 @@
           </div>   
       </div>
     </div>
-    <input type="button" value="REPLAY" id="MyButton">
+    <input type="button" value="REPLAY" id="Replay">
+    <input type="button" value="STOP" id="Pause">
+    <input type="button" value="START" id="Start">
+    <input type="button" value="REWIND" id="Rewind">
 
  <script type="text/javascript">
     //VERTICAL KNOBS
@@ -371,16 +374,33 @@
     }; 
     // replay button
     function replay() {
-      var i = (- rawWidth/2);
-      var windowSize = 0.01;
+      step = (- rawWidth/2);
+      //var windowSize = 0.01;
       timerID = setInterval(increment, 10);
       function increment () {
-        if (i <= rawWidth/2) {
-          i = i + 0.01
+        if (step <= rawWidth/2) {
+          step = step + 0.01
         }else {
          clearInterval(timerID); 
         }  
-        rhMax = i;
+        rhMax = step;
+        rhMin = (- rawWidth/2); 
+        rawChartOptions.hAxis.viewWindow.max = rhMax;
+        rawChartOptions.hAxis.viewWindow.min = rhMin;
+
+        rawChart.draw(moveWindowData, rawChartOptions);
+      };
+    };
+    // pause / start / rewind
+    function start() {   
+      timerID = setInterval(increment, 10);
+      function increment () {
+        if (step <= rawWidth/2) {
+          step = step + 0.01
+        }else {
+         clearInterval(timerID); 
+        }  
+        rhMax = step;
         rhMin = (- rawWidth/2); 
         rawChartOptions.hAxis.viewWindow.max = rhMax;
         rawChartOptions.hAxis.viewWindow.min = rhMin;
@@ -389,9 +409,44 @@
       };
     };
 
+    function rewind() {   
+      timerID = setInterval(increment, 10);
+      function increment () {
+        if (step > (-rawWidth/2)) {
+          step = step - 0.01
+        }else {
+         clearInterval(timerID); 
+        }  
+        rhMax = step;
+        rhMin = (- rawWidth/2); 
+        rawChartOptions.hAxis.viewWindow.max = rhMax;
+        rawChartOptions.hAxis.viewWindow.min = rhMin;
+
+        rawChart.draw(moveWindowData, rawChartOptions);
+      };
+    };
+// BUTTON CONTROLS
   $(document).ready(function(){
-    $('#MyButton').click(function(){
+    $('#Replay').click(function(){
        replay();
+    });
+  });
+
+  $(document).ready(function(){
+    $('#Pause').click(function(){
+       clearInterval(timerID);
+    });
+  });
+
+  $(document).ready(function(){
+    $('#Start').click(function(){
+       start();
+    });
+  });
+
+  $(document).ready(function(){
+    $('#Rewind').click(function(){
+       rewind();
     });
   });
 
