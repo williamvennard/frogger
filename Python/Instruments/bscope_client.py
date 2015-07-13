@@ -15,31 +15,42 @@ MY_CHANNEL = 0 # channel to capture and display
 MY_PROBE_FILE = "" # default probe file if unspecified 
 MY_MODE = BL_MODE_FAST # preferred capture mode
 MY_RATE = 1000 # default sample rate we'll use for capture (hertz).  1 sample every 1 milisecond.
-MY_SIZE = 500 # number of samples we'll capture (simply a connectivity test)
+MY_SIZE = 50 # number of samples we'll capture (simply a connectivity test)
 SLICE_SIZE = 10 # miliseconds
 TRUE = 1
 MODES = ("FAST","DUAL","MIXED","LOGIC","STREAM")
 SOURCES = ("POD","BNC","X10","X20","X50","ALT","GND")
-
+COMPANYNAME = 'Acme'
+HARDWARENAME ='Tahoe'
 
 
 def dt2ms(t):
     return int(t.strftime('%s'))*1000 + int(t.microsecond/1000)
 
 def check_start(config):
-    start_measurement = str(config[0]['start_measurement'])
-    return start_measurement
+    commence_test = str(config['commence_test'])
+    return commence_test
 
 
 def check_config_vars(config):
-    if config[0]['number_of_samples'] != 'None':
-        MY_SIZE = config[0]['number_of_samples']
-    if config[0]['sample_rate'] != 'None':
-        MY_RATE = config[0]['sample_rate']
-    return MY_RATE, MY_SIZE
+    print config
+    print config['test_plan'], type(config['test_plan'])
+    if config['test_plan'] == 'True':
+        testplan_name = config['testplan_name']
+        instrument_name = config['inst_config']['instrument_name']
+        MY_RATE = config['inst_config']['sample_rate']
+        MY_SIZE = config['inst_config']['number_of_samples']
+        test_plan =config['test_plan']
+    else:
+        testplan_name = config['testplan_name']
+        test_plan = 'False'
+        instrument_name = config['instrument_name']
+        MY_RATE = config['sample_rate']
+        MY_SIZE = config['number_of_samples']
+    return testplan_name, instrument_name, MY_RATE, MY_SIZE, test_plan
 
 def set_v_for_k(test_dict, k, v):
-    test_dict[k] = v
+    test_dict[k.encode('ascii')] = v
     return test_dict
 
 def roundup(x):
@@ -51,11 +62,13 @@ def make_json(payload):
 
 def check_config_url():
     """polls the configuration URL for a start signal @ 1sec intervals"""
-    r = requests.get('http://gradientone-dev1.appspot.com/configoutput/nedwards/Bscope/LEDTESTER2')
+    config_url = "https://gradientone-dev1.appspot.com/testplansummary/" + COMPANYNAME + '/' + HARDWARENAME
+    r = requests.get(config_url)
     config = r.json()
+    config = config['configs'][0]
     if check_start(config) == 'True':
-	    print "Starting API"
-	    bscope_acq(config)
+        print "Starting API"
+        bscope_acq(config)
     else:
         print "No start order found"
     threading.Timer(1, check_config_url()).start()
@@ -67,8 +80,12 @@ def bscope_acq(config):
     print "Starting: Attempting to open one device..."
     if BL_Open(MY_PROBE_FILE,1):
         config_vars = check_config_vars(config)
-        MY_RATE = float(config_vars[0])
-        MY_SIZE = int(config_vars[1])
+        testplan_name = config_vars[0]
+        instrument_name = config_vars[1]
+        MY_RATE = float(config_vars[2])
+        MY_SIZE = int(config_vars[3])
+        test_plan = config_vars[4]
+        print testplan_name, instrument_name, MY_RATE, MY_SIZE, test_plan
         BL_Select(BL_SELECT_DEVICE,MY_DEVICE)
         BL_Mode(BL_MODE_LOGIC) == BL_MODE_LOGIC or BL_Mode(BL_MODE_FAST)
         BL_Range(BL_Count(BL_COUNT_RANGE))
@@ -93,10 +110,10 @@ def bscope_acq(config):
         plot_dict = {}
         inst_dict ={}
         inst_dict = set_v_for_k(inst_dict, 'Link', BL_Name(0))
-        inst_dict = set_v_for_k(inst_dict, 'BitScope', (BL_Version(BL_VERSION_DEVICE), BL_ID()))
-        inst_dict = set_v_for_k(inst_dict, 'Channels', (BL_Count(BL_COUNT_ANALOG) + BL_Count(BL_COUNT_LOGIC), 
-                                                           BL_Count(BL_COUNT_ANALOG),BL_Count(BL_COUNT_LOGIC)))
-        inst_dict = set_v_for_k(inst_dict, 'Library', (BL_Version(BL_VERSION_LIBRARY), BL_Version(BL_VERSION_BINDING))) 
+        inst_dict = set_v_for_k(inst_dict, 'BitScope', [BL_Version(BL_VERSION_DEVICE), BL_ID()])
+        inst_dict = set_v_for_k(inst_dict, 'Channels', [BL_Count(BL_COUNT_ANALOG) + BL_Count(BL_COUNT_LOGIC), 
+                                                           BL_Count(BL_COUNT_ANALOG),BL_Count(BL_COUNT_LOGIC)])
+        inst_dict = set_v_for_k(inst_dict, 'Library', [BL_Version(BL_VERSION_LIBRARY), BL_Version(BL_VERSION_BINDING)]) 
         inst_dict = set_v_for_k(inst_dict, 'Sample_Rate_Hz', MY_RATE)
         inst_dict = set_v_for_k(inst_dict, 'Sample_Size', SAMPLE_SIZE)
         plot_dict = set_v_for_k(plot_dict, 'Total_Slices', Total_Slices)
@@ -108,6 +125,9 @@ def bscope_acq(config):
         acq_dict = set_v_for_k(acq_dict, 'data', DATA) 
         acq_dict = set_v_for_k(acq_dict, 'i_settings', inst_dict)    
         acq_dict = set_v_for_k(acq_dict, 'p_settings', plot_dict)
+        acq_dict = set_v_for_k(acq_dict, 'testplan_name', testplan_name)
+        acq_dict = set_v_for_k(acq_dict, 'instrument_name', instrument_name)
+        acq_dict = set_v_for_k(acq_dict, 'test_plan', test_plan)
         acq_dict = set_v_for_k(acq_dict, 'Start_TSE', (roundup(tse)))
         print acq_dict
         BL_Close()
