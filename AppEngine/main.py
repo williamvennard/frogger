@@ -942,8 +942,7 @@ class BscopeDataDec(InstrumentDataHandler):
         bscope_payload = memcache.get(key)
         if bscope_payload is None:
             logging.error("BscopeData:get: query")
-            rows = db.GqlQuery("""SELECT * FROM BscopeDB WHERE company_nickname =:1 and hardware_name =:2, instrument_name =:3
-                                AND start_tse= :4 ORDER BY slicename ASC""", company_nickname, hardware_name, instrument_name, start_tse)  
+            rows = db.GqlQuery("""SELECT * FROM BscopeDB WHERE company_nickname =:1 and hardware_name =:2 and instrument_name =:3 AND start_tse= :4 ORDER BY slicename ASC""", company_nickname, hardware_name, instrument_name, start_tse)  
             rows = list(rows)
             data = query_to_dict(rows)
             test_results = create_decimation(data)
