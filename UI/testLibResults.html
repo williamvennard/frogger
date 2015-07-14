@@ -99,6 +99,16 @@
               <div id="decChart" style="height: 200px; width: 600px;"></div>
               <div id="rawChart" style="height: 450px; width: 600px;"></div>
             </div>
+          <div style="text-align:center">
+            <input type="button" value="REPLAY" id="Replay">
+            <button type="button" id="Pause" class="btn" onclick="">
+              <i class="glyphicon glyphicon-pause"></i>
+            </button>
+            <button type="button" id="Start" class="btn" onclick="">
+              <i class="glyphicon glyphicon-play"></i>
+            </button>
+            <input type="button" value="REWIND" id="Rewind">
+          </div>
             <div class="row-md-3"  id="resultsTableCSS">
               <div id="decTable"></div>
             </div>            
@@ -108,10 +118,7 @@
           </div>   
       </div>
     </div>
-    <input type="button" value="REPLAY" id="Replay">
-    <input type="button" value="STOP" id="Pause">
-    <input type="button" value="START" id="Start">
-    <input type="button" value="REWIND" id="Rewind">
+
 
  <script type="text/javascript">
     //VERTICAL KNOBS
@@ -198,7 +205,7 @@
 
     function getTestInfo() {
 
-      var test_info_url = 'https://gradientone-test.appspot.com/testlibrary/acme/lab/1436574830850.json';
+      var test_info_url = 'https://gradientone-test.appspot.com/testlibrary/acme/manufacturing/1436652934150.json';
       $.ajax({
           async: true,
           url: test_info_url,
@@ -356,8 +363,6 @@
     // Connected to knobs
     // WILL BE USED TO MOVE THE PLOT WINDOW TO GIVE THE FEELING OF MOVEMENT
     function moveWindow(){
-        console.log('moveWindow: rawWidth = ', rawWidth);
-
         var width = rawWidth*(100/hZoom);
         hPosStep = (100/hZoom);
     console.log('hPosStep = ',hPosStep);
@@ -375,7 +380,7 @@
     // replay button
     function replay() {
       step = (- rawWidth/2);
-      //var windowSize = 0.01;
+      var windowSize = rawWidth*(100/hZoom);
       timerID = setInterval(increment, 10);
       function increment () {
         if (step <= rawWidth/2) {
@@ -383,8 +388,8 @@
         }else {
          clearInterval(timerID); 
         }  
-        rhMax = step;
-        rhMin = (- rawWidth/2); 
+        rhMax = step + windowSize/2;
+        rhMin = step - windowSize/2; 
         rawChartOptions.hAxis.viewWindow.max = rhMax;
         rawChartOptions.hAxis.viewWindow.min = rhMin;
 
@@ -393,6 +398,7 @@
     };
     // pause / start / rewind
     function start() {   
+      var windowSize = rawWidth*(100/hZoom);
       timerID = setInterval(increment, 10);
       function increment () {
         if (step <= rawWidth/2) {
@@ -400,8 +406,8 @@
         }else {
          clearInterval(timerID); 
         }  
-        rhMax = step;
-        rhMin = (- rawWidth/2); 
+        rhMax = step + windowSize/2;
+        rhMin = step - windowSize/2; 
         rawChartOptions.hAxis.viewWindow.max = rhMax;
         rawChartOptions.hAxis.viewWindow.min = rhMin;
 
@@ -409,16 +415,17 @@
       };
     };
 
-    function rewind() {   
+    function rewind() {  
+      var windowSize = rawWidth*(100/hZoom); 
       timerID = setInterval(increment, 10);
       function increment () {
-        if (step > (-rawWidth/2)) {
+        if (step >= (-rawWidth/2)) {
           step = step - 0.01
         }else {
          clearInterval(timerID); 
-        }  
-        rhMax = step;
-        rhMin = (- rawWidth/2); 
+        }; 
+        rhMax = step + windowSize/2;
+        rhMin = step - windowSize/2; 
         rawChartOptions.hAxis.viewWindow.max = rhMax;
         rawChartOptions.hAxis.viewWindow.min = rhMin;
 
@@ -430,21 +437,12 @@
     $('#Replay').click(function(){
        replay();
     });
-  });
-
-  $(document).ready(function(){
-    $('#Pause').click(function(){
+    $('#Pause').click(function(){ 
        clearInterval(timerID);
     });
-  });
-
-  $(document).ready(function(){
     $('#Start').click(function(){
        start();
     });
-  });
-
-  $(document).ready(function(){
     $('#Rewind').click(function(){
        rewind();
     });
