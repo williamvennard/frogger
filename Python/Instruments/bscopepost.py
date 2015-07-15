@@ -62,7 +62,7 @@ class BitScope:
         print start_tse
         raw_url = "https://gradientone-dev1.appspot.com/bscopedata/" + COMPANYNAME + '/' + HARDWARENAME +'/' + instrument_name + "/%s" % str(start_tse)
         dec_url = "https://gradientone-dev1.appspot.com/bscopedata/dec/" + COMPANYNAME + '/'+ HARDWARENAME +'/' + instrument_name + "/%s" % str(start_tse)
-        window_testresults = {'p_settings':p_settings,'dec_data_url':dec_url,'test_plan':test_plan, 'raw_data_url':raw_url, 'start_tse':start_tse}
+        window_testresults = {'p_settings':p_settings,'dec_data_url':dec_url,'test_plan':test_plan, 'raw_data_url':raw_url, 'start_tse':start_tse, 'instrument_name':instrument_name}
         out_testresults = json.dumps(window_testresults, ensure_ascii=True)
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
         url_t = "https://gradientone-dev1.appspot.com/testresults/" + COMPANYNAME + '/' + testplan_name + "/%s" % str(start_tse)
