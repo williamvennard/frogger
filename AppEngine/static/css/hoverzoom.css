@@ -21,8 +21,8 @@
 .hiddenInfo {
     display: none;
     position: relative;
-    left:260px;
-    bottom: 90px;
+    left:400px;
+    bottom: 180px;
     z-index: 1;
 }
 
