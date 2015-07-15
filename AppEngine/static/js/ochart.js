@@ -91,7 +91,7 @@
     function getTestInfo() {
       counter++;
       //var test_info_url = 'https://gradientone-test.appspot.com/testlibrary/acme/manufacturing/1436652934150.json';
-      test_info_url = 'https://gradientone-test.appspot.com/testresults/Acme/Tahoe/primetime';
+      test_info_url = 'https://gradientone-dev1.appspot.com/testresults/Acme/Tahoe/primetime';
       $.ajax({
           async: true,
           url: test_info_url,
@@ -140,10 +140,8 @@
        setTimeout(getTestInfo,200);   // change to 100 later
     };
     // getTestInfo();  // called by googe setOnLoadCallback method
-    
-   
-   
-    
+
+
     // DEC CHART CODE //
 
     // BUILD DEC DATA TABLE AND DRAW DEC CHART
@@ -161,15 +159,17 @@
              ]);
         };
         decChartOptions = {
-         title: 'Preview',
+         title: '',
          titleTextStyle: {color:'lightgray', fontSize: 18, fontName: 'NexaLight'},
          legend: {alignment:'center', textStyle:{color:'lightgray'}},
-         hAxis: {title: 'Time(sec)',titleTextStyle:{color:'lightgray', fontName: 'NexaLight'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'none', count: 5},viewWindowMode:'explicit'},
-         vAxis: {title: '', titleTextStyle:{color:'lightgray'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'none', count: 0}, format: '##.###', viewWindowMode:'explicit'},
-         backgroundColor: {fill:'none', stroke: 'black', strokeWidth: 0,},
+         hAxis: {title: 'Time(sec)',titleTextStyle:{color:'lightgray', fontName: 'NexaLight'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'gray', count: 6}, minorGridlines:{color: 'gray', count: 1}, viewWindowMode:'explicit', viewWindow:{max: hMax, min: hMin}},
+         vAxis: {title: '', titleTextStyle:{color:'lightgray'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'gray', count: 6}, minorGridlines:{color: 'gray', count: 1}, format: '##.###', viewWindowMode:'explicit', },
+         backgroundColor: {fill:'none', stroke: 'black', strokeWidth: 0,},                 
          colors: ['rgb(2,255,253)','rgb(239,253,146)'],
-         lineWidth: 2,
+         //chartArea:{backgroundColor:'', height:300, width:445},
+         lineWidth: 2.5,
          curveType: 'function',
+         crosshair: {trigger: 'both', selected:{opacity: 0.8}, focused:{opacity:0.8}},
         };
       //DRAW CHART
          var chart = new google.visualization.LineChart($('#decChart').get(0));      
