@@ -1,13 +1,15 @@
 <html>
   <head>
-    <title> New Test Library </title>
+    <title>Test Library</title>
     <link rel="stylesheet" type="text/css" href="../static/css/custom.css">
     <link rel="stylesheet" type="text/css" href="../static/css/testLibrary.css">
     <link rel="stylesheet" type="text/css" href="../static/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../static/css/hoverzoom.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/fonts/stylesheet.css" charset="utf-8" />    
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script src="../static/js/addons/angular.min.js"></script>
+
     <meta name="niewport" content="width=device-width">
   </head>
   <body id="mainBackground">
@@ -59,7 +61,7 @@
     //console.log(test_lib_url);
   var index = 0;
   function fetchTestLib(){
-      //var test_lib_url = 'https://gradientone-test.appspot.com/testlibrary/Acme.json'; 
+       test_lib_url = 'https://gradientone-test.appspot.com/testlibrary/Acme.json'; 
       //comment out for live version ^
         $.ajax({
           async: true,
@@ -79,26 +81,26 @@
             var formatEndDate = (ed.getMonth()+1) + "/" + ed.getDate() + "/" + ed.getFullYear() + " " + ed.getHours() + ":" + ed.getMinutes() + ":" + ed.getSeconds() + "." + ed.getMilliseconds();
             //TEST IF test_plan or trace
             if (testArray[i].test_plan  === 'True') {
-                testTable+= "<tr>" + "<span class='name'>" + "Name: "  + "</span>" + testArray[i].testplan_name + "</tr>";
+                testTable+= "<tr>" + "<span class='name'>" + "Name: "  + "</span>" + "<span  class='testName text-capitalize'>" + testArray[i].testplan_name + "</span>" + "</tr>";
                 testTable+="<br>";
                 testTable+="<span class='startTime'>" + "Start Time: " + "</span>" + "<tr>" + formatStartDate + "</tr>";
                 testTable+="<br>";
                 testTable+="<span class='endTime'>" + "End Time: " + "</span>" + "<tr>" + formatEndDate + "</tr>";
                 testTable+="<br>";
-                testTable+="<a href='https://gradientone-test.appspot.com/testlibrary/" + testArray[i].company_nickname + "/" + testArray[i].testplan_name + "/" + testArray[i].start_tse + "'>results</a>";
+                testTable+="<a class='resultsLink' href='https://gradientone-test.appspot.com/testlibrary/" + testArray[i].company_nickname + "/" + testArray[i].testplan_name + "/" + testArray[i].start_tse + "'>Results</a>";
                 testTable+="<div class='decChart hoverzoom showHidden' id='decChart" + index + "'></div>";
                 testTable+="<div class='hiddenInfo' style='color:white;'>Stuff shown on hover</div>"
                 testTable+="<br>";                
                 fetchDecData(testArray[i],index)
                 console.log('fetchTestLib: test Lib = ', testArray[i].start_tse);
             }else if (testArray[i].trace === 'True') {
-                traceTable+= "<tr>" + "<span class='name'>" + "Name: "  + "</span>" + testArray[i].testplan_name + "</tr>";
+                traceTable+= "<tr>" + "<span class='name'>" + "Name: "  + "</span>" + "<span  class='testName text-capitalize'>" + testArray[i].testplan_name + "</span>" + "</tr>";
                 traceTable+="<br>";
                 traceTable+="<span class='startTime'>" + "Start Time: " + "</span>" + "<tr>" + formatStartDate + "</tr>";
                 traceTable+="<br>";
                 traceTable+="<span class='endTime'>" + "End Time: " + "</span>" + "<tr>" + formatEndDate + "</tr>";
                 traceTable+="<br>";
-                traceTable+="<a href='https://gradientone-test.appspot.com/testlibrary/" + testArray[i].company_nickname + "/" + testArray[i].testplan_name + "/" + testArray[i].start_tse + "'>results</a>";
+                traceTable+="<a class='resultsLink' href='https://gradientone-test.appspot.com/testlibrary/" + testArray[i].company_nickname + "/" + testArray[i].testplan_name + "/" + testArray[i].start_tse + "'>Results</a>";
                 traceTable+="<div class='decChart hoverzoom showHidden' id='decChart" + index + "'></div>";
                 traceTable+="<div class='hiddenInfo' style='color:white;'>Stuff shown on hover</div>"
                 traceTable+="<br>";                

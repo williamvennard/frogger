@@ -1,18 +1,3 @@
-/*FONTS*/
-@font-face {
-    font-family: NexusBold;
-    src: url(css/fonts/NexaBold) format('truetype');
-    font-weight: normal;
-    font-style: normal; 
-}
-
-@font-face {
-    font-family: NexusLight;
-    src: url(css/fonts/NexaLight) format('truetype');
-    font-weight: normal;
-    font-style: normal; 
-}
-
 .label {
     text-align: right;
 }
@@ -24,7 +9,7 @@
 #libTitle {
     margin: 10px 20px 10px 80px;
     color: white;
-    font-family: 'NexaBold'
+    font-family: 'nexa_boldregular'
 }
 
 .headerLine {
@@ -47,13 +32,13 @@
 .instType {
     margin: 10px 0 0 0;
     color: white;
-    font-family: 'NexaLight';
+    font-family: 'nexa_lightregular';
 }
 
 .colTitle {
     margin: 10px 0 0 0;
     color: white;
-    font-family: 'NexaLight';
+    font-family: 'nexa_lightregular';
     letter-spacing: 1px;
 }
 
@@ -61,12 +46,11 @@
     float: left;
     margin-right: 10px; 
     color: rgb(197,44,72);
-    font-family: 'NexaLight';
+    font-family: 'nexa_lightregular';
 }
 
 .resultsName {
     color:white;
-    font-size: 130%;
 }
 
 .decChart {
@@ -77,14 +61,29 @@
     height:100px;
     width: 150px;
 }
+.testName {
+
+    font-family: 'nexa_boldregular'
+}
 .name {
+    margin-left: 34px;
     color:rgb(197,44,72);
+    font-family: 'nexa_boldregular'
 }
 
 .startTime {
     color:rgb(197,44,72);
+    font-family: 'nexa_lightregular';
+}
+
+.resultsLink {
+    margin:0 0 0 90px;
+    color: white;
+    font-family: 'nexa_lightregular';    
 }
 
 .endTime {
+    margin-left: 11px;
     color:rgb(197,44,72);
+    font-family: 'nexa_lightregular';
 }
