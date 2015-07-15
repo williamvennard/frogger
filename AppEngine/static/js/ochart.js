@@ -90,12 +90,13 @@
     function getTestInfo() {
       counter++;
       //var test_info_url = 'https://gradientone-test.appspot.com/testlibrary/acme/manufacturing/1436652934150.json';
-      var test_info_url = 'https://gradientone-dev1.appspot.com/testresults/Acme/Tahoe/LED';
+      test_info_url = 'https://gradientone-dev1.appspot.com/testresults/Acme/Tahoe/LED';
       $.ajax({
           async: true,
           url: test_info_url,
           dataType: 'json',
        }).done(function (results) {
+        var sliceSize = 0;
         testInfo = results.data[0];
 
         //URLS DEC/RAW
@@ -115,7 +116,7 @@
         rawOffset = Number(testSliceStart) + ((Number(numPages) * Number(sliceSize))/2);
         rawWidth = (Number(numPages) * Number(sliceSize)) * rawPointSpacing;
 
-        for (msec = Number(testSliceStart); msec <= Number(sliceEnd);msec += 10) {
+        for (msec = Number(testSliceStart); msec <= sliceEnd;msec += 10) {
           name = String(msec);
           if ($.inArray(name, sliceNames) == -1) {
             sliceNames.push(name);
@@ -123,7 +124,9 @@
         };
 
         fetchDecData();
-
+        name = String(sliceEnd);
+        delete resultsCache(name);
+        fetchSliceNames();
         //console.log('slice names = ',sliceNames);
         //console.log('decOffset = ',decOffset);
         //console.log('getTestInfo: testInfo = ', testInfo);
@@ -132,11 +135,12 @@
         //console.log('getTestInfo: testInfo.Dec_msec_btw_samples = ', decPointSpacing);  
         //console.log('getTestInfo: sliceSize = ', sliceSize);     
        });
+       setTimeout(getTestInfo,2000);   // change to 100 later
     };
-    getTestInfo();
-    //setTimeout(getTestInfo,100);
-    //setInterval(getTestInfo,100);
-    //console.log('getTestInfo: counter =',counter);
+    // getTestInfo();  // called by googe setOnLoadCallback method
+    
+   
+   
     
     // DEC CHART CODE //
 
@@ -237,7 +241,7 @@
            };
         };
     };
-    google.setOnLoadCallback(fetchSliceNames);
+    google.setOnLoadCallback(getTestInfo);
     // FETCH RAW DATA 
     function fetchData(base_url,sliceName,use_async){
         json_url = base_url + sliceName;
