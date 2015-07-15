@@ -81,6 +81,20 @@ h3 {
     color: white;
     background-color: black; 
 }
+#decChart{
+    height: 420px;
+    width:550px;
+    margin: 10px 0 5px 30px;
+    display: inline-block;
+    vertical-align: left;
+    background-image: radial-gradient(#00C5B6, #00A984);
+    border-radius: 8px;
+    border: 5px inset #f4f4f4;
+    -webkit-box-shadow: inset 6px 5px 55px 1px rgba(0,0,0,0.8);
+    -moz-box-shadow: inset 6px 5px 55px 1px rgba(0,0,0,0.8);
+    box-shadow: inset 6px 5px 55px 1px rgba(0,0,0,0.8);
+
+}
 
 #ochart{
     height: 420px;
