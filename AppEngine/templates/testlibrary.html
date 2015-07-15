@@ -42,14 +42,13 @@
     <div class="col-md-12" id="testListBox">
        <h4 class="colTitle text-uppercase">Test Plan <span style="margin-right: 175px"></span> Preview<span style="margin-right: 20%"></span>Measurements</h4>
       <hr class="headerLine">
-        <table id="testTable" style="color:white;" class=""></table>
+        <div id="testTable" style="color:white;" class=""></div>
     </div>
     <div class="col-md-12" id="testListBox">
        <h4 class="colTitle text-uppercase">Trace<span style="margin-right: 215px"></span> Preview<span style="margin-right: 20%"></span>Measurements</h4>
       <hr class="headerLine">
-        <table id="traceTable" style="color:white;" class=""></table>
+        <div id="traceTable" style="color:white;" class=""></div>
     </div>
-
 
 
 <script type="text/javascript">
@@ -69,8 +68,8 @@
           dataType: 'json',
        }).done(function (results) {
         var testArray = results;
-        var testTable = "<table>";
-        var traceTable = "<table>";
+        var testTable = "<div>";
+        var traceTable = "<div>";
         for (i=0;i<testArray.length;i++) {
             index = i;
             var starttse = Number(testArray[i].start_tse);
@@ -81,36 +80,37 @@
             var formatEndDate = (ed.getMonth()+1) + "/" + ed.getDate() + "/" + ed.getFullYear() + " " + ed.getHours() + ":" + ed.getMinutes() + ":" + ed.getSeconds() + "." + ed.getMilliseconds();
             //TEST IF test_plan or trace
             if (testArray[i].test_plan  === 'True') {
-                testTable+= "<tr>" + "<span class='name'>" + "Name: "  + "</span>" + "<span  class='testName text-capitalize'>" + testArray[i].testplan_name + "</span>" + "</tr>";
+                testTable+="<div style='margin-bottom: -60px;'>";
+                testTable+="<span class='name'>" + "Name: "  + "</span>" + "<span  class='testName text-capitalize'>" + testArray[i].testplan_name + "</span>";
                 testTable+="<br>";
-                testTable+="<span class='startTime'>" + "Start Time: " + "</span>" + "<tr>" + formatStartDate + "</tr>";
+                testTable+="<span class='startTime'>" + "Start Time: " + "</span>" + "<span class='libTime'>" + formatStartDate + "</span>";
                 testTable+="<br>";
-                testTable+="<span class='endTime'>" + "End Time: " + "</span>" + "<tr>" + formatEndDate + "</tr>";
+                testTable+="<span class='endTime'>" + "End Time: " + "</span>" + "<span class='libTime'>" + formatEndDate + "</span>";
                 testTable+="<br>";
                 testTable+="<a class='resultsLink' href='https://gradientone-dev1.appspot.com/testlibrary/" + testArray[i].company_nickname + "/" + testArray[i].testplan_name + "/" + testArray[i].start_tse + "'>Results</a>";
                 testTable+="<div class='decChart hoverzoom showHidden' id='decChart" + index + "'></div>";
                 testTable+="<div class='hiddenInfo' style='color:white;'>Stuff shown on hover</div>"
-                testTable+="<br>";                
+                testTable+="</div>"; 
+
                 fetchDecData(testArray[i],index)
-                console.log('fetchTestLib: test Lib = ', testArray[i].start_tse);
             }else if (testArray[i].trace === 'True') {
-                traceTable+= "<tr>" + "<span class='name'>" + "Name: "  + "</span>" + "<span  class='testName text-capitalize'>" + testArray[i].testplan_name + "</span>" + "</tr>";
+                traceTable+= "<div style='margin-bottom: -60px;'>"
+                traceTable+= "<span class='name'>" + "Name: "  + "</span>" + "<span  class='testName text-capitalize'>" + testArray[i].testplan_name + "</span>";
                 traceTable+="<br>";
-                traceTable+="<span class='startTime'>" + "Start Time: " + "</span>" + "<tr>" + formatStartDate + "</tr>";
+                traceTable+="<span class='startTime'>" + "Start Time: " + "</span>" + "<span class='libTime'>" + formatStartDate + "</span>";
                 traceTable+="<br>";
-                traceTable+="<span class='endTime'>" + "End Time: " + "</span>" + "<tr>" + formatEndDate + "</tr>";
+                traceTable+="<span class='endTime'>" + "End Time: " + "</span>" + "<span class='libTime'>" + formatEndDate + "</span>";
                 traceTable+="<br>";
-                traceTable+="<a class='resultsLink' href='https://gradientone-test.appspot.com/testlibrary/" + testArray[i].company_nickname + "/" + testArray[i].testplan_name + "/" + testArray[i].start_tse + "'>Results</a>";
+                traceTable+="<a class='resultsLink' href='https://gradientone-dev1.appspot.com/testlibrary/" + testArray[i].company_nickname + "/" + testArray[i].testplan_name + "/" + testArray[i].start_tse + "'>Results</a>";
                 traceTable+="<div class='decChart hoverzoom showHidden' id='decChart" + index + "'></div>";
                 traceTable+="<div class='hiddenInfo' style='color:white;'>Stuff shown on hover</div>"
-                traceTable+="<br>";                
+                traceTable+="</div>"; 
+
                 fetchDecData(testArray[i],index)
-                console.log('fetchTestLib: testArray[i] = ', testArray[i]);
-                console.log('trace', index);
             };
         };
-        testTable+="</table>";
-        traceTable+="</table>";
+        testTable+="</div>";
+        traceTable+="</div>";
         //console.log('testTable',testTable);
         document.getElementById("testTable").innerHTML = testTable;
         document.getElementById("traceTable").innerHTML = traceTable;

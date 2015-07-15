@@ -55,10 +55,10 @@
 
 .decChart {
     position: relative;
-    left: 100%;
+    left: 250px;
     bottom: 90px;
-    margin-bottom: 0;
-    height:100px;
+    margin: 10px 0 0 0;
+    height: 100px;
     width: 150px;
 }
 .testName {
@@ -66,7 +66,7 @@
     font-family: 'nexa_boldregular'
 }
 .name {
-    margin-left: 34px;
+    margin-left: 30px;
     color:rgb(197,44,72);
     font-family: 'nexa_boldregular'
 }
@@ -77,13 +77,16 @@
 }
 
 .resultsLink {
-    margin:0 0 0 90px;
+    margin: 0 0 0 90px;
     color: white;
     font-family: 'nexa_lightregular';    
 }
 
 .endTime {
-    margin-left: 11px;
+    margin-left: 9px;
     color:rgb(197,44,72);
     font-family: 'nexa_lightregular';
+}
+.libTime {
+    font-family: 'nexa_lightregular';    
 }
