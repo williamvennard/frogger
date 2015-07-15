@@ -1,18 +1,3 @@
-/*FONTS*/
-@font-face {
-    font-family: NexusBold;
-    src: url(css/fonts/NexaBold) format('truetype');
-    font-weight: normal;
-    font-style: normal; 
-}
-
-@font-face {
-    font-family: NexusLight;
-    src: url(css/fonts/NexaLight) format('truetype');
-    font-weight: normal;
-    font-style: normal; 
-}
-
 button {
     margin-top: 10px;
     width: 90px;
@@ -42,7 +27,7 @@ h3 {
 }
 
 #buttons {
-    font-family: 'NexaBold';
+    font-family: 'nexa_boldregular';
     font-size: 130%;
     margin: 0 0 10px 0;
     width: 190px;

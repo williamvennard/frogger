@@ -13,47 +13,33 @@ html, body {
     -o-background-size: cover;
     -webkit-background-size: cover;
 }
-/*FONTS*/
-@font-face {
-    font-family: NexusBold;
-    src: url(css/fonts/NexaBold) format('truetype');
-    font-weight: normal;
-    font-style: normal; 
-}
-
-@font-face {
-    font-family: NexusLight;
-    src: url(css/fonts/NexaLight) format('truetype');
-    font-weight: normal;
-    font-style: normal; 
-}
 
 p {
-    font-family: 'NexaLight';
+    font-family: 'nexa_lightregular';
 }
 
 h1 {
-    font-family: 'NexaBold';
+    font-family: 'nexa_boldregular';
 }
 
 h2 {
-    font-family: 'NexaLight';
+    font-family: 'nexa_lightregular';
     font-weight: 100;
     margin-top: 10px;
 }
 
 h3 {
-    font-family: 'NexaLight';
+    font-family: 'nexa_lightregular';
     color: lightgray;
     font-weight: 100;
 }
 
 h4 {
-    font-family: 'NexaLight';
+    font-family: 'nexa_lightregular';
 }
 
 h5 {
-    font-family: 'NexaLight';
+    font-family: 'nexa_lightregular';
 }
 
 #topNavBar {
@@ -68,14 +54,14 @@ h5 {
 }
 
 .nav {
-    font-family: 'NexaLight';
+    font-family: 'nexa_lightregular';
     letter-spacing: 1px;
     float: none;
     display: inline-block;
     vertical-align: top;
 }
 .canv {
-    font-family: 'NexaBold';
+    font-family: 'nexa_boldregular';
     margin-bottom: 0px;
     height: 40px;
     width: 100%;
@@ -150,7 +136,7 @@ h5 {
 }
 
 .com {
-    font-family: 'NexaLight';
+    font-family: 'nexa_lightregular';
     margin-bottom: 0px;
     margin-top: 0px;
     padding-top: 0px;
@@ -176,7 +162,7 @@ h5 {
 }
 
 legend {
-    font-family: 'NexaLight';
+    font-family: 'nexa_lightregular';
     font-size: 16px;
     letter-spacing: 2px;
     margin-bottom: 10px;
@@ -216,7 +202,7 @@ legend {
 
 /*  INSTRUMENTS */
 #isntrumentList {
-    font-family: 'NexaBold';
+    font-family: 'nexa_boldregular';
     height:450px; 
     color:white; 
     overflow:auto;
@@ -234,7 +220,7 @@ legend {
 
 #myInstListHeader {
     text-align: center;
-    font-family: 'NexaLight';
+    font-family: 'nexa_lightregular';
     margin: 0 0 5px 5px;
 
 }
@@ -243,7 +229,7 @@ legend {
     float: right;
     position: relative;
     top: -20px;
-    font-family: 'NexaLight';
+    font-family: 'nexa_lightregular';
     text-align: center;    
     height: 18px; 
     width: 41px;
@@ -263,14 +249,14 @@ legend {
 }
 
 .savedList {
-    font-family: 'NexaLight';
+    font-family: 'nexa_lightregular';
     color: white;
     padding-top: 0px;
 }
 
 .savedLink {
     color: silver;
-    font-family: 'NexaLight';
+    font-family: 'nexa_lightregular';
 
 }
 
@@ -290,7 +276,7 @@ legend {
 }
 
 #newTestBtn {
-    font-family: 'NexaLight';
+    font-family: 'nexa_lightregular';
     color: white;
     font-weight: 100;
     letter-spacing: 2px;
@@ -328,7 +314,7 @@ legend {
 }
 .panel-body{
     letter-spacing: 1px;
-    font-family: 'NexaLight';
+    font-family: 'nexa_lightregular';
 }
 
 

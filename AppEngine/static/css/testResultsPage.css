@@ -12,7 +12,7 @@
     margin-right: 10px;
 }
 .compName {
-    font-family: 'NexaBold';
+    font-family: 'nexa_boldregular';
     color: white;
     position: relative;
     top:0px;
@@ -33,7 +33,7 @@
 }
 .testPlanNameCSS { 
     margin:5px;
-    font-family: 'NexaBold'
+    font-family: 'nexa_boldregular'
 }
 #testPlanInfoBox {
     width:25%;

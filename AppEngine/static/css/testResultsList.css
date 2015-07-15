@@ -1,19 +1,4 @@
 /*TEST RESULTS LIST*/
-/*FONTS*/
-@font-face {
-    font-family: NexusBold;
-    src: url(css/fonts/NexaBold) format('truetype');
-    font-weight: normal;
-    font-style: normal; 
-}
-
-@font-face {
-    font-family: NexusLight;
-    src: url(css/fonts/NexaLight) format('truetype');
-    font-weight: normal;
-    font-style: normal; 
-}
-
 .testResultsBox {
     min-height: 400px;
     width: 435px;
@@ -28,7 +13,7 @@
 #testResultsHeadr {
     text-align: center;
     color:white; 
-    font-family:'NexaLight';
+    font-family:'nexa_lightregular';
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-bottom: 0px;
@@ -41,7 +26,7 @@
 }
 
 .testName {
-    font-family: 'NexaBold';
+    font-family: 'nexa_boldregular';
     font-size: 110%;
     color:white;
     float: left;
@@ -49,13 +34,13 @@
 }
 
 .testAuthor {
-    font-family: 'NexaLight';
+    font-family: 'nexa_lightregular';
     color: white;
     padding-left: 50px;
 }
 
 .testDate {
     padding-left: 50px;
-    font-family: 'NexaLight';
+    font-family: 'nexa_lightregular';
     color: white;
 }
