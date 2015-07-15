@@ -118,7 +118,7 @@
         rawOffset = Number(testSliceStart) + ((Number(numPages) * Number(sliceSize))/2);
         rawWidth = (Number(numPages) * Number(sliceSize)) * rawPointSpacing;
 
-        for (msec = Number(testSliceStart); msec <= sliceEnd;msec += 10) {
+        for (msec = Number(testSliceStart); msec <= sliceEnd;msec += Number(sliceSize)) {
           name = String(msec);
           if ($.inArray(name, sliceNames) == -1) {
             sliceNames.push(name);
