@@ -1,3 +1,5 @@
+// SETTING UP FOR LIVE DATA STREAM TEST //
+
  //VERTICAL KNOBS
     var vZoom = 100;
     var vPosition = 0;
@@ -81,15 +83,20 @@
     test_info_url = window.location.pathname + '.json';
     console.log(test_info_url);
 
-    function getTestInfo() {
 
-      var test_info_url = 'https://gradientone-test.appspot.com/testlibrary/acme/manufacturing/1436652934150.json';
+    //Needs to be continuously polling at: 
+    //https://gradientone-dev1.appspot.com/testresults/Acme/Tahoe/LED
+    var counter = 0;
+    function getTestInfo() {
+      counter++;
+      //var test_info_url = 'https://gradientone-test.appspot.com/testlibrary/acme/manufacturing/1436652934150.json';
+      var test_info_url = 'https://gradientone-dev1.appspot.com/testresults/Acme/Tahoe/LED';
       $.ajax({
           async: true,
           url: test_info_url,
           dataType: 'json',
        }).done(function (results) {
-        testInfo = results[0];
+        testInfo = results.data[0];
 
         //URLS DEC/RAW
         dec_url = testInfo.dec_data_url;
@@ -114,10 +121,12 @@
             sliceNames.push(name);
           };
         };
+
+        fetchDecData();
+
         //console.log('slice names = ',sliceNames);
         //console.log('decOffset = ',decOffset);
         //console.log('getTestInfo: testInfo = ', testInfo);
-        //console.log('getTestInfo: testInfo.start_tse = ', testSliceStart);
         //console.log('getTestInfo: sliceEnd = ', sliceEnd);        
         //console.log('getTestInfo: testInfo.Total_Slices = ', numPages);
         //console.log('getTestInfo: testInfo.Dec_msec_btw_samples = ', decPointSpacing);  
@@ -125,7 +134,10 @@
        });
     };
     getTestInfo();
-
+    //setTimeout(getTestInfo,100);
+    //setInterval(getTestInfo,100);
+    //console.log('getTestInfo: counter =',counter);
+    
     // DEC CHART CODE //
 
     // BUILD DEC DATA TABLE AND DRAW DEC CHART
@@ -161,7 +173,7 @@
          table.draw(data); 
     };
 
-    google.setOnLoadCallback(fetchDecData);
+    //google.setOnLoadCallback(fetchDecData);
 
 // RAW CHART CODE //
 
@@ -238,8 +250,10 @@
           drawRawChart();
         });  
     };
+
     // Connected to knobs
     // WILL BE USED TO MOVE THE PLOT WINDOW TO GIVE THE FEELING OF MOVEMENT
+    /*
     function moveWindow(){
         var width = rawWidth*(100/hZoom);
         
@@ -327,3 +341,4 @@
        rewind();
     });
   });
+  */
