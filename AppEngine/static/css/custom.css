@@ -60,6 +60,7 @@ h5 {
     display: inline-block;
     vertical-align: top;
 }
+
 .canv {
     font-family: 'nexa_boldregular';
     margin-bottom: 0px;
@@ -89,7 +90,7 @@ h5 {
 
 .dots {
     color: gray;
-    top: 10px;
+    margin: 10px 0 0 0;
     font-size: 200%;
 }
 
@@ -242,6 +243,7 @@ legend {
     border-color: white;
     background-color: rgb(0,0,0);
 }
+
 .configLink {
     color: white;
     text-transform: uppercase;
@@ -306,12 +308,14 @@ legend {
 .panel-heading {
     padding: 5px 5px 5px 7px;
 }
+
 .panel-title {
     font-size: 100%;
     letter-spacing: 1px;
     text-transform: uppercase;
     padding: 4px 0 0 0;
 }
+
 .panel-body{
     letter-spacing: 1px;
     font-family: 'nexa_lightregular';
