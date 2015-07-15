@@ -114,7 +114,8 @@
         rawUrlSplit = raw_urlPath.split(testSliceStart);
         base_url = rawUrlSplit[0];
         sliceEnd = (Number(testSliceStart) + (numPages*sliceSize)) -10;
-        decOffset = (((Number(numPages) * Number(sliceSize))/10) * decPointSpacing)/2;
+        //decOffset = (((Number(numPages) * Number(sliceSize))/10) * decPointSpacing)/2;
+        decOffset = 0;
         rawOffset = Number(testSliceStart) + ((Number(numPages) * Number(sliceSize))/2);
         rawWidth = (Number(numPages) * Number(sliceSize)) * rawPointSpacing;
 
