@@ -54,6 +54,7 @@
     var hMax = 0;
     var hMin = 0;
     var rawChartOptions = {};
+    var totalNumPages = 0;
     var numPages = 0;
     var range = 0;
     var decData;
@@ -105,7 +106,8 @@
         //Test Info DEC/RAW
         testSliceStart = testInfo.start_tse;    
         decPointSpacing = (testInfo.Dec_msec_btw_samples)/1000;    
-        numPages = testInfo.Total_Slices;
+        totalNumPages = testInfo.Total_Slices;
+        numPages = testInfo.Current_slice_count;
         rawPointSpacing = (testInfo.Raw_msec_btw_samples)/1000;
         sliceSize = testInfo.Slice_Size_msec;
 
@@ -125,7 +127,7 @@
 
         fetchDecData();
         name = String(sliceEnd);
-        delete resultsCache(name);
+        delete resultsCache.name;
         fetchSliceNames();
         //console.log('slice names = ',sliceNames);
         //console.log('decOffset = ',decOffset);
@@ -135,7 +137,7 @@
         //console.log('getTestInfo: testInfo.Dec_msec_btw_samples = ', decPointSpacing);  
         //console.log('getTestInfo: sliceSize = ', sliceSize);     
        });
-       setTimeout(getTestInfo,2000);   // change to 100 later
+       setTimeout(getTestInfo,1000);   // change to 100 later
     };
     // getTestInfo();  // called by googe setOnLoadCallback method
     
