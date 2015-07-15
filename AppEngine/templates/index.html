@@ -423,20 +423,5 @@ ls <!DOCTYPE html>
         <hr>
     </div> 
     <script type="text/javascript">$('#collapseOne').collapse("hide");</script><!--stops accordion from loading open -->
-    <!--ON FORM SUBMIT STAY ON PAGE-->
-    <script type="text/javascript">
-    $(document).ready(function(){
-        var $form = $('form');
-        $("#testConfig").submit(function(){
-            $.post($(this).attr('action'),
-            $(this).serialize(),
-            function(response){
-            setTimeout(function () { window.location.reload(); }, 10)
-            // do something here on success
-            },'json');
-      return false;
-   });
-});
-    </script>
 </body>
 </html>
