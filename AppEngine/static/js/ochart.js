@@ -137,7 +137,7 @@
         //console.log('getTestInfo: testInfo.Dec_msec_btw_samples = ', decPointSpacing);  
         //console.log('getTestInfo: sliceSize = ', sliceSize);     
        });
-       setTimeout(getTestInfo,1000);   // change to 100 later
+       setTimeout(getTestInfo,200);   // change to 100 later
     };
     // getTestInfo();  // called by googe setOnLoadCallback method
     
