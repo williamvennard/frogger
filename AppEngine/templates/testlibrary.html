@@ -59,7 +59,7 @@
     //console.log(test_lib_url);
   var index = 0;
   function fetchTestLib(){
-      //var test_lib_url = 'https://gradientone-dev1.appspot.com/testlibrary/Acme.json'; 
+      //var test_lib_url = 'https://gradientone-test.appspot.com/testlibrary/Acme.json'; 
       //comment out for live version ^
         $.ajax({
           async: true,
@@ -85,7 +85,7 @@
                 testTable+="<br>";
                 testTable+="<span class='endTime'>" + "End Time: " + "</span>" + "<tr>" + formatEndDate + "</tr>";
                 testTable+="<br>";
-                testTable+="<a href='https://gradientone-dev1.appspot.com/testlibrary/" + testArray[i].company_nickname + "/" + testArray[i].testplan_name + "/" + testArray[i].start_tse + "'>results</a>";
+                testTable+="<a href='https://gradientone-test.appspot.com/testlibrary/" + testArray[i].company_nickname + "/" + testArray[i].testplan_name + "/" + testArray[i].start_tse + "'>results</a>";
                 testTable+="<div class='decChart hoverzoom showHidden' id='decChart" + index + "'></div>";
                 testTable+="<div class='hiddenInfo' style='color:white;'>Stuff shown on hover</div>"
                 testTable+="<br>";                
@@ -98,7 +98,7 @@
                 traceTable+="<br>";
                 traceTable+="<span class='endTime'>" + "End Time: " + "</span>" + "<tr>" + formatEndDate + "</tr>";
                 traceTable+="<br>";
-                traceTable+="<a href='https://gradientone-dev1.appspot.com/testlibrary/" + testArray[i].company_nickname + "/" + testArray[i].testplan_name + "/" + testArray[i].start_tse + "'>results</a>";
+                traceTable+="<a href='https://gradientone-test.appspot.com/testlibrary/" + testArray[i].company_nickname + "/" + testArray[i].testplan_name + "/" + testArray[i].start_tse + "'>results</a>";
                 traceTable+="<div class='decChart hoverzoom showHidden' id='decChart" + index + "'></div>";
                 traceTable+="<div class='hiddenInfo' style='color:white;'>Stuff shown on hover</div>"
                 traceTable+="<br>";                
