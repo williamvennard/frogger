@@ -1,4 +1,3 @@
-
 <html>
   <head>
     <title> New Test Library </title>
@@ -39,12 +38,12 @@
       <h1 id="libTitle">Test Library</h1> 
     </div>
     <div class="col-md-12" id="testListBox">
-       <h4 class="colTitle text-uppercase">Test Plan <span style="margin-right: 175px"></span> Preview<span style="margin-right: 20%"></span> Options</h4>
+       <h4 class="colTitle text-uppercase">Test Plan <span style="margin-right: 175px"></span> Preview<span style="margin-right: 20%"></span>Measurements</h4>
       <hr class="headerLine">
         <table id="testTable" style="color:white;" class=""></table>
     </div>
     <div class="col-md-12" id="testListBox">
-       <h4 class="colTitle text-uppercase">Trace<span style="margin-right: 175px"></span> Preview<span style="margin-right: 20%"></span> Options</h4>
+       <h4 class="colTitle text-uppercase">Trace<span style="margin-right: 215px"></span> Preview<span style="margin-right: 20%"></span>Measurements</h4>
       <hr class="headerLine">
         <table id="traceTable" style="color:white;" class=""></table>
     </div>
@@ -88,7 +87,8 @@
                 testTable+="<br>";
                 testTable+="<a href='https://gradientone-dev1.appspot.com/testlibrary/" + testArray[i].company_nickname + "/" + testArray[i].testplan_name + "/" + testArray[i].start_tse + "'>results</a>";
                 testTable+="<div class='decChart hoverzoom showHidden' id='decChart" + index + "'></div>";
-                testTable+="<div class='hiddenInfo' style='color:white;'>Stuff shown on hover</div>"                
+                testTable+="<div class='hiddenInfo' style='color:white;'>Stuff shown on hover</div>"
+                testTable+="<br>";                
                 fetchDecData(testArray[i],index)
                 console.log('fetchTestLib: test Lib = ', testArray[i].start_tse);
             }else if (testArray[i].trace === 'True') {
@@ -101,6 +101,7 @@
                 traceTable+="<a href='https://gradientone-dev1.appspot.com/testlibrary/" + testArray[i].company_nickname + "/" + testArray[i].testplan_name + "/" + testArray[i].start_tse + "'>results</a>";
                 traceTable+="<div class='decChart hoverzoom showHidden' id='decChart" + index + "'></div>";
                 traceTable+="<div class='hiddenInfo' style='color:white;'>Stuff shown on hover</div>"
+                traceTable+="<br>";                
                 fetchDecData(testArray[i],index)
                 console.log('fetchTestLib: testArray[i] = ', testArray[i]);
                 console.log('trace', index);
