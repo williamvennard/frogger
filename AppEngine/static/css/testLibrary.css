@@ -51,7 +51,7 @@
 }
 
 .colTitle {
-    margin: 5px 0 0 0;
+    margin: 10px 0 0 0;
     color: white;
     font-family: 'NexaLight';
     letter-spacing: 1px;
@@ -66,14 +66,25 @@
 
 .resultsName {
     color:white;
-    font-size: 110%;
+    font-size: 130%;
 }
 
 .decChart {
     position: relative;
-    left: 450px;
-    bottom: 80px;
+    left: 100%;
+    bottom: 90px;
     margin-bottom: 0;
     height:100px;
     width: 150px;
+}
+.name {
+    color:rgb(197,44,72);
+}
+
+.startTime {
+    color:rgb(197,44,72);
+}
+
+.endTime {
+    color:rgb(197,44,72);
 }
