@@ -5,9 +5,11 @@
     <link rel="stylesheet" type="text/css" href="../static/css/custom.css">
     <link rel="stylesheet" type="text/css" href="../static/css/testLibrary.css">
     <link rel="stylesheet" type="text/css" href="../static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/hoverzoom.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script src="../static/js/addons/angular.min.js"></script>
+    <meta name="niewport" content="width=device-width">
   </head>
   <body id="mainBackground">
     <div class="container">
@@ -33,25 +35,32 @@
         </div>
       </nav>
     </div>
-    <div  ng-app="" class="col-md-12" id="testListBox">
-      <h2 class="instType">Test Library</h2>
-       <h4 class="colTitle text-uppercase">Test Plan <span style="margin-right: 400px"></span> Preview<span style="margin-right: 300px"></span> Options</h4>
+    <div class="col-md-12">
+      <h1 id="libTitle">Test Library</h1> 
+    </div>
+    <div class="col-md-12" id="testListBox">
+       <h4 class="colTitle text-uppercase">Test Plan <span style="margin-right: 175px"></span> Preview<span style="margin-right: 20%"></span> Options</h4>
       <hr class="headerLine">
         <table id="testTable" style="color:white;" class=""></table>
     </div>
+    <div class="col-md-12" id="testListBox">
+       <h4 class="colTitle text-uppercase">Trace<span style="margin-right: 175px"></span> Preview<span style="margin-right: 20%"></span> Options</h4>
+      <hr class="headerLine">
+        <table id="traceTable" style="color:white;" class=""></table>
+    </div>
+
+
 
 <script type="text/javascript">
   // load chart lib
   google.load('visualization', '1', {packages: ['corechart']})
   google.setOnLoadCallback(fetchTestLib);
-
     //LOADING URL
     test_lib_url = window.location.pathname + '.json';
     //console.log(test_lib_url);
-
   var index = 0;
   function fetchTestLib(){
-      //var test_lib_url = 'https://gradientone-test.appspot.com/testlibrary/acme.json'; 
+      //var test_lib_url = 'https://gradientone-dev1.appspot.com/testlibrary/Acme.json'; 
       //comment out for live version ^
         $.ajax({
           async: true,
@@ -59,35 +68,51 @@
           dataType: 'json',
        }).done(function (results) {
         var testArray = results;
-
         var testTable = "<table>";
-
+        var traceTable = "<table>";
         for (i=0;i<testArray.length;i++) {
+            index = i;
             var starttse = Number(testArray[i].start_tse);
             var endtse = Number(testArray[i].test_complete)
             var sd = new Date(starttse);
             var ed = new Date(endtse)
             var formatStartDate = (sd.getMonth()+1) + "/" + sd.getDate() + "/" + sd.getFullYear() + " " + sd.getHours() + ":" + sd.getMinutes() + ":" + sd.getSeconds() + "." + sd.getMilliseconds();
             var formatEndDate = (ed.getMonth()+1) + "/" + ed.getDate() + "/" + ed.getFullYear() + " " + ed.getHours() + ":" + ed.getMinutes() + ":" + ed.getSeconds() + "." + ed.getMilliseconds();
-            console.log('formated date = ',formatStartDate);
-            index = i;
-
-            testTable+= "<tr>" + "<span class='name'>" + "Name: "  + "</span>" + testArray[i].testplan_name + "</tr>";
-            testTable+="<br>";
-            testTable+="<span class='startTime'>" + "Start Time: " + "</span>" + "<tr>" + formatStartDate + "</tr>";
-            testTable+="<br>";
-            testTable+="<span class='endTime'>" + "End Time: " + "</span>" + "<tr>" + formatEndDate + "</tr>";
-            testTable+="<br>";
-            testTable+="<a href='https://gradientone-test.appspot.com/testlibrary/acme/" + testArray[i].testplan_name + "/" + testArray[i].start_tse + "'>results</a>";
-            testTable+="<div class='decChart' id='decChart" + index + "'></div>";
-            fetchDecData(testArray[i],index)
-            console.log('fetchTestLib: test Lib = ', testArray[i].start_tse);
+            //TEST IF test_plan or trace
+            if (testArray[i].test_plan  === 'True') {
+                testTable+= "<tr>" + "<span class='name'>" + "Name: "  + "</span>" + testArray[i].testplan_name + "</tr>";
+                testTable+="<br>";
+                testTable+="<span class='startTime'>" + "Start Time: " + "</span>" + "<tr>" + formatStartDate + "</tr>";
+                testTable+="<br>";
+                testTable+="<span class='endTime'>" + "End Time: " + "</span>" + "<tr>" + formatEndDate + "</tr>";
+                testTable+="<br>";
+                testTable+="<a href='https://gradientone-dev1.appspot.com/testlibrary/" + testArray[i].company_nickname + "/" + testArray[i].testplan_name + "/" + testArray[i].start_tse + "'>results</a>";
+                testTable+="<div class='decChart hoverzoom showHidden' id='decChart" + index + "'></div>";
+                testTable+="<div class='hiddenInfo' style='color:white;'>Stuff shown on hover</div>"                
+                fetchDecData(testArray[i],index)
+                console.log('fetchTestLib: test Lib = ', testArray[i].start_tse);
+            }else if (testArray[i].trace === 'True') {
+                traceTable+= "<tr>" + "<span class='name'>" + "Name: "  + "</span>" + testArray[i].testplan_name + "</tr>";
+                traceTable+="<br>";
+                traceTable+="<span class='startTime'>" + "Start Time: " + "</span>" + "<tr>" + formatStartDate + "</tr>";
+                traceTable+="<br>";
+                traceTable+="<span class='endTime'>" + "End Time: " + "</span>" + "<tr>" + formatEndDate + "</tr>";
+                traceTable+="<br>";
+                traceTable+="<a href='https://gradientone-dev1.appspot.com/testlibrary/" + testArray[i].company_nickname + "/" + testArray[i].testplan_name + "/" + testArray[i].start_tse + "'>results</a>";
+                traceTable+="<div class='decChart hoverzoom showHidden' id='decChart" + index + "'></div>";
+                traceTable+="<div class='hiddenInfo' style='color:white;'>Stuff shown on hover</div>"
+                fetchDecData(testArray[i],index)
+                console.log('fetchTestLib: testArray[i] = ', testArray[i]);
+                console.log('trace', index);
+            };
         };
         testTable+="</table>";
-        console.log('testTable',testTable);
+        traceTable+="</table>";
+        //console.log('testTable',testTable);
         document.getElementById("testTable").innerHTML = testTable;
+        document.getElementById("traceTable").innerHTML = traceTable;
         });
-      };
+    };
 
     function fetchDecData(testArray,index){
        //console.log('fetchDecData: testArray = ',testArray);
@@ -105,7 +130,7 @@
          // var offset = (sampleSize/sampleRate)/2;
 
          //console.log('fetchDecData: decPointSpacing =',decPointSpacing);
-         //console.log('decData :',decData);
+         console.log('decData :',decData);
          //console.log('Index = ', index);
        drawDecChart(decData, decPointSpacing, offset, index);
       });
@@ -113,13 +138,13 @@
 
     // BUILD DEC DATA TABLE AND DRAW DEC CHART
     function drawDecChart(decData, decPointSpacing,offset,index) {
-      console.log('drawDecChart: index',index);
-      chartID = "#decChart" + index
+      //console.log('drawDecChart: index',index);
+      chartID = "#decChart" + index;
       var data = new google.visualization.DataTable();
         data.addColumn('number', 'Time');
         data.addColumn('number', 'Ch1');
 
-        for (i=0; i<decData.length; i++) {
+        for (i=0; i < decData.length; i++) {
            var num = i*decPointSpacing - offset;
            num = Math.ceil(num * 100) / 100;
            data.addRow([
@@ -131,16 +156,20 @@
          title: 'Preview',
          titleTextStyle: {color:'lightgray', fontSize: 18, fontName: 'NexaLight'},
          legend: 'none',
-         hAxis: {title: 'Time(sec)',titleTextStyle:{color:'lightgray', fontName: 'NexaLight'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'none', count: 5},viewWindowMode:'explicit'},
+         hAxis: {title: '',titleTextStyle:{color:'lightgray', fontName: ''}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'none', count: 0},viewWindowMode:'explicit'},
          vAxis: {title: '', titleTextStyle:{color:'lightgray'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'none', count: 0}, format: '##.###', viewWindowMode:'explicit'},
          backgroundColor: {fill:'none', stroke: 'black', strokeWidth: 0,},
          colors: ['rgb(2,255,253)','rgb(239,253,146)'],
          lineWidth: 2,
          curveType: 'function',
+         crosshair: 'none',
+         enableInteractivity: false,
         };
+
+        console.log('drawDecChart: data = ',data);
       //DRAW CHART
-         var chart = new google.visualization.LineChart($(chartID).get(0));      
-         chart.draw(data, decChartOptions);
+         var chart = new google.visualization.LineChart($(chartID).get(0)); 
+         chart.draw(data, decChartOptions);    
     };
 
 </script>

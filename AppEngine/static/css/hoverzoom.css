@@ -5,7 +5,9 @@
     -ms-transition: all .3s ease; /* Opera */
     transition: all .3s ease;
 }
-.hoverzoom:hover {
+
+.hoverzoom:hover{
+
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
     -webkit-transform:translateZ(0) scale(1.5); /* Safari and Chrome */
@@ -16,4 +18,14 @@
     z-index: 2;
 }
   
-  
+.hiddenInfo {
+    display: none;
+    position: relative;
+    left:100%;
+    bottom: 90px;
+    z-index: 1;
+}
+
+.showHidden:hover + .hiddenInfo {
+    display: inline-block;
+}    
