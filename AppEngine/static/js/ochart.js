@@ -91,7 +91,7 @@
     function getTestInfo() {
       counter++;
       //var test_info_url = 'https://gradientone-test.appspot.com/testlibrary/acme/manufacturing/1436652934150.json';
-      test_info_url = 'https://gradientone-test.appspot.com/testresults/Acme/Tahoe/LED';
+      test_info_url = 'https://gradientone-test.appspot.com/testresults/Acme/Tahoe/primetime';
       $.ajax({
           async: true,
           url: test_info_url,
