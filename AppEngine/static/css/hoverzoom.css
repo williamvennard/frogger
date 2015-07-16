@@ -21,6 +21,7 @@
 .hiddenInfo {
     display: none;
     position: relative;
+    font-family: 'nexa_lightregular';
     left:400px;
     bottom: 180px;
     z-index: 1;

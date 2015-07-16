@@ -33,10 +33,6 @@
     }); 
 
     $(".hPosKnob").knob({
-        'value':hPosition,
-        'min':-1,
-        'max':1,
-        'step':hPosStep,
         'release' : function (hPos) { 
           //console.log('knob H pos value:',hPos);  
           hPosition = hPos;
