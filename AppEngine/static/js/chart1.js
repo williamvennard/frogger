@@ -1,4 +1,4 @@
- // load chart lib
+// load chart lib
     google.load('visualization', '1', {packages: ['corechart','table']});
        //DECIMATED DATA PLOT
     function fetchDecData(){
@@ -19,7 +19,6 @@
 
          console.log('decPointSpacing:',decPointSpacing);
          
-
 
        data = new google.visualization.DataTable();
          data.addColumn('number', 'Time');
@@ -50,6 +49,7 @@
          curveType: 'function',
          crosshair: {trigger: 'both', selected:{opacity: 0.8}, focused:{opacity:0.8}},
          animation: {startup:true, duration: 400},
+         enableInteractivity: false,
        };
       //DRAW CHART
          var chart = new google.visualization.LineChart($('#chart1').get(0));      

@@ -59,7 +59,8 @@
             backgroundColor: {fill: 'black', stroke: 'silver', strokeWidth: 3,},               
             colors: ['rgb(255, 102, 255)'], 
             curveType: 'function',
-            lineWidth: 2,         
+            lineWidth: 2,
+            enableInteractivity: false,         
           };
 
 

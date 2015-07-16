@@ -59,6 +59,7 @@
           backgroundColor: {fill: 'black', stroke: 'silver', strokeWidth: 3,},  
           colors: ['rgb(248,157,0)'],
           chartArea:{backgroundColor:'black'},
+          enableInteractivity: false,
         };
         
 
