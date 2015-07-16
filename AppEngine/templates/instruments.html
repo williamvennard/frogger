@@ -128,17 +128,66 @@
                     <div class="col-md-2" id="optionsBox" style="background-color: black; height: 415px;">
                         <div id="optionsBoxTitle" class="boxTitle">
                             <h2>Options</h2>
-                        </div> 
+                        </div>
+<!-- 
                         <div>
                           <img style="height:30%; width:30%;" src="../static/images/image4207.png">
                         </div>
-                        <!--
+-->   
                         <div id="buttons" style="margin-bottom: 10px;">
                             <button style="padding-top:5px;" class="text-uppercase" type="button" id="start">Start</button>
-                            <button style="padding-top:5px;" class="text-uppercase" type="button" id="save">Save</button>
+                            <button style="padding-top:5px;" class="text-uppercase" data-toggle="collapse" data-parent="#accordion" href="#collapseConfig">Config</button>
                             <button style="padding-top:5px;" class="text-uppercase" data-toggle="collapse" data-parent="#accordion" href="#collapseTable">Table</botton>
                         </div> 
-                        -->                     
+
+                        <div id="collapseConfig" class="col-md-2 collapse in">           
+                            <form method="post"><!--CONFIG FORM-->
+                            <table>
+                              <tr>
+                                <td class="label">
+                                  Instrument Name
+                                </td>
+                                <td>
+                                  <input type="text" name="instrument_name" value="{{instrument_name}}">
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>
+                                  Trace Name:
+                                </td>
+                                <td>
+                                  <input type="text" name="testplan_name" value="{{testplan_name}}">
+                                </td>
+                              </tr> 
+                              <tr>
+                                <td class="label">
+                                  Sample Rate (Hz):  
+                                </td>
+                                <td>
+                                  <input type="text" name="sample_rate" value="{{sample_rate}}">
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="label">
+                                  Number of Samples:  
+                                </td>
+                                <td>
+                                  <input type="text" name="number_of_samples" value="{{number_of_samples}}">
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>
+                                  Start Measurement:
+                                </td>
+                                <td>
+                                  <input type="checkbox" name="commence_test">
+                                </td>
+                              </tr> 
+                            </table>
+                            <input type="submit">
+                          </form>
+                        </div>
+
                         <fieldset class="col-md-12" id="knobBox" style="width: 90%;">
                         <span class="spacer"></span><legend class="text-uppercase" style="width: 300px; padding-left: 5px;">Horizontal</legend><span class="spacer"></span>   
                           <div class="Knobs">
@@ -229,20 +278,21 @@
           </div>  
         <hr>
         <div style="text-align:center">
-                      <input type="button" value="REPLAY" id="Replay">
-                      <button type="button" id="Pause" class="btn" onclick="">
-                        <i class="glyphicon glyphicon-pause"></i>
-                      </button>
-                      <button type="button" id="Start" class="btn" onclick="">
-                        <i class="glyphicon glyphicon-play"></i>
-                      </button>
-                      <input type="button" value="REWIND" id="Rewind">
-                    </div> 
+          <input type="button" value="REPLAY" id="Replay">
+          <button type="button" id="Pause" class="btn" onclick="">
+            <i class="glyphicon glyphicon-pause"></i>
+          </button>
+          <button type="button" id="Start" class="btn" onclick="">
+            <i class="glyphicon glyphicon-play"></i>
+          </button>
+          <input type="button" value="REWIND" id="Rewind">
+        </div> 
     </div> 
     <script type="text/javascript" src="../static/js/ochart.js"></script>
     <script type="text/javascript">$('#collapseOne').collapse("hide");</script><!--stops accordion from loading open -->
     <script type="text/javascript">$('#collapseTwo').collapse("hide");</script>
     <script type="text/javascript">$('#collapseThree').collapse("hide");</script>
     <script type="text/javascript">$('#collapseTable').collapse("hide");</script>
+    <script type="text/javascript">$('#collapseConfig').collapse("hide");</script>
 </body>
 </html>

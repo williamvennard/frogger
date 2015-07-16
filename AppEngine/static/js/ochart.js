@@ -1,6 +1,6 @@
 // SETTING UP FOR LIVE DATA STREAM TEST //
 
- //VERTICAL KNOBS
+  //VERTICAL KNOBS
     var vZoom = 100;
     var vPosition = 0;
     $(".vPosKnob").knob({
@@ -19,11 +19,10 @@
       },
     }); 
  
-//HORIZONTAL KNOBS
+  //HORIZONTAL KNOBS
     var hZoom = 100;
     var hPosition = 0;
     var hPosStep = 0.05;
-
 
     $(".hZoomKnob").knob({
       'release' : function (hRange) { 
@@ -45,7 +44,7 @@
       },
     }); 
 
- // load chart lib
+  // load chart lib
     google.load('visualization', '1', {packages: ['corechart','table']});
 
     var testInfo = [];
@@ -84,13 +83,12 @@
     test_info_url = window.location.pathname + '.json';
     console.log(test_info_url);
 
-
-    //Needs to be continuously polling at: 
+    //Continuously polling at: 
     //https://gradientone-dev1.appspot.com/testresults/Acme/Tahoe/LED
     var counter = 0;
     function getTestInfo() {
       counter++;
-      //var test_info_url = 'https://gradientone-test.appspot.com/testlibrary/acme/manufacturing/1436652934150.json';
+      //test_info_url = 'https://gradientone-dev1.appspot.com/testlibrary/Acme/manufacturing/1436809506690.json';
       test_info_url = 'https://gradientone-dev1.appspot.com/testresults/Acme/Tahoe/primetime';
       $.ajax({
           async: true,
@@ -98,27 +96,30 @@
           dataType: 'json',
        }).done(function (results) {
         var sliceSize = 0;
-        testInfo = results.data[0];
+        testInfo = results.data[0];  //live version
+        //testInfo = results[0];     //nonLive
 
         //URLS DEC/RAW
         dec_url = testInfo.dec_data_url;
         raw_urlPath = testInfo.raw_data_url;
         //Test Info DEC/RAW
         testSliceStart = testInfo.start_tse;    
-        decPointSpacing = (testInfo.Dec_msec_btw_samples)/1000;    
+        decPointSpacing = (Number(testInfo.Dec_msec_btw_samples))/1000;    
         totalNumPages = testInfo.Total_Slices;
-        numPages = testInfo.Current_slice_count;
+        //numPages = testInfo.Current_slice_count;
+        numPages = Number(testInfo.Total_Slices); //not live version
         rawPointSpacing = (testInfo.Raw_msec_btw_samples)/1000;
-        sliceSize = testInfo.Slice_Size_msec;
+        sliceSize = Number(testInfo.Slice_Size_msec);
 
         rawUrlSplit = raw_urlPath.split(testSliceStart);
         base_url = rawUrlSplit[0];
         sliceEnd = (Number(testSliceStart) + (numPages*sliceSize)) -10;
+
         decOffset = (((Number(numPages) * Number(sliceSize))/10) * decPointSpacing)/2;
         rawOffset = Number(testSliceStart) + ((Number(numPages) * Number(sliceSize))/2);
         rawWidth = (Number(numPages) * Number(sliceSize)) * rawPointSpacing;
 
-        for (msec = Number(testSliceStart); msec <= sliceEnd;msec += Number(sliceSize)) {
+        for (msec = Number(testSliceStart); msec <= sliceEnd;msec += sliceSize) {
           name = String(msec);
           if ($.inArray(name, sliceNames) == -1) {
             sliceNames.push(name);
@@ -130,17 +131,16 @@
         delete resultsCache.name;
         fetchSliceNames();
         //console.log('slice names = ',sliceNames);
-        //console.log('decOffset = ',decOffset);
+        console.log('decOffset = ',decOffset);
         //console.log('getTestInfo: testInfo = ', testInfo);
         //console.log('getTestInfo: sliceEnd = ', sliceEnd);        
-        //console.log('getTestInfo: testInfo.Total_Slices = ', numPages);
-        //console.log('getTestInfo: testInfo.Dec_msec_btw_samples = ', decPointSpacing);  
-        //console.log('getTestInfo: sliceSize = ', sliceSize);     
+        console.log('getTestInfo: testInfo.Total_Slices = ', numPages);
+        console.log('getTestInfo: testInfo.Dec_msec_btw_samples = ', decPointSpacing);  
+        console.log('getTestInfo: sliceSize = ', sliceSize);     
        });
        setTimeout(getTestInfo,200);   // change to 100 later
     };
     // getTestInfo();  // called by googe setOnLoadCallback method
-
 
     // DEC CHART CODE //
 
@@ -152,12 +152,14 @@
 
         for (i=0; i<decData.length; i++) {
            var num = i*decPointSpacing - decOffset;
+           console.log('drawDecChart: num =', decOffset);
            num = Math.ceil(num * 100) / 100;
            data.addRow([
              num, 
              decData[i],
              ]);
         };
+
         decChartOptions = {
          title: '',
          titleTextStyle: {color:'lightgray', fontSize: 18, fontName: 'NexaLight'},
@@ -166,7 +168,6 @@
          vAxis: {title: '', titleTextStyle:{color:'lightgray'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'gray', count: 6}, minorGridlines:{color: 'gray', count: 1}, format: '##.###', viewWindowMode:'explicit', },
          backgroundColor: {fill:'none', stroke: 'black', strokeWidth: 0,},                 
          colors: ['rgb(2,255,253)','rgb(239,253,146)'],
-         //chartArea:{backgroundColor:'', height:300, width:445},
          lineWidth: 2.5,
          curveType: 'function',
          crosshair: {trigger: 'both', selected:{opacity: 0.8}, focused:{opacity:0.8}},
