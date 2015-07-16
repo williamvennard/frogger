@@ -1,4 +1,4 @@
-ls <!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en">
 <head>
@@ -54,7 +54,7 @@ ls <!DOCTYPE html>
         </div>
         <div class="row">
             <div class="col-md-3" style="width: 180px; margin-top: 20px;">
-            <button id="newTestBtn" class="btn btn-default">NEW TEST</button>
+            <button id="newTestBtn" class="btn btn-default" data-toggle="collapse" data-parent="#accordion" href="#collapseConfig">NEW TEST</button>
                 <div class="panel-group" id="accordion" style="width: 140px;">
                     <div class="panel panel-default">
                         <div class="panel-heading">
@@ -188,7 +188,7 @@ ls <!DOCTYPE html>
             <fieldset class="col-md-12" id="canvasBox" style="width: 40%;">
                 <span class="spacer"></span><legend class="text-uppercase" style="width: 118px;">Test Space</legend><span class="spacer"></span>
 <!--TEST PLAN CONFIGURATION-->
-                <div class="well well-sm" id="testConfigBox">
+                <div class="collapse in well well-sm testConfigBox" id="collapseConfig">
                   <h2 style="text-align:center; color:white;">Test Plan Configuration</h2>
                   <hr id="breakLine">
 
@@ -355,29 +355,29 @@ ls <!DOCTYPE html>
                   </form>   
                 </div>  
 <!--PEAK POWER APP-->
-                <div data-ng-repeat="item in settings.items track by $index" class="well well-sm" style="margin-top: 10px;">
+                <div data-ng-repeat="item in settings.items track by $index" class="well well-sm" style="margin-top: 10px; background-color: rgb(33,33,33); border: 1px solid black;">
                     <h4 style="margin-top: 0px; margin= 0px;">
                         <a class="btn btn-inverse glyphicon glyphicon-menu-right">
                         </a>
-                        Peak Power <span></span>
+                        <span style="color:white">Peak Power </span>
                         <a class="btn btn-inverse glyphicon glyphicon-chevron-up" style="float: right;"></a>
                         <a class="btn btn-inverse glyphicon glyphicon-chevron-down" style="float: right;"></a>
                     </h4>
                     <div class="input-group">
-                        <span class="input-group-addon" id="basic-addon1">Trigger Source</span>
-                        <select id="sourceSelect" class="form-control">                          
+                        <span class="input-group-addon" id="basic-addon1" style="">Trigger Source</span>
+                        <select id="sourceSelect" class="form-control" style="border-style:solid;">                          
                             <option value="External">External</option>
                             <option value="RF Burst">RF Burst</option>
                             <option value="Free Run">Free Run</option>
                         </select>
                     </div>
                     <div class="input-group">
-                        <span class="input-group-addon" id="basic-addon2">Bandwidth</span>
-                        <input type="text" class="form-control" placeholder="20 MHz" aria-describedby="basic-addon2">
+                        <span class="input-group-addon" id="basic-addon2" style="width:118px">Bandwidth</span>
+                        <input type="text" class="form-control" placeholder="20 MHz" aria-describedby="basic-addon2" style="width: 297px; border-style:solid;">
                     </div>
                     <div class="input-group">
-                        <span class="input-group-addon" id="basic-addon3">Trigger Delay</span>
-                        <input type="text" class="form-control" placeholder="2 &mu;Sec" aria-describedby="basic-addon3">
+                        <span class="input-group-addon" id="basic-addon3" style="width:118px">Trigger Delay</span>
+                        <input type="text" class="form-control" placeholder="2 &mu;Sec" aria-describedby="basic-addon3" style="width: 297px;">
                     </div>
                     <div class="btn-group btn-group-sm" style=" left: 25%; margin-top: 10px;" role="group">
                         <button type="button" class="btn btn-primary">Save</button>
@@ -392,7 +392,7 @@ ls <!DOCTYPE html>
 <!--TEST RESULTS-->              
                 <div class="well well-sm testResultsBox">
                     <h2 style="text-align:center; color:white; margin-bottom: 5px;">Test Results</h2>
-<h5 id="testResultsHeadr">Name <span style="padding-left:100px;">Author</span> <span style="padding-left:100px;">Date</span></h5>
+                    <h5 id="testResultsHeadr">Name <span style="padding-left:100px;">Author</span> <span style="padding-left:100px;">Date</span></h5>
                     <hr id="breakLine">
                     <form method="post" id="resultsForm">
                       <table>
@@ -422,6 +422,7 @@ ls <!DOCTYPE html>
         </div> 
         <hr>
     </div> 
-    <script type="text/javascript">$('#collapseOne').collapse("hide");</script><!--stops accordion from loading open -->
+    <script type="text/javascript">$('#collapseOne').collapse("hide");</script>
+    <script type="text/javascript">$('#collapseConfig').collapse("hide");</script><!--stops accordion from loading open -->
 </body>
 </html>

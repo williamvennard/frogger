@@ -2,8 +2,8 @@
     google.load('visualization', '1', {packages: ['corechart','table']});
        //DECIMATED DATA PLOT
     function fetchDecData(){
-       dec_base_url = 'https://gradientone-test.appspot.com/dec/';
-       dec_urlPath = 'bscopedata/arduino/1435775476910';
+       dec_base_url = 'https://gradientone-dev1.appspot.com/bscopedata/dec/Acme/';
+       dec_urlPath = 'Tahoe/LED/1436809506690';
        //dec_urlPath = decPathname;
        dec_json_url = dec_base_url + dec_urlPath;
        $.ajax({
@@ -13,28 +13,13 @@
        }).done(function (results) {
           //console.log("fetchDecData: json_url =", json_url);
          var decData = results.cha;
-          //console.log("results:", decData);
+          console.log("results:", decData);
          //console.log('decData Test:',decData);
-         var config = results.config;
-         var cleanConfig = config.substr(1, config.length-2);
-         var configArray = cleanConfig.split(', ');
+         var decPointSpacing = results.p_settings[0];
 
-         var sampleSize = configArray[7].split(': ')[1];
-         var sampleRate = configArray[configArray.length-1].split(': ')[1];
-         //console.log('Config:',configArray);
+         console.log('decPointSpacing:',decPointSpacing);
          
 
-         var decPointSpacing = (1/Number(sampleRate))*10;
-         var offset = (sampleSize/sampleRate)/2;
-
-         //console.log('dec point spacing should be .01:',decPointSpacing);
-         //console.log('offset = ',offset);
-                        //var configOptions = rawData[0].config;
-            //console.log('config options: ',configOptions);
-           // var formatConfig = configOptions.substr(1, configOptions.length-2);
-           // var configArray = formatConfig.split(', ');
-                        //sampleSize = Number(configArray[7].split(': ')[1]);
-           // var sampleRate = configArray[configArray.length-1].split(': ')[1];
 
        data = new google.visualization.DataTable();
          data.addColumn('number', 'Time');
@@ -42,7 +27,7 @@
 
          //GETING DATA
          for (i=0; i<decData.length; i++) {
-           var num = i*decPointSpacing - offset;
+           var num = i*(0.01);
            num = Math.ceil(num * 100) / 100;
            console.log("fetchDecData:num=",num);
            data.addRow([
