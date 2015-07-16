@@ -89,7 +89,7 @@
     function getTestInfo() {
       counter++;
       //test_info_url = 'https://gradientone-dev1.appspot.com/testlibrary/Acme/manufacturing/1436809506690.json';
-      test_info_url = 'https://gradientone-dev1.appspot.com/testresults/Acme/Tahoe/primetime';
+      test_info_url = 'https://gradientone-prod.appspot.com/testresults/Acme/Tahoe/primetime';
       $.ajax({
           async: true,
           url: test_info_url,
@@ -106,8 +106,8 @@
         testSliceStart = testInfo.start_tse;    
         decPointSpacing = (Number(testInfo.Dec_msec_btw_samples))/1000;    
         totalNumPages = testInfo.Total_Slices;
-        //numPages = testInfo.Current_slice_count;
-        numPages = Number(testInfo.Total_Slices); //not live version
+        numPages = testInfo.Current_slice_count;
+        //numPages = Number(testInfo.Total_Slices); //not live version
         rawPointSpacing = (testInfo.Raw_msec_btw_samples)/1000;
         sliceSize = Number(testInfo.Slice_Size_msec);
 
@@ -138,7 +138,7 @@
         console.log('getTestInfo: testInfo.Dec_msec_btw_samples = ', decPointSpacing);  
         console.log('getTestInfo: sliceSize = ', sliceSize);     
        });
-       setTimeout(getTestInfo,200);   // change to 100 later
+       //setTimeout(getTestInfo,200);   // change to 100 later
     };
     // getTestInfo();  // called by googe setOnLoadCallback method
 

@@ -139,52 +139,42 @@
                             <button style="padding-top:5px;" class="text-uppercase" data-toggle="collapse" data-parent="#accordion" href="#collapseConfig">Config</button>
                             <button style="padding-top:5px;" class="text-uppercase" data-toggle="collapse" data-parent="#accordion" href="#collapseTable">Table</botton>
                         </div> 
-
-                        <div id="collapseConfig" class="col-md-2 collapse in">           
-                            <form method="post"><!--CONFIG FORM-->
-                            <table>
-                              <tr>
-                                <td class="label">
-                                  Instrument Name
-                                </td>
-                                <td>
-                                  <input type="text" name="instrument_name" value="{{instrument_name}}">
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>
-                                  Trace Name:
-                                </td>
-                                <td>
-                                  <input type="text" name="testplan_name" value="{{testplan_name}}">
-                                </td>
-                              </tr> 
-                              <tr>
-                                <td class="label">
-                                  Sample Rate (Hz):  
-                                </td>
-                                <td>
-                                  <input type="text" name="sample_rate" value="{{sample_rate}}">
-                                </td>
-                              </tr>
-                              <tr>
-                                <td class="label">
-                                  Number of Samples:  
-                                </td>
-                                <td>
-                                  <input type="text" name="number_of_samples" value="{{number_of_samples}}">
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>
-                                  Start Measurement:
-                                </td>
-                                <td>
-                                  <input type="checkbox" name="commence_test">
-                                </td>
-                              </tr> 
-                            </table>
-                            <input type="submit">
+                        <!--CONFIG FORM-->
+                        <div id="collapseConfig" class="collapse in configBox">           
+                            <form method="post">
+                              <div class="row configRow">
+                                <tr>
+                                  <td class="label">
+                                    <p class="configLabel">Instrument:</p> 
+                                    <input class="configInput" style="border-top-right-radius: 5px; border-top-left-radius: 5px;" type="text" name="instrument_name" value="{{instrument_name}}">
+                                  </td>
+                                </tr>
+                              </div>
+                              <div class="row configRow">
+                                <tr>
+                                  <td class="label">
+                                    <p class="configLabel">Trace Name:</p>
+                                    <input class="configInput" type="text" name="testplan_name" value="{{testplan_name}}">
+                                  </td>
+                                </tr>
+                              </div>
+                              <div class="row configRow">
+                                <tr>
+                                  <td class="label">
+                                    <p class="configLabel">Sample Rate (Hz):</p>  
+                                    <input class="configInput" type="text" name="sample_rate" value="{{sample_rate}}">
+                                  </td>
+                                </tr>
+                              </div>
+                              <div class="row configRow">
+                                <tr>
+                                  <td class="label">
+                                    <p class="configLabel">Num. of Samples:</p>  
+                                    <input class="configInput" style="border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;" type="text" name="number_of_samples" value="{{number_of_samples}}">
+                                  </td>
+                                </tr>
+                              </div> 
+                            <input id="submitBtn" type="submit" value="SUBMIT">
                           </form>
                         </div>
 

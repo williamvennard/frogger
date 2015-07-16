@@ -60,7 +60,7 @@
     //console.log(test_lib_url);
   var index = 0;
   function fetchTestLib(){
-       //test_lib_url = 'https://gradientone-dev1.appspot.com/testlibrary/Acme.json'; 
+       test_lib_url = 'https://gradientone-prod.appspot.com/testlibrary/Acme.json'; 
       //comment out for live version ^
         $.ajax({
           async: true,
@@ -87,7 +87,7 @@
                 testTable+="<br>";
                 testTable+="<span class='endTime'>" + "End Time: " + "</span>" + "<span class='libTime'>" + formatEndDate + "</span>";
                 testTable+="<br>";
-                testTable+="<a class='resultsLink' href='https://gradientone-dev1.appspot.com/testlibrary/" + testArray[i].company_nickname + "/" + testArray[i].testplan_name + "/" + testArray[i].start_tse + "'>Results</a>";
+                testTable+="<a class='resultsLink' href='https://gradientone-prod.appspot.com/testlibrary/" + testArray[i].company_nickname + "/" + testArray[i].testplan_name + "/" + testArray[i].start_tse + "'>Results</a>";
                 testTable+="<div class='decChart hoverzoom showHidden' id='decChart" + index + "'></div>";
                 testTable+="<div class='hiddenInfo' style='color:white;'>Stuff shown on hover</div>"
                 testTable+="</div>"; 
@@ -101,7 +101,7 @@
                 traceTable+="<br>";
                 traceTable+="<span class='endTime'>" + "End Time: " + "</span>" + "<span class='libTime'>" + formatEndDate + "</span>";
                 traceTable+="<br>";
-                traceTable+="<a class='resultsLink' href='https://gradientone-dev1.appspot.com/testlibrary/" + testArray[i].company_nickname + "/" + testArray[i].testplan_name + "/" + testArray[i].start_tse + "'>Results</a>";
+                traceTable+="<a class='resultsLink' href='https://gradientone-prod.appspot.com/testlibrary/" + testArray[i].company_nickname + "/" + testArray[i].testplan_name + "/" + testArray[i].start_tse + "'>Results</a>";
                 traceTable+="<div class='decChart hoverzoom showHidden' id='decChart" + index + "'></div>";
                 traceTable+="<div class='hiddenInfo' style='color:white;'>Stuff shown on hover</div>"
                 traceTable+="</div>"; 
@@ -159,7 +159,7 @@
          title: 'Preview',
          titleTextStyle: {color:'lightgray', fontSize: 18, fontName: 'NexaLight'},
          legend: 'none',
-         hAxis: {title: '',titleTextStyle:{color:'lightgray', fontName: ''}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'none', count: 0},viewWindowMode:'explicit'},
+         hAxis: {title: '',titleTextStyle:{color:'lightgray', fontName: ''}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'none', count: 5},viewWindowMode:'explicit'},
          vAxis: {title: '', titleTextStyle:{color:'lightgray'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'none', count: 0}, format: '##.###', viewWindowMode:'explicit'},
          backgroundColor: {fill:'none', stroke: 'black', strokeWidth: 0,},
          colors: ['rgb(2,255,253)','rgb(239,253,146)'],
