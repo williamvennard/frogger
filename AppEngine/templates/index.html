@@ -19,7 +19,7 @@
     <script src="../static/js/addons/angular.min.js"></script>
     <script type="text/javascript" src="../static/js/addons/clickadd.js"></script>
     <link rel="stylesheet" type="text/css" href="../static/css/testConfig.css">
-    <link rel="stylesheet" type="text/css" href="../static/css/testResultsList.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/canvasApp.css">
     <style type="text/css"></style>
 </head>
 
@@ -36,7 +36,9 @@
                             <li class="dots glyphicon glyphicon-option-vertical"></li>
                             <li><a href="instruments">INSTRUMENTS</a></li>
                             <li class="dots glyphicon glyphicon-option-vertical"></li>
-                            <li><a href="community">COMMUNITY</a></li>          
+                            <li><a href="testlibrary">TEST LIBRARY</a></li>
+                            <li class="dots glyphicon glyphicon-option-vertical"></li>
+                            <li><a href="community">COMMUNITY</a></li>            
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
                           <li><a class="glyphicon glyphicon-envelope" href="../navbar-static-top/"></a></li>
@@ -184,8 +186,9 @@
                         </div>
                     </div>
                 </div>
-            </div>    
-            <fieldset class="col-md-12" id="canvasBox" style="width: 40%;">
+            </div>
+<!-- TEST SPACE -->    
+            <fieldset class="col-md-12" id="canvasBox" style="width: 80%;">
                 <span class="spacer"></span><legend class="text-uppercase" style="width: 118px;">Test Space</legend><span class="spacer"></span>
 <!--TEST PLAN CONFIGURATION-->
                 <div class="collapse in well well-sm testConfigBox" id="collapseConfig">
@@ -353,63 +356,154 @@
                     </div>
                     <input id="submitBtn" type="submit" value="SUBMIT">                  
                   </form>   
-                </div>  
-<!--PEAK POWER APP-->
-                <div data-ng-repeat="item in settings.items track by $index" class="well well-sm" style="margin-top: 10px; background-color: rgb(33,33,33); border: 1px solid black;">
-                    <h4 style="margin-top: 0px; margin= 0px;">
-                        <a class="btn btn-inverse glyphicon glyphicon-menu-right">
-                        </a>
-                        <span style="color:white">Peak Power </span>
-                        <a class="btn btn-inverse glyphicon glyphicon-chevron-up" style="float: right;"></a>
-                        <a class="btn btn-inverse glyphicon glyphicon-chevron-down" style="float: right;"></a>
+                </div> 
+<!-- O-SCOPE INST APP -->
+                <div class="appBox">
+                    <h4 class="appTitle">Instrument - Oscilloscope
+                    <span class="appRemove glyphicon glyphicon-remove-circle"></span>
                     </h4>
-                    <div class="input-group">
-                        <span class="input-group-addon" id="basic-addon1" style="">Trigger Source</span>
-                        <select id="sourceSelect" class="form-control" style="border-style:solid;">                          
-                            <option value="External">External</option>
-                            <option value="RF Burst">RF Burst</option>
-                            <option value="Free Run">Free Run</option>
-                        </select>
+                    <form method="post" class="appForm">
+                        <div class="row appRow">
+                            <tr>
+                                <td class="label">
+                                    <p class="appLabel">Instrument:</p> 
+                                    <input class="appInput" style="border-top-right-radius: 5px; border-top-left-radius: 5px;" type="text" name="instrument_name" value="{{instrument_name}}">
+                                </td>
+                            </tr>
+                        </div>
+                        <div class="row appRow">
+                            <tr>
+                                <td class="label">
+                                    <p class="appLabel">Sample Rate (Hz):</p>  
+                                    <input class="appInput" type="text" name="sample_rate" value="{{sample_rate}}">
+                                </td>
+                            </tr>
+                        </div>
+                        <div class="row appRow">
+                            <tr>
+                                <td class="label">
+                                    <p class="appLabel">Num. of Samples:</p>  
+                                    <input class="appInput" style="border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;" type="text" name="number_of_samples" value="{{number_of_samples}}">
+                                </td>
+                            </tr>
+                        </div> 
+                        <input id="appSubmitBtn" type="submit" value="SUBMIT">
+                    </form>
+                </div>
+<!-- RMS MEAS APP-->
+                <div class="appBox">
+                    <h4 class="appTitle">Measurement - RMS
+                        <span class="appRemove glyphicon glyphicon-remove-circle"></span>
+                    </h4>
+                    <form method="post" class="appForm">
+                        <div class="row appRow">
+                            <tr>
+                                <td class="label">
+                                    <p class="appLabel">Start Time:</p> 
+                                    <input class="appInput" style="border-top-right-radius: 5px; border-top-left-radius: 5px;" type="text" name="instrument_name" value="{{RMS_time_start}}">
+                                </td>
+                            </tr>
+                        </div>
+                        <div class="row appRow">
+                            <tr>
+                                <td class="label">
+                                    <p class="appLabel">Stop Time:</p>  
+                                    <input style="border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;" class="appInput" type="text" name="sample_rate" value="{{RMS_time_stop}}">
+                                </td>
+                            </tr>
+                        </div>
+                        <input id="appSubmitBtn" type="submit" value="SUBMIT">
+                    </form>     
+                </div>
+<!-- PEAK POWER MEAS APP -->
+                <div data-ng-repeat="item in settings.items track by $index" class="appBox">
+                    <h4 class="appTitle">Measurement - Peak Power
+                        <span class="appRemove glyphicon glyphicon-remove-circle"></span>
+                    </h4> 
+                    <div class="row appRow">
+                        <tr>
+                            <td class="label">
+                                <p class="appLabel">Trigger Source:</p>
+                                <select id="sourceSelect" class="form-control appInput" style="position:relative; bottom:10px;">                          
+                                    <option value="External">External</option>
+                                    <option value="RF Burst">RF Burst</option>
+                                    <option value="Free Run">Free Run</option>
+                                </select>
+                            </td>
+                        </tr>                        
                     </div>
-                    <div class="input-group">
-                        <span class="input-group-addon" id="basic-addon2" style="width:118px">Bandwidth</span>
-                        <input type="text" class="form-control" placeholder="20 MHz" aria-describedby="basic-addon2" style="width: 297px; border-style:solid;">
+                    <div class="row appRow">
+                        <tr>
+                            <tr class="label">
+                                <p class="appLabel">Bandwidth:</p>
+                                <input class="appInput" placeholder="20 MHz" style="border-top-right-radius: 5px; border-top-left-radius: 5px;">    
+                            </tr>
+                        </tr>
                     </div>
-                    <div class="input-group">
-                        <span class="input-group-addon" id="basic-addon3" style="width:118px">Trigger Delay</span>
-                        <input type="text" class="form-control" placeholder="2 &mu;Sec" aria-describedby="basic-addon3" style="width: 297px;">
+                    <div class="row appRow">
+                        <tr>
+                            <tr class="label">
+                                <p class="appLabel">Trigger Delay:</p>
+                                <input class="appInput" placeholder="2 &mu;Sec" style="border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;">
+                            </tr>
+                        </tr>
                     </div>
-                    <div class="btn-group btn-group-sm" style=" left: 25%; margin-top: 10px;" role="group">
-                        <button type="button" class="btn btn-primary">Save</button>
+
+                    <div class="btn-group btn-group-sm" style=" left: 300px; margin-bottom: 10px;" role="group">
                         <button type="button" class="btn btn-success">Execute</button>
                         <button type="button" class="btn btn-danger" data-ng-click="settings.removeItem($index)">Delete</button> 
                         <span ng-bind="$parent.$eval(item)"></span>
                     </div>                    
                 </div>
-            </fieldset>
-            <fieldset class="col-md-12" id="resultsBox" style="width: 40%;">
-                    <span class="spacer"></span><legend class="text-uppercase" style="width: 140px;">Test Results</legend><span class="spacer"></span>   
-<!--TEST RESULTS-->              
-                <div class="well well-sm testResultsBox">
-                    <h2 style="text-align:center; color:white; margin-bottom: 5px;">Test Results</h2>
-                    <h5 id="testResultsHeadr">Name <span style="padding-left:100px;">Author</span> <span style="padding-left:100px;">Date</span></h5>
-                    <hr id="breakLine">
-                    <form method="post" id="resultsForm">
-                      <table>
-
-                        {% block import %}
-
-                        {% for t in tests %}
-
-                       
-          
-                          <a class="testName" href ="testresults/{{t.testplan_name}}">{{ t.testplan_name }}</a><span class="testAuthor">{{ t.author }}<span class="testDate">{{ t.date_created }}
-                          <br><br>   
-                          
-                        {% endfor %}
-                        {% endblock %} 
-                      </table>
-                    </form>
+<!-- DEVICE UNDER TEST -->
+                <div class="appBox">
+                    <h4 class="appTitle">Device Under Test - Arduino
+                        <span class="appRemove glyphicon glyphicon-remove-circle"></span>
+                    </h4>
+                    <form method="post" class="appForm">
+                        <div class="row appRow">
+                            <tr>
+                                <tr class="label">
+                                    <p class="appLabel">Settings:</p>
+                                    <input class="appInput">    
+                                </tr>
+                            </tr>                            
+                        </div>
+                        <input id="appSubmitBtn" type="submit" value="SUBMIT">
+                    </form>    
+                </div>
+<!-- SEQUENCING -->
+                <div class="appBox">
+                    <h4 class="appTitle">Test Sequence
+                        <span class="appRemove glyphicon glyphicon-remove-circle"></span>
+                    </h4>
+                    <form method="post" class="appForm">
+                        <div class="row appRow">
+                            <tr>
+                                <tr class="label">
+                                    <p class="appLabel">Start Time:</p>
+                                    <input class="appInput">
+                                </tr>
+                            </tr>
+                        </div>
+                        <div class="row appRow">
+                            <tr>
+                                <tr class="label">
+                                    <p class="appLabel">Pause:</p>
+                                    <input class="appInput">
+                                </tr>
+                            </tr>
+                        </div>
+                        <div class="row appRow">
+                            <tr>
+                                <tr class="label">
+                                    <p class="appLabel">End Time:</p>
+                                    <input class="appInput">
+                                </tr>
+                            </tr>
+                        </div>
+                        <input id="appSubmitBtn" type="submit" value="SUBMIT">
+                    </form>    
                 </div>
             </fieldset>
         </div>

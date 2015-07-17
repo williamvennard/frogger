@@ -1,0 +1,66 @@
+.appBox {
+    background-color: rgb(33,33,33);
+    border-radius: 5px;
+    border: 1px solid black;
+    margin: 5px 0 5px 0;
+}
+
+.appTitle {
+    margin: 10px 5px 10px 10px;
+    color: white;
+    font-family: 'nexa_lightregular';
+}
+
+.appRemove {
+    color: white;
+    background-color: rgb(33,33,33); 
+    float: right;
+    margin-right: 5px;
+}
+
+.appRow {
+    height: 25px;
+}
+
+.appInput {
+    width: 125px;
+    position: relative;
+    left: 180px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+}
+
+.appLabel {
+    position: relative;
+    top: 25px;
+    left: 30px;
+    margin-bottom: 0px;
+    width: 135px;
+    color: white;
+    font-size: 13;
+    font-family: 'nexa_lightregular';
+}
+
+.appForm {
+    height: 90px; 
+    position:relative; 
+    bottom: 25px;
+    margin: 0 0 0 5px;
+}
+
+#appSubmitBtn {
+    color: black;
+    font-family: 'nexa_lightregular';
+    letter-spacing: 2px;
+    width: 80px;
+    position: relative;
+    bottom: 15px;
+    margin: 10px 20px 15px 340px;
+    padding: 4px 0 0 0;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 5px;
+    border-color: rgb(38,38,39);
+    background-color: rgb(124,175,46);
+}
