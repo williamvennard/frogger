@@ -64,3 +64,9 @@
     border-color: rgb(38,38,39);
     background-color: rgb(124,175,46);
 }
+
+.appOrder {
+    margin-top: 25px;
+    margin-right: 500px;
+    float: right;
+}
