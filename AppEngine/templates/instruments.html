@@ -131,15 +131,14 @@
                         <div id="optionsBoxTitle" class="boxTitle">
                             <h2>Options</h2>
                         </div>
-<!-- 
-                        <div>
-                          <img style="height:30%; width:30%;" src="../static/images/image4207.png">
-                        </div>
--->   
+                        <!--BUTTONS-->
                         <div id="buttons" style="margin-bottom: 10px;">
-                            <button style="padding-top:5px;" class="text-uppercase" type="button" id="start">Start</button>
-                            <button style="padding-top:5px;" class="text-uppercase" data-toggle="collapse" data-parent="#accordion" href="#collapseConfig">Config</button>
+                            <button style="padding-top:5px;" class="text-uppercase" type="button" id="startStop">Start</button>
                             <button style="padding-top:5px;" class="text-uppercase" data-toggle="collapse" data-parent="#accordion" href="#collapseTable">Table</botton>
+                            <button style="padding-top:5px;" class="text-uppercase" type="button" id="save">save</button>
+                            <button style="padding-top:5px;" class="text-uppercase" type="button" id="delete">delete</button>
+                            <button style="padding-top:5px;" class="text-uppercase" data-toggle="collapse" data-parent="#accordion" href="#collapseConfig">Config</button>
+                            
                         </div> 
                         <!--CONFIG FORM-->
                         <div id="collapseConfig" class="collapse in configBox">           
@@ -265,20 +264,20 @@
                           </div>
                         </fieldset>
                     </div>
-                  </div>
+                    <div style="text-align:center" class="replayBtn">
+                        <input type="button" value="REPLAY" id="Replay">
+                        <button type="button" id="Pause" class="btn" onclick="">
+                          <i class="glyphicon glyphicon-pause"></i>
+                        </button>
+                        <button type="button" id="Start" class="btn" onclick="">
+                          <i class="glyphicon glyphicon-play"></i>
+                        </button>
+                        <input type="button" value="REWIND" id="Rewind">
+                    </div>
+                  </div>                 
               </div>  
           </div>  
-        <hr>
-        <div style="text-align:center">
-          <input type="button" value="REPLAY" id="Replay">
-          <button type="button" id="Pause" class="btn" onclick="">
-            <i class="glyphicon glyphicon-pause"></i>
-          </button>
-          <button type="button" id="Start" class="btn" onclick="">
-            <i class="glyphicon glyphicon-play"></i>
-          </button>
-          <input type="button" value="REWIND" id="Rewind">
-        </div> 
+        <hr> 
     </div> 
     <script type="text/javascript" src="../static/js/ochart.js"></script>
     <script type="text/javascript">$('#collapseOne').collapse("hide");</script><!--stops accordion from loading open -->

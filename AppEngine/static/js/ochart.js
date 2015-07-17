@@ -75,6 +75,15 @@
       });
     };
 
+    function buildSliceNames(start,end,interval) {
+        for (msec = start; msec <= end;msec += interval) {
+          name = String(msec);
+          if ($.inArray(name, sliceNames) == -1) {
+            sliceNames.push(name);
+          };
+        };  
+    };
+
     //LOADING URL
     test_info_url = window.location.pathname + '.json';
     console.log(test_info_url);
@@ -114,7 +123,9 @@
         decOffset = (((Number(numPages) * Number(sliceSize))/10) * decPointSpacing)/2;
         rawOffset = Number(testSliceStart) + ((Number(numPages) * Number(sliceSize))/2);
         rawWidth = (Number(numPages) * Number(sliceSize)) * rawPointSpacing;
-
+        //move to function called buildSliceNames(start,end,sliceSize)
+        //give slice start and a number
+        //buildSliceNames(Number(testSliceStart),sliceEnd,10);
         for (msec = Number(testSliceStart); msec <= sliceEnd;msec += sliceSize) {
           name = String(msec);
           if ($.inArray(name, sliceNames) == -1) {
@@ -345,3 +356,8 @@
     });
   });
   */
+   $("#startStop").click(function () {
+            $(this).text(function(i, v){
+               return v === 'STOP' ? 'START' : 'STOP'
+            })
+        });
