@@ -16,9 +16,10 @@ import numpy as np
 import scipy.signal 
 import os, sys, stat
 import csv
+import grequests
 #import urllib3 
 #from urllib3.poolmanager import PoolManager
-from requests_toolbelt.multipart.encoder import MultipartEncoder
+#from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 class BitScope:
     """Parse BitScope output dictionary.
@@ -41,40 +42,38 @@ class BitScope:
 
     def dt2ms(self, t):
         return int(t.strftime('%s'))*1000 + int(t.microsecond/1000)
+ 
+    def get_payload(self, URL, payload_dict):
+        return payload_dict[URL]
 
-
-    def post_creation_data(self, i_settings, p_settings, slicename, stuffing, start_tse, parent, instrument_name) :
-        window_bscope = {'i_settings':i_settings, 'p_settings':p_settings,'slicename':slicename,'cha':stuffing, 'start_tse':start_tse}
-        out_bscope = json.dumps(window_bscope, ensure_ascii=True)
+    def post_creation_data(self, i_settings, p_settings, stuffing, start_tse, parent, instrument_name, testplan_name, test_plan) :
+        window_bscope = {'i_settings':i_settings, 'p_settings':p_settings, 'cha':stuffing, 'start_tse':start_tse}
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
         if parent == 'raw':    
             #url = "http://localhost:18080/bscopedata/arduino/%s" % slicename
-            url_b = "https://gradientone-dev1.appspot.com/bscopedata/" + COMPANYNAME + '/' + HARDWARENAME +'/' + instrument_name + "/%s" % slicename
+            url_b = "https://gradientone-dev1.appspot.com/bscopedata/" + COMPANYNAME + '/' + HARDWARENAME +'/' + instrument_name + "/%s" % start_tse
+            out_bscope = json.dumps(window_bscope, ensure_ascii=True)
+            r = requests.post(url_b, data=out_bscope, headers=headers)
+            #print "dir(r)=",dir(r)
+            print "r.reason=",r.reason
+            print "r.status_code=",r.status_code
         else:
             #url = "http://localhost:18080/dec/bscopedata/arduino/%s" % slicename
-            url_b = "https://gradientone-dev1.appspot.com/bscopedata/dec/" + COMPANYNAME + '/' + HARDWARENAME +'/' + instrument_name + "/%s" % slicename
-        r = requests.post(url_b, data=out_bscope, headers=headers)
-        #print "dir(r)=",dir(r)
-        print "r.reason=",r.reason
-        print "r.status_code=",r.status_code
-
-    def post_creation_test(self, i_settings, p_settings, stuffing, start_tse, instrument_name, test_plan, testplan_name):
-        print start_tse
+            url_b = "https://gradientone-dev1.appspot.com/bscopedata/dec/" + COMPANYNAME + '/' + HARDWARENAME +'/' + instrument_name + "/%s" % start_tse
+            url_t = "https://gradientone-dev1.appspot.com/testresults/" + COMPANYNAME + '/' + testplan_name + "/%s" % str(start_tse)
+            URL_list = [url_b, url_t]
+            raw_url = "https://gradientone-dev1.appspot.com/bscopedata/" + COMPANYNAME + '/' + HARDWARENAME +'/' + instrument_name + "/%s" % str(start_tse)
+            dec_url = "https://gradientone-dev1.appspot.com/bscopedata/dec/" + COMPANYNAME + '/'+ HARDWARENAME +'/' + instrument_name + "/%s" % str(start_tse)
+            window_testresults = {'p_settings':p_settings,'dec_data_url':dec_url,'test_plan':test_plan, 'raw_data_url':raw_url, 'start_tse':start_tse, 'instrument_name':instrument_name, 'hardware_name':HARDWARENAME}
+            window_bscope = {'i_settings':i_settings, 'p_settings':p_settings, 'cha':stuffing, 'start_tse':start_tse}
+            payload_dict = {url_b:window_bscope, url_t:window_testresults}
+            rs = (grequests.post(u, json=self.get_payload(u, payload_dict), headers=headers) for u in URL_list)
+            grequests.map(rs)
+    
+    def post_complete(self, testplan_name, instrument_name, test_plan, stop_tse, i_settings, p_settings, start_tse,):
         raw_url = "https://gradientone-dev1.appspot.com/bscopedata/" + COMPANYNAME + '/' + HARDWARENAME +'/' + instrument_name + "/%s" % str(start_tse)
         dec_url = "https://gradientone-dev1.appspot.com/bscopedata/dec/" + COMPANYNAME + '/'+ HARDWARENAME +'/' + instrument_name + "/%s" % str(start_tse)
-        window_testresults = {'p_settings':p_settings,'dec_data_url':dec_url,'test_plan':test_plan, 'raw_data_url':raw_url, 'start_tse':start_tse, 'instrument_name':instrument_name}
-        out_testresults = json.dumps(window_testresults, ensure_ascii=True)
-        headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-        url_t = "https://gradientone-dev1.appspot.com/testresults/" + COMPANYNAME + '/' + testplan_name + "/%s" % str(start_tse)
-        print start_tse
-        print url_t
-        t = requests.post(url_t, data=out_testresults, headers=headers)
-        print "t.reason=",t.reason
-        print "t.status_code=",t.status_code
-        #print "dir(t)=",dir(t)
-    
-    def post_complete(self, testplan_name, stuffing,stop_tse):
-        window_complete = {'testplan_name':testplan_name, 'names':stuffing, 'stop_tse':stop_tse}
+        window_complete = {'testplan_name':testplan_name, 'dec_data_url':dec_url, 'raw_data_url':raw_url, 'instrument_name':instrument_name,'test_plan':test_plan, 'stop_tse':stop_tse, 'i_settings':i_settings, 'p_settings':p_settings, 'start_tse':start_tse, 'hardware_name':HARDWARENAME}
         out_complete = json.dumps(window_complete, ensure_ascii=True)
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
         url_c = "https://gradientone-dev1.appspot.com/testcomplete/" + COMPANYNAME + '/' + testplan_name + "/%s" % str(stop_tse)
@@ -93,37 +92,25 @@ class BitScope:
         i_settings = self.bscope_test_results['i_settings']
         start_tse = int(self.bscope_test_results['Start_TSE'])
         slicename = start_tse
+        test_plan = self.test_plan
         new_results = test_results[:1000]
         results_arr = np.array(new_results)  #puts the test data in an array
         dec = scipy.signal.decimate(results_arr, 10, ftype='fir', axis = 0)  #performs the decimation function
         test_results = dec.tolist()
-        self.post_creation_data(i_settings, p_settings, slicename, test_results, start_tse, parent, instrument_name)
+        self.post_creation_data(i_settings, p_settings, test_results, start_tse, parent, instrument_name, testplan_name, test_plan)
 
     def transmitraw(self):
         parent = 'raw'
         test_results = self.bscope_test_results['data']
+        print test_results
         i_settings = self.bscope_test_results['i_settings']
         p_settings = self.bscope_test_results['p_settings']
         test_plan = self.test_plan
         instrument_name = self.instrument_name
         testplan_name = self.testplan_name
-        print testplan_name
-        print type(testplan_name)
         p_settings['Dec_msec_btw_samples'] = 10
         start_tse = int(self.bscope_test_results['Start_TSE'])
-        slice_size = int(p_settings['Slice_Size_msec'])
-        sample_rate = int(i_settings['Sample_Rate_Hz'])
-        data_length = len(test_results)
-        sample_per_slice = int((float(sample_rate)/1000)*float(slice_size))
-        tse = start_tse
-        stuffing = []
-        self.post_creation_test(i_settings, p_settings, stuffing, start_tse, instrument_name, test_plan, testplan_name)
-
-        for i in range(0, data_length, sample_per_slice):
-            chunk = str(test_results[i:i + sample_per_slice])
-            slicename = tse + i
-            stuffing = chunk
-            self.post_creation_data(i_settings, p_settings, slicename, stuffing, start_tse, parent, instrument_name)
+        self.post_creation_data(i_settings, p_settings, test_results, start_tse, parent, instrument_name, testplan_name, test_plan)
 
     def transmitblob(self):
         f = open('/home/nedwards/BitScope/Examples/tempfile.csv', 'w')
@@ -148,8 +135,11 @@ class BitScope:
         testplan_name = self.testplan_name
         instrument_name = self.instrument_name
         test_plan = self.test_plan
-        stuffing = {'testplan_name':testplan_name, 'test_plan':test_plan, 'instrument_name':instrument_name, 'hardware_name':HARDWARENAME}
-        self.post_complete(testplan_name, stuffing, stop_tse)
+        p_settings = self.bscope_test_results['p_settings']
+        p_settings['Dec_msec_btw_samples'] = 10
+        i_settings = self.bscope_test_results['i_settings']
+        start_tse = int(self.bscope_test_results['Start_TSE'])
+        self.post_complete(testplan_name, instrument_name, test_plan, stop_tse, i_settings, p_settings, start_tse)
 
 
 if __name__ == "__main__":

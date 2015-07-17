@@ -291,6 +291,7 @@ class TestResultsDB(DictModel):
     testplan_name = db.StringProperty(required = False)
     company_nickname = db.StringProperty(required = False)
     Total_Slices = db.IntegerProperty(required = False)
+    Current_slice_count = db.IntegerProperty(required = False)
     Dec_msec_btw_samples = db.IntegerProperty(required = False)
     Raw_msec_btw_samples = db.IntegerProperty(required = False)
     Slice_Size_msec = db.IntegerProperty(required = False)
@@ -720,42 +721,28 @@ class TestResultsData(InstrumentDataHandler):
         "retrieve BitScope data by intstrument name and time slice name"
         #if not self.authcheck():
         #    return
-        rows = db.GqlQuery("""SELECT * FROM TestResultsDB WHERE company_nickname =:1 and hardware_name =:2
-                                AND instrument_name = :3 and test_complete_bool =:4""", company_nickname, hardware_name, instrument_name, False)  
-        rows = list(rows)
-        data = query_to_dict(rows)
-        output = {"data":data}
-        render_json(self, output)
+        key = 'testresults' + hardware_name + instrument_name
+        output = memcache.get(key)
+        render_json_cached(self, output)
 
     def post(self,company_nickname= "", testplan_name="",start_tse=""):
         "store data by intstrument name and time slice name"
-        key = 'testresults' + company_nickname + testplan_name + start_tse
-        print 'test plan raw post handler'
         testresults_content = json.loads(self.request.body)
+        instrument_name=str(testresults_content['instrument_name'])
+        hardware_name=str(testresults_content['hardware_name'])
         test_plan = testresults_content['test_plan']
         if test_plan == 'True':
-            test_plan = True
-            trace = False
+            testresults_content['test_plan'] = True
+            testresults_content['trace'] = False
         else:
-            test_plan = False
-            trace = True
-        to_save = []
-        r = TestResultsDB(parent = TestResultsDB_key(testplan_name), testplan_name=testplan_name,
-                    company_nickname = company_nickname, 
-                    Total_Slices=(testresults_content['p_settings']['Total_Slices']),
-                    Dec_msec_btw_samples=(testresults_content['p_settings']['Dec_msec_btw_samples']),
-                    Raw_msec_btw_samples=(testresults_content['p_settings']['Raw_msec_btw_samples']),
-                    Slice_Size_msec=(testresults_content['p_settings']['Slice_Size_msec']),
-                    dec_data_url=str(testresults_content['dec_data_url']),
-                    raw_data_url=str(testresults_content['raw_data_url']),
-                    instrument_name=str(testresults_content['instrument_name']),
-                    test_plan = test_plan,
-                    trace = trace, 
-                    start_tse=(testresults_content['start_tse'])
-                    )
-        to_save.append(r) 
-        memcache.set(key, to_save)
-        db.put(to_save)
+            testresults_content['test_plan'] = False
+            testresults_content['trace'] = True
+        testresults_content['test_complete_bool'] = False
+        testresults_content['p_settings'] = unic_to_ascii(testresults_content['p_settings'])
+        testresults_content = unic_to_ascii(testresults_content)
+        key = 'testresults' + hardware_name + instrument_name
+        testresults_content = json.dumps(testresults_content)
+        memcache.set(key, testresults_content)
 
 
 class BscopeData(InstrumentDataHandler):
@@ -764,40 +751,28 @@ class BscopeData(InstrumentDataHandler):
         #if not self.authcheck():
         #    return
         key = 'bscopedata' + company_nickname + hardware_name + instrument_name + slicename
-        rows = memcache.get(key)
-        if rows is None:
-            logging.error("BscopeData:get: query")
-            rows = db.GqlQuery("""SELECT * FROM BscopeDB WHERE instrument_name =:1
-                                AND slicename = :2""", instrument_name, slicename)  
-            rows = list(rows)
-            memcache.set(key, rows)
-        data = query_to_dict(rows)
-        cha_list = convert_str_to_cha_list(data)
-        data[0]['cha'] = cha_list
-        output = {"data":data}
-        render_json(self, output)
-    def post(self,company_nickname="", hardware_name="", instrument_name="",slicename=""):
+        cached_copy = memcache.get(key)
+        render_json_cached(self, cached_copy)
+    def post(self,company_nickname="", hardware_name="", instrument_name="",start_tse=""):
         "store data by intstrument name and time slice name"
-        key = 'bscopedata' + company_nickname + hardware_name + instrument_name + slicename
-        bscope_content = json.loads(self.request.body)
-        original_p = bscope_content['p_settings']
-        original_i = bscope_content['i_settings']
-        new_p = unic_to_ascii(original_p)
-        new_i = unic_to_ascii(original_i)
-        to_save = []
-        r = BscopeDB(parent = BscopeDB_key(instrument_name), 
-                        instrument_name=instrument_name,
-                         company_nickname = company_nickname,
-                         hardware_name= hardware_name,
-                         slicename=slicename,
-                         p_settings=str(new_p),
-                         i_settings=str(new_i),
-                         cha=(bscope_content['cha']),
-                         start_tse=(bscope_content['start_tse'])
-                         )
-        to_save.append(r) 
-        memcache.set(key, to_save)
-        db.put(to_save)
+        key = 'bscopedata' + company_nickname + hardware_name + instrument_name + start_tse
+        memcache.set(key, self.request.body)
+        test_results = json.loads(self.request.body)
+        test_results_data = test_results['cha']
+        data_length = len(test_results_data)
+        slice_size = int(test_results['p_settings']['Slice_Size_msec'])
+        sample_rate = int(test_results['i_settings']['Sample_Rate_Hz'])
+        sample_per_slice = int((float(sample_rate)/1000)*float(slice_size))
+        stuffing = []
+        for i in range(0, data_length, sample_per_slice):
+            chunk = str(test_results_data[i:i + sample_per_slice])
+            slicename = int(start_tse) + i
+            stuffing = chunk
+            key = 'bscopedata' + company_nickname + hardware_name + instrument_name + str(slicename)
+            window_bscope = {'i_settings':test_results['i_settings'], 'p_settings':test_results['p_settings'], 'cha':stuffing, 
+            'start_tse':start_tse, 'company_nickname':company_nickname, 'slicename':slicename, 'hardware_name':hardware_name, 'instrument_name':instrument_name}
+            out_bscope = json.dumps(window_bscope, ensure_ascii=True)
+            memcache.set(key, out_bscope)
 
 
 class SearchPage(InstrumentDataHandler):
@@ -807,10 +782,14 @@ class SearchPage(InstrumentDataHandler):
     def post(self):
         dropdown = dropdown_creation()
         name = self.request.get('name')
-        start_tse = int(self.request.get('start_tse'))
-        slicename = self.request.get('slicename')
+        if int(self.request.get('start_time')):
+            start_time = int(self.request.get('start_time'))
+        else:
+            start_time = None
+            
+        end_time = int(self.request.get('end_time'))
         instrument = self.request.get('instrument')
-        config = self.request.get('config')
+        testplan_name = self.request.get('testplan_name')
         if instrument == 'BitScope':
             instrument = BscopeDB.gql
         elif instrument == 'Tektronix':
@@ -818,15 +797,15 @@ class SearchPage(InstrumentDataHandler):
         #query = instrument("where name = :1 and start_tse =:2 and slicename =:3 and config =:4", name, start_tse, slicename, config)
         results = set()
                #summary.add((str(r.start_tse), str(r.name), str(r.config))) #make set to eliminate dupes
-        query=BscopeDB.all()
-        start_tse_query = query.filter("start_tse =",start_tse).run()
+        query=TestResultsDB.all()
+        start_tse_query = query.filter("start_tse =",start_time).run()
         for i in start_tse_query:
             results.add((str(i.start_tse), str(i.name)))
-        config_query = query.filter("config =",config).run()
-        for i in config_query:
-            results.add((str(i.start_tse), str(i.name)))
-        results = list(results)
-        self.render('search.html', results = results, dropdown = dropdown, name = name, slicename = slicename, start_tse = start_tse, config = config )
+        #config_query = query.filter("config =",config).run()
+        #for i in config_query:
+            #results.add((str(i.start_tse), str(i.name)))
+        #results = list(results)
+        self.render('search.html', results = results, dropdown = dropdown, name = name, slicename = slicename, start_time = start_time, end_time = end_time )
 
 
 class TestAnalyzerPage(InstrumentDataHandler):
@@ -900,14 +879,33 @@ class TestLibraryPage(InstrumentDataHandler):
 
 class TestCompletePage(InstrumentDataHandler):
     def post(self, company_nickname="", testplan_name="", stop_tse=""):
+        key = 'testresults' + company_nickname + testplan_name + stop_tse
         test_complete_content = json.loads(self.request.body)
-        test_plan = test_complete_content['names']['test_plan']
-        if test_plan == 'True':
-            result = db.GqlQuery("SELECT * FROM TestResultsDB WHERE company_nickname =:1 and testplan_name =:2", company_nickname, testplan_name)
-            for r in result:
-                r.test_complete = int(stop_tse)
-                r.test_complete_bool = True
-                r.put()   
+        print test_complete_content
+        test_plan = test_complete_content['test_plan']
+        if test_plan == 'True':        
+            test_plan = True
+            trace = False
+            to_save = []
+            r = TestResultsDB(parent = TestResultsDB_key(testplan_name), testplan_name=testplan_name,
+                    company_nickname = company_nickname, 
+                    Total_Slices=(test_complete_content['p_settings']['Total_Slices']),
+                    Dec_msec_btw_samples=(test_complete_content['p_settings']['Dec_msec_btw_samples']),
+                    Raw_msec_btw_samples=(test_complete_content['p_settings']['Raw_msec_btw_samples']),
+                    Slice_Size_msec=(test_complete_content['p_settings']['Slice_Size_msec']),
+                    dec_data_url=str(test_complete_content['dec_data_url']),
+                    raw_data_url=str(test_complete_content['raw_data_url']),
+                    instrument_name=str(test_complete_content['instrument_name']),
+                    hardware_name=str(test_complete_content['hardware_name']),
+                    test_plan = test_plan,
+                    test_complete_bool = True,
+                    test_complete = int(stop_tse),
+                    trace = trace, 
+                    start_tse=(test_complete_content['start_tse'])
+                    )
+            to_save.append(r) 
+            memcache.set(key, to_save)
+            db.put(to_save)
             result = db.GqlQuery("SELECT * FROM TestDB WHERE company_nickname =:1 and testplan_name =:2", company_nickname, testplan_name)
             for r in result:
                 r.commence_test = False
@@ -917,13 +915,31 @@ class TestCompletePage(InstrumentDataHandler):
                 r.commence_test = False
                 r.put()
         else:
-            instrument_name = test_complete_content['names']['instrument_name']
-            hardware_name = test_complete_content['names']['hardware_name']
-            result = db.GqlQuery("SELECT * FROM TestResultsDB WHERE company_nickname =:1 and testplan_name =:2", company_nickname, testplan_name)
-            for r in result:
-                r.test_complete = int(stop_tse)
-                r.test_complete_bool = True
-                r.put()   
+            test_plan = False
+            trace = True
+            instrument_name = test_complete_content['instrument_name']
+            hardware_name = test_complete_content['hardware_name']
+            print instrument_name, hardware_name
+            to_save = []
+            r = TestResultsDB(parent = TestResultsDB_key(testplan_name), testplan_name=testplan_name,
+                    company_nickname = company_nickname, 
+                    Total_Slices=(test_complete_content['p_settings']['Total_Slices']),
+                    Dec_msec_btw_samples=(test_complete_content['p_settings']['Dec_msec_btw_samples']),
+                    Raw_msec_btw_samples=(test_complete_content['p_settings']['Raw_msec_btw_samples']),
+                    Slice_Size_msec=(test_complete_content['p_settings']['Slice_Size_msec']),
+                    dec_data_url=str(test_complete_content['dec_data_url']),
+                    raw_data_url=str(test_complete_content['raw_data_url']),
+                    instrument_name=instrument_name,
+                    hardware_name=hardware_name,
+                    test_plan = test_plan,
+                    test_complete_bool = True,
+                    test_complete = int(stop_tse),
+                    trace = trace, 
+                    start_tse=(test_complete_content['start_tse'])
+                    )
+            to_save.append(r) 
+            memcache.set(key, to_save)
+            db.put(to_save)
             result = db.GqlQuery("SELECT * FROM ConfigDB WHERE instrument_name =:1 and hardware_name =:2 and company_nickname =:3 and testplan_name =:4", instrument_name, hardware_name, company_nickname, testplan_name)
             for r in result:
                 r.commence_test = False
@@ -938,6 +954,7 @@ class BscopeDataDec(InstrumentDataHandler):
         key = 'bscopedatadec' + company_nickname + hardware_name + instrument_name + start_tse
         start_tse = int(start_tse)
         bscope_payload = memcache.get(key)
+        print bscope_payload
         if bscope_payload is None:
             logging.error("BscopeData:get: query")
             rows = db.GqlQuery("""SELECT * FROM BscopeDB WHERE company_nickname =:1 and hardware_name =:2 and instrument_name =:3 AND start_tse= :4 ORDER BY slicename ASC""", company_nickname, hardware_name, instrument_name, start_tse)  
@@ -955,8 +972,8 @@ class BscopeDataDec(InstrumentDataHandler):
     def post(self,company_nickname="", hardware_name="", instrument_name="",slicename=""):
         "store data by intstrument name and time slice name"
         key = 'bscopedatadec' + company_nickname + hardware_name + instrument_name + slicename
-        bscope_payload = self.request.body
-        memcache.set(key, bscope_payload)
+        print self.request.body
+        memcache.set(key, self.request.body)
 
 
 app = webapp2.WSGIApplication([

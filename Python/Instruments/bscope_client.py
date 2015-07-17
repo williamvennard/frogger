@@ -15,8 +15,8 @@ MY_CHANNEL = 0 # channel to capture and display
 MY_PROBE_FILE = "" # default probe file if unspecified 
 MY_MODE = BL_MODE_FAST # preferred capture mode
 MY_RATE = 1000 # default sample rate we'll use for capture (hertz).  1 sample every 1 milisecond.
-MY_SIZE = 50 # number of samples we'll capture (simply a connectivity test)
-SLICE_SIZE = 10 # miliseconds
+MY_SIZE = 5000 # number of samples we'll capture (simply a connectivity test)
+SLICE_SIZE = 100 # miliseconds
 TRUE = 1
 MODES = ("FAST","DUAL","MIXED","LOGIC","STREAM")
 SOURCES = ("POD","BNC","X10","X20","X50","ALT","GND")
@@ -33,8 +33,8 @@ def check_start(config):
 
 
 def check_config_vars(config):
-    print config
-    print config['test_plan'], type(config['test_plan'])
+    #print config
+    #print config['test_plan'], type(config['test_plan'])
     if config['test_plan'] == 'True':
         testplan_name = config['testplan_name']
         instrument_name = config['inst_config']['instrument_name']
@@ -76,8 +76,10 @@ def check_config_url():
 
 def bscope_acq(config):    
     """sets the configuration for the bitscope API and calls the BitScope class"""
+    time_start = time.time()
     acq_dict = {}
     print "Starting: Attempting to open one device..."
+    
     if BL_Open(MY_PROBE_FILE,1):
         config_vars = check_config_vars(config)
         testplan_name = config_vars[0]
@@ -85,7 +87,7 @@ def bscope_acq(config):
         MY_RATE = float(config_vars[2])
         MY_SIZE = int(config_vars[3])
         test_plan = config_vars[4]
-        print testplan_name, instrument_name, MY_RATE, MY_SIZE, test_plan
+        #print testplan_name, instrument_name, MY_RATE, MY_SIZE, test_plan
         BL_Select(BL_SELECT_DEVICE,MY_DEVICE)
         BL_Mode(BL_MODE_LOGIC) == BL_MODE_LOGIC or BL_Mode(BL_MODE_FAST)
         BL_Range(BL_Count(BL_COUNT_RANGE))
@@ -129,14 +131,25 @@ def bscope_acq(config):
         acq_dict = set_v_for_k(acq_dict, 'instrument_name', instrument_name)
         acq_dict = set_v_for_k(acq_dict, 'test_plan', test_plan)
         acq_dict = set_v_for_k(acq_dict, 'Start_TSE', (roundup(tse)))
-        print acq_dict
+        #print acq_dict
         BL_Close()
+        time_bs = time.time()
         print "Finished: Library closed, resources released."    
         bits = BitScope(acq_dict)
         bits.transmitdec()
+        time_dec = time.time()
         bits.transmitraw()
+        time_stop = time.time()
         #bits.transmitblob()
         bits.testcomplete()
+        bs_time = time_bs - time_start
+        dec_time = time_dec - time_start
+        raw_time = time_stop - time_dec
+        total_time = time_stop - time_start
+        print 'BS data acq time', bs_time
+        #print 'time between data acq and transmit dec data', dec_time
+        #print 'time after dec transmission and transmit raw data', raw_time
+        print 'total time', total_time
     else:
         print "  FAILED: device not found (check your probe file)."
     
