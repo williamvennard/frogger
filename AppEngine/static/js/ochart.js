@@ -101,7 +101,7 @@
           dataType: 'json',
        }).done(function (results) {
         var sliceSize = 0;
-        testInfo = results.data[0];  //live version
+        testInfo = results.data;  //live version
         //testInfo = results[0];     //nonLive
 
         //URLS DEC/RAW
