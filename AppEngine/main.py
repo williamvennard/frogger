@@ -281,6 +281,7 @@ class TestDB(DictModel):
     public = db.BooleanProperty(required = False)    
     commence_test = db.BooleanProperty(required = False)
     test_plan = db.BooleanProperty(required = True)
+    test_status = db.StringProperty(required = False)
     trace = db.BooleanProperty(required = True)
 
 
@@ -304,6 +305,7 @@ class TestResultsDB(DictModel):
     test_complete_bool = db.BooleanProperty(required = False)
     trace = db.BooleanProperty(required = False)
     test_plan = db.BooleanProperty(required = False)
+    saved_state = db.BooleanProperty(required = False)
 
 def ConfigDB_key(name = 'default'):
     return db.Key.from_path('company_nickname', name)
@@ -332,6 +334,7 @@ class ConfigDB(DictModel):
     test_plan = db.BooleanProperty(required = True)
     testplan_name = db.StringProperty(required = False)
     trace = db.BooleanProperty(required = True)
+    instrument_status = db.StringProperty(required = False)
 
 
 def OscopeDB_key(name = 'default'):
@@ -441,7 +444,7 @@ class InstrumentsPage(InstrumentDataHandler):
 
 
 class TestPlanSummary(InstrumentDataHandler):
-    "present to the user a list of all configured test plans"
+    "An HTTP GET will present test plans.  Queries that include just company and hardware name are used to present instructions to the instrument for testing."
     def get(self, company_nickname="", hardware_name="", testplan_name=""):
         if company_nickname and hardware_name and testplan_name:
             rows = db.GqlQuery("SELECT * FROM TestDB WHERE company_nickname =:1 and testplan_name =:2", 
@@ -718,12 +721,12 @@ class OscopeData(InstrumentDataHandler):
 class TestResultsData(InstrumentDataHandler):
 
     def get(self,company_nickname="", hardware_name="", instrument_name=""):
-        "retrieve BitScope data by intstrument name and time slice name"
+        "HTTP GETs from the Instrument Page in the UI provide data to faciliate plotting"
         print company_nickname, hardware_name, instrument_name
         #if not self.authcheck():
         #    return
         rows = db.GqlQuery("""SELECT * FROM TestResultsDB WHERE company_nickname =:1 and hardware_name =:2
-                                AND instrument_name = :3 and test_complete_bool =:4""", company_nickname, hardware_name, instrument_name, True)  
+                                AND instrument_name = :3 and test_complete_bool =:4""", company_nickname, hardware_name, instrument_name, False)  
         rows = list(rows)
         data = query_to_dict(rows)
         print data
