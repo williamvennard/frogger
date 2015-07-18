@@ -729,9 +729,8 @@ class TestResultsData(InstrumentDataHandler):
                                 AND instrument_name = :3 and test_complete_bool =:4""", company_nickname, hardware_name, instrument_name, False)  
         rows = list(rows)
         data = query_to_dict(rows)
-        print data
         output = {"data":data}
-        render_json_cached(self, output)
+        render_json(self, output)
 
 
     def post(self,company_nickname= "", testplan_name="",start_tse=""):
