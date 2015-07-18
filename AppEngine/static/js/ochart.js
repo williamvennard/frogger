@@ -94,7 +94,7 @@
     function getTestInfo() {
       counter++;
       //test_info_url = 'https://gradientone-dev1.appspot.com/testlibrary/Acme/manufacturing/1436809506690.json';
-      test_info_url = 'https://gradientone-dev1.appspot.com/testresults/Acme/Tahoe/Primetime';
+      test_info_url = 'https://gradientone-dev1.appspot.com/testplansummary/Acme/Tahoe';
       $.ajax({
           async: true,
           url: test_info_url,
