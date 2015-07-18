@@ -94,7 +94,7 @@
     function getTestInfo() {
       counter++;
       //test_info_url = 'https://gradientone-dev1.appspot.com/testlibrary/Acme/manufacturing/1436809506690.json';
-      test_info_url = 'https://gradientone-prod.appspot.com/testresults/Acme/Tahoe/primetime';
+      test_info_url = 'https://gradientone-dev1.appspot.com/testresults/Acme/Tahoe/Primetime';
       $.ajax({
           async: true,
           url: test_info_url,
@@ -111,8 +111,8 @@
         testSliceStart = testInfo.start_tse;    
         decPointSpacing = (Number(testInfo.Dec_msec_btw_samples))/1000;    
         totalNumPages = testInfo.Total_Slices;
-        numPages = testInfo.Current_slice_count;
-        //numPages = Number(testInfo.Total_Slices); //not live version
+        //numPages = testInfo.Current_slice_count;
+        numPages = Number(testInfo.Total_Slices); //not live version
         rawPointSpacing = (testInfo.Raw_msec_btw_samples)/1000;
         sliceSize = Number(testInfo.Slice_Size_msec);
 
@@ -145,7 +145,7 @@
         console.log('getTestInfo: testInfo.Dec_msec_btw_samples = ', decPointSpacing);  
         console.log('getTestInfo: sliceSize = ', sliceSize);     
        });
-       //setTimeout(getTestInfo,200);   // change to 100 later
+       setTimeout(getTestInfo,200);   // change to 100 later
     };
     // getTestInfo();  // called by googe setOnLoadCallback method
 
@@ -264,6 +264,32 @@
           drawRawChart();
         });  
     };
+    //want save button to create this url and post true or
+    //https://gradientone-test.appspot.com/datamgmt/bscopedata/Acme/Tahoe/wildwood/1436937598030
+
+    function saveStatus(status) {
+      console.log('saveStatus: testSliceStart = ',testSliceStart);
+      console.log('saveStatus: sliceSize = ',sliceSize);
+      console.log('saveStatus: totalNumPages = ',totalNumPages);
+      console.log('saveStatus: raw_urlPath = ',raw_urlPath);
+
+      var saveValue = '"' + status + '"';
+      var save_url = 'https://gradientone-test.appspot.com/datamgmt/' + testSliceStart;
+      console.log('saveStatus: save_url = ',save_url);
+/*
+      var formData = {save_status:saveValue,totalNumPages:totalNumPages,sliceSize:sliceSize};
+     $.ajax({
+        type: "POST",
+        url: save_url,
+        data: formData,
+        dataType: 'json',
+        success: function(data, textStatus, jqXHR)
+        {
+            console.log('Ajax post was a success!');
+        },
+      }); 
+*/
+    };
 
     // Connected to knobs
     // WILL BE USED TO MOVE THE PLOT WINDOW TO GIVE THE FEELING OF MOVEMENT
@@ -356,8 +382,11 @@
     });
   });
   */
-   $("#startStop").click(function () {
-            $(this).text(function(i, v){
-               return v === 'STOP' ? 'START' : 'STOP'
-            })
-        });
+  $("#save").click(function () {
+      saveStatus('save');
+  });
+  $("#startStop").click(function () {
+    $(this).text(function(i, v){
+      return v === 'STOP' ? 'START' : 'STOP'
+    })
+  });
