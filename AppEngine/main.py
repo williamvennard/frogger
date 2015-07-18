@@ -719,11 +719,17 @@ class TestResultsData(InstrumentDataHandler):
 
     def get(self,company_nickname="", hardware_name="", instrument_name=""):
         "retrieve BitScope data by intstrument name and time slice name"
+        print company_nickname, hardware_name, instrument_name
         #if not self.authcheck():
         #    return
-        key = 'testresults' + hardware_name + instrument_name
-        output = memcache.get(key)
+        rows = db.GqlQuery("""SELECT * FROM TestResultsDB WHERE company_nickname =:1 and hardware_name =:2
+                                AND instrument_name = :3 and test_complete_bool =:4""", company_nickname, hardware_name, instrument_name, True)  
+        rows = list(rows)
+        data = query_to_dict(rows)
+        print data
+        output = {"data":data}
         render_json_cached(self, output)
+
 
     def post(self,company_nickname= "", testplan_name="",start_tse=""):
         "store data by intstrument name and time slice name"
@@ -752,7 +758,19 @@ class BscopeData(InstrumentDataHandler):
         #    return
         key = 'bscopedata' + company_nickname + hardware_name + instrument_name + slicename
         cached_copy = memcache.get(key)
-        render_json_cached(self, cached_copy)
+        if cached_copy is None:
+            logging.error("BscopeData:get: query")
+            rows = db.GqlQuery("""SELECT * FROM BscopeDB WHERE instrument_name =:1
+                                AND slicename = :2""", instrument_name, slicename)  
+            rows = list(rows)
+            data = query_to_dict(rows)
+            cha_list = convert_str_to_cha_list(data)
+            data[0]['cha'] = cha_list
+            output = {"data":data}
+            memcache.set(key, output)
+            render_json(self, output)
+        else:
+            render_json_cached(self, cached_copy)
     def post(self,company_nickname="", hardware_name="", instrument_name="",start_tse=""):
         "store data by intstrument name and time slice name"
         key = 'bscopedata' + company_nickname + hardware_name + instrument_name + start_tse
@@ -853,6 +871,7 @@ class TestAnalyzerPage(InstrumentDataHandler):
             self.render('testanalyzer.html', test_sample = start_tse, start_time = start_time, stop_time = stop_time, rms = rms)
 
 
+
 class TestLibraryPage(InstrumentDataHandler):
     def get(self, company_name="", testplan_name="", start_tse=""):
         if company_name:
@@ -875,6 +894,80 @@ class TestLibraryPage(InstrumentDataHandler):
             render_json(self, test_results)
         else:
             self.render('testlibrary.html')
+
+
+class DataMgmtPage(InstrumentDataHandler):
+    def get(self, company_nickname="", hardware_name="",instrument_name="",start_tse=""):
+        data_objects = self.request.body
+        self.response.headers['Content-Type'] = 'application/json; charset=UTF-8'
+        self.response.headers['Access-Control-Allow-Origin'] = '*'
+        data_objects = "You have given the server:          " + data_objects +"       check if valid JSON here:  http://jsonformatter.curiousconcept.com/"
+        self.response.write(data_objects)
+
+        #slice_count = 5
+        #Slice_Size_msec = 100
+        #check_slices = 0
+        #slicename = start_tse
+        #for s in range(0, slice_count):
+            #key = 'bscopedata' + company_nickname + hardware_name + instrument_name + slicename
+            #bscope_content = memcache.get(key)
+            
+            #bscope_content = json.loads(bscope_content)
+            #print bscope_content
+            #original_p = bscope_content['p_settings']
+            #original_i = bscope_content['i_settings']
+            #new_p = unic_to_ascii(original_p)
+            #new_i = unic_to_ascii(original_i)
+            #to_save = []
+            #r = BscopeDB(parent = BscopeDB_key(instrument_name), 
+            #                instrument_name=instrument_name,
+            #                 company_nickname = company_nickname,
+            #                 hardware_name= hardware_name,
+            #                 slicename=(slicename),
+            #                 p_settings=str(new_p),
+            #                 i_settings=str(new_i),
+            #                 cha=(bscope_content['cha']),
+            #                 start_tse=int(bscope_content['start_tse'])
+            #                 )
+            #to_save.append(r) 
+            #db.put(to_save)
+            #check_slices += 1
+            #slicename = int(slicename)
+            #slicename += int(Slice_Size_msec)
+            #slicename = str(slicename)
+        #if check_slices == slice_count:
+        #    print check_slices, "Successfully saved."
+        #else:
+        #    print "Error:", check_slices, "saved.  The server was expecting to save:", slice_count
+
+
+class TestLibraryPage(InstrumentDataHandler):
+    def get(self, company_name="", testplan_name="", start_tse=""):
+        if company_name:
+            company_name_check = company_name.split('.')
+            company_name = company_name_check[0]
+        if start_tse:
+            start_tse_check = start_tse.split('.')
+            start_tse = int(start_tse_check[0])
+        if company_name and testplan_name and start_tse and start_tse_check[-1] == 'json':
+            rows = db.GqlQuery("SELECT * FROM TestResultsDB WHERE testplan_name =:1 and start_tse =:2", testplan_name, start_tse)
+            rows = list(rows)            
+            test_results = query_to_dict(rows)
+            render_json(self, test_results)
+        elif company_name and testplan_name and start_tse:
+            self.render('testLibResults.html')
+        elif company_name and company_name_check[-1] == 'json':
+            rows = db.GqlQuery("SELECT * FROM TestResultsDB")
+            rows = list(rows)            
+            test_results = query_to_dict(rows)
+            render_json(self, test_results)
+        else:
+            self.render('testlibrary.html')
+
+
+class TestSavePage(InstrumentDataHandler):
+    def get(self):
+        self.render('testpage_save.html')
 
 
 class TestCompletePage(InstrumentDataHandler):
@@ -988,6 +1081,7 @@ app = webapp2.WSGIApplication([
     ('/bscopeconfiginput', BscopeConfigInputPage),
     ('/configoutput/([a-zA-Z0-9-]+)', ConfigOutputPage),
     ('/configoutput/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', ConfigOutputPage),
+    ('/datamgmt/bscopedata/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', DataMgmtPage),
     ('/testconfiginput', TestConfigInputPage),
     ('/testconfigoutput/([a-zA-Z0-9-]+)', TestConfigOutputPage),
     ('/testplansummary/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', TestPlanSummary),
@@ -1009,6 +1103,7 @@ app = webapp2.WSGIApplication([
     ('/bscopedata/([a-zA-Z0-9-]+)//([a-zA-Z0-9.-]+)', BscopeData),
     ('/bscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', BscopeData),
     ('/bscopedata/dec/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', BscopeDataDec),
+    ('/testsave',TestSavePage),
     ('/upload/geturl', UploadURLGenerator),
     ('/upload/upload_file', FileUploadHandler),
     ('/upload/success',FileUploadSuccess),
