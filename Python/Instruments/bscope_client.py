@@ -31,8 +31,8 @@ def check_start(config):
     commence_test = str(config['commence_test'])
     return commence_test
 
-
 def post_status(status):
+    "posts hardware status updates to the server"
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
     status = json.dumps(status, ensure_ascii=True)
     url_s = "https://gradientone-dev1.appspot.com/status/" + COMPANYNAME + '/' + HARDWARENAME
@@ -42,8 +42,7 @@ def post_status(status):
     #print "dir(s)=",dir(s)
 
 def check_config_vars(config):
-    #print config
-    #print config['test_plan'], type(config['test_plan'])
+    "creates config variables to pass to the main BitScope code"
     if config['test_plan'] == 'True':
         testplan_name = config['testplan_name']
         instrument_name = config['inst_config']['instrument_name']
@@ -59,6 +58,7 @@ def check_config_vars(config):
     return testplan_name, instrument_name, MY_RATE, MY_SIZE, test_plan
 
 def set_v_for_k(test_dict, k, v):
+    "creates dictionary based off empty dictionary and key/value args"
     test_dict[k.encode('ascii')] = v
     return test_dict
 
@@ -66,6 +66,7 @@ def roundup(x):
     return int(((x//SLICE_SIZE) * SLICE_SIZE) + SLICE_SIZE)
 
 def make_json(payload):
+    "makes json based off input payload"
     acq_dict = json.dumps(payload)
     return acq_dict
 
@@ -83,7 +84,6 @@ def check_config_url():
         else:
             print "No start order found"
     threading.Timer(1, check_config_url()).start()
-
 
 def bscope_acq(config):    
     """sets the configuration for the bitscope API and calls the BitScope class"""
