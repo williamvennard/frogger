@@ -348,6 +348,14 @@ class OscopeDB(DictModel):
     start_tse = db.IntegerProperty(required = True)
  
 
+def HardwareDB_key(name = 'default'):
+    return db.Key.from_path('company_nickname', name)
+
+class HardwareDB(DictModel):
+    company_nickname = db.StringProperty(required = False)
+    hardware_name = db.StringProperty(required = False)
+    hardware_status = db.StringProperty(required = False)
+
 def BscopeDB_key(name = 'default'):
     return db.Key.from_path('bscope', name)
 
@@ -769,8 +777,9 @@ class BscopeData(InstrumentDataHandler):
             cha_list = convert_str_to_cha_list(data)
             data[0]['cha'] = cha_list
             output = {"data":data}
+            output = json.dumps(output)
             memcache.set(key, output)
-            render_json(self, output)
+            render_json_cached(self, output)
         else:
             render_json_cached(self, cached_copy)
     def post(self,company_nickname="", hardware_name="", instrument_name="",start_tse=""):
@@ -900,47 +909,40 @@ class TestLibraryPage(InstrumentDataHandler):
 
 class DataMgmtPage(InstrumentDataHandler):
     def get(self, company_nickname="", hardware_name="",instrument_name="",start_tse=""):
-        data_objects = self.request.body
-        self.response.headers['Content-Type'] = 'application/json; charset=UTF-8'
-        self.response.headers['Access-Control-Allow-Origin'] = '*'
-        data_objects = "You have given the server:          " + data_objects +"       check if valid JSON here:  http://jsonformatter.curiousconcept.com/"
-        self.response.write(data_objects)
-
-        #slice_count = 5
-        #Slice_Size_msec = 100
-        #check_slices = 0
-        #slicename = start_tse
-        #for s in range(0, slice_count):
-            #key = 'bscopedata' + company_nickname + hardware_name + instrument_name + slicename
-            #bscope_content = memcache.get(key)
-            
-            #bscope_content = json.loads(bscope_content)
-            #print bscope_content
-            #original_p = bscope_content['p_settings']
-            #original_i = bscope_content['i_settings']
-            #new_p = unic_to_ascii(original_p)
-            #new_i = unic_to_ascii(original_i)
-            #to_save = []
-            #r = BscopeDB(parent = BscopeDB_key(instrument_name), 
-            #                instrument_name=instrument_name,
-            #                 company_nickname = company_nickname,
-            #                 hardware_name= hardware_name,
-            #                 slicename=(slicename),
-            #                 p_settings=str(new_p),
-            #                 i_settings=str(new_i),
-            #                 cha=(bscope_content['cha']),
-            #                 start_tse=int(bscope_content['start_tse'])
-            #                 )
-            #to_save.append(r) 
-            #db.put(to_save)
-            #check_slices += 1
-            #slicename = int(slicename)
-            #slicename += int(Slice_Size_msec)
-            #slicename = str(slicename)
-        #if check_slices == slice_count:
-        #    print check_slices, "Successfully saved."
-        #else:
-        #    print "Error:", check_slices, "saved.  The server was expecting to save:", slice_count
+        slice_count = 5
+        Slice_Size_msec = 100
+        check_slices = 0
+        slicename = start_tse
+        for s in range(0, slice_count):
+            key = 'bscopedata' + company_nickname + hardware_name + instrument_name + slicename
+            bscope_content = memcache.get(key)
+            bscope_content = json.loads(bscope_content)
+            print type(bscope_content)
+            original_p = bscope_content['p_settings']
+            original_i = bscope_content['i_settings']
+            new_p = unic_to_ascii(original_p)
+            new_i = unic_to_ascii(original_i)
+            to_save = []
+            r = BscopeDB(parent = BscopeDB_key(instrument_name), 
+                            instrument_name=instrument_name,
+                             company_nickname = company_nickname,
+                             hardware_name= hardware_name,
+                             slicename=(slicename),
+                             p_settings=str(new_p),
+                             i_settings=str(new_i),
+                             cha=(bscope_content['cha']),
+                             start_tse=int(bscope_content['start_tse'])
+                             )
+            to_save.append(r) 
+            db.put(to_save)
+            check_slices += 1
+            slicename = int(slicename)
+            slicename += int(Slice_Size_msec)
+            slicename = str(slicename)
+        if check_slices == slice_count:
+            print check_slices, "Successfully saved."
+        else:
+            print "Error:", check_slices, "saved.  The server was expecting to save:", slice_count
 
 
 class TestLibraryPage(InstrumentDataHandler):
@@ -971,6 +973,36 @@ class TestSavePage(InstrumentDataHandler):
     def get(self):
         self.render('testpage_save.html')
 
+
+class Status(InstrumentDataHandler):
+    def get(self, company_nickname="", hardware_name=""):
+        rows = db.GqlQuery("SELECT * FROM HardwareDB WHERE company_nickname=:1 and hardware_name =:2", company_nickname, hardware_name)
+        rows = list(rows)            
+        status = query_to_dict(rows)
+        render_json(self, status)
+
+    def post(self, company_nickname="", hardware_name=""):
+        status = json.loads(self.request.body)
+        rows = db.GqlQuery("SELECT * FROM HardwareDB WHERE company_nickname=:1 and hardware_name =:2", company_nickname, hardware_name)
+        print rows
+        rows = list(rows)            
+        status_DB = query_to_dict(rows)
+        if not status_DB:
+                print 'no rows found'
+                s = HardwareDB(parent = HardwareDB_key(hardware_name), 
+                   company_nickname = company_nickname, 
+                   hardware_name = hardware_name, 
+                   hardware_status = status,             
+                   )  
+                s.put()
+                print 'This status was inserted to the DB', status
+        else:
+            for r in rows:
+                r.hardware_status = status
+                r.put()
+                print 'This status was inserted to the DB', status
+
+        #print status
 
 class TestCompletePage(InstrumentDataHandler):
     def post(self, company_nickname="", testplan_name="", stop_tse=""):
@@ -1090,6 +1122,7 @@ app = webapp2.WSGIApplication([
     ('/testplansummary/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', TestPlanSummary),
     ('/communitytests', CommunityTestsPage),
     ('/search', SearchPage),
+    ('/status/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', Status),
     ('/testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)', TestCompletePage),
     ('/testresults', TestResultsPage),
     ('/testresults/([a-zA-Z0-9-]+)', TestResultsData),
