@@ -32,6 +32,15 @@ def check_start(config):
     return commence_test
 
 
+def post_status(status):
+    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+    status = json.dumps(status, ensure_ascii=True)
+    url_s = "https://gradientone-dev1.appspot.com/status/" + COMPANYNAME + '/' + HARDWARENAME
+    s = requests.post(url_s, data=status, headers=headers)
+    print "s.reason=",s.reason
+    print "s.status_code=",s.status_code
+    #print "dir(s)=",dir(s)
+
 def check_config_vars(config):
     #print config
     #print config['test_plan'], type(config['test_plan'])
@@ -64,13 +73,15 @@ def check_config_url():
     """polls the configuration URL for a start signal @ 1sec intervals"""
     config_url = "https://gradientone-dev1.appspot.com/testplansummary/" + COMPANYNAME + '/' + HARDWARENAME
     r = requests.get(config_url)
-    config = r.json()
-    config = config['configs'][0]
-    if check_start(config) == 'True':
-        print "Starting API"
-        bscope_acq(config)
-    else:
-        print "No start order found"
+    if r:
+        config = r.json()
+        config = config['configs'][0]
+        if check_start(config) == 'True':
+            print "Starting API"
+            post_status('Starting')
+            bscope_acq(config)
+        else:
+            print "No start order found"
     threading.Timer(1, check_config_url()).start()
 
 
@@ -79,7 +90,7 @@ def bscope_acq(config):
     time_start = time.time()
     acq_dict = {}
     print "Starting: Attempting to open one device..."
-    
+    post_status('Acquiring')
     if BL_Open(MY_PROBE_FILE,1):
         config_vars = check_config_vars(config)
         testplan_name = config_vars[0]
@@ -87,7 +98,6 @@ def bscope_acq(config):
         MY_RATE = float(config_vars[2])
         MY_SIZE = int(config_vars[3])
         test_plan = config_vars[4]
-        #print testplan_name, instrument_name, MY_RATE, MY_SIZE, test_plan
         BL_Select(BL_SELECT_DEVICE,MY_DEVICE)
         BL_Mode(BL_MODE_LOGIC) == BL_MODE_LOGIC or BL_Mode(BL_MODE_FAST)
         BL_Range(BL_Count(BL_COUNT_RANGE))
@@ -131,10 +141,10 @@ def bscope_acq(config):
         acq_dict = set_v_for_k(acq_dict, 'instrument_name', instrument_name)
         acq_dict = set_v_for_k(acq_dict, 'test_plan', test_plan)
         acq_dict = set_v_for_k(acq_dict, 'Start_TSE', (roundup(tse)))
-        #print acq_dict
         BL_Close()
         time_bs = time.time()
         print "Finished: Library closed, resources released."    
+        post_status('Transmitting')
         bits = BitScope(acq_dict)
         bits.transmitdec()
         time_dec = time.time()
@@ -142,6 +152,7 @@ def bscope_acq(config):
         time_stop = time.time()
         #bits.transmitblob()
         bits.testcomplete()
+        post_status('Idle')
         bs_time = time_bs - time_start
         dec_time = time_dec - time_start
         raw_time = time_stop - time_dec
@@ -152,5 +163,6 @@ def bscope_acq(config):
         print 'total time', total_time
     else:
         print "  FAILED: device not found (check your probe file)."
-    
+
+post_status('Idle')
 check_config_url()
