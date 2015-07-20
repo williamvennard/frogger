@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block import %}
+
+<html>
+  <head>
+    <title>Test Analyzer </title>
+    <style type="text/css">
+      .label {text-align: right}
+      .error {color: red}
+    </style>
+
+  </head>
+
+
+  <body>
+    <h2>Analysis Panel</h2>
+    <form method="post">
+        <td>
+            Test Sample = {{test_sample}}
+            <br>
+            Test Range = {{start_time}} to {{stop_time}} (msec)
+            <br><br>
+        </td>
+
+      <table>
+        
+        <tr>
+          <td>
+            Root Mean Squared Voltage
+          </td>
+        <td>
+          <input type="checkbox" name="measurement_RMS">
+        </td>
+        </tr> 
+
+        <tr>
+          <td>
+            Peak To Peak Voltage
+          </td>
+        <td>
+          <input type="checkbox" name="measurement_peak_to_peak_voltage">
+        </td>
+        </tr> 
+
+        <tr>
+          <td class="label">
+            RMS Start Time
+          </td>
+          <td>
+            <input type="text" name="RMS_time_start" value="{{RMS_time_start}}">
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            RMS Stop Time
+          </td>
+          <td>
+            <input type="text" name="RMS_time_stop" value="{{RMS_time_stop}}">
+          </td>
+        </tr>
+
+         Measurement Result = {{measurement_result}}
+      </table>
+
+      <input type="submit">
+    </form>
+  </body>
+
+</html>
+
+{% endblock %}

@@ -31,7 +31,6 @@ from google.appengine.ext.webapp import blobstore_handlers
 from string import maketrans
 
 
-
 authorized_users = ['charlie@gradientone.com',
                     'nedwards@gradientone.com',
                     'nickedwards@gmail.com'
@@ -69,24 +68,6 @@ def render_json_cached(self,j):
     self.response.headers['Access-Control-Allow-Origin'] = '*'
     self.response.write(j)
 
-def root_mean_squared(test_data, test):
-    "RMS measurement function that relies upon queries from test config and instrument data"
-    RMS_time_start = float(test[0]["RMS_time_start"])
-    RMS_time_stop = float(test[0]["RMS_time_stop"])  
-    sample_interval = 0.01
-    row_RMS_time_start = RMS_time_start/sample_interval
-    row_RMS_time_stop = RMS_time_stop/sample_interval
-    sum = 0
-    tempsq = 0
-    i = 0
-    for entry in test_data[int(row_RMS_time_start):(1+int(row_RMS_time_stop))]:
-        tempsq = float(entry['CH1'])*float(entry['CH1'])
-        sum += tempsq 
-        i += 1
-    z = sum/i
-    rms = math.sqrt(z)
-    return rms
-
 def root_mean_squared_ta(test_data, RMS_time_start, RMS_time_stop, sample_interval):
     "RMS measurement function that relies upon queries from test config and instrument data"
     RMS_time_start = float(RMS_time_start)
@@ -101,6 +82,21 @@ def root_mean_squared_ta(test_data, RMS_time_start, RMS_time_stop, sample_interv
     z = sum/i
     rms = math.sqrt(z)
     return rms
+
+def peak_to_peak_voltage_ta(test_data, time_start, time_stop, sample_interval):
+    "RMS measurement function that relies upon queries from test config and instrument data"
+    time_start = float(time_start)
+    time_stop = float(time_stop) 
+    sum = 0
+    tempsq = 0
+    i = 0
+    for entry in test_data[int(time_start/sample_interval):(1+int(time_stop/sample_interval))]:
+        tempsq = entry*entry
+        sum += tempsq 
+        i += 1  
+    z = sum/i
+    peak_to_peak_voltage = z*2
+    return peak_to_peak_voltage
 
 def unic_to_ascii(input_uni):
     new = {}
@@ -132,7 +128,6 @@ def create_decimation(data):
     return test_results
 
 def convert_str_to_cha_list(string):
-    #sample_data = string[0]['cha']
     bracket_free_data = string[1:-1]
     cha_list = bracket_free_data.split(',')
     cha_list =  [float(x) for x in cha_list]
@@ -731,7 +726,6 @@ class OscopeData(InstrumentDataHandler):
 
 
 class TestResultsData(InstrumentDataHandler):
-
     def get(self,company_nickname="", hardware_name="", instrument_name=""):
         "HTTP GETs from the Instrument Page in the UI provide data to faciliate plotting"
         print company_nickname, hardware_name, instrument_name
@@ -743,8 +737,6 @@ class TestResultsData(InstrumentDataHandler):
         data = query_to_dict(rows)
         output = {"data":data}
         render_json(self, output)
-
-
     def post(self,company_nickname= "", testplan_name="",start_tse=""):
         "store data by intstrument name and time slice name"
         testresults_content = json.loads(self.request.body)
@@ -865,8 +857,8 @@ class TestAnalyzerPage(InstrumentDataHandler):
         rows = memcache.get(key)
         if rows is None:
             logging.error("BscopeData:get: query")
-            rows = db.GqlQuery("""SELECT * FROM BscopeDB WHERE name =:1
-                                AND start_tse=:2 ORDER BY slicename ASC """, name, start_tse)  
+            rows = db.GqlQuery("""SELECT * FROM BscopeDB WHERE instrument_name =:1
+                                AND start_tse=:2 ORDER BY slicename ASC """, instrument_name, start_tse)  
             rows = list(rows)
             memcache.set(key, rows)
         data = query_to_dict(rows)
@@ -875,11 +867,22 @@ class TestAnalyzerPage(InstrumentDataHandler):
         stop_time = config_settings['Total_Slices'] * config_settings['Slice_Size_msec'] * config_settings['Raw_msec_btw_samples']
         si = config_settings['Raw_msec_btw_samples']
         cha_list = convert_str_to_cha_list(data[0]['cha'])
-        RMS_time_start = self.request.get('RMS_time_start')
-        RMS_time_stop = self.request.get('RMS_time_stop')
-        rms = root_mean_squared_ta(cha_list, RMS_time_start, RMS_time_stop, si)
-        self.render('testanalyzer.html', test_sample = start_tse, start_time = start_time, stop_time = stop_time, rms = rms)
+        if self.request.get('measurement_RMS'):
+            print 'RMS is checked'
+            RMS_time_start = self.request.get('RMS_time_start')
+            RMS_time_stop = self.request.get('RMS_time_stop')
+            measurement_result = root_mean_squared_ta(cha_list, RMS_time_start, RMS_time_stop, si)
+            print measurement_result
+        elif self.request.get('measurement_peak_to_peak_voltage'):
+            print 'p2p is checked'
+            RMS_time_start = self.request.get('RMS_time_start')
+            RMS_time_stop = self.request.get('RMS_time_stop')
+            measurement_result = peak_to_peak_voltage_ta(cha_list, RMS_time_start, RMS_time_stop, si)
+            print measurement_result
+        else:
+            measurement_result = None
 
+        self.render('testanalyzer.html', test_sample = start_tse, start_time = start_time, stop_time = stop_time, measurement_result = measurement_result)
 
 
 class TestLibraryPage(InstrumentDataHandler):
