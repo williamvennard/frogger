@@ -95,7 +95,7 @@ def peak_to_peak_voltage_ta(test_data, time_start, time_stop, sample_interval):
         sum += tempsq 
         i += 1  
     z = sum/i
-    peak_to_peak_voltage = z*2
+    peak_to_peak_voltage = math.sqrt(z)*2*math.sqrt(2)
     return peak_to_peak_voltage
 
 def unic_to_ascii(input_uni):
