@@ -132,8 +132,8 @@ def create_decimation(data):
     return test_results
 
 def convert_str_to_cha_list(string):
-    sample_data = string[0]['cha']
-    bracket_free_data = sample_data[1:-1]
+    #sample_data = string[0]['cha']
+    bracket_free_data = string[1:-1]
     cha_list = bracket_free_data.split(',')
     cha_list =  [float(x) for x in cha_list]
     return cha_list
@@ -158,7 +158,7 @@ def dropdown_creation():
     return dropdown
 
 def create_psettings(data):
-    data = str(data[0]['config'])
+    #data = str(data[0]['config'])
     data = data.split(',')
     temp_list = []
     for d in data[:5]:
@@ -166,14 +166,18 @@ def create_psettings(data):
     temp_dict = {}
     for item in temp_list[1:-1]:
         item = item.split(':')
-        temp_dict[item[0].strip().strip('u').strip('\'')] = int((item[1].strip().strip('L')))
+        temp_dict[item[0].strip().strip('u').strip('\'')] = int((item[1]).strip().rstrip("'").lstrip("'"))
+    print temp_dict
     t = temp_list[0]
     t = t.split(':')
-    del t[0]
+    print t
+    #del t[0]
     temp_dict[t[0].strip().strip('{').strip('u').strip('\'')] = int((t[1].strip()))
     t = temp_list[-1]
     t = t.split(':')
     temp_dict[t[0].strip().strip('u').strip('\'')] = int((t[1].strip().strip('}')))
+    print temp_dict
+
     return temp_dict
     
 def getKey(row):
@@ -774,7 +778,7 @@ class BscopeData(InstrumentDataHandler):
                                 AND slicename = :2""", instrument_name, slicename)  
             rows = list(rows)
             data = query_to_dict(rows)
-            cha_list = convert_str_to_cha_list(data)
+            cha_list = convert_str_to_cha_list(data[0]['cha'])
             data[0]['cha'] = cha_list
             output = {"data":data}
             output = json.dumps(output)
@@ -839,47 +843,42 @@ class SearchPage(InstrumentDataHandler):
 
 class TestAnalyzerPage(InstrumentDataHandler):
     #work in progress.  To do:  modularize parsing and measurment calls.
-    def get(self, instrument="", name="", start_tse=""):
-        if instrument == 'bscopedata':
-            key = 'bscopedata' + name + start_tse
-            start_tse = int(start_tse)
-            rows = memcache.get(key)
-            if rows is None:
-                logging.error("BscopeData:get: query")
-                rows = db.GqlQuery("""SELECT * FROM BscopeDB WHERE name =:1
+    def get(self, instrument_name="", start_tse=""):
+        key = 'bscopedata' + instrument_name + start_tse
+        start_tse = int(start_tse)
+        rows = memcache.get(key)
+        if rows is None:
+            logging.error("BscopeData:get: query")
+            rows = db.GqlQuery("""SELECT * FROM BscopeDB WHERE instrument_name =:1
+                            AND start_tse=:2 ORDER BY slicename ASC """, instrument_name, start_tse)  
+            rows = list(rows)
+            memcache.set(key, rows)
+        data = query_to_dict(rows)
+        config_settings = create_psettings(data[0]['p_settings'])
+        start_time = 0 #miliseconds
+        stop_time = config_settings['Total_Slices'] * config_settings['Slice_Size_msec'] * config_settings['Raw_msec_btw_samples']
+        si = config_settings['Raw_msec_btw_samples']
+        self.render('testanalyzer.html', test_sample = start_tse, start_time = start_time, stop_time = stop_time)        
+    def post(self, instrument_name="", start_tse=""):
+        key = 'bscopedata' + instrument_name + start_tse
+        start_tse = int(start_tse)
+        rows = memcache.get(key)
+        if rows is None:
+            logging.error("BscopeData:get: query")
+            rows = db.GqlQuery("""SELECT * FROM BscopeDB WHERE name =:1
                                 AND start_tse=:2 ORDER BY slicename ASC """, name, start_tse)  
-                rows = list(rows)
-                memcache.set(key, rows)
-            data = query_to_dict(rows)
-            config_settings = create_psettings(data)
-            start_time = 0 #miliseconds
-            stop_time = config_settings['Total_Slices'] * config_settings['Slice_Size(msec)'] * config_settings['Raw_msec_btw_samples']#miliseconds
-            si = config_settings['Raw_msec_btw_samples']
-            self.render('testanalyzer.html', test_sample = start_tse, start_time = start_time, stop_time = stop_time)        
-    def post(self, instrument="", name="", start_tse=""):
-        if instrument == 'bscopedata':
-            key = 'bscopedata' + name + start_tse
-            start_tse = int(start_tse)
-            rows = memcache.get(key)
-            if rows is None:
-                logging.error("BscopeData:get: query")
-                rows = db.GqlQuery("""SELECT * FROM BscopeDB WHERE name =:1
-                                AND start_tse=:2 ORDER BY slicename ASC """, name, start_tse)  
-                rows = list(rows)
-                memcache.set(key, rows)
-            data = query_to_dict(rows)
-            config_settings = create_psettings(data)
-            start_time = 0 #miliseconds
-            stop_time = config_settings['Total_Slices'] * config_settings['Slice_Size(msec)'] * config_settings['Raw_msec_btw_samples']#miliseconds
-            si = config_settings['Raw_msec_btw_samples']
-            temp = []
-            for item in data:
-                z = ast.literal_eval(item['cha'])
-                temp.extend(z)
-            RMS_time_start = self.request.get('RMS_time_start')
-            RMS_time_stop = self.request.get('RMS_time_stop')
-            rms = root_mean_squared_ta(temp, RMS_time_start, RMS_time_stop, si)
-            self.render('testanalyzer.html', test_sample = start_tse, start_time = start_time, stop_time = stop_time, rms = rms)
+            rows = list(rows)
+            memcache.set(key, rows)
+        data = query_to_dict(rows)
+        config_settings = create_psettings(data[0]['p_settings'])
+        start_time = 0 #miliseconds
+        stop_time = config_settings['Total_Slices'] * config_settings['Slice_Size_msec'] * config_settings['Raw_msec_btw_samples']
+        si = config_settings['Raw_msec_btw_samples']
+        cha_list = convert_str_to_cha_list(data[0]['cha'])
+        RMS_time_start = self.request.get('RMS_time_start')
+        RMS_time_stop = self.request.get('RMS_time_stop')
+        rms = root_mean_squared_ta(cha_list, RMS_time_start, RMS_time_stop, si)
+        self.render('testanalyzer.html', test_sample = start_tse, start_time = start_time, stop_time = stop_time, rms = rms)
 
 
 
@@ -976,33 +975,14 @@ class TestSavePage(InstrumentDataHandler):
 
 class Status(InstrumentDataHandler):
     def get(self, company_nickname="", hardware_name=""):
-        rows = db.GqlQuery("SELECT * FROM HardwareDB WHERE company_nickname=:1 and hardware_name =:2", company_nickname, hardware_name)
-        rows = list(rows)            
-        status = query_to_dict(rows)
-        render_json(self, status)
+        key = 'status' + company_nickname + hardware_name
+        status = memcache.get(key)
+        render_json_cached(self, status)
 
     def post(self, company_nickname="", hardware_name=""):
         status = json.loads(self.request.body)
-        rows = db.GqlQuery("SELECT * FROM HardwareDB WHERE company_nickname=:1 and hardware_name =:2", company_nickname, hardware_name)
-        print rows
-        rows = list(rows)            
-        status_DB = query_to_dict(rows)
-        if not status_DB:
-                print 'no rows found'
-                s = HardwareDB(parent = HardwareDB_key(hardware_name), 
-                   company_nickname = company_nickname, 
-                   hardware_name = hardware_name, 
-                   hardware_status = status,             
-                   )  
-                s.put()
-                print 'This status was inserted to the DB', status
-        else:
-            for r in rows:
-                r.hardware_status = status
-                r.put()
-                print 'This status was inserted to the DB', status
-
-        #print status
+        key = 'status' + company_nickname + hardware_name
+        memcache.set(key, status)
 
 class TestCompletePage(InstrumentDataHandler):
     def post(self, company_nickname="", testplan_name="", stop_tse=""):
@@ -1132,7 +1112,7 @@ app = webapp2.WSGIApplication([
     ('/testlibrary/([a-zA-Z0-9-]+.json)', TestLibraryPage),
     ('/testlibrary/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', TestLibraryPage),
     ('/testlibrary/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+.json)', TestLibraryPage),
-    ('/testanalyzer/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', TestAnalyzerPage),
+    ('/testanalyzer/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', TestAnalyzerPage),
     ('/oscopedata/([a-zA-Z0-9-]+)', OscopeData),
     ('/oscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)', OscopeData),
     ('/bscopedata/([a-zA-Z0-9-]+)//([a-zA-Z0-9.-]+)', BscopeData),
