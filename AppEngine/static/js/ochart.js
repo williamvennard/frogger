@@ -284,23 +284,20 @@
     //https://gradientone-test.appspot.com/datamgmt/bscopedata/Acme/Tahoe/wildwood/1436937598030
 
     function saveStatus(status) {
-      console.log('saveStatus: testSliceStart = ',testSliceStart);
       console.log('saveStatus: sliceSize = ',sliceSize);
       console.log('saveStatus: totalNumPages = ',totalNumPages);
-      console.log('saveStatus: raw_urlPath = ',raw_urlPath);
       formatSaveUrl = raw_urlPath.split('/');
-      console.log('saveStatus: formatSaveUrl = ',formatSaveUrl);
       var saveValue = status;
       var save_url = 'https://gradientone-test.appspot.com/datamgmt/' + formatSaveUrl[formatSaveUrl.length-5] + '/' + formatSaveUrl[formatSaveUrl.length-4] + '/' + formatSaveUrl[formatSaveUrl.length-3] + '/' + formatSaveUrl[formatSaveUrl.length-2] + '/' + formatSaveUrl[formatSaveUrl.length-1];
       console.log('saveStatus: save_url = ',save_url);
 
-      var formData = {"save_status":saveValue,"totalNumPages":totalNumPages,"sliceSize":sliceSize};
+      var formData = JSON.stringify({"save_status":saveValue,"totalNumPages":totalNumPages,"sliceSize":sliceSize});
       console.log('saveStatus: formData =', formData);
      $.ajax({
         type: "POST",
         url: save_url,
         data: formData,
-        dataType: 'jsonp',
+        dataType: 'json',
         success: function(data, textStatus, jqXHR)
         {
             console.log('saveStatus: Ajax post was a success!');
