@@ -85,23 +85,24 @@
     };
 
     //LOADING URL
-    test_info_url = window.location.pathname + '.json';
-    console.log(test_info_url);
+    //test_info_url = window.location.pathname + '.json';
+    // console.log(test_info_url);
 
     //Continuously polling at: 
     //https://gradientone-dev1.appspot.com/testresults/Acme/Tahoe/LED
+    var sliceSize = 0;
     var counter = 0;
     function getTestInfo() {
       counter++;
       //test_info_url = 'https://gradientone-dev1.appspot.com/testlibrary/Acme/manufacturing/1436809506690.json';
-      test_info_url = 'https://gradientone-dev1.appspot.com/testplansummary/Acme/Tahoe';
+      test_info_url = 'https://gradientone-test.appspot.com/testresults/Acme/Tahoe/Primetime';
+      console.log('test_info_url', test_info_url);
       $.ajax({
           async: true,
           url: test_info_url,
           dataType: 'json',
-       }).done(function (results) {
-        var sliceSize = 0;
-        testInfo = results.configs;  //live version
+       }).done(function (results) {       
+        testInfo = results.data[0];  //live version
         //testInfo = results[0];     //nonLive
 
         //URLS DEC/RAW
@@ -113,6 +114,7 @@
         totalNumPages = testInfo.Total_Slices;
         //numPages = testInfo.Current_slice_count;
         numPages = Number(testInfo.Total_Slices); //not live version
+        //numPages = 5;
         rawPointSpacing = (testInfo.Raw_msec_btw_samples)/1000;
         sliceSize = Number(testInfo.Slice_Size_msec);
 
@@ -137,18 +139,19 @@
         name = String(sliceEnd);
         delete resultsCache.name;
         fetchSliceNames();
-        //console.log('slice names = ',sliceNames);
+        console.log('slice names = ',sliceNames);
         console.log('decOffset = ',decOffset);
-        //console.log('getTestInfo: testInfo = ', testInfo);
-        //console.log('getTestInfo: sliceEnd = ', sliceEnd);        
+        console.log('getTestInfo: testInfo = ', testInfo);
+        console.log('getTestInfo: sliceEnd = ', sliceEnd);        
         console.log('getTestInfo: testInfo.Total_Slices = ', numPages);
         console.log('getTestInfo: testInfo.Dec_msec_btw_samples = ', decPointSpacing);  
         console.log('getTestInfo: sliceSize = ', sliceSize);     
        });
-       setTimeout(getTestInfo,1000);   // change to 100 later
+       //setTimeout(getTestInfo,1000);   // change to 100 later
+       console.log('Counter = ',counter);
     };
-    // getTestInfo();  // called by googe setOnLoadCallback method
-
+    //getTestInfo();  // called by googe setOnLoadCallback method
+    
     // DEC CHART CODE //
 
     // BUILD DEC DATA TABLE AND DRAW DEC CHART
@@ -159,7 +162,7 @@
 
         for (i=0; i<decData.length; i++) {
            var num = i*decPointSpacing - decOffset;
-           console.log('drawDecChart: num =', decOffset);
+           //console.log('drawDecChart: num =', decOffset);
            num = Math.ceil(num * 100) / 100;
            data.addRow([
              num, 
@@ -235,16 +238,16 @@
          showRowNumber: true,
       };   
           moveWindowData = data;
+          console.log('drawRawChart: data=',data)
          //DRAW CHART
-         //var chart = new google.visualization.LineChart($('#rawChart').get(0));
-         rawChart = new google.visualization.LineChart($('#ochart').get(0));      
-         //chart.draw(data, rawChartOptions);
+         rawChart = new google.visualization.LineChart($('#oChart').get(0));      
          rawChart.draw(data, rawChartOptions);
          //DRAW TABLE
          var table = new google.visualization.Table($('#oTable').get(0));
          table.draw(data, tableOptions);  
     };
     function fetchSliceNames() {
+      console.log('fetchSliceNames: sliceNames = ',sliceNames);
         for (idx in sliceNames) {
             if (!(sliceNames[idx] in resultsCache)) {
                fetchData(base_url,sliceNames[idx],true);
@@ -254,13 +257,16 @@
     google.setOnLoadCallback(getTestInfo);
     // FETCH RAW DATA 
     function fetchData(base_url,sliceName,use_async){
+
         json_url = base_url + sliceName;
+        console.log('fetchData: json_url',json_url)
         $.ajax({
           async: use_async,
           url: json_url,            
           dataType: 'json',
         }).done(function (results) {
           resultsCache[sliceName] = results;
+          console.log('fetchData: results =',results)
           drawRawChart();
         });  
     };
@@ -276,7 +282,7 @@
       var saveValue = '"' + status + '"';
       var save_url = 'https://gradientone-test.appspot.com/datamgmt/' + testSliceStart;
       console.log('saveStatus: save_url = ',save_url);
-/*
+
       var formData = {save_status:saveValue,totalNumPages:totalNumPages,sliceSize:sliceSize};
      $.ajax({
         type: "POST",
@@ -285,10 +291,10 @@
         dataType: 'json',
         success: function(data, textStatus, jqXHR)
         {
-            console.log('Ajax post was a success!');
+            console.log('saveStatus: Ajax post was a success!');
         },
       }); 
-*/
+
     };
 
     // Connected to knobs
