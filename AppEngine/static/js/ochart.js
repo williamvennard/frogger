@@ -44,6 +44,7 @@
     google.load('visualization', '1', {packages: ['corechart','table']});
 
     var testInfo = [];
+    var testSettings = [];
     var sliceNames = [];
     var resultsCache = [];
     var hMax = 0;
@@ -102,21 +103,26 @@
           url: test_info_url,
           dataType: 'json',
        }).done(function (results) {       
-        testInfo = results.data[0];  //live version
-        //testInfo = results[0];     //nonLive
+        //testInfo = results.data[0];  //live version
+        testInfo = results;     //nonLive
+        //console.log('getTestInfo: results = ',results);
+        
+        console.log('testInfo p_settings = ', testInfo.p_settings);
+        console.log('sting or no?', typeof testInfo.p_settings);
 
+        testSettings = testInfo.p_settings;
         //URLS DEC/RAW
         dec_url = testInfo.dec_data_url;
         raw_urlPath = testInfo.raw_data_url;
         //Test Info DEC/RAW
-        testSliceStart = testInfo.start_tse;    
-        decPointSpacing = (Number(testInfo.Dec_msec_btw_samples))/1000;    
-        totalNumPages = testInfo.Total_Slices;
+        testSliceStart = testSettings.Start_TSE;    
+        decPointSpacing = (Number(testSettings.Dec_msec_btw_samples))/1000;    
+        totalNumPages = testSettings.Total_Slices;
         //numPages = testInfo.Current_slice_count;
-        numPages = Number(testInfo.Total_Slices); //not live version
+        numPages = Number(testSettings.Total_Slices); //not live version
         //numPages = 5;
-        rawPointSpacing = (testInfo.Raw_msec_btw_samples)/1000;
-        sliceSize = Number(testInfo.Slice_Size_msec);
+        rawPointSpacing = (testSettings.Raw_msec_btw_samples)/1000;
+        sliceSize = Number(testSettings.Slice_Size_msec);
 
         rawUrlSplit = raw_urlPath.split(testSliceStart);
         base_url = rawUrlSplit[0];
@@ -205,8 +211,12 @@
             if (!(sliceName in resultsCache)) { return; }
             var gatheredResults = resultsCache[sliceName];
             //console.log('drawRawChart: gatheredResults = ',resultsCache[sliceName]);
-            var rawData = gatheredResults.data;
-            var rawCha = rawData[0].cha;
+            console.log('drawRawChart: gatheredResults =', gatheredResults)
+            var rawData = gatheredResults;
+            console.log('drawRawChart: rawData = ', rawData);
+            //var rawCha = rawData[0].cha;
+            var rawCha = rawData.cha;
+
             
             //BUILD DATA TABLE ADDING ROWS TIME AND CHA
            for (i = 0; i < rawCha.length; i++) {
@@ -259,14 +269,14 @@
     function fetchData(base_url,sliceName,use_async){
 
         json_url = base_url + sliceName;
-        console.log('fetchData: json_url',json_url)
+        //console.log('fetchData: json_url',json_url)
         $.ajax({
           async: use_async,
           url: json_url,            
           dataType: 'json',
         }).done(function (results) {
           resultsCache[sliceName] = results;
-          console.log('fetchData: results =',results)
+          //console.log('fetchData: results =',results)
           drawRawChart();
         });  
     };
