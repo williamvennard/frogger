@@ -153,7 +153,7 @@
         console.log('getTestInfo: testInfo.Dec_msec_btw_samples = ', decPointSpacing);  
         console.log('getTestInfo: sliceSize = ', sliceSize);     
        });
-       setTimeout(getTestInfo,500);   // change to 100 later
+       setTimeout(getTestInfo,60000);   // change to 100 later
        console.log('Counter = ',counter);
     };
     //getTestInfo();  // called by googe setOnLoadCallback method
@@ -216,7 +216,7 @@
             console.log('drawRawChart: rawData = ', rawData);
             //var rawCha = rawData[0].cha;
             var rawCha = rawData.cha;
-
+            console.log('drawRawChart: rawCha=', rawCha);
             
             //BUILD DATA TABLE ADDING ROWS TIME AND CHA
            for (i = 0; i < rawCha.length; i++) {
@@ -288,17 +288,19 @@
       console.log('saveStatus: sliceSize = ',sliceSize);
       console.log('saveStatus: totalNumPages = ',totalNumPages);
       console.log('saveStatus: raw_urlPath = ',raw_urlPath);
-
-      var saveValue = '"' + status + '"';
-      var save_url = 'https://gradientone-test.appspot.com/datamgmt/' + testSliceStart;
+      formatSaveUrl = raw_urlPath.split('/');
+      console.log('saveStatus: formatSaveUrl = ',formatSaveUrl);
+      var saveValue = status;
+      var save_url = 'https://gradientone-test.appspot.com/datamgmt/' + formatSaveUrl[formatSaveUrl.length-5] + '/' + formatSaveUrl[formatSaveUrl.length-4] + '/' + formatSaveUrl[formatSaveUrl.length-3] + '/' + formatSaveUrl[formatSaveUrl.length-2] + '/' + formatSaveUrl[formatSaveUrl.length-1];
       console.log('saveStatus: save_url = ',save_url);
 
-      var formData = {save_status:saveValue,totalNumPages:totalNumPages,sliceSize:sliceSize};
+      var formData = {"save_status":saveValue,"totalNumPages":totalNumPages,"sliceSize":sliceSize};
+      console.log('saveStatus: formData =', formData);
      $.ajax({
         type: "POST",
         url: save_url,
         data: formData,
-        dataType: 'json',
+        dataType: 'jsonp',
         success: function(data, textStatus, jqXHR)
         {
             console.log('saveStatus: Ajax post was a success!');
