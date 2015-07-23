@@ -22,7 +22,7 @@
   //HORIZONTAL KNOBS
     var hZoom = 100;
     var hPosition = 0;
-    var hPosStep = 0.05;
+
 
     $(".hZoomKnob").knob({
       'release' : function (hRange) { 
@@ -63,6 +63,8 @@
     var test_info_url;
     var rawChart;
     var moveWindowData;
+    var sliceSize = 0;
+    var dynamicSliceEnd;
     
     function fetchDecData(){
        dec_json_url = dec_url;
@@ -89,12 +91,26 @@
     //test_info_url = window.location.pathname + '.json';
     // console.log(test_info_url);
 
+    // status updates URL =
+    // https://gradientone-test.appspot.com/status/Acme/Tahoe
+    var currentTestStatus;
+    var statusArray = [];
+    function getTestStatus() {
+      status_url = 'https://gradientone-test.appspot.com/status/Acme/Tahoe';
+      $.ajax({
+          async: true,
+          url: status_url,            
+          dataType: 'json',
+       }).done(function (results) {
+          currentTestStatus = results[0];
+          statusArray.push(currentTestStatus);
+      });
+    };
+    console.log('statusArray = ',statusArray);
     //Continuously polling at: 
     //https://gradientone-dev1.appspot.com/testresults/Acme/Tahoe/LED
-    var sliceSize = 0;
-    var counter = 0;
     function getTestInfo() {
-      counter++;
+
       //test_info_url = 'https://gradientone-dev1.appspot.com/testlibrary/Acme/manufacturing/1436809506690.json';
       test_info_url = 'https://gradientone-test.appspot.com/testresults/Acme/Tahoe/Primetime';
       console.log('test_info_url', test_info_url);
@@ -103,12 +119,7 @@
           url: test_info_url,
           dataType: 'json',
        }).done(function (results) {       
-        //testInfo = results.data[0];  //live version
-        testInfo = results;     //nonLive
-        //console.log('getTestInfo: results = ',results);
-        
-        console.log('testInfo p_settings = ', testInfo.p_settings);
-        console.log('sting or no?', typeof testInfo.p_settings);
+        testInfo = results;  
 
         testSettings = testInfo.p_settings;
         //URLS DEC/RAW
@@ -118,12 +129,10 @@
         testSliceStart = testSettings.Start_TSE;    
         decPointSpacing = (Number(testSettings.Dec_msec_btw_samples))/1000;    
         totalNumPages = testSettings.Total_Slices;
-        //numPages = testInfo.Current_slice_count;
         numPages = Number(testSettings.Total_Slices); //not live version
-        //numPages = 5;
+
         rawPointSpacing = (testSettings.Raw_msec_btw_samples)/1000;
         sliceSize = Number(testSettings.Slice_Size_msec);
-
         rawUrlSplit = raw_urlPath.split(testSliceStart);
         base_url = rawUrlSplit[0];
         sliceEnd = (Number(testSliceStart) + (numPages*sliceSize)) -10;
@@ -131,9 +140,12 @@
         decOffset = (((Number(numPages) * Number(sliceSize))/10) * decPointSpacing)/2;
         rawOffset = Number(testSliceStart) + ((Number(numPages) * Number(sliceSize))/2);
         rawWidth = (Number(numPages) * Number(sliceSize)) * rawPointSpacing;
+
         //move to function called buildSliceNames(start,end,sliceSize)
         //give slice start and a number
-        //buildSliceNames(Number(testSliceStart),sliceEnd,10);
+        dynamicSliceEnd = (Number(testSliceStart) + (sliceSize));
+        //buildSliceNames(Number(testSliceStart),dynamicSliceEnd,sliceSize);
+
         for (msec = Number(testSliceStart); msec <= sliceEnd;msec += sliceSize) {
           name = String(msec);
           if ($.inArray(name, sliceNames) == -1) {
@@ -153,8 +165,7 @@
         console.log('getTestInfo: testInfo.Dec_msec_btw_samples = ', decPointSpacing);  
         console.log('getTestInfo: sliceSize = ', sliceSize);     
        });
-       setTimeout(getTestInfo,60000);   // change to 100 later
-       console.log('Counter = ',counter);
+       setTimeout(getTestInfo,6000);   // change to 100 later
     };
     //getTestInfo();  // called by googe setOnLoadCallback method
     
@@ -308,16 +319,17 @@
 
     // Connected to knobs
     // WILL BE USED TO MOVE THE PLOT WINDOW TO GIVE THE FEELING OF MOVEMENT
-    /*
+   
     function moveWindow(){
         var width = rawWidth*(100/hZoom);
         
-    console.log('hPosStep = ',hPosStep);
+
         hMax = hPosition + width/2;
         hMin = hPosition - width/2;
- 
-        hPosStep = 5.0 / hZoom;
-        console.log('hPosStep = ', hPosStep);
+        console.log('moveWindow: hMax = ', hMax);
+        console.log('moveWindow: hMin = ', hMin);
+
+
         console.log('moveWindow: H position = ',hPosition);
         console.log('moveWindow: H zoom = ',hZoom);
         rawChartOptions.hAxis.viewWindow.max = hMax;
@@ -326,6 +338,7 @@
         rawChart.draw(moveWindowData, rawChartOptions); // REDRAW CHART
         console.log('moveWindow: vew window =',rawChartOptions.hAxis.viewWindow);
     }; 
+     /*
     // replay button
     function replay() {
       step = (- rawWidth/2);
@@ -399,6 +412,10 @@
   */
   $("#save").click(function () {
       saveStatus('save');
+  });
+  $("#delete").click(function () {
+      saveStatus('delete');
+      statusArray = [];
   });
   $("#startStop").click(function () {
     $(this).text(function(i, v){
