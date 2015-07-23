@@ -73,4 +73,5 @@ class Handler(InstrumentDataHandler):
             window_bscope = {'i_settings':test_results['i_settings'], 'p_settings':test_results['p_settings'], 'cha':stuffing, 
             'start_tse':start_tse, 'company_nickname':company_nickname, 'slicename':slicename, 'hardware_name':hardware_name, 'instrument_name':instrument_name}
             out_bscope = json.dumps(window_bscope, ensure_ascii=True)
+            print out_bscope
             memcache.set(key, out_bscope)

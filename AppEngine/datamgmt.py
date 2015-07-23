@@ -4,6 +4,7 @@ from gradientone import create_psettings
 from gradientone import convert_str_to_cha_list
 from gradientone import render_json_cached
 from gradientone import author_creation
+from gradientone import unic_to_ascii
 from onedb import BscopeDB
 from onedb import BscopeDB_key
 import collections
@@ -33,9 +34,14 @@ from google.appengine.ext.webapp import blobstore_handlers
 from string import maketrans
 
 class Handler(InstrumentDataHandler):
-    def get(self, company_nickname="", hardware_name="",instrument_name="",start_tse=""):
-        slice_count = 5
-        Slice_Size_msec = 100
+    def post(self, company_nickname="", hardware_name="",instrument_name="",start_tse=""):
+        save = self.request.body
+        print save
+        save_object = json.loads(self.request.body)
+        print save_object
+        save_status = save_object['save_status']
+        slice_count = save_object['totalNumPages']
+        Slice_Size_msec = save_object['sliceSize']
         check_slices = 0
         slicename = start_tse
         for s in range(0, slice_count):

@@ -3,6 +3,7 @@ from gradientone import query_to_dict
 from gradientone import create_psettings
 from gradientone import convert_str_to_cha_list
 from gradientone import render_json
+from gradientone import render_json_cached
 from gradientone import unic_to_ascii
 from gradientone import author_creation
 from onedb import TestResultsDB
@@ -37,15 +38,18 @@ from string import maketrans
 class Handler(InstrumentDataHandler):
     def get(self,company_nickname="", hardware_name="", instrument_name=""):
         "HTTP GETs from the Instrument Page in the UI provide data to faciliate plotting"
-        print company_nickname, hardware_name, instrument_name
         #if not self.authcheck():
         #    return
-        rows = db.GqlQuery("""SELECT * FROM TestResultsDB WHERE company_nickname =:1 and hardware_name =:2
-                                AND instrument_name = :3 and test_complete_bool =:4""", company_nickname, hardware_name, instrument_name, False)  
-        rows = list(rows)
-        data = query_to_dict(rows)
-        output = {"data":data}
-        render_json(self, output)
+        key = 'testresults' + hardware_name + instrument_name
+        memcache.get(key)
+        output = memcache.get(key)
+        render_json_cached(self, output)
+        #rows = db.GqlQuery("""SELECT * FROM TestResultsDB WHERE company_nickname =:1 and hardware_name =:2
+        #                        AND instrument_name = :3 and test_complete_bool =:4""", company_nickname, hardware_name, instrument_name, False)  
+        #rows = list(rows)
+        #data = query_to_dict(rows)
+        #output = {"data":data}
+        #render_json(self, output)
     def post(self,company_nickname= "", testplan_name="",start_tse=""):
         "store data by intstrument name and time slice name"
         testresults_content = json.loads(self.request.body)
@@ -63,4 +67,5 @@ class Handler(InstrumentDataHandler):
         testresults_content = unic_to_ascii(testresults_content)
         key = 'testresults' + hardware_name + instrument_name
         testresults_content = json.dumps(testresults_content)
+        print testresults_content
         memcache.set(key, testresults_content)
