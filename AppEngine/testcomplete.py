@@ -2,8 +2,6 @@ from gradientone import InstrumentDataHandler
 from gradientone import query_to_dict
 from gradientone import render_json_cached
 from gradientone import author_creation
-from onedb import BscopeDB
-from onedb import BscopeDB_key
 from onedb import TestResultsDB
 from onedb import TestResultsDB_key
 from onedb import TestDB
@@ -79,7 +77,7 @@ class Handler(InstrumentDataHandler):
                     test_complete_bool = True,
                     test_complete = int(stop_tse),
                     trace = trace, 
-                    start_tse=(test_complete_content['start_tse'])
+                    start_tse=(test_complete_content['start_tse']),
                     )
             to_save.append(r) 
             memcache.set(key, to_save)
