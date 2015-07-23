@@ -11,7 +11,8 @@
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript" src="../static/js/chart1.js"></script>
     <script type="text/javascript" src="../static/js/chart2.js"></script>
-    <script type="text/javascript" src="../static/js/chart3.js"></script>  
+    <script type="text/javascript" src="../static/js/chart3.js"></script>
+    <script type="text/javascript" src="../static/js/addons/appDrag.js"></script>  
     <link rel="stylesheet" type="text/css" href="../static/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../static/css/custom.css">
     <link rel="stylesheet" type="text/css" href="../static/css/hoverzoom.css">
@@ -187,15 +188,19 @@
                     </div>
                 </div>
             </div>
+
+
 <!-- TEST SPACE -->    
             <fieldset class="col-md-12" id="canvasBox" style="width: 80%;">
                 <span class="spacer"></span><legend class="text-uppercase" style="width: 118px;">Test Space</legend><span class="spacer"></span>
+
+
 <!--TEST PLAN CONFIGURATION-->
                 <div class="collapse in well well-sm testConfigBox" id="collapseConfig">
                   <h2 style="text-align:center; color:white;">Test Plan Configuration</h2>
                   <hr id="breakLine">
 
-                  <!--LOCAL AND LIVE VERSIONS-->
+                <!--LOCAL AND LIVE VERSIONS-->
                 <!--<form method="post" action="https://gradientone-dev1.appspot.com/testconfiginput">-->
                   <form id="testConfig" method="post" action="http://localhost:18080/testconfiginput">
 
@@ -357,6 +362,12 @@
                     <input id="submitBtn" type="submit" value="SUBMIT">                  
                   </form>   
                 </div> 
+
+
+
+
+
+                <div class="droppable">             
 <!-- O-SCOPE INST APP -->
                 <div class="appBox">
                     <h4 class="appTitle">Instrument - Oscilloscope
@@ -517,7 +528,7 @@
                         <input id="appSubmitBtn" type="submit" value="SUBMIT">
                     </form>    
                 </div>
-<!-- SEQUENCING -->
+<!-- SEQUENCING-Power Sweep APP -->
                 <div class="appBox">
                     <h4 class="appTitle">Sequencing - Power Sweep
                         <span class="appRemove glyphicon glyphicon-remove-circle"></span>
@@ -541,7 +552,7 @@
                         <div class="row appRow">
                             <tr>
                                 <tr class="label">
-                                    <p class="appLabel">Voltage Range:</p>
+                                    <p class="appLabel">Voltage:</p>
                                     <input class="appInput">
                                 </tr>
                             </tr>
@@ -564,6 +575,8 @@
                         </div>
                         <input id="appSubmitBtn" type="submit" value="SUBMIT">
                     </form>    
+                </div>
+
                 </div>
             </fieldset>
         </div>
