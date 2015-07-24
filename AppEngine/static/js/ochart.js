@@ -65,6 +65,7 @@
     var sliceSize = 0;
     var dynamicSliceEnd = 0;
     var getTestInfoCounter = 0;
+    var rawPointSpacing;
 
     function fetchDecData(){
        dec_json_url = dec_url;
@@ -178,7 +179,7 @@
         //console.log('getTestInfo: sliceSize = ', sliceSize);   
         //console.log('getTestInfo: rawPointSpacing =',rawPointSpacing);  
        });
-       setTimeout(getTestInfo,10000);   // change to 100 later
+       setTimeout(getTestInfo,1000);   // change to 100 later
     };
     //getTestInfo();  // called by googe setOnLoadCallback method
     
@@ -366,12 +367,13 @@
      
     // replay button
     function replay() {
+      //console.log('rawPointSpacing!!!!!! =',rawPointSpacing);
       step = 0;
       var windowSize = rawWidth*(100/hZoom);
-      timerID = setInterval(increment, 10);
+      timerID = setInterval(increment, 100);
       function increment () {
         if (step <= rawWidth) {
-          step = step + 0.001
+          step = step + rawPointSpacing*2
         }else {
          clearInterval(timerID); 
         }  
@@ -386,10 +388,10 @@
     // pause / start / rewind
     function start() {   
       var windowSize = rawWidth*(100/hZoom);
-      timerID = setInterval(increment, 10);
+      timerID = setInterval(increment, 100);
       function increment () {
         if (step <= rawWidth) {
-          step = step + 0.001
+          step = step + rawPointSpacing*2
         }else {
          clearInterval(timerID); 
         }  
@@ -404,10 +406,10 @@
 
     function rewind() {  
       var windowSize = rawWidth*(100/hZoom); 
-      timerID = setInterval(increment, 10);
+      timerID = setInterval(increment, 100);
       function increment () {
         if (step >= 0) {
-          step = step - 0.001
+          step = step - rawPointSpacing*2
         }else {
          clearInterval(timerID); 
         }; 
