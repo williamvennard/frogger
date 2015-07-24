@@ -102,6 +102,16 @@
               <div id="rawChart" style="height: 450px; width: 600px;"></div>
               <div id="decChart" style="height: 200px; width: 600px;"></div>
             </div>
+            <div style="text-align:center">
+            <input type="button" value="REPLAY" id="Replay">
+            <button type="button" id="Pause" class="btn" onclick="">
+              <i class="glyphicon glyphicon-pause"></i>
+            </button>
+            <button type="button" id="Start" class="btn" onclick="">
+              <i class="glyphicon glyphicon-play"></i>
+            </button>
+            <input type="button" value="REWIND" id="Rewind">
+          </div>
             <div class="row-md-3"  id="resultsTableCSS">
               <div id="rawTable" ></div>
             </div>
@@ -233,6 +243,7 @@
         };
 
         fetchSliceNames();
+        fetchDecData()
         console.log('rawWidth = ',rawWidth);
         console.log('rawPointSpacing = ',rawPointSpacing);
         //console.log('slice names = ',sliceNames);
@@ -282,7 +293,7 @@
          table.draw(data); 
     };
 
-    google.setOnLoadCallback(fetchDecData);
+    //google.setOnLoadCallback(fetchDecData);
 
 // RAW CHART CODE //
 
