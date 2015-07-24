@@ -20,9 +20,8 @@
     }); 
  
   //HORIZONTAL KNOBS
-    var hZoom = 100;
+    var hZoom = 1000;
     var hPosition = 0;
-
 
     $(".hZoomKnob").knob({
       'release' : function (hRange) { 
@@ -64,8 +63,9 @@
     var rawChart;
     var moveWindowData;
     var sliceSize = 0;
-    var dynamicSliceEnd;
-    
+    var dynamicSliceEnd = 0;
+    var getTestInfoCounter = 0;
+
     function fetchDecData(){
        dec_json_url = dec_url;
        $.ajax({
@@ -78,15 +78,6 @@
       });
     };
 
-    function buildSliceNames(start,end,interval) {
-        for (msec = start; msec <= end;msec += interval) {
-          name = String(msec);
-          if ($.inArray(name, sliceNames) == -1) {
-            sliceNames.push(name);
-          };
-        };  
-    };
-
     //LOADING URL
     //test_info_url = window.location.pathname + '.json';
     // console.log(test_info_url);
@@ -97,16 +88,25 @@
     var statusArray = [];
     function getTestStatus() {
       status_url = 'https://gradientone-test.appspot.com/status/Acme/Tahoe';
+      console.log('getTestStatus: RUNNING',status_url)
       $.ajax({
           async: true,
           url: status_url,            
           dataType: 'json',
        }).done(function (results) {
-          currentTestStatus = results[0];
-          statusArray.push(currentTestStatus);
+          currentTestStatus = results.status.status;
+          testStatusTime = results.status.time;
+          console.log('getTestStatus: currentTestStatus = ',currentTestStatus);
+          console.log('getTestStatus =  ', $.inArray(testStatusTime, statusArray) == -1);
+
+          if ($.inArray(jsonStatus, statusArray) == -1) {
+            var jsonStatus = {"status":{"status":currentTestStatus, "time":testStatusTime}};
+            statusArray.push(jsonStatus);
+          };          
+          console.log('statusArray = ',statusArray);
       });
     };
-    console.log('statusArray = ',statusArray);
+    
     //Continuously polling at: 
     //https://gradientone-dev1.appspot.com/testresults/Acme/Tahoe/LED
     function getTestInfo() {
@@ -131,7 +131,7 @@
         totalNumPages = testSettings.Total_Slices;
         numPages = Number(testSettings.Total_Slices); //not live version
 
-        rawPointSpacing = (testSettings.Raw_msec_btw_samples)/1000;
+        rawPointSpacing = (testSettings.Raw_msec_btw_samples)/1000000;
         sliceSize = Number(testSettings.Slice_Size_msec);
         rawUrlSplit = raw_urlPath.split(testSliceStart);
         base_url = rawUrlSplit[0];
@@ -143,29 +143,42 @@
 
         //move to function called buildSliceNames(start,end,sliceSize)
         //give slice start and a number
-        dynamicSliceEnd = (Number(testSliceStart) + (sliceSize));
-        //buildSliceNames(Number(testSliceStart),dynamicSliceEnd,sliceSize);
+        hMaxMs = hMax*1000
+        console.log('getTestInfo: hMaxMs =', hMaxMs);
+        console.log('getTestInfo: dynamicSliceEnd <= sliceEnd ',dynamicSliceEnd <= sliceEnd);
+        console.log('getTestInfo: sliceEnd = ', sliceEnd); 
+        console.log('getTestInfo: dynamicSliceEnd = ', dynamicSliceEnd);
+        console.log('getTestInfo:counter <= numPages ',getTestInfoCounter <= numPages);
 
+        console.log('getTestInfoCounter =',getTestInfoCounter);
+        if(getTestInfoCounter < numPages) {
+          dynamicSliceEnd = (Number(testSliceStart) + getTestInfoCounter*sliceSize );
+        }else;
+        buildSliceNames(Number(testSliceStart),dynamicSliceEnd,sliceSize);
+        getTestInfoCounter++;
+/*
         for (msec = Number(testSliceStart); msec <= sliceEnd;msec += sliceSize) {
           name = String(msec);
           if ($.inArray(name, sliceNames) == -1) {
             sliceNames.push(name);
           };
         };
-
-        fetchDecData();
+*/
+        getTestStatus()       
         name = String(sliceEnd);
         delete resultsCache.name;
         fetchSliceNames();
+
+        //fetchDecData();  //DEC DATA 
         console.log('slice names = ',sliceNames);
-        console.log('decOffset = ',decOffset);
-        console.log('getTestInfo: testInfo = ', testInfo);
-        console.log('getTestInfo: sliceEnd = ', sliceEnd);        
-        console.log('getTestInfo: testInfo.Total_Slices = ', numPages);
-        console.log('getTestInfo: testInfo.Dec_msec_btw_samples = ', decPointSpacing);  
-        console.log('getTestInfo: sliceSize = ', sliceSize);     
+        //console.log('decOffset = ',decOffset);
+        //console.log('getTestInfo: testInfo = ', testInfo);              
+        //console.log('getTestInfo: testInfo.Total_Slices = ', numPages);
+        //console.log('getTestInfo: testInfo.Dec_msec_btw_samples = ', decPointSpacing);  
+        //console.log('getTestInfo: sliceSize = ', sliceSize);   
+        //console.log('getTestInfo: rawPointSpacing =',rawPointSpacing);  
        });
-       setTimeout(getTestInfo,6000);   // change to 100 later
+       setTimeout(getTestInfo,10000);   // change to 100 later
     };
     //getTestInfo();  // called by googe setOnLoadCallback method
     
@@ -217,30 +230,32 @@
        data.addColumn('number', 'Time');
        data.addColumn('number', 'Ch1');
 
-       for (idx = 0; idx < numPages; idx++) {
+       for (idx = 0; idx < sliceNames.length; idx++) {
             sliceName = sliceNames[idx];
+            //console.log('drawRawChart: SHOULD CHANGE sliceName = ', sliceName);
             if (!(sliceName in resultsCache)) { return; }
             var gatheredResults = resultsCache[sliceName];
-            //console.log('drawRawChart: gatheredResults = ',resultsCache[sliceName]);
-            console.log('drawRawChart: gatheredResults =', gatheredResults)
+            //console.log('drawRawChart: gatheredResults =', gatheredResults)
             var rawData = gatheredResults;
-            console.log('drawRawChart: rawData = ', rawData);
-            //var rawCha = rawData[0].cha;
             var rawCha = rawData.cha;
-            console.log('drawRawChart: rawCha=', rawCha);
-            
+            //console.log('drawRawChart: rawCha=', rawCha);
+
             //BUILD DATA TABLE ADDING ROWS TIME AND CHA
            for (i = 0; i < rawCha.length; i++) {
+
              data.addRow([
-               ((Number(sliceName) - rawOffset) + i)/1000,
+               (10*(Number(sliceName) - testSliceStart) + i)/10000,
                parseFloat(rawCha[i]),
                ]);
            };
          };
-      
-         range = (Number(sliceNames[numPages]) - Number(sliceNames[0]))/1000;
-         hMax = range/2;
-         hMin = (- rawWidth/2); 
+        //console.log('drawRawChart: THIS SHOULD SHOW UP data =', data);
+         //range = (Number(sliceNames[numPages]) - Number(sliceNames[0]))/1000;
+         //hMax = range/2;
+         //hMin = (- rawWidth/2); 
+        var width = rawWidth*(100/hZoom);
+        hMax = hPosition + width;
+        hMin = hPosition;
 
       rawChartOptions = {
          title: 'Raw Data',
@@ -259,7 +274,7 @@
          showRowNumber: true,
       };   
           moveWindowData = data;
-          console.log('drawRawChart: data=',data)
+          //console.log('drawRawChart: data=',data)
          //DRAW CHART
          rawChart = new google.visualization.LineChart($('#oChart').get(0));      
          rawChart.draw(data, rawChartOptions);
@@ -267,6 +282,16 @@
          var table = new google.visualization.Table($('#oTable').get(0));
          table.draw(data, tableOptions);  
     };
+    function buildSliceNames(start,end,interval) {
+      //console.log('buildSliceNames',start);
+        for (msec = start; msec <= end;msec += interval) {
+          name = String(msec);
+          if ($.inArray(name, sliceNames) == -1) {
+            sliceNames.push(name);
+          };
+        };  
+    };
+
     function fetchSliceNames() {
       console.log('fetchSliceNames: sliceNames = ',sliceNames);
         for (idx in sliceNames) {
@@ -324,8 +349,8 @@
         var width = rawWidth*(100/hZoom);
         
 
-        hMax = hPosition + width/2;
-        hMin = hPosition - width/2;
+        hMax = hPosition + width;
+        hMin = hPosition;
         console.log('moveWindow: hMax = ', hMax);
         console.log('moveWindow: hMin = ', hMin);
 
@@ -338,7 +363,7 @@
         rawChart.draw(moveWindowData, rawChartOptions); // REDRAW CHART
         console.log('moveWindow: vew window =',rawChartOptions.hAxis.viewWindow);
     }; 
-     /*
+     
     // replay button
     function replay() {
       step = (- rawWidth/2);
@@ -346,12 +371,12 @@
       timerID = setInterval(increment, 10);
       function increment () {
         if (step <= rawWidth/2) {
-          step = step + 0.01
+          step = step + 0.001
         }else {
          clearInterval(timerID); 
         }  
-        rhMax = step + windowSize/2;
-        rhMin = step - windowSize/2; 
+        rhMax = step + windowSize;
+        rhMin = step; 
         rawChartOptions.hAxis.viewWindow.max = rhMax;
         rawChartOptions.hAxis.viewWindow.min = rhMin;
 
@@ -368,8 +393,8 @@
         }else {
          clearInterval(timerID); 
         }  
-        rhMax = step + windowSize/2;
-        rhMin = step - windowSize/2; 
+        rhMax = step + windowSize;
+        rhMin = step; 
         rawChartOptions.hAxis.viewWindow.max = rhMax;
         rawChartOptions.hAxis.viewWindow.min = rhMin;
 
@@ -386,8 +411,8 @@
         }else {
          clearInterval(timerID); 
         }; 
-        rhMax = step + windowSize/2;
-        rhMin = step - windowSize/2; 
+        rhMax = step + windowSize;
+        rhMin = step; 
         rawChartOptions.hAxis.viewWindow.max = rhMax;
         rawChartOptions.hAxis.viewWindow.min = rhMin;
 
@@ -409,7 +434,7 @@
        rewind();
     });
   });
-  */
+ 
   $("#save").click(function () {
       saveStatus('save');
   });
