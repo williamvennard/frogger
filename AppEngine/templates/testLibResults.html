@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+open<!DOCTYPE html>
 <!--{% block import %}-->
 <html>
 <head>
@@ -136,7 +136,7 @@
     }); 
  
 //HORIZONTAL KNOBS
-    var hZoom = 100;
+    var hZoom = 1000;
     var hPosition = 0;
     var hPosStep = 0.05;
 
@@ -150,10 +150,6 @@
     }); 
 
     $(".hPosKnob").knob({
-        'value':hPosition,
-        'min':-1,
-        'max':1,
-        'step':hPosStep,
         'release' : function (hPos) { 
           //console.log('knob H pos value:',hPos);  
           hPosition = hPos;
@@ -201,7 +197,7 @@
 
     function getTestInfo() {
 
-      //test_info_url = 'https://gradientone-dev1.appspot.com/testlibrary/acme/manufacturing/1436652934150.json';
+      //test_info_url = 'https://gradientone-test.appspot.com/testlibrary/Acme/NyquistB/1437712799600.json';
       $.ajax({
           async: true,
           url: test_info_url,
@@ -216,15 +212,18 @@
         testSliceStart = testInfo.start_tse;    
         decPointSpacing = (testInfo.Dec_msec_btw_samples)/1000;    
         numPages = testInfo.Total_Slices;
-        rawPointSpacing = (testInfo.Raw_msec_btw_samples)/1000;
+        rawPointSpacing = (testInfo.Raw_msec_btw_samples)/1000000;
         sliceSize = Number(testInfo.Slice_Size_msec);
 
         rawUrlSplit = raw_urlPath.split(testSliceStart);
         base_url = rawUrlSplit[0];
         sliceEnd = (Number(testSliceStart) + (numPages*sliceSize)) -10;
+        rawWidth = (Number(numPages) * Number(sliceSize)) * rawPointSpacing;
         decOffset = (((Number(numPages) * Number(sliceSize))/10) * decPointSpacing)/2;
         rawOffset = Number(testSliceStart) + ((Number(numPages) * Number(sliceSize))/2);
-        rawWidth = (Number(numPages) * Number(sliceSize)) * rawPointSpacing;
+        console.log('getTestInfo: rawOffset =', rawOffset);
+
+        //decOffset = 0;
 
         for (msec = Number(testSliceStart); msec <= Number(sliceEnd);msec += sliceSize) {
           name = String(msec);
@@ -232,6 +231,8 @@
             sliceNames.push(name);
           };
         };
+        console.log('rawWidth = ',rawWidth);
+        console.log('rawPointSpacing = ',rawPointSpacing);
         //console.log('slice names = ',sliceNames);
         //console.log('decOffset = ',decOffset);
         //console.log('getTestInfo: testInfo = ', testInfo);
@@ -294,21 +295,22 @@
             if (!(sliceName in resultsCache)) { return; }
             var gatheredResults = resultsCache[sliceName];
             //console.log('drawRawChart: gatheredResults = ',resultsCache[sliceName]);
-            var rawData = gatheredResults.data;
-            var rawCha = rawData[0].cha;
-            
+            var rawData = gatheredResults;
+            var rawCha = rawData.cha;
+            console.log('drawRawChart: rawCha.length = ',rawCha.length);
             //BUILD DATA TABLE ADDING ROWS TIME AND CHA
            for (i = 0; i < rawCha.length; i++) {
+            //console.log('drawRawChart: time values =',(((Number(sliceName) - testSliceStart)/1000) + i*rawPointSpacing));
              data.addRow([
-               ((Number(sliceName) - rawOffset) + i)/1000,
+               (((Number(sliceName) - testSliceStart)/1000) + i*rawPointSpacing),
                parseFloat(rawCha[i]),
                ]);
            };
          };
       
-         range = (Number(sliceNames[numPages]) - Number(sliceNames[0]))/1000;
-         hMax = range/2;
-         hMin = (- rawWidth/2); 
+         var width = rawWidth*(100/hZoom);
+        hMax = hPosition + width;
+        hMin = hPosition; 
 
       rawChartOptions = {
          title: 'Raw Data',
@@ -361,12 +363,13 @@
     function moveWindow(){
         var width = rawWidth*(100/hZoom);
         
-    console.log('hPosStep = ',hPosStep);
-        hMax = hPosition + width/2;
-        hMin = hPosition - width/2;
- 
-        hPosStep = 5.0 / hZoom;
-        console.log('hPosStep = ', hPosStep);
+
+        hMax = hPosition + width;
+        hMin = hPosition;
+        console.log('moveWindow: hMax = ', hMax);
+        console.log('moveWindow: hMin = ', hMin);
+
+
         console.log('moveWindow: H position = ',hPosition);
         console.log('moveWindow: H zoom = ',hZoom);
         rawChartOptions.hAxis.viewWindow.max = hMax;
@@ -375,19 +378,21 @@
         rawChart.draw(moveWindowData, rawChartOptions); // REDRAW CHART
         console.log('moveWindow: vew window =',rawChartOptions.hAxis.viewWindow);
     }; 
+     
     // replay button
     function replay() {
-      step = (- rawWidth/2);
+      //console.log('rawPointSpacing!!!!!! =',rawPointSpacing);
+      step = 0;
       var windowSize = rawWidth*(100/hZoom);
-      timerID = setInterval(increment, 10);
+      timerID = setInterval(increment, 100);
       function increment () {
-        if (step <= rawWidth/2) {
-          step = step + 0.01
+        if (step <= rawWidth) {
+          step = step + rawPointSpacing*2
         }else {
          clearInterval(timerID); 
         }  
-        rhMax = step + windowSize/2;
-        rhMin = step - windowSize/2; 
+        rhMax = step + windowSize;
+        rhMin = step; 
         rawChartOptions.hAxis.viewWindow.max = rhMax;
         rawChartOptions.hAxis.viewWindow.min = rhMin;
 
@@ -397,15 +402,15 @@
     // pause / start / rewind
     function start() {   
       var windowSize = rawWidth*(100/hZoom);
-      timerID = setInterval(increment, 10);
+      timerID = setInterval(increment, 100);
       function increment () {
-        if (step <= rawWidth/2) {
-          step = step + 0.01
+        if (step <= rawWidth) {
+          step = step + rawPointSpacing*2
         }else {
          clearInterval(timerID); 
         }  
-        rhMax = step + windowSize/2;
-        rhMin = step - windowSize/2; 
+        rhMax = step + windowSize;
+        rhMin = step; 
         rawChartOptions.hAxis.viewWindow.max = rhMax;
         rawChartOptions.hAxis.viewWindow.min = rhMin;
 
@@ -415,15 +420,15 @@
 
     function rewind() {  
       var windowSize = rawWidth*(100/hZoom); 
-      timerID = setInterval(increment, 10);
+      timerID = setInterval(increment, 100);
       function increment () {
-        if (step >= (-rawWidth/2)) {
-          step = step - 0.01
+        if (step >= 0) {
+          step = step - rawPointSpacing*2
         }else {
          clearInterval(timerID); 
         }; 
-        rhMax = step + windowSize/2;
-        rhMin = step - windowSize/2; 
+        rhMax = step + windowSize;
+        rhMin = step; 
         rawChartOptions.hAxis.viewWindow.max = rhMax;
         rawChartOptions.hAxis.viewWindow.min = rhMin;
 
@@ -447,6 +452,7 @@
   });
 
 </script>
+
 
 
 </body>

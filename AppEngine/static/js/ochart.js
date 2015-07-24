@@ -245,7 +245,7 @@
            for (i = 0; i < rawCha.length; i++) {
 
              data.addRow([
-               (10*(Number(sliceName) - testSliceStart) + i)/10000,
+               (((Number(sliceName) - testSliceStart)/1000) + i*rawPointSpacing),
                parseFloat(rawCha[i]),
                ]);
            };
