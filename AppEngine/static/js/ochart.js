@@ -186,7 +186,7 @@
         //console.log('getTestInfo: rawPointSpacing =',rawPointSpacing);  
        });
 
-          setTimeout(getTestInfo,10000);
+          setTimeout(getTestInfo,200);
 
        //setTimeout(getTestInfo,200);   // change to 100 later
     };
