@@ -137,8 +137,7 @@
                             <button style="padding-top:5px;" class="text-uppercase" data-toggle="collapse" data-parent="#accordion" href="#collapseTable">Table</botton>
                             <button style="padding-top:5px;" class="text-uppercase" type="button" id="save">save</button>
                             <button style="padding-top:5px;" class="text-uppercase" type="button" id="delete">delete</button>
-                            <button style="padding-top:5px;" class="text-uppercase" data-toggle="collapse" data-parent="#accordion" href="#collapseConfig">Config</button>
-                            
+                            <button style="padding-top:5px;" class="text-uppercase" data-toggle="collapse" data-parent="#accordion" href="#collapseConfig">Config</button>                         
                         </div> 
                         <!--CONFIG FORM-->
                         <div id="collapseConfig" class="collapse in configBox">           
@@ -264,15 +263,33 @@
                           </div>
                         </fieldset>
                     </div>
-                    <div style="text-align:center" class="replayBtn">
-                        <input type="button" value="REPLAY" id="Replay">
-                        <button type="button" id="Pause" class="btn" onclick="">
-                          <i class="glyphicon glyphicon-pause"></i>
-                        </button>
-                        <button type="button" id="Start" class="btn" onclick="">
-                          <i class="glyphicon glyphicon-play"></i>
-                        </button>
-                        <input type="button" value="REWIND" id="Rewind">
+                    <div class="row">
+                      <div class="replayBtn btn-group btn-xs col-md-2" data-toggle="buttons">
+                          <label class="btn btn-default glyphicon glyphicon-fast-backward playBtn" id="fastBackward">
+                            <input type="radio" autocomplete="off" checked> 
+                          </label>
+                          <label class="btn btn-default glyphicon glyphicon-backward playBtn" id="backward">
+                            <input type="radio" autocomplete="off" checked> 
+                          </label>
+                          <label class="btn btn-default active glyphicon glyphicon-pause playBtn" id="Pause">
+                            <input type="radio" autocomplete="off" checked> 
+                          </label>
+                          <label class="btn btn-default glyphicon glyphicon-play playBtn" id="Start">
+                            <input type="radio" autocomplete="off" checked> 
+                          </label>
+                          <label class="btn btn-default glyphicon glyphicon-forward playBtn" id="forward">
+                            <input type="radio" autocomplete="off" checked> 
+                          </label>
+                          <label class="btn btn-default glyphicon glyphicon-fast-forward playBtn" id="fastForward">
+                            <input type="radio" autocomplete="off" checked> 
+                          </label>
+                          <!--
+                          <input type="button" value="REPLAY" id="Replay">
+                          <input type="button" value="REWIND" id="Rewind">-->
+                      </div>
+                      <div class="col-md-3 statusInfoBox">
+                        <h5>Status:</h5><span id="currentStatus"></span>    
+                      </div>
                     </div>
                   </div>                 
               </div>  

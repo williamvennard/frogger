@@ -99,7 +99,7 @@
           testStatusTime = results.status.time;
           console.log('getTestStatus: currentTestStatus = ',currentTestStatus);
           console.log('getTestStatus =  ', $.inArray(testStatusTime, statusArray) == -1);
-
+          document.getElementById("currentStatus").innerHTML = currentTestStatus;
           if ($.inArray(testStatusTime, statusArray) == -1) {
             var jsonStatus = {"status":currentTestStatus, "time":testStatusTime};
             statusArray.push(jsonStatus);
@@ -143,16 +143,18 @@
         rawOffset = Number(testSliceStart) + ((Number(numPages) * Number(sliceSize))/2);
         rawWidth = (Number(numPages) * Number(sliceSize)) * rawPointSpacing;
 
+        instrumentName = testInfo.instrument_name;
+        document.getElementById("instName").innerHTML = instrumentName
+        
         //move to function called buildSliceNames(start,end,sliceSize)
         //give slice start and a number
-        hMaxMs = hMax*1000
-        console.log('getTestInfo: hMaxMs =', hMaxMs);
-        console.log('getTestInfo: dynamicSliceEnd <= sliceEnd ',dynamicSliceEnd <= sliceEnd);
-        console.log('getTestInfo: sliceEnd = ', sliceEnd); 
-        console.log('getTestInfo: dynamicSliceEnd = ', dynamicSliceEnd);
-        console.log('getTestInfo:counter <= numPages ',getTestInfoCounter <= numPages);
+        //console.log('getTestInfo: hMaxMs =', hMaxMs);
+        //console.log('getTestInfo: dynamicSliceEnd <= sliceEnd ',dynamicSliceEnd <= sliceEnd);
+        //console.log('getTestInfo: sliceEnd = ', sliceEnd); 
+        //console.log('getTestInfo: dynamicSliceEnd = ', dynamicSliceEnd);
+        //console.log('getTestInfo:counter <= numPages ',getTestInfoCounter <= numPages);
 
-        console.log('getTestInfoCounter =',getTestInfoCounter);
+        //console.log('getTestInfoCounter =',getTestInfoCounter);
         if(getTestInfoCounter < numPages) {
           dynamicSliceEnd = (Number(testSliceStart) + getTestInfoCounter*sliceSize );
         }else;
@@ -171,7 +173,8 @@
         delete resultsCache.name;
         fetchSliceNames();
 
-        //fetchDecData();  //DEC DATA 
+        //fetchDecData();  //DEC DATA
+
         console.log('slice names = ',sliceNames);
         //console.log('decOffset = ',decOffset);
         //console.log('getTestInfo: testInfo = ', testInfo);              
@@ -180,7 +183,10 @@
         //console.log('getTestInfo: sliceSize = ', sliceSize);   
         //console.log('getTestInfo: rawPointSpacing =',rawPointSpacing);  
        });
-       setTimeout(getTestInfo,200);   // change to 100 later
+
+          setTimeout(getTestInfo,10000);
+
+       //setTimeout(getTestInfo,200);   // change to 100 later
     };
     //getTestInfo();  // called by googe setOnLoadCallback method
     
@@ -367,9 +373,9 @@
     }; 
      
     // replay button
+    var step = 0;
     function replay() {
-      //console.log('rawPointSpacing!!!!!! =',rawPointSpacing);
-      step = 0;
+      //console.log('rawPointSpacing!!!!!! =',rawPointSpacing);   
       var windowSize = rawWidth*(100/hZoom);
       timerID = setInterval(increment, 100);
       function increment () {
@@ -404,6 +410,23 @@
         rawChart.draw(moveWindowData, rawChartOptions);
       };
     };
+    function fastForward() {   
+      var windowSize = rawWidth*(100/hZoom);
+      timerID = setInterval(increment, 100);
+      function increment () {
+        if (step <= rawWidth) {
+          step = step + rawPointSpacing*10
+        }else {
+         clearInterval(timerID); 
+        }  
+        rhMax = step + windowSize;
+        rhMin = step; 
+        rawChartOptions.hAxis.viewWindow.max = rhMax;
+        rawChartOptions.hAxis.viewWindow.min = rhMin;
+
+        rawChart.draw(moveWindowData, rawChartOptions);
+      };
+    };
 
     function rewind() {  
       var windowSize = rawWidth*(100/hZoom); 
@@ -422,10 +445,33 @@
         rawChart.draw(moveWindowData, rawChartOptions);
       };
     };
+    function fastBackward() {  
+      var windowSize = rawWidth*(100/hZoom); 
+      timerID = setInterval(increment, 100);
+      function increment () {
+        if (step >= 0) {
+          step = step - rawPointSpacing*10
+        }else {
+         clearInterval(timerID); 
+        }; 
+        rhMax = step + windowSize;
+        rhMin = step; 
+        rawChartOptions.hAxis.viewWindow.max = rhMax;
+        rawChartOptions.hAxis.viewWindow.min = rhMin;
+
+        rawChart.draw(moveWindowData, rawChartOptions);
+      };
+    };
 // BUTTON CONTROLS
   $(document).ready(function(){
     $('#Replay').click(function(){
        replay();
+    });
+    $('#fastBackward').click(function(){
+       fastBackward();
+    });
+    $('#Rewind').click(function(){
+       rewind();
     });
     $('#Pause').click(function(){ 
        clearInterval(timerID);
@@ -433,11 +479,13 @@
     $('#Start').click(function(){
        start();
     });
-    $('#Rewind').click(function(){
-       rewind();
+    $('#fastForward').click(function(){
+       fastForward();
     });
   });
  
+
+
   $("#save").click(function () {
       saveStatus('save');
   });
