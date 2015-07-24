@@ -89,7 +89,6 @@
     var statusArray = [];
     function getTestStatus() {
       status_url = 'https://gradientone-test.appspot.com/status/Acme/Tahoe';
-      console.log('getTestStatus: RUNNING',status_url)
       $.ajax({
           async: true,
           url: status_url,            
@@ -98,17 +97,11 @@
           currentTestStatus = results.status.status;
           testStatusTime = results.status.time;
           console.log('getTestStatus: currentTestStatus = ',currentTestStatus);
-          console.log('getTestStatus =  ', $.inArray(testStatusTime, statusArray) == -1);
-          document.getElementById("currentStatus").innerHTML = currentTestStatus;
-          if ($.inArray(testStatusTime, statusArray) == -1) {
-            var jsonStatus = {"status":currentTestStatus, "time":testStatusTime};
-            statusArray.push(jsonStatus);
-            statusArray.push(testStatusTime);
-          };          
-          console.log('statusArray = ',statusArray);
+          document.getElementById("currentStatus").innerHTML = currentTestStatus;      
       });
+       setTimeout(getTestStatus,100);
     };
-    
+    getTestStatus();
     //Continuously polling at: 
     //https://gradientone-dev1.appspot.com/testresults/Acme/Tahoe/LED
     function getTestInfo() {
@@ -169,8 +162,7 @@
             sliceNames.push(name);
           };
         };
-*/
-        getTestStatus()       
+*/           
         name = String(sliceEnd);
         delete resultsCache.name;
         fetchSliceNames();
@@ -185,8 +177,7 @@
         //console.log('getTestInfo: sliceSize = ', sliceSize);   
         //console.log('getTestInfo: rawPointSpacing =',rawPointSpacing);  
        });
-
-          setTimeout(getTestInfo,200);
+          setTimeout(getTestInfo,500);
 
        //setTimeout(getTestInfo,200);   // change to 100 later
     };
