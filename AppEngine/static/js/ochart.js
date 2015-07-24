@@ -100,8 +100,8 @@
           console.log('getTestStatus: currentTestStatus = ',currentTestStatus);
           console.log('getTestStatus =  ', $.inArray(testStatusTime, statusArray) == -1);
 
-          if ($.inArray(jsonStatus, statusArray) == -1) {
-            var jsonStatus = {"status":{"status":currentTestStatus, "time":testStatusTime}};
+          if ($.inArray(testStatusTime, statusArray) == -1) {
+            var jsonStatus = {testStatusTime:{"status":currentTestStatus, "time":testStatusTime}};
             statusArray.push(jsonStatus);
           };          
           console.log('statusArray = ',statusArray);
@@ -179,7 +179,7 @@
         //console.log('getTestInfo: sliceSize = ', sliceSize);   
         //console.log('getTestInfo: rawPointSpacing =',rawPointSpacing);  
        });
-       setTimeout(getTestInfo,1000);   // change to 100 later
+       setTimeout(getTestInfo,200);   // change to 100 later
     };
     //getTestInfo();  // called by googe setOnLoadCallback method
     
