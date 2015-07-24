@@ -1,4 +1,4 @@
-open<!DOCTYPE html>
+<!DOCTYPE html>
 <!--{% block import %}-->
 <html>
 <head>
@@ -231,6 +231,8 @@ open<!DOCTYPE html>
             sliceNames.push(name);
           };
         };
+
+        fetchSliceNames();
         console.log('rawWidth = ',rawWidth);
         console.log('rawPointSpacing = ',rawPointSpacing);
         //console.log('slice names = ',sliceNames);
@@ -243,7 +245,7 @@ open<!DOCTYPE html>
         //console.log('getTestInfo: sliceSize = ', sliceSize);     
        });
     };
-    getTestInfo();
+    
 
     // DEC CHART CODE //
 
@@ -345,7 +347,7 @@ open<!DOCTYPE html>
            };
         };
     };
-    google.setOnLoadCallback(fetchSliceNames);
+    google.setOnLoadCallback(getTestInfo);
     // FETCH RAW DATA 
     function fetchData(base_url,sliceName,use_async){
         json_url = base_url + sliceName;
