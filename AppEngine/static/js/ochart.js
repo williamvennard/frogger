@@ -366,11 +366,11 @@
      
     // replay button
     function replay() {
-      step = (- rawWidth/2);
+      step = 0;
       var windowSize = rawWidth*(100/hZoom);
       timerID = setInterval(increment, 10);
       function increment () {
-        if (step <= rawWidth/2) {
+        if (step <= rawWidth) {
           step = step + 0.001
         }else {
          clearInterval(timerID); 
@@ -388,8 +388,8 @@
       var windowSize = rawWidth*(100/hZoom);
       timerID = setInterval(increment, 10);
       function increment () {
-        if (step <= rawWidth/2) {
-          step = step + 0.01
+        if (step <= rawWidth) {
+          step = step + 0.001
         }else {
          clearInterval(timerID); 
         }  
@@ -406,8 +406,8 @@
       var windowSize = rawWidth*(100/hZoom); 
       timerID = setInterval(increment, 10);
       function increment () {
-        if (step >= (-rawWidth/2)) {
-          step = step - 0.01
+        if (step >= 0) {
+          step = step - 0.001
         }else {
          clearInterval(timerID); 
         }; 
