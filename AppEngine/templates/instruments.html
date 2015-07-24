@@ -120,7 +120,8 @@
                 </div>                           
 <!--Oscilloscope-->    
               <div id="instBox">
-                  <h2 id="instName" class="instname" style="color:black;">Oscilloscope</h2>
+                  <h2 class="row" id="instrumentName" class="instname" style="margin:5px 0 0 20px">Oscilloscope </h2>
+                  <h4 class="row" id="hardwareName" class="hardwareName" style="margin:0 0 0 20px"></h4>
                   <div class="row">
                     <div class="col-md-6" id="oChart"></div> 
                     <!--<div class="col-md-6" id="decChart"></div>-->
@@ -271,10 +272,10 @@
                           <label class="btn btn-default glyphicon glyphicon-backward playBtn" id="backward">
                             <input type="radio" autocomplete="off" checked> 
                           </label>
-                          <label class="btn btn-default active glyphicon glyphicon-pause playBtn" id="Pause">
+                          <label class="btn btn-default active glyphicon glyphicon-pause playBtn" id="pause">
                             <input type="radio" autocomplete="off" checked> 
                           </label>
-                          <label class="btn btn-default glyphicon glyphicon-play playBtn" id="Start">
+                          <label class="btn btn-default glyphicon glyphicon-play playBtn" id="start">
                             <input type="radio" autocomplete="off" checked> 
                           </label>
                           <label class="btn btn-default glyphicon glyphicon-forward playBtn" id="forward">
@@ -283,12 +284,9 @@
                           <label class="btn btn-default glyphicon glyphicon-fast-forward playBtn" id="fastForward">
                             <input type="radio" autocomplete="off" checked> 
                           </label>
-                          <!--
-                          <input type="button" value="REPLAY" id="Replay">
-                          <input type="button" value="REWIND" id="Rewind">-->
                       </div>
                       <div class="col-md-3 statusInfoBox">
-                        <h5>Status:</h5><span id="currentStatus"></span>    
+                        <h5>Status: </h5><span id="currentStatus"></span>    
                       </div>
                     </div>
                   </div>                 

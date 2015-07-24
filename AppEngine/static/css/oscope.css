@@ -22,8 +22,15 @@ h3 {
 }
 
 .instname {
-    margin:10px 0 0 0;
-    text-align: center;
+    float: left;
+    font-family: 'nexa_lightregular';
+    margin:5px 0 0 100px;
+}
+
+.hardwareName {
+    font-family: 'nexa_lightregular';
+    font-size: 50%;
+    margin:0 20px 0 100px;
 }
 
 #buttons {

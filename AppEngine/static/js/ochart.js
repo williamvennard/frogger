@@ -143,9 +143,11 @@
         rawOffset = Number(testSliceStart) + ((Number(numPages) * Number(sliceSize))/2);
         rawWidth = (Number(numPages) * Number(sliceSize)) * rawPointSpacing;
 
-        instrumentName = testInfo.instrument_name;
-        document.getElementById("instName").innerHTML = instrumentName
-        
+        instrumentName = 'Instrument: ' + testInfo.instrument_name;
+        hardwareName = 'Hardware: ' + testInfo.hardware_name;
+        document.getElementById("instrumentName").innerHTML = instrumentName;
+        document.getElementById("hardwareName").innerHTML = hardwareName;
+
         //move to function called buildSliceNames(start,end,sliceSize)
         //give slice start and a number
         //console.log('getTestInfo: hMaxMs =', hMaxMs);
@@ -268,12 +270,12 @@
       rawChartOptions = {
          title: 'Raw Data',
          titleTextStyle: {color:'lightgray', fontSize: 18, fontName: 'NexaLight'},
-         legend: {alignment:'center', textStyle:{color:'lightgray'}},
+         legend: 'none', //{alignment:'center', textStyle:{color:'lightgray'}},
          hAxis: {title: 'Time(sec)',titleTextStyle:{color:'lightgray', fontName: 'NexaLight'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'gray', count: 6}, minorGridlines:{color: 'gray', count: 1}, viewWindowMode:'explicit', viewWindow:{max: hMax, min: hMin}},
          vAxis: {title: '', titleTextStyle:{color:'lightgray'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'gray', count: 6}, minorGridlines:{color: 'gray', count: 1}, format: '##.###', viewWindowMode:'explicit', },
          backgroundColor: {fill:'none', stroke: 'black', strokeWidth: 0,},                 
          colors: ['rgb(2,255,253)','rgb(239,253,146)'],
-         //chartArea:{backgroundColor:'', height:300, width:445},
+         chartArea:{backgroundColor:'', height:300, width:445},
          lineWidth: 2.5,
          curveType: 'function',
          crosshair: {trigger: 'both', selected:{opacity: 0.8}, focused:{opacity:0.8}},
@@ -374,13 +376,30 @@
      
     // replay button
     var step = 0;
-    function replay() {
+    function Forward() {
       //console.log('rawPointSpacing!!!!!! =',rawPointSpacing);   
       var windowSize = rawWidth*(100/hZoom);
       timerID = setInterval(increment, 100);
       function increment () {
         if (step <= rawWidth) {
           step = step + rawPointSpacing*2
+        }else {
+         clearInterval(timerID); 
+        }  
+        rhMax = step + windowSize;
+        rhMin = step; 
+        rawChartOptions.hAxis.viewWindow.max = rhMax;
+        rawChartOptions.hAxis.viewWindow.min = rhMin;
+
+        rawChart.draw(moveWindowData, rawChartOptions);
+      };
+    };
+    function fastForward() {   
+      var windowSize = rawWidth*(100/hZoom);
+      timerID = setInterval(increment, 100);
+      function increment () {
+        if (step <= rawWidth) {
+          step = step + rawPointSpacing*20
         }else {
          clearInterval(timerID); 
         }  
@@ -410,25 +429,9 @@
         rawChart.draw(moveWindowData, rawChartOptions);
       };
     };
-    function fastForward() {   
-      var windowSize = rawWidth*(100/hZoom);
-      timerID = setInterval(increment, 100);
-      function increment () {
-        if (step <= rawWidth) {
-          step = step + rawPointSpacing*10
-        }else {
-         clearInterval(timerID); 
-        }  
-        rhMax = step + windowSize;
-        rhMin = step; 
-        rawChartOptions.hAxis.viewWindow.max = rhMax;
-        rawChartOptions.hAxis.viewWindow.min = rhMin;
 
-        rawChart.draw(moveWindowData, rawChartOptions);
-      };
-    };
 
-    function rewind() {  
+    function backward() {  
       var windowSize = rawWidth*(100/hZoom); 
       timerID = setInterval(increment, 100);
       function increment () {
@@ -450,7 +453,7 @@
       timerID = setInterval(increment, 100);
       function increment () {
         if (step >= 0) {
-          step = step - rawPointSpacing*10
+          step = step - rawPointSpacing*20
         }else {
          clearInterval(timerID); 
         }; 
@@ -464,20 +467,23 @@
     };
 // BUTTON CONTROLS
   $(document).ready(function(){
-    $('#Replay').click(function(){
+    $('#replay').click(function(){
        replay();
     });
     $('#fastBackward').click(function(){
        fastBackward();
     });
-    $('#Rewind').click(function(){
-       rewind();
+    $('#backward').click(function(){
+       backward();
     });
-    $('#Pause').click(function(){ 
+    $('#pause').click(function(){ 
        clearInterval(timerID);
     });
-    $('#Start').click(function(){
+    $('#start').click(function(){
        start();
+    });
+    $('#forward').click(function(){
+       Forward();
     });
     $('#fastForward').click(function(){
        fastForward();
