@@ -101,8 +101,9 @@
           console.log('getTestStatus =  ', $.inArray(testStatusTime, statusArray) == -1);
 
           if ($.inArray(testStatusTime, statusArray) == -1) {
-            var jsonStatus = {testStatusTime:{"status":currentTestStatus, "time":testStatusTime}};
+            var jsonStatus = {"status":currentTestStatus, "time":testStatusTime};
             statusArray.push(jsonStatus);
+            statusArray.push(testStatusTime);
           };          
           console.log('statusArray = ',statusArray);
       });
