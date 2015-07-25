@@ -23,57 +23,40 @@
           </td>
           <td>
             <input type="text" name="testplan_name" value="{{testplan_name}}">
+            <input type="hidden" name="company_nickname" value="Acme">
+            <input type="hidden" name="hardware_name" value="Tahoe">
+            <input type="hidden" name="instrument_type" value="BitScope">
+            <input type="hidden" name="author" value="nedwards">
+            <input type="hidden" name="testpost" value=True>
           </td>
         </tr>
+      <input type="submit">
+    </form>
 
-        <tr>
+    <form method="post">
+      <table>
+          <tr>
           <td class="label">
-            Company Nickname
+            Test Plan Name:  
           </td>
           <td>
-            <input type="text" name="company_nickname" value="{{company_nickname}}">
+            <input type="text" name="testplan_name" value="{{testplan_name}}">
           </td>
         </tr>
-
-        <tr>
-          <td class="label">
-            Author
-          </td>
-          <td>
-            <input type="text" name="author" value="{{author}}">
-          </td>
-        </tr>
-
-        <tr>
-          <td class="label">
-            Instrument Type
-          </td>
-          <td>
-          <select name ="instrument_type"> 
-            <option value ="BitScope">BitScope</option>
-          </select>
-          </td>
-        </tr>
-
-        <tr>
-          <td class="label">
-            Hardware Name
-          </td>
-          <td>
-            <input type="text" name="hardware_name" value="{{hardware_name}}">
-          </td>
-        </tr>
-
         <tr>
           <td class="label">
             Instrument Name
           </td>
           <td>
             <input type="text" name="instrument_name" value="{{instrument_name}}">
+            <input type="hidden" name="company_nickname" value="Acme">
+            <input type="hidden" name="hardware_name" value="Tahoe">
+            <input type="hidden" name="testplan_name" value="Smiley">
+            <input type="hidden" name="instrument_type" value="BitScope">
+            <input type="hidden" name="author" value="nedwards">
+            <input type="hidden" name="instpost" value=True>
           </td>
-        </tr>
-
-        <tr>
+          <tr>
           <td class="label">
             Sample Rate (Hz):  
           </td>
@@ -90,84 +73,29 @@
             <input type="text" name="number_of_samples" value="{{number_of_samples}}">
           </td>
         </tr>
-
-        <tr>
-          <td>
-            Peak To Peak Voltage
-          </td>
-        <td>
-          <input type="checkbox" name="measurement_P2P">
-        </td>
-        </tr> 
-
-        <tr>
-          <td>
-            Peak Voltage
-          </td>
-        <td>
-          <input type="checkbox" name="measurement_Peak">
-        </td>
-        </tr> 
-
-        <tr>
-          <td>
-            Root Mean Squared Voltage
-          </td>
-        <td>
-          <input type="checkbox" name="measurement_RMS">
-        </td>
-        </tr> 
-
-        <tr>
-          <td class="label">
-            RMS Start Time
-          </td>
-          <td>
-            <input type="text" name="RMS_time_start" value="{{RMS_time_start}}">
-          </td>
         </tr>
-
-        <tr>
-          <td class="label">
-            RMS Stop Time
-          </td>
-          <td>
-            <input type="text" name="RMS_time_stop" value="{{RMS_time_stop}}">
-          </td>
-        </tr>
-
-        <tr>
-          <td>
-            Rise Time
-          </td>
-        <td>
-          <input type="checkbox" name="measurement_RiseT">
-        </td>
-        </tr> 
-
-        <tr>
-          <td>
-            Public
-          </td>
-        <td>
-          <input type="checkbox" name="public">
-        </td>
-        </tr> 
-
-        <tr>
-          <td>
-            Commence Test Now
-          </td>
-        <td>
-          <input type="checkbox" name="commence_test">
-        </td>
-        </tr> 
-
-
-      </table>
-
       <input type="submit">
     </form>
+
+        <form method="post">
+      <table>
+        <tr>
+          <td class="label">
+            Instrument Name
+          </td>
+          <td>
+            <input type="text" name="instrument_name" value="{{instrument_name}}">
+          </td>
+        </tr>
+      <input type="submit">
+    </form>
+
+
+
+
+
+
+
   </body>
 
 </html>

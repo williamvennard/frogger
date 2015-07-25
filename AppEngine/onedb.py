@@ -15,24 +15,13 @@ class ConfigDB(DictModel):
     author = db.StringProperty(required = True)
     instrument_type = db.StringProperty(required = True)
     instrument_name = db.StringProperty(required = False)
-    source = db.StringProperty(required = False)
-    horizontal_position = db.FloatProperty(required = False)
-    horizontal_seconds_per_div = db.FloatProperty(required = False)
-    vertical_position = db.FloatProperty(required = False)
-    vertical_volts_per_division = db.FloatProperty(required = False)
-    trigger_type = db.StringProperty(required = False)
-    frequency_center = db.FloatProperty(required = False)
-    frequency_span = db.FloatProperty(required = False)
-    frequency_start = db.FloatProperty(required = False)
-    frequency_stop = db.FloatProperty(required = False)
-    power = db.FloatProperty(required = False)
     sample_rate = db.IntegerProperty(required = False)
     number_of_samples = db.IntegerProperty(required = False)
     commence_test = db.BooleanProperty(required = False)
     test_plan = db.BooleanProperty(required = True)
-    testplan_name = db.StringProperty(required = False)
     trace = db.BooleanProperty(required = True)
     instrument_status = db.StringProperty(required = False)
+    tests = db.ListProperty(db.Key)
 
 def OscopeDB_key(name = 'default'):
     return db.Key.from_path('oscope', name)
@@ -50,20 +39,22 @@ def TestDB_key(name = 'default'):
 class TestDB(DictModel):
     testplan_name = db.StringProperty(required = False)
     company_nickname = db.StringProperty(required = False)
+    #instrument_name = db.StringProperty(required = False)
     author = db.StringProperty(required = False)
     date_created = db.DateTimeProperty(auto_now_add = True)
-    instrument_type = db.StringProperty(required = False)
-    measurement_P2P = db.BooleanProperty(required = False)
-    measurement_Peak = db.BooleanProperty(required = False)
-    measurement_RMS = db.BooleanProperty(required = False)
-    RMS_time_start = db.FloatProperty(required = False)
-    RMS_time_stop = db.FloatProperty(required = False)
-    measurement_RiseT = db.BooleanProperty(required = False)
+    #instrument_type = db.StringProperty(required = False)
+    #hardware_name = db.StringProperty(required = False)
+    measurement_name = db.StringProperty(required = False)
+    sequence_name = db.StringProperty(required = False)
+    device_under_test = db.StringProperty(required = False)
     public = db.BooleanProperty(required = False)    
     commence_test = db.BooleanProperty(required = False)
     test_plan = db.BooleanProperty(required = True)
     test_status = db.StringProperty(required = False)
     trace = db.BooleanProperty(required = True)
+    instruments = db.ListProperty(db.Key)
+
+
 
 def BscopeDB_key(name = 'default'):
     return db.Key.from_path('bscope', name)
@@ -77,6 +68,7 @@ class BscopeDB(DictModel):
     slicename = db.StringProperty(required = True)
     cha = db.TextProperty(required = True)
     start_tse = db.IntegerProperty(required = True)
+
 
 def TestResultsDB_key(name = 'default'):
     return db.Key.from_path('testresults', name)
