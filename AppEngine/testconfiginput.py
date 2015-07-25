@@ -41,7 +41,7 @@ class Handler(InstrumentDataHandler):
         number_of_samples = (self.request.get('number_of_samples'))
         testpost = (self.request.get('testpost'))
         instpost = (self.request.get('instpost'))
-        if testpost == 'True':
+        if testpost == 'True': #this controls the POST functionality if someone is configuring test plan details.
             print 'hi'
             t = TestDB(parent = TestDB_key(testplan_name), 
             testplan_name = testplan_name, 
@@ -50,12 +50,12 @@ class Handler(InstrumentDataHandler):
             test_plan = True,
             trace = False,
             )
-            t.put()  # might help with making plan show up on list?
-        if instpost == 'True':
+            t.put() 
+        if instpost == 'True': #this controls the POST functionality if someone is configuring instrument details.
             tests = TestDB.gql("Where testplan_name =:1", testplan_name).get()
             inst = ConfigDB.gql("Where instrument_name =:1", instrument_name).get()
             print inst
-            if inst == None:
+            if inst == None:  #if there is not an instrument with the inputted name, then create it in the DB
                 c = ConfigDB(parent = ConfigDB_key(instrument_name), 
                     company_nickname = company_nickname, author = author,
                     hardware_name = hardware_name, instrument_type = instrument_type,
@@ -67,28 +67,13 @@ class Handler(InstrumentDataHandler):
                 c.put()
             inst = ConfigDB.gql("Where instrument_name =:1", instrument_name).get()
             print inst
-            if tests.key() not in inst.tests:
+            if tests.key() not in inst.tests:  #add the test plan to the list property of the instrument
                 inst.tests.append(tests.key())
                 inst.put()
             insts = ConfigDB.gql("Where instrument_name =:1", instrument_name).get()
             test = TestDB.gql("Where testplan_name =:1", testplan_name).get()
-            if insts.key() not in test.instruments:
+            if insts.key() not in test.instruments:  #add the instrument name to the list property ot the test plan
                 test.instruments.append(insts.key())
                 test.put()
-
-
-            #c = ConfigDB(parent = ConfigDB_key(instrument_name), 
-            #company_nickname = company_nickname, author = author,
-            #hardware_name = hardware_name, instrument_type = instrument_type,
-            #instrument_name = instrument_name,             
-            #sample_rate = int(sample_rate), number_of_samples = int(number_of_samples),
-            #test_plan = True,
-            #testplan_name = testplan_name,
-            ##trace = False,
-            #)
-            #c.put()
-
-
-        
         self.render('testconfig.html')
         #self.redirect('/testplansummary/' + company_nickname + '/' + hardware_name)
