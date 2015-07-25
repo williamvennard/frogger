@@ -54,7 +54,6 @@ class Handler(InstrumentDataHandler):
         if instpost == 'True': #this controls the POST functionality if someone is configuring instrument details.
             tests = TestDB.gql("Where testplan_name =:1", testplan_name).get()
             inst = ConfigDB.gql("Where instrument_name =:1", instrument_name).get()
-            print inst
             if inst == None:  #if there is not an instrument with the inputted name, then create it in the DB
                 c = ConfigDB(parent = ConfigDB_key(instrument_name), 
                     company_nickname = company_nickname, author = author,
@@ -66,7 +65,9 @@ class Handler(InstrumentDataHandler):
                     )
                 c.put()
             inst = ConfigDB.gql("Where instrument_name =:1", instrument_name).get()
-            print inst
+            if inst == None:
+                print 'no inst found the first time'
+                inst = ConfigDB.gql("Where instrument_name =:1", instrument_name).get()
             if tests.key() not in inst.tests:  #add the test plan to the list property of the instrument
                 inst.tests.append(tests.key())
                 inst.put()
