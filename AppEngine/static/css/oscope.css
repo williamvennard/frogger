@@ -33,12 +33,18 @@ h3 {
     margin:0 20px 0 100px;
 }
 
-#buttons {
-    font-family: 'nexa_boldregular';
+.optionsButtons {
+    font-family: 'nexa_lightregular';
     font-size: 130%;
-    margin: 0 0 10px 0;
-    width: 190px;
+    text-align: center;
+    margin: 0 5px 5px 10px;
+    width: 200px;
 }
+
+.optionsBtn {
+    border-radius: 2px;
+    margin:2px 0 2px 0;
+ }
 
 #container {
     position: relative;
@@ -52,8 +58,7 @@ h3 {
     overflow:auto;
     margin: 10px 40px 0 0;
     padding: 0 0 0 0;
-    margin-left: 10px;
-    height: 400px;
+    height: 420px;
     width: 160px;
 }
 
@@ -230,5 +235,9 @@ h3 {
 
 .playBtn {
     padding: 12px 6px 12px 6px; 
+}
+.status {
+    font-family: 'nexa_lightregular';
+    margin
 }
 /* ---------- Responsive ---------- */

@@ -133,12 +133,12 @@
                             <h2>Options</h2>
                         </div>
                         <!--BUTTONS-->
-                        <div id="buttons" style="margin-bottom: 10px;">
-                            <button style="padding-top:5px;" class="text-uppercase" type="button" id="startStop">Start</button>
-                            <button style="padding-top:5px;" class="text-uppercase" data-toggle="collapse" data-parent="#accordion" href="#collapseTable">Table</botton>
-                            <button style="padding-top:5px;" class="text-uppercase" type="button" id="save">save</button>
-                            <button style="padding-top:5px;" class="text-uppercase" type="button" id="delete">delete</button>
-                            <button style="padding-top:5px;" class="text-uppercase" data-toggle="collapse" data-parent="#accordion" href="#collapseConfig">Config</button>                         
+                        <div class="optionsButtons">
+                            <button style="" class="text-uppercase optionsBtn" type="button" id="startStop">Start</button>
+                            <button style="" class="text-uppercase optionsBtn" data-toggle="collapse" data-parent="#accordion" href="#collapseTable">Table</botton>
+                            <button style="" class="text-uppercase optionsBtn" type="button" id="save">save</button>
+                            <button style="" class="text-uppercase optionsBtn" type="button" id="delete">delete</button>
+                            <button style="" class="text-uppercase optionsBtn" data-toggle="collapse" data-parent="#accordion" href="#collapseConfig">Config</button>                         
                         </div> 
                         <!--CONFIG FORM-->
                         <div id="collapseConfig" class="collapse in configBox">           
@@ -179,7 +179,7 @@
                           </form>
                         </div>
 
-                        <fieldset class="col-md-12" id="knobBox" style="width: 90%; margin-top:18px;">
+                        <fieldset class="col-md-12" id="knobBox" style="width: 90%; margin-top:30px;">
                         <span class="spacer"></span><legend class="text-uppercase" style="width: 300px; padding-left: 5px;">Horizontal</legend><span class="spacer"></span>   
                           <div class="Knobs">
                             <section>
@@ -221,7 +221,7 @@
                             </section>
                           </div>
                         </fieldset>
-                        <fieldset class="col-md-12" id="knobBox" style="width: 90%;">
+                        <fieldset class="col-md-12" id="knobBox" style="width: 90%; margin-top:25px;">
                         <span class="spacer"></span><legend class="text-uppercase" style="width: 300px; padding-left: 5px;">Vertical</legend><span class="spacer"></span>   
                           <div class="Knobs">
                             <section>
@@ -286,7 +286,7 @@
                           </label>
                       </div>
                       <div class="col-md-3 statusInfoBox">
-                        <h5>Status: </h5><span id="currentStatus"></span>    
+                        <h5 style="margin-bottom: 0px;">Status: <span id="currentStatus" class="status"></span> </h5>   
                       </div>
                     </div>
                   </div>                 
