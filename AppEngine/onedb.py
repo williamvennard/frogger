@@ -23,6 +23,19 @@ class ConfigDB(DictModel):
     instrument_status = db.StringProperty(required = False)
     tests = db.ListProperty(db.Key)
 
+
+def DutDB_key(name = 'default'):
+    return db.Key.from_path('company_nickname', name)
+
+class DutDB(DictModel):
+    company_nickname = db.StringProperty(required = True)
+    date_created = db.DateTimeProperty(auto_now_add = True)
+    author = db.StringProperty(required = True)
+    dut_type = db.StringProperty(required = True)
+    dut_name = db.StringProperty(required = False)
+    settings = db.StringProperty(required = False)
+    tests = db.ListProperty(db.Key)
+
 def OscopeDB_key(name = 'default'):
     return db.Key.from_path('oscope', name)
 
@@ -53,7 +66,7 @@ class TestDB(DictModel):
     test_status = db.StringProperty(required = False)
     trace = db.BooleanProperty(required = True)
     instruments = db.ListProperty(db.Key)
-
+    duts = db.ListProperty(db.Key)
 
 
 def BscopeDB_key(name = 'default'):
