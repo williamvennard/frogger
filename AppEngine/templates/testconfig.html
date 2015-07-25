@@ -45,7 +45,7 @@
         </tr>
         <tr>
           <td class="label">
-            Instrument Name
+            Instrument Name:
           </td>
           <td>
             <input type="text" name="instrument_name" value="{{instrument_name}}">
@@ -77,19 +77,46 @@
       <input type="submit">
     </form>
 
-        <form method="post">
+    <form method="post">
       <table>
-        <tr>
+          <tr>
           <td class="label">
-            Instrument Name
+            Test Plan Name:  
           </td>
           <td>
-            <input type="text" name="instrument_name" value="{{instrument_name}}">
+            <input type="text" name="testplan_name" value="{{testplan_name}}">
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Device Under Test Type:  
+          </td>
+          <td>
+            <input type="text" name="dut_type" value="{{dut_type}}">
+          </td>
+        </tr>
+        <tr>
+        <td class="label">
+            Device Under Test Name:
+        </td>
+
+          <td>
+            <input type="text" name="dut_name" value="{{dut_name}}">
+            <input type="hidden" name="company_nickname" value="Acme">
+            <input type="hidden" name="testplan_name" value="Smiley">
+            <input type="hidden" name="author" value="nedwards">
+            <input type="hidden" name="dutpost" value=True>
+          </td>
+          <tr>
+          <td class="label">
+            Settings:  
+          </td>
+          <td>
+            <input type="text" name="settings" value="{{settings}}">
           </td>
         </tr>
       <input type="submit">
     </form>
-
 
 
 
