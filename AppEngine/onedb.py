@@ -5,8 +5,12 @@ class DictModel(db.Model):
        return dict([(p, unicode(getattr(self, p))) for p in self.properties()])
 
 
-def ConfigDB_key(name = 'default'):
-    return db.Key.from_path('company_nickname', name)
+def company_key(name = 'default'):
+    return db.Key.from_path('companies', name)
+
+def ConfigDB_key(company_nickname ="", config_name =""):
+    print 'onedb', config_name
+    return db.Key.from_path(company_nickname, config_name)
 
 class ConfigDB(DictModel):
     company_nickname = db.StringProperty(required = True)
@@ -14,7 +18,7 @@ class ConfigDB(DictModel):
     hardware_name = db.StringProperty(required = True)
     author = db.StringProperty(required = True)
     instrument_type = db.StringProperty(required = True)
-    instrument_name = db.StringProperty(required = False)
+    config_name = db.StringProperty(required = False)
     sample_rate = db.IntegerProperty(required = False)
     number_of_samples = db.IntegerProperty(required = False)
     commence_test = db.BooleanProperty(required = False)
@@ -52,7 +56,7 @@ def TestDB_key(name = 'default'):
 class TestDB(DictModel):
     testplan_name = db.StringProperty(required = False)
     company_nickname = db.StringProperty(required = False)
-    #instrument_name = db.StringProperty(required = False)
+    #config_name = db.StringProperty(required = False)
     author = db.StringProperty(required = False)
     date_created = db.DateTimeProperty(auto_now_add = True)
     #instrument_type = db.StringProperty(required = False)
@@ -65,7 +69,7 @@ class TestDB(DictModel):
     test_plan = db.BooleanProperty(required = True)
     test_status = db.StringProperty(required = False)
     trace = db.BooleanProperty(required = True)
-    instruments = db.ListProperty(db.Key)
+    configs = db.ListProperty(db.Key)
     duts = db.ListProperty(db.Key)
 
 
@@ -75,7 +79,7 @@ def BscopeDB_key(name = 'default'):
 class BscopeDB(DictModel):
     company_nickname = db.StringProperty(required = True)
     hardware_name = db.StringProperty(required = True)
-    instrument_name = db.StringProperty(required = True)
+    config_name = db.StringProperty(required = True)
     i_settings = db.StringProperty(required = True)
     p_settings = db.StringProperty(required = True)
     slicename = db.StringProperty(required = True)
@@ -96,7 +100,7 @@ class TestResultsDB(DictModel):
     Slice_Size_msec = db.IntegerProperty(required = False)
     dec_data_url = db.StringProperty(required = False)
     raw_data_url = db.StringProperty(required = False)
-    instrument_name = db.StringProperty(required = False)
+    config_name = db.StringProperty(required = False)
     hardware_name = db.StringProperty(required = False)
     start_tse = db.IntegerProperty(required = False)
     test_complete = db.IntegerProperty(required = False)
