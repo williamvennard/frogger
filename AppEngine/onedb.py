@@ -108,3 +108,22 @@ class TestResultsDB(DictModel):
     trace = db.BooleanProperty(required = False)
     test_plan = db.BooleanProperty(required = False)
     saved_state = db.BooleanProperty(required = False)
+
+
+class CapabilitiesDB(DictModel):
+    instrument_type = db.StringProperty(required = False)
+    analog_bandwidth = db.IntegerProperty(required = False)
+    capture_channels = db.IntegerProperty(required = False)
+    input_range = db.FloatProperty(required = False)
+    analog_sample_rate = db.IntegerProperty(required = False)
+    resolution = db.IntegerProperty(required = False)
+    capture_buffer_size = db.IntegerProperty(required = False)
+
+class InstrumentsDB(DictModel):
+    capabilities = db.ReferenceProperty(CapabilitiesDB, collection_name = 'instruments')
+    instrument_type = db.StringProperty(required = False)
+    hardware_name = db.StringProperty(required = False)
+    company_nickname = db.StringProperty(required = False)
+    serial_number = db.StringProperty(required = False)
+
+

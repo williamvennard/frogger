@@ -48,6 +48,7 @@ import configinput
 import bscopeconfig
 import communitytests
 import mainpage
+import configlookup
 from gradientone import InstrumentDataHandler
 
 authorized_users = ['charlie@gradientone.com',
@@ -161,6 +162,7 @@ app = webapp2.WSGIApplication([
     ('/help', mainpage.Handler),
     ('/adduser', AdduserPage),
     ('/listusers', ListUsersPage),
+    ('/configlookup', configlookup.Handler),
     ('/instruments', instruments.Handler),
     ('/instruments/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', instruments.Handler),
     ('/instruments/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+.json)', instruments.Handler),

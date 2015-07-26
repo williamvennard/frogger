@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block import %}
+
+<html>
+  <head>
+    <title>Config Lookup </title>
+    <style type="text/css">
+      .label {text-align: right}
+      .error {color: red}
+    </style>
+
+  </head>
+
+
+  <body>
+    <h2>Config Lookup</h2>
+    <form method="post">
+      <table>
+        <tr>
+          <td class="label">
+            Instruments Input
+          </td>
+          </tr>
+          <tr>
+        <td class="label">
+            Instrument Type:  
+          </td>
+          <td>
+            <input type="text" name="model" value="{{model}}">
+            <input type="hidden" name="instpost" value=True>
+          </td>
+        </tr>
+        <tr>
+        <td class="label">
+            Hardware Name:  
+          </td>
+          <td>
+            <input type="text" name="hardware_name" value="{{hardware_name}}">
+          </td>
+        </tr>
+        <tr>
+        <td class="label">
+            Company Nickname:  
+          </td>
+          <td>
+            <input type="text" name="company_nickname" value="{{company_nickname}}">
+          </td>
+        </tr>
+        <tr>
+        <td class="label">
+            Serial Number:  
+          </td>
+          <td>
+            <input type="text" name="serial_number" value="{{serial_number}}">
+          </td>
+        </tr>
+      <input type="submit">
+    </form>
+
+   <form method="post">
+      <table>
+        <tr>
+          <td class="label">
+            Capabilities Input
+          </td>
+          </tr>
+        <td class="label">
+            Instrument Type:  
+          </td>
+          <td>
+            <input type="text" name="instrument_type" value="{{instrument_type}}">
+          </td>
+        </tr>
+        <td class="label">
+            Analog Bandwidth:  
+          </td>
+          <td>
+            <input type="text" name="analog_bandwidth" value="{{analog_bandwidth}}">
+            <input type="hidden" name="cappost" value=True>
+          </td>
+        </tr>
+        <td class="label">
+            # of Capture Channels:  
+          </td>
+          <td>
+            <input type="text" name="capture_channels" value="{{capture_channels}}">
+          </td>
+        </tr>
+        <td class="label">
+            Input Range:  
+          </td>
+          <td>
+            <input type="text" name="input_range" value="{{input_range}}">
+          </td>
+        </tr>
+        </tr>
+        <td class="label">
+            Analog Sample Rate:  
+          </td>
+          <td>
+            <input type="text" name="analog_sample_rate" value="{{analog_sample_rate}}">
+          </td>
+        </tr>
+        </tr>
+        <td class="label">
+            Capture Buffer Size:  
+          </td>
+          <td>
+            <input type="text" name="capture_buffer_size" value="{{capture_buffer_size}}">
+          </td>
+        </tr>
+        </tr>
+        <td class="label">
+            Resolution:  
+          </td>
+          <td>
+            <input type="text" name="resolution" value="{{resolution}}">
+          </td>
+        </tr>
+        </tr>
+      <input type="submit">
+    </form>
+
+
+  </body>
+
+</html>
+
+{% endblock %}
