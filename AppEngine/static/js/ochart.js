@@ -143,7 +143,7 @@
         rawOffset = Number(testSliceStart) + ((Number(numPages) * Number(sliceSize))/2);
         rawWidth = (Number(numPages) * Number(sliceSize)) * rawPointSpacing;
 
-        instrumentName = 'Instrument: ' + testInfo.instrument_name;
+        instrumentName = 'Instrument: ' + testInfo.config_name;
         hardwareName = 'Hardware: ' + testInfo.hardware_name;
         document.getElementById("instrumentName").innerHTML = instrumentName;
         document.getElementById("hardwareName").innerHTML = hardwareName;
