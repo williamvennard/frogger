@@ -75,6 +75,10 @@ class TestDB(DictModel):
     start_time = db.DateTimeProperty(required = False)
     duts = db.ListProperty(db.Key)
     order = db.StringListProperty()
+    stop_time = db.DateTimeProperty(required = False)
+    test_ready = db.BooleanProperty(required = False)
+    test_scheduled = db.BooleanProperty(required = False)
+    scheduled_start_time = db.DateTimeProperty(required = False)
 
 
 class StateDB(DictModel):
@@ -108,6 +112,7 @@ def TestResultsDB_key(name = 'default'):
 
 class TestResultsDB(DictModel):
     testplan_name = db.StringProperty(required = False)
+    config_name = db.StringProperty(required = False)
     company_nickname = db.StringProperty(required = False)
     Total_Slices = db.IntegerProperty(required = False)
     Current_slice_count = db.IntegerProperty(required = False)

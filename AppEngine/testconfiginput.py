@@ -62,6 +62,8 @@ class Handler(InstrumentDataHandler):
             author = author,
             test_plan = True,
             trace = False,
+            test_ready = False,
+            test_scheduled = False
             )
             t.put() 
             self.render('testconfig.html', testplan_name = testplan_name)
@@ -141,7 +143,9 @@ class Handler(InstrumentDataHandler):
             print start_time
             date_object = datetime.strptime(start_time, '%b %d %Y %I:%M%p')
             test = TestDB.gql("Where testplan_name =:1", testplan_name).get()
-            test.start_time = date_object
+            test.scheduled_start_time = date_object
+            test.test_ready = True
+            test.test_scheduled = True
             test.put()
             taskqueue.add(url = '/testmanager', method = 'POST', params={'info':(company_nickname,testplan_name)}, eta = date_object)
 

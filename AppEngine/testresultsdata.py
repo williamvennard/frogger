@@ -36,24 +36,25 @@ from string import maketrans
 
 
 class Handler(InstrumentDataHandler):
-    def get(self,company_nickname="", hardware_name="", instrument_name=""):
+    def get(self,company_nickname="", testplan_name="", config_name=""):
         "HTTP GETs from the Instrument Page in the UI provide data to faciliate plotting"
         #if not self.authcheck():
         #    return
-        key = 'testresults' + hardware_name + instrument_name
+        key = 'testresults' + testplan_name + config_name
         memcache.get(key)
         output = memcache.get(key)
         render_json_cached(self, output)
+        #print company_nickname, hardware_name, config_name
         #rows = db.GqlQuery("""SELECT * FROM TestResultsDB WHERE company_nickname =:1 and hardware_name =:2
-        #                        AND instrument_name = :3 and test_complete_bool =:4""", company_nickname, hardware_name, instrument_name, False)  
+        #                        AND config_name = :3 and test_complete_bool =:4""", company_nickname, hardware_name, config_name, False)  
         #rows = list(rows)
         #data = query_to_dict(rows)
+        #print data
         #output = {"data":data}
         #render_json(self, output)
-    def post(self,company_nickname= "", testplan_name="",start_tse=""):
+    def post(self,company_nickname= "", testplan_name="", config_name =""):
         "store data by intstrument name and time slice name"
         testresults_content = json.loads(self.request.body)
-        instrument_name=str(testresults_content['instrument_name'])
         hardware_name=str(testresults_content['hardware_name'])
         test_plan = testresults_content['test_plan']
         if test_plan == 'True':
@@ -65,7 +66,7 @@ class Handler(InstrumentDataHandler):
         testresults_content['test_complete_bool'] = False
         testresults_content['p_settings'] = unic_to_ascii(testresults_content['p_settings'])
         testresults_content = unic_to_ascii(testresults_content)
-        key = 'testresults' + hardware_name + instrument_name
+        key = 'testresults' + testplan_name + config_name
         testresults_content = json.dumps(testresults_content)
         print testresults_content
         memcache.set(key, testresults_content)

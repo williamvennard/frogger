@@ -55,6 +55,10 @@ class Handler(InstrumentDataHandler):
         first_event.active_testplan_name = names[-1]
         first_event.put()
         start_time = datetime.datetime.now()
+        key = db.Key.from_path('TestDB', names[-1], parent = company_key())
+        testplan = db.get(key)
+        testplan.start_time = start_time
+        testplan.put()
         first_key = names[-1]+order_list[0]['type']+order_list[0]['name']
         key = db.Key.from_path('StateDB', first_key, parent = company_key())
         state_first_event = db.get(key)
