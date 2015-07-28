@@ -87,8 +87,10 @@
     // https://gradientone-test.appspot.com/status/Acme/Tahoe
     var currentTestStatus;
     var statusArray = [];
+    
     function getTestStatus() {
-      status_url = 'https://gradientone-test.appspot.com/status/Acme/Tahoe';
+      //status_url = 'https://gradientone-test.appspot.com/testlibrary/Acme/NyquistB/1437712799600.json';
+      status_url = 'https://gradientone-dev1.appspot.com/status/Acme/Tahoe';
       $.ajax({
           async: true,
           url: status_url,            
@@ -96,38 +98,43 @@
        }).done(function (results) {
           currentTestStatus = results.status.status;
           testStatusTime = results.status.time;
+          // have key start, finish, current, config change
+          // check value of key current with whats in status history 
           console.log('getTestStatus: currentTestStatus = ',currentTestStatus);
           document.getElementById("currentStatus").innerHTML = currentTestStatus;      
       });
-       setTimeout(getTestStatus,100);
+       setTimeout(getTestStatus,200);
     };
     getTestStatus();
+    
     //Continuously polling at: 
     //https://gradientone-dev1.appspot.com/testresults/Acme/Tahoe/LED
     function getTestInfo() {
 
       //test_info_url = 'https://gradientone-dev1.appspot.com/testlibrary/Acme/manufacturing/1436809506690.json';
-      test_info_url = 'https://gradientone-test.appspot.com/testresults/Acme/Tahoe/Primetime';
-      console.log('test_info_url', test_info_url);
+      test_info_url = 'https://gradientone-dev1.appspot.com/traceresults/Acme/Tahoe/Primetime';
       $.ajax({
           async: true,
           url: test_info_url,
           dataType: 'json',
        }).done(function (results) {       
         testInfo = results;  
-
+        //testSettings = testInfo;
+        //console.log('getTestInfo: testInfo =',testInfo);
         testSettings = testInfo.p_settings;
         //URLS DEC/RAW
         dec_url = testInfo.dec_data_url;
         raw_urlPath = testInfo.raw_data_url;
         //Test Info DEC/RAW
+        //testSliceStart = testSettings.start_tse;
         testSliceStart = testSettings.Start_TSE;    
         decPointSpacing = (Number(testSettings.Dec_msec_btw_samples))/1000;    
         totalNumPages = testSettings.Total_Slices;
         numPages = Number(testSettings.Total_Slices); //not live version
 
-        rawPointSpacing = (testSettings.Raw_msec_btw_samples)/1000000;
+        rawPointSpacing = (testSettings.Raw_msec_btw_samples)/1000000;  //convert micro s to seconds
         sliceSize = Number(testSettings.Slice_Size_msec);
+        console.log('raw_urlPath = ',raw_urlPath);
         rawUrlSplit = raw_urlPath.split(testSliceStart);
         base_url = rawUrlSplit[0];
         sliceEnd = (Number(testSliceStart) + (numPages*sliceSize)) -10;
@@ -177,7 +184,7 @@
         //console.log('getTestInfo: sliceSize = ', sliceSize);   
         //console.log('getTestInfo: rawPointSpacing =',rawPointSpacing);  
        });
-          setTimeout(getTestInfo,500);
+          setTimeout(getTestInfo,1000);
 
        //setTimeout(getTestInfo,200);   // change to 100 later
     };
@@ -254,7 +261,7 @@
          //range = (Number(sliceNames[numPages]) - Number(sliceNames[0]))/1000;
          //hMax = range/2;
          //hMin = (- rawWidth/2); 
-        var width = rawWidth*(100/hZoom);
+        var width = rawWidth*(100/hZoom);  
         hMax = hPosition + width;
         hMin = hPosition;
 
@@ -325,7 +332,7 @@
       console.log('saveStatus: totalNumPages = ',totalNumPages);
       formatSaveUrl = raw_urlPath.split('/');
       var saveValue = status;
-      var save_url = 'https://gradientone-test.appspot.com/datamgmt/' + formatSaveUrl[formatSaveUrl.length-5] + '/' + formatSaveUrl[formatSaveUrl.length-4] + '/' + formatSaveUrl[formatSaveUrl.length-3] + '/' + formatSaveUrl[formatSaveUrl.length-2] + '/' + formatSaveUrl[formatSaveUrl.length-1];
+      var save_url = 'https://gradientone-dev1.appspot.com/datamgmt/' + formatSaveUrl[formatSaveUrl.length-5] + '/' + formatSaveUrl[formatSaveUrl.length-4] + '/' + formatSaveUrl[formatSaveUrl.length-3] + '/' + formatSaveUrl[formatSaveUrl.length-2] + '/' + formatSaveUrl[formatSaveUrl.length-1];
       console.log('saveStatus: save_url = ',save_url);
 
       var formData = JSON.stringify({"save_status":saveValue,"totalNumPages":totalNumPages,"sliceSize":sliceSize});
@@ -458,25 +465,32 @@
     };
 // BUTTON CONTROLS
   $(document).ready(function(){
+    //cleart interval 
     $('#replay').click(function(){
+      clearInterval(timerID);
        replay();
     });
     $('#fastBackward').click(function(){
+      clearInterval(timerID);
        fastBackward();
     });
     $('#backward').click(function(){
+       clearInterval(timerID);
        backward();
     });
     $('#pause').click(function(){ 
        clearInterval(timerID);
     });
     $('#start').click(function(){
+      clearInterval(timerID);
        start();
     });
     $('#forward').click(function(){
+      clearInterval(timerID);
        Forward();
     });
     $('#fastForward').click(function(){
+      clearInterval(timerID);
        fastForward();
     });
   });
