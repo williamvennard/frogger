@@ -467,30 +467,30 @@
   $(document).ready(function(){
     //cleart interval 
     $('#replay').click(function(){
-      clearInterval(timerID);
+      //clearInterval(timerID);
        replay();
     });
     $('#fastBackward').click(function(){
-      clearInterval(timerID);
+      //clearInterval(timerID);
        fastBackward();
     });
     $('#backward').click(function(){
-       clearInterval(timerID);
+       //clearInterval(timerID);
        backward();
     });
     $('#pause').click(function(){ 
        clearInterval(timerID);
     });
     $('#start').click(function(){
-      clearInterval(timerID);
+      //clearInterval(timerID);
        start();
     });
     $('#forward').click(function(){
-      clearInterval(timerID);
+      //clearInterval(timerID);
        Forward();
     });
     $('#fastForward').click(function(){
-      clearInterval(timerID);
+      //clearInterval(timerID);
        fastForward();
     });
   });
