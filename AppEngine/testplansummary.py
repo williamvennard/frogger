@@ -47,27 +47,9 @@ class Handler(InstrumentDataHandler):
             config = {'test_config':test_config, 'inst_config':inst_config}
             render_json(self, config)
         elif company_nickname and hardware_name:
-            configs = []
-            rows = db.GqlQuery("SELECT * FROM TestDB WHERE company_nickname =:1 and commence_test =:2", 
-                              company_nickname, True)
-            rows = list(rows)            
-            test_config = query_to_dict(rows)
-            rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE company_nickname =:1 and test_plan =:2 and hardware_name =:3", 
+            rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE company_nickname =:1 and commence_test =:2 and hardware_name =:3", 
                                 company_nickname, True, hardware_name)
             rows = list(rows)
-            inst_config = query_to_dict(rows)
-            for t in test_config:
-                for i in inst_config: 
-                    if i['testplan_name'] == t['testplan_name']:
-                        t['inst_config'] = i
-            for t in test_config:
-                configs.append(t)
-            rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE company_nickname =:1 and commence_test =:2 and hardware_name =:3", 
-                    company_nickname, True, hardware_name)
-            rows = list(rows)
-            meas_config = query_to_dict(rows)
-            for m in meas_config:
-                configs.append(m)
-            config_list = sorted(configs, key=getTestKey)
-            config = {'configs':config_list}
+            config = query_to_dict(rows)
+            config = {'configs':config}
             render_json(self, config)

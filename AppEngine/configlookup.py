@@ -27,7 +27,6 @@ class Handler(InstrumentDataHandler):
         serial_number = self.request.get('serial_number')
         analog_bandwidth= self.request.get('analog_bandwidth')
         capture_channels = self.request.get('capture_channels')
-        input_range = self.request.get('input_range')
         analog_sample_rate = self.request.get('analog_sample_rate')
         resolution = self.request.get('resolution')
         capture_buffer_size = self.request.get('capture_buffer_size')
@@ -39,7 +38,8 @@ class Handler(InstrumentDataHandler):
             instrument = InstrumentsDB(key_name = hardware_name, 
                          company_nickname = company_nickname, 
                          serial_number = serial_number, 
-                         instrument_type = model
+                         instrument_type = model,
+                         hardware_name = hardware_name,
                          )
             capability = CapabilitiesDB.all().filter("instrument_type =", model).get()
             instrument.capabilities = capability
@@ -49,7 +49,6 @@ class Handler(InstrumentDataHandler):
                 instrument_type = instrument_type,
                 analog_bandwidth = int(analog_bandwidth), 
                 capture_channels = int(capture_channels), 
-                input_range = float(input_range),
                 analog_sample_rate = int(analog_sample_rate),
                 resolution = int(resolution),
                 capture_buffer_size = int(capture_buffer_size),

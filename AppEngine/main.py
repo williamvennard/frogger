@@ -19,6 +19,7 @@ from google.appengine.api import memcache
 from google.appengine.api import oauth
 from google.appengine.api import users
 from google.appengine.ext import db
+from google.appengine.api import taskqueue
 from time import gmtime, strftime
 from collections import OrderedDict
 import numpy as np
@@ -49,6 +50,8 @@ import bscopeconfig
 import communitytests
 import mainpage
 import configlookup
+import testmanager
+#import ordermanager
 from gradientone import InstrumentDataHandler
 
 authorized_users = ['charlie@gradientone.com',
@@ -172,13 +175,13 @@ app = webapp2.WSGIApplication([
     ('/configoutput/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', configoutput.Handler),
     ('/datamgmt/bscopedata/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', datamgmt.Handler),
     ('/testconfiginput', testconfiginput.Handler),
-    ('/testconfigoutput/([a-zA-Z0-9-]+)', testconfigoutput.Handler),
+    ('/testconfigoutput/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', testconfigoutput.Handler),
     ('/testplansummary/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', testplansummary.Handler),
     ('/testplansummary/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', testplansummary.Handler),
     ('/communitytests', communitytests.Handler),
     ('/search', search.Handler),
     ('/status/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', status.Handler),
-    ('/testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)', testcomplete.Handler),
+    ('/testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', testcomplete.Handler),
     ('/testresults', canvaspage.Handler),
     ('/testresults/([a-zA-Z0-9-]+)', testresultsdata.Handler),
     ('/testresults/([a-zA-Z0-9-]+.json)', canvaspage.Handler),
@@ -198,6 +201,8 @@ app = webapp2.WSGIApplication([
     ('/upload/upload_file', FileUploadHandler),
     ('/upload/success',FileUploadSuccess),
     ('/upload/failure',FileUploadFailure),
+    ('/testmanager', testmanager.Handler),
+#    ('/ordermanager', ordermanager.Handler),
 ], debug=True)
 
 

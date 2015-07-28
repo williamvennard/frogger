@@ -57,19 +57,115 @@
           </td>
           <tr>
           <td class="label">
-            Sample Rate (Hz):  
+            Analog Bandwidth:  
           </td>
           <td>
-            <input type="text" name="sample_rate" value="{{sample_rate}}">
+            <input type="text" name="analog_bandwidth" value="{{analog_bandwidth}}">
           </td>
         </tr>
 
         <tr>
           <td class="label">
-            Number of Samples:  
+            Analog Sample Rate:  
           </td>
           <td>
-            <input type="text" name="number_of_samples" value="{{number_of_samples}}">
+            <input type="text" name="analog_sample_rate" value="{{analog_sample_rate}}">
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            Capture Buffer Size:  
+          </td>
+          <td>
+            <input type="text" name="capture_buffer_size" value="{{capture_buffer_size}}">
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            # of Capture Channels:  
+          </td>
+          <td>
+            <input type="text" name="capture_channels" value="{{capture_channels}}">
+          </td>
+        </tr>
+        </tr>
+      <input type="submit">
+    </form>
+
+    <form method="post">
+      <table>
+         <tr>
+          <td class="label">
+            Test Plan Name:  
+          </td>
+          <td>
+            <input type="text" name="testplan_name" value="{{testplan_name}}">
+          </td>
+        </tr>
+          <tr>
+          <td class="label">
+            Config Name:
+          </td>
+          <td>
+            <input type="text" name="config_name" value="{{config_name}}">
+          </td>
+         <select name ="instrument">
+              {% for d in dropdown %}
+           <option value ="{{d['config_name']}}">{{d['config_name']}}</option>
+             {% endfor %}
+          </select>
+          <td>
+            <input type="hidden" name="company_nickname" value="Acme">
+            <input type="hidden" name="author" value="nedwards">
+            <input type="hidden" name="confpost" value=True>
+          </td>
+          <tr>
+          <td class="label">
+            Analog Bandwidth:  
+          </td>
+          <td>
+            <input type="text" name="analog_bandwidth" value="{{analog_bandwidth}}">
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Instruments
+          </td>
+          <tr>
+          <td class="label">
+            Selected Instrument Type:  
+          </td>
+          <td>
+         <input type = "text" name ="selected_inst_type" value = "{{selected_inst_type}}">
+            <input type="hidden" name="selectpost" value=True>
+          </td>
+        </tr>
+       <tr>
+          <td class="label">
+            Selected Hardware:  
+          </td>
+          <td>
+         <input type = "text" name ="selected_hardware" value = "{{selected_hardware}}">
+            <input type="hidden" name="selectpost" value=True>
+          </td>
+        </tr>
+
+          <tr>
+          <td class="label">
+            Available Instruments:  
+          </td>
+          <td>
+            {{avail_inst}}
+          </td>
+        </tr>
+      <tr>
+          <td class="label">
+          Config Test Order:  
+          </td>
+          <td>
+            <input type="text" name="config_test_order" value="{{config_test_order}}">
           </td>
         </tr>
         </tr>
@@ -114,14 +210,40 @@
             <input type="text" name="settings" value="{{settings}}">
           </td>
         </tr>
+
+      <tr>
+          <td class="label">
+          DUT  Test Order:  
+          </td>
+          <td>
+            <input type="text" name="dut_test_order" value="{{dut_test_order}}">
+          </td>
+        </tr>
       <input type="submit">
     </form>
 
-
-
-
-
-
+    <form method="post">
+      <table>
+        <tr>
+          <td class="label">
+            Test Plan Name:  
+          </td>
+          <td>
+            <input type="text" name="testplan_name" value="{{testplan_name}}">
+          </td>
+        </tr>
+        <tr>
+          <td class="label">
+            Test Start Time:
+          </td>
+          <td>
+            <input type="text" name="start_time" value="{{start_time}}">
+            <input type="hidden" name="company_nickname" value="Acme">
+            <input type="hidden" name="timepost" value=True>
+          </td>
+        </tr>
+      <input type="submit">
+    </form>
   </body>
 
 </html>

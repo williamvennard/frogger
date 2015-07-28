@@ -15,6 +15,14 @@ template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
                                autoescape = False)
 
+authorized_users = ['charlie@gradientone.com',
+                    'nedwards@gradientone.com',
+                    'nickedwards@gmail.com'
+#                    'nhannotte@gradientone.com',
+#                    'wvennard@gradientone.com',
+                    'test@example.com',
+                   ]
+
 def render_str(template, **params):
     t = jinja_env.get_template(template)
     return t.render(params)
@@ -24,6 +32,9 @@ def getKey(row):
 
 def getTestKey(tconfigs):
     return tconfigs['date_created']
+
+def getOrderKey(orders):
+    return orders['order']
 
 def author_creation():
     "Use the cookie to return the author"
@@ -104,6 +115,50 @@ def unic_to_ascii(input_uni):
         new[k] = v
     return new
 
+def co_and_tp_names(incoming): 
+    split_incoming =  incoming.split('&')
+    company_list = split_incoming[0].split('=')
+    company_nickname = company_list[1]
+    testplan_name_list = split_incoming[1].split('=')
+    testplan_name = testplan_name_list[1]
+    return company_nickname, testplan_name
+    
+def get_ordered_list(order):
+    order = order.split(',')
+    middle_section = order[1:-1]
+    mdict = {}
+    for m in middle_section:
+        m = m.strip()
+        m = m.lstrip('u')
+        m = m.strip('\'')
+        m = m.split(':')
+        mdict['type'] = m[0]
+        mdict['name'] = m[1]
+        mdict['order'] = m[-1]
+    f = order[0]
+    f = f.lstrip('[')
+    f = f.lstrip('u')
+    f = f.strip('\'')
+    f = f.split(':')
+    fdict = {}
+    fdict['type'] = f[0]
+    fdict['name'] = f[1]
+    fdict['order'] = f[-1]
+    l = order[-1]
+    l = l.strip()
+    l = l.rstrip(']')
+    l = l.lstrip('u')
+    l = l.strip('\'')
+    l = l.split(':')
+    ldict = {}
+    ldict['type'] = l[0]
+    ldict['name'] = l[1]
+    ldict['order'] = l[-1]
+    order_list = []
+    order_list = [mdict, ldict, fdict]
+    order_list = sorted(order_list, key=getOrderKey)
+    return order_list    
+
 class InstrumentDataHandler(webapp2.RequestHandler):
     authorized = False
     def write(self, *a, **kw): self.response.out.write(*a, **kw)
@@ -137,3 +192,4 @@ class InstrumentDataHandler(webapp2.RequestHandler):
         if not authorized:
             self.redirect('/static/autherror.html')
         return authorized
+

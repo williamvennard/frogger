@@ -22,8 +22,10 @@ class ConfigDB(DictModel):
     sample_rate = db.IntegerProperty(required = False)
     number_of_samples = db.IntegerProperty(required = False)
     commence_test = db.BooleanProperty(required = False)
+    analog_bandwidth = db.StringProperty(required = False)
     test_plan = db.BooleanProperty(required = True)
     trace = db.BooleanProperty(required = True)
+    active_testplan_name = db.StringProperty(required = False)
     instrument_status = db.StringProperty(required = False)
     tests = db.ListProperty(db.Key)
 
@@ -70,7 +72,21 @@ class TestDB(DictModel):
     test_status = db.StringProperty(required = False)
     trace = db.BooleanProperty(required = True)
     configs = db.ListProperty(db.Key)
+    start_time = db.DateTimeProperty(required = False)
     duts = db.ListProperty(db.Key)
+    order = db.StringListProperty()
+
+
+class StateDB(DictModel):
+    testplan_name = db.StringProperty(required = False)
+    version = db.IntegerProperty(required = False)
+    widget = db.StringProperty(required = False)
+    start_time = db.DateTimeProperty(required = False)
+    stop_time = db.DateTimeProperty(required = False)
+    error = db.StringProperty(required = False)
+    name = db.StringProperty(required = False)
+    company_nickname = db.StringProperty(required = False)
+    order = db.IntegerProperty(required = False)
 
 
 def BscopeDB_key(name = 'default'):
@@ -114,7 +130,6 @@ class CapabilitiesDB(DictModel):
     instrument_type = db.StringProperty(required = False)
     analog_bandwidth = db.IntegerProperty(required = False)
     capture_channels = db.IntegerProperty(required = False)
-    input_range = db.FloatProperty(required = False)
     analog_sample_rate = db.IntegerProperty(required = False)
     resolution = db.IntegerProperty(required = False)
     capture_buffer_size = db.IntegerProperty(required = False)
