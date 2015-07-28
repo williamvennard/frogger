@@ -99,7 +99,7 @@
             configTable+="<div style='margin-bottom:20px;'>";
             configTable+="<span class='name'> Name: </span>" + "<span  class='testName text-capitalize'>" + testArray[i].testplan_name + "</span>";
             configTable+="<br>"
-            configTable+="<span> Date Created: </span>" + "<span>" + testArray[i].date_created + "</span>";
+            configTable+="<span class='startTime'> Date Created: </span>" + "<span>" + testArray[i].date_created + "</span>";
             configTable+="</div>"
         };
         configTable+="</div>"
@@ -222,7 +222,7 @@
 
       $(".tog").click(function () {    
           $(".menu").hide();
-          $("." + $(this).data('id')).toggle("fast");
+          $("." + $(this).data('id')).fadeIn("fast");
       });
     });
 </script>
