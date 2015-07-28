@@ -38,19 +38,38 @@
         </div>
       </nav>
     </div>
-    <div class="col-md-12">
-      <h1 id="libTitle">Test Library</h1> 
+    <div class="row">
+      <div class="col-md-2 subMenu" style="margin-left:80px;">
+        <h3 style="margin-bottom: 5px;" href='#' class="tog" data-id="planMenu">TEST PLANS</h3>
+        <hr class="subMenuLine">
+      </div>
+      <div class="col-md-2 subMenu">
+        <h3 style="margin-bottom: 5px;" href='#' class="tog" data-id="resultsMenu">RESULTS</h3>
+        <hr class="subMenuLine">
+      </div>
     </div>
-    <div class="col-md-12" id="testListBox">
-       <h4 class="colTitle text-uppercase">Test Plan <span style="margin-right: 175px"></span> Preview<span style="margin-right: 20%"></span>Measurements</h4>
-      <hr class="headerLine">
+
+    <div class="menu planMenu" id="planMenu">
+      <div class="col-md-12" id="testListBox">
+        <h4 class="colTitle text-uppercase">Test Plan</h4>
+        <hr class="headerLine">
+        <div id="configTable" style="color:white;" class=""></div>
+      </div>
+    </div>
+
+    <div class="menu resultsMenu" id="resultsMenu">
+      <div class="col-md-12" id="testListBox">
+        <h4 class="colTitle text-uppercase">Test Plan <span style="margin-right: 175px"></span> Preview<span style="margin-right: 20%"></span>Measurements</h4>
+        <hr class="headerLine">
         <div id="testTable" style="color:white;" class=""></div>
-    </div>
-    <div class="col-md-12" id="testListBox">
-       <h4 class="colTitle text-uppercase">Trace<span style="margin-right: 215px"></span> Preview<span style="margin-right: 20%"></span>Measurements</h4>
-      <hr class="headerLine">
+      </div>
+      <div class="col-md-12" id="testListBox">
+        <h4 class="colTitle text-uppercase">Trace<span style="margin-right: 215px"></span> Preview<span style="margin-right: 20%"></span>Measurements</h4>
+        <hr class="headerLine">
         <div id="traceTable" style="color:white;" class=""></div>
-    </div>
+      </div>
+    </div>    
+    
 
 
 <script type="text/javascript">
@@ -63,65 +82,82 @@
   var index = 0;
   function fetchTestLib(){
        //test_lib_url = 'https://gradientone-test.appspot.com/testlibrary/Acme.json'; 
+      test_lib_url = 'https://gradientone-dev1.appspot.com/testlibrary/Acme.json';
       //comment out for live version ^
         $.ajax({
           async: true,
           url: test_lib_url,            
           dataType: 'json',
        }).done(function (results) {
-        var testArray = results;
+        var testArray = results.configs;
+        var resultsArray = results.results;
+        console.log(testArray.length);
+        //TEST PLANS TAB
+        var configTable = "<div>";
+        for (var i=0;i<testArray.length;i++) {
+          console.log(testArray[i].testplan_name);
+            configTable+="<div style='margin-bottom:20px;'>";
+            configTable+="<span class='name'> Name: </span>" + "<span  class='testName text-capitalize'>" + testArray[i].testplan_name + "</span>";
+            configTable+="<br>"
+            configTable+="<span> Date Created: </span>" + "<span>" + testArray[i].date_created + "</span>";
+            configTable+="</div>"
+        };
+        configTable+="</div>"
+        console.log('configTable = ', configTable);
+        //RESULTS TAB
         var testTable = "<div>";
         var traceTable = "<div>";
-        for (i=0;i<testArray.length;i++) {
+        for (var i=0;i<resultsArray.length;i++) {
             index = i;
-            var starttse = Number(testArray[i].start_tse);
-            var endtse = Number(testArray[i].test_complete)
+            var starttse = Number(resultsArray[i].start_tse);
+            var endtse = Number(resultsArray[i].test_complete)
             var sd = new Date(starttse);
             var ed = new Date(endtse)
             var formatStartDate = (sd.getMonth()+1) + "/" + sd.getDate() + "/" + sd.getFullYear() + " " + sd.getHours() + ":" + sd.getMinutes() + ":" + sd.getSeconds() + "." + sd.getMilliseconds();
             var formatEndDate = (ed.getMonth()+1) + "/" + ed.getDate() + "/" + ed.getFullYear() + " " + ed.getHours() + ":" + ed.getMinutes() + ":" + ed.getSeconds() + "." + ed.getMilliseconds();
             //TEST IF test_plan or trace
-            if (testArray[i].test_plan  === 'True') {
+            if (resultsArray[i].test_plan  === 'True') {
                 testTable+="<div style='margin-bottom: -60px;'>";
-                testTable+="<span class='name'>" + "Name: "  + "</span>" + "<span  class='testName text-capitalize'>" + testArray[i].testplan_name + "</span>";
+                testTable+="<span class='name'>" + "Name: "  + "</span>" + "<span  class='testName text-capitalize'>" + resultsArray[i].testplan_name + "</span>";
                 testTable+="<br>";
                 testTable+="<span class='startTime'>" + "Start Time: " + "</span>" + "<span class='libTime'>" + formatStartDate + "</span>";
                 testTable+="<br>";
                 testTable+="<span class='endTime'>" + "End Time: " + "</span>" + "<span class='libTime'>" + formatEndDate + "</span>";
                 testTable+="<br>";
-                testTable+="<a class='resultsLink' href='https://gradientone-test.appspot.com/testlibrary/" + testArray[i].company_nickname + "/" + testArray[i].testplan_name + "/" + testArray[i].start_tse + "'>Results</a>";
+                testTable+="<a class='resultsLink' href='https://gradientone-test.appspot.com/testlibrary/" + resultsArray[i].company_nickname + "/" + resultsArray[i].testplan_name + "/" + resultsArray[i].start_tse + "'>Results</a>";
                 testTable+="<div class='decChart hoverzoom showHidden' id='decChart" + index + "'></div>";
                 testTable+="<div class='hiddenInfo' style='color:white;'>Stuff shown on hover</div>"
                 testTable+="</div>"; 
 
-                fetchDecData(testArray[i],index)
-            }else if (testArray[i].trace === 'True') {
+                fetchDecData(resultsArray[i],index)
+            }else if (resultsArray[i].trace === 'True') {
                 traceTable+= "<div style='margin-bottom: -60px;'>"
-                traceTable+= "<span class='name'>" + "Name: "  + "</span>" + "<span  class='testName text-capitalize'>" + testArray[i].testplan_name + "</span>";
+                traceTable+= "<span class='name'>" + "Name: "  + "</span>" + "<span  class='testName text-capitalize'>" + resultsArray[i].testplan_name + "</span>";
                 traceTable+="<br>";
                 traceTable+="<span class='startTime'>" + "Start Time: " + "</span>" + "<span class='libTime'>" + formatStartDate + "</span>";
                 traceTable+="<br>";
                 traceTable+="<span class='endTime'>" + "End Time: " + "</span>" + "<span class='libTime'>" + formatEndDate + "</span>";
                 traceTable+="<br>";
-                traceTable+="<a class='resultsLink' href='https://gradientone-test.appspot.com/testlibrary/" + testArray[i].company_nickname + "/" + testArray[i].testplan_name + "/" + testArray[i].start_tse + "'>Results</a>";
+                traceTable+="<a class='resultsLink' href='https://gradientone-test.appspot.com/testlibrary/" + resultsArray[i].company_nickname + "/" + resultsArray[i].testplan_name + "/" + resultsArray[i].start_tse + "'>Results</a>";
                 traceTable+="<div class='decChart hoverzoom showHidden' id='decChart" + index + "'></div>";
                 traceTable+="<div class='hiddenInfo' style='color:white;'>Stuff shown on hover</div>"
                 traceTable+="</div>"; 
 
-                fetchDecData(testArray[i],index)
+                fetchDecData(resultsArray[i],index)
             };
         };
         testTable+="</div>";
         traceTable+="</div>";
-        //console.log('testTable',testTable);
+
+        document.getElementById("configTable").innerHTML = configTable;
         document.getElementById("testTable").innerHTML = testTable;
         document.getElementById("traceTable").innerHTML = traceTable;
         });
     };
 
-    function fetchDecData(testArray,index){
-       //console.log('fetchDecData: testArray = ',testArray);
-       dec_urlPath = testArray.dec_data_url;
+    function fetchDecData(resultsArray,index){
+       //console.log('fetchDecData: resultsArray = ',resultsArray);
+       dec_urlPath = resultsArray.dec_data_url;
        //console.log('fetchDecData: dec_urlPath = ',dec_urlPath);
        $.ajax({
           async: true,
@@ -130,7 +166,7 @@
        }).done(function (results) {
           //console.log("fetchDecData: json_url =", json_url);
          var decData = results.cha;
-         var decPointSpacing = testArray.Raw_msec_btw_samples;
+         var decPointSpacing = resultsArray.Raw_msec_btw_samples;
          var offset = 0;
          // var offset = (sampleSize/sampleRate)/2;
 
@@ -177,6 +213,18 @@
          chart.draw(data, decChartOptions);    
     };
 
+
+
+
+    $(document).ready(function () {    
+      $(".planMenu").show();
+      $(".resultsMenu").hide();
+
+      $(".tog").click(function () {    
+          $(".menu").hide();
+          $("." + $(this).data('id')).toggle("fast");
+      });
+    });
 </script>
 
   </body>

@@ -6,10 +6,17 @@
     color: red;
 }
 
-#libTitle {
-    margin: 10px 20px 10px 80px;
+.subMenu {
+    text-align: center;
+    margin: 0 5px 0 5px;
     color: white;
     font-family: 'nexa_boldregular'
+}
+
+.subMenuLine {
+    margin: 0 0 10px 0;
+    border-color: rgb(197,44,72);
+    border-style: solid;
 }
 
 .headerLine {
