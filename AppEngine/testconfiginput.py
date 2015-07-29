@@ -3,6 +3,7 @@ from gradientone import render_json
 from gradientone import author_creation
 from gradientone import query_to_dict
 from gradientone import is_checked
+from gradientone import instruments_and_explanations
 from onedb import ConfigDB
 from onedb import company_key
 from onedb import TestDB
@@ -40,8 +41,8 @@ class Handler(InstrumentDataHandler):
         analog_bandwidth = self.request.get('analog_bandwidth')
         analog_sample_rate = self.request.get('analog_sample_rate')
         capture_buffer_size = self.request.get('capture_buffer_size')
-        capture_channels = self.request.get('captu sre_channels')
-
+        capture_channels = self.request.get('capture_channels')
+        resolution = self.request.get('resolution')
         selectpost = self.request.get('selectpost')
         dut_name = self.request.get('dut_name')
         dut_type = self.request.get('dut_type')
@@ -63,17 +64,24 @@ class Handler(InstrumentDataHandler):
             t.put() 
             self.render('testconfig.html', testplan_name = testplan_name)
         if confpost == 'True': #this controls the POST functionality if someone is configuring instrument details.
-            inst_list =[]
-            c = CapabilitiesDB.gql("WHERE analog_bandwidth >=:1", int(analog_bandwidth))
-            results = c.run(batch_size=50)
-            for r in results:
-                inst_list.append(r.instrument_type)
+            insts_and_explanations = instruments_and_explanations(analog_bandwidth, analog_sample_rate, capture_buffer_size, capture_channels, resolution)
+            instruments = insts_and_explanations[0]
+            explanations = insts_and_explanations[-1]
             avail = []
-            for inst in inst_list:
+            for inst in instruments:
                 i = (InstrumentsDB.gql("Where instrument_type =:1", inst))
                 for entry in i:
                     avail.append((inst, entry.hardware_name))
-            self.render('testconfig.html', selected_inst_type = avail[0][0], selected_hardware = avail[0][1], avail_inst = avail, analog_bandwidth= analog_bandwidth)
+            print avail
+            if len(avail) == 0:
+                selected_inst_type = "None Selected"
+                selected_hardware = "None Selected"
+                avail = "None available"
+            else:
+                selected_inst_type = avail[0][0]
+                selected_hardware = avail[0][1]
+                avail = avail
+            self.render('testconfig.html', explanations = explanations, selected_inst_type = selected_inst_type, selected_hardware = selected_hardware, avail_inst = avail)
 
       
         if dutpost == 'True': #this controls the POST functionality if someone is configuring instrument details.

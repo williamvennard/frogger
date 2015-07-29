@@ -7,6 +7,7 @@ from onedb import BscopeDB
 from onedb import BscopeDB_key
 from onedb import OscopeDB
 from onedb import OscopeDB_key
+from onedb import CapabilitiesDB
 from google.appengine.api import users
 from google.appengine.api import memcache
 from google.appengine.ext import db
@@ -159,6 +160,14 @@ def get_ordered_list(order):
     order_list = sorted(order_list, key=getOrderKey)
     return order_list    
 
+def is_checked(self,c,param):
+    "Mesurement checked and up date test object 'c'."
+    checked = self.request.get(param)
+    if checked:
+        setattr(c,param,True)
+    else:
+        setattr(c,param,False)
+
 class InstrumentDataHandler(webapp2.RequestHandler):
     authorized = False
     def write(self, *a, **kw): self.response.out.write(*a, **kw)
@@ -193,3 +202,57 @@ class InstrumentDataHandler(webapp2.RequestHandler):
             self.redirect('/static/autherror.html')
         return authorized
 
+
+def instruments_and_explanations(analog_bandwidth, analog_sample_rate, capture_buffer_size, capture_channels, resolution):
+    inst_list =[]
+    c = CapabilitiesDB.all()
+    results = c.run(batch_size=1000)
+    for r in results:
+        inst_list.append(r.instrument_type)
+    master_insts =[]
+    master_explanations = []
+    for i in inst_list:
+        qualify_list = []
+        exclusion_list = []
+        c = CapabilitiesDB.gql("WHERE instrument_type=:1 and analog_bandwidth >=:2", i, int(analog_bandwidth))
+        results = c.get()
+        if hasattr(results, 'instrument_type'):
+            qualify_list.append(results.instrument_type)
+        else:
+            exclusion_list.append('The Analog Bandwidth you specified does not meet available capabilities')
+        c = CapabilitiesDB.gql("WHERE instrument_type=:1 and analog_sample_rate >=:2", i, int(analog_sample_rate))
+        results = c.get()
+        if hasattr(results, 'instrument_type'):
+            qualify_list.append(results.instrument_type)
+        else:
+            exclusion_list.append('The Analog Sample Rate you specified does not meet available capabilities')
+        c = CapabilitiesDB.gql("WHERE instrument_type=:1 and capture_buffer_size >=:2", i, int(capture_buffer_size))
+        results = c.get()
+        if hasattr(results, 'instrument_type'):
+            qualify_list.append(results.instrument_type)
+        else:
+            exclusion_list.append('The Capture Buffer Size you specified does not meet available capabilities')
+        c = CapabilitiesDB.gql("WHERE instrument_type=:1 and capture_channels >=:2", i, int(capture_channels))
+        results = c.get()
+        if hasattr(results, 'instrument_type'):
+            qualify_list.append(results.instrument_type)
+        else:
+            exclusion_list.append('The number of Capture Channels you specivied does not meet available capabilities')
+        c = CapabilitiesDB.gql("WHERE instrument_type=:1 and resolution >=:2", i, int(resolution))
+        results = c.get()
+        if hasattr(results, 'instrument_type'):
+            qualify_list.append(results.instrument_type)
+        else:
+            exclusion_list.append('The resolution you specified does not meet available capabilities')
+        if len(qualify_list) <5:
+            master_explanations.append(exclusion_list)
+        else:
+            qualify_list = set(qualify_list)
+            print qualify_list
+            for q in qualify_list:
+                master_insts.append(q)
+    if len(master_insts) >0:
+        master_explanations = "This instrument is available."
+    else:
+        master_insts = "No instruments available."
+    return master_insts, master_explanations
