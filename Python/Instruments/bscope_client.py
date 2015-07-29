@@ -1,6 +1,8 @@
 import json
 import requests
+import grequests
 import time   # time is a module here
+import math
 import datetime
 import threading
 from bitlib import *
@@ -34,7 +36,8 @@ def check_start(config):
 def post_status(status):
     "posts hardware status updates to the server"
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-    status = json.dumps(status, ensure_ascii=True)
+    window = {'status':status, 'time':time.time()}
+    status = json.dumps(window, ensure_ascii=True)
     url_s = "https://gradientone-dev1.appspot.com/status/" + COMPANYNAME + '/' + HARDWARENAME
     s = requests.post(url_s, data=status, headers=headers)
     print "s.reason=",s.reason
@@ -44,18 +47,18 @@ def post_status(status):
 def check_config_vars(config):
     "creates config variables to pass to the main BitScope code"
     if config['test_plan'] == 'True':
-        testplan_name = config['testplan_name']
-        instrument_name = config['inst_config']['instrument_name']
-        MY_RATE = config['inst_config']['sample_rate']
-        MY_SIZE = config['inst_config']['number_of_samples']
-        test_plan =config['test_plan']
-    else:
-        testplan_name = config['testplan_name']
-        test_plan = 'False'
-        instrument_name = config['instrument_name']
+        active_testplan_name = config['active_testplan_name']
+        config_name = config['config_name']
         MY_RATE = config['sample_rate']
         MY_SIZE = config['number_of_samples']
-    return testplan_name, instrument_name, MY_RATE, MY_SIZE, test_plan
+        test_plan =config['test_plan']
+    else:
+        active_testplan_name = config['active_testplan_name']
+        test_plan = 'False'
+        config_name = config['config_name']
+        MY_RATE = config['sample_rate']
+        MY_SIZE = config['number_of_samples']
+    return active_testplan_name, config_name, MY_RATE, MY_SIZE, test_plan
 
 def set_v_for_k(test_dict, k, v):
     "creates dictionary based off empty dictionary and key/value args"
@@ -90,11 +93,11 @@ def bscope_acq(config):
     time_start = time.time()
     acq_dict = {}
     print "Starting: Attempting to open one device..."
-    post_status('Acquiring')
     if BL_Open(MY_PROBE_FILE,1):
+        post_status('Acquiring')
         config_vars = check_config_vars(config)
-        testplan_name = config_vars[0]
-        instrument_name = config_vars[1]
+        active_testplan_name = config_vars[0]
+        config_name = config_vars[1]
         MY_RATE = float(config_vars[2])
         MY_SIZE = int(config_vars[3])
         test_plan = config_vars[4]
@@ -116,8 +119,10 @@ def bscope_acq(config):
         tse = dt2ms(datetime.datetime.now())
         DATA = BL_Acquire()
         SAMPLE_SIZE = len(DATA)
-        MY_SAMPLE_INTERVAL = int(1/MY_RATE*1000) #interval between sample in msec
-        Total_Slices = SAMPLE_SIZE/SLICE_SIZE
+        MY_SAMPLE_INTERVAL = int(1/MY_RATE*1000000) #interval between sample in microsec
+        print MY_SAMPLE_INTERVAL, 'sample interval'
+        Total_Slices = math.ceil((float(SAMPLE_SIZE)/(float(SLICE_SIZE))/float(MY_RATE/1000.0)))
+        print 'total slices', Total_Slices
         config_dict = {}
         plot_dict = {}
         inst_dict ={}
@@ -137,14 +142,13 @@ def bscope_acq(config):
         acq_dict = set_v_for_k(acq_dict, 'data', DATA) 
         acq_dict = set_v_for_k(acq_dict, 'i_settings', inst_dict)    
         acq_dict = set_v_for_k(acq_dict, 'p_settings', plot_dict)
-        acq_dict = set_v_for_k(acq_dict, 'testplan_name', testplan_name)
-        acq_dict = set_v_for_k(acq_dict, 'instrument_name', instrument_name)
+        acq_dict = set_v_for_k(acq_dict, 'active_testplan_name', active_testplan_name)
+        acq_dict = set_v_for_k(acq_dict, 'config_name', config_name)
         acq_dict = set_v_for_k(acq_dict, 'test_plan', test_plan)
         acq_dict = set_v_for_k(acq_dict, 'Start_TSE', (roundup(tse)))
         BL_Close()
         time_bs = time.time()
         print "Finished: Library closed, resources released."    
-        post_status('Transmitting')
         bits = BitScope(acq_dict)
         bits.transmitdec()
         time_dec = time.time()
