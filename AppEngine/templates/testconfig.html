@@ -230,6 +230,7 @@
           </td>
           <td>
             <input type="text" name="testplan_name" value="{{testplan_name}}">
+            <input type="hidden" name="timepost" value=True>
           </td>
         </tr>
         <tr>
@@ -242,7 +243,19 @@
             <input type="hidden" name="timepost" value=True>
           </td>
         </tr>
+        <tr>
+          <td>
+            Start Measurement Now:
+          </td>
+        <td>
+          <input type="checkbox" name="start_measurement_now">
+          <input type="hidden" name="timepost" value=True>
+        </td>
+        </tr> 
       <input type="submit">
+    </form>
+
+
     </form>
   </body>
 

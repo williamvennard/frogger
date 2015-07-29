@@ -2,13 +2,14 @@ from gradientone import InstrumentDataHandler
 from gradientone import render_json
 from gradientone import author_creation
 from gradientone import query_to_dict
+from gradientone import is_checked
 from onedb import ConfigDB
 from onedb import company_key
 from onedb import TestDB
 from onedb import DutDB
 from onedb import CapabilitiesDB
 from onedb import InstrumentsDB
-from datetime import datetime, tzinfo
+from datetime import datetime
 import jinja2
 import json
 import logging
@@ -29,13 +30,7 @@ class Handler(InstrumentDataHandler):
         dropdown = query_to_dict(rows_c)
         print dropdown
         self.render('testconfig.html', dropdown = dropdown)
-    def is_checked(self,t,param):
-        "Test checked and up date test object 't'."
-        checked = self.request.get(param)
-        if checked:
-            setattr(t,param,True)
-        else:
-            setattr(t,param,False)
+
     def post(self):
         configs = []
         testplan_name = self.request.get('testplan_name')
@@ -140,15 +135,18 @@ class Handler(InstrumentDataHandler):
             testplan_name = self.request.get('testplan_name')
             company_nickname = self.request.get('company_nickname')
             start_time = str(self.request.get('start_time'))
-            print start_time
-            date_object = datetime.strptime(start_time, '%b %d %Y %I:%M%p')
+            checkbox_names = ["start_measurement_now"]
+            start_measurement_now = self.request.get('start_measurement_now')
+            if start_measurement_now == 'on':
+                date_object = datetime.now()
+            else:
+                date_object = datetime.strptime(start_time, '%b %d %Y %I:%M%p')
             test = TestDB.gql("Where testplan_name =:1", testplan_name).get()
             test.scheduled_start_time = date_object
             test.test_ready = True
             test.test_scheduled = True
             test.put()
-            taskqueue.add(url = '/testmanager', method = 'POST', params={'info':(company_nickname,testplan_name)}, eta = date_object)
 
-            #add task queue push here 
+            taskqueue.add(url = '/testmanager', method = 'POST', params={'info':(company_nickname,testplan_name)}, eta = date_object)
                        
         #self.redirect('/testplansummary/' + company_nickname + '/' + hardware_name)
