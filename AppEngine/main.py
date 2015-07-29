@@ -51,6 +51,7 @@ import communitytests
 import mainpage
 import configlookup
 import testmanager
+import traceresultsdata
 #import ordermanager
 from gradientone import InstrumentDataHandler
 
@@ -202,6 +203,7 @@ app = webapp2.WSGIApplication([
     ('/upload/success',FileUploadSuccess),
     ('/upload/failure',FileUploadFailure),
     ('/testmanager', testmanager.Handler),
+    ('/traceresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', traceresultsdata.Handler)
 #    ('/ordermanager', ordermanager.Handler),
 ], debug=True)
 
