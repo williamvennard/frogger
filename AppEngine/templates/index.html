@@ -12,7 +12,8 @@
     <script type="text/javascript" src="../static/js/chart1.js"></script>
     <script type="text/javascript" src="../static/js/chart2.js"></script>
     <script type="text/javascript" src="../static/js/chart3.js"></script>
-    <script type="text/javascript" src="../static/js/addons/appDrag.js"></script>  
+    <script type="text/javascript" src="../static/js/addons/appDrag.js"></script>
+     
     <link rel="stylesheet" type="text/css" href="../static/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../static/css/custom.css">
     <link rel="stylesheet" type="text/css" href="../static/css/hoverzoom.css">
@@ -57,7 +58,7 @@
         </div>
         <div class="row">
             <div class="col-md-3" style="width: 180px; margin-top: 20px;">
-            <button id="newTestBtn" class="btn btn-default" data-toggle="collapse" data-parent="#accordion" href="#collapseConfig">NEW TEST</button>
+            <button id="newTestBtn" class="btn btn-default tog" href="#collapseNewTest">NEW TEST</button>
                 <div class="panel-group" id="accordion" style="width: 140px;">
                     <div class="panel panel-default">
                         <div class="panel-heading">
@@ -85,7 +86,7 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <a>O-Scope</a>                             
+                                            <a id="OScope">O-Scope</a>                             
                                         </td>
                                     </tr>
                                 </table>
@@ -193,391 +194,56 @@
 <!-- TEST SPACE -->    
             <fieldset class="col-md-12" id="canvasBox" style="width: 80%;">
                 <span class="spacer"></span><legend class="text-uppercase" style="width: 118px;">Test Space</legend><span class="spacer"></span>
-
-
-<!--TEST PLAN CONFIGURATION-->
-                <div class="collapse in well well-sm testConfigBox" id="collapseConfig">
-                  <h2 style="text-align:center; color:white;">Test Plan Configuration</h2>
-                  <hr id="breakLine">
-
-                <!--LOCAL AND LIVE VERSIONS-->
-                <!--<form method="post" action="https://gradientone-dev1.appspot.com/testconfiginput">-->
-                  <form id="testConfig" method="post" action="http://localhost:18080/testconfiginput">
-
-            <!--TEST PLAN NAME-->
-                    <div class="row configRow" style="margin-left:10px;">
-                      <tr>
-                        <td>
-                        <p class="configLabel" style="margin-left: px;">
-                          Test Plan Name:
-                        </p>
-                          <input style="border-top-right-radius: 5px; border-top-left-radius: 5px;" class="textBlocks" type="text" name="testplan_name" placeholder="Billy_Bob's_Test" value="{{testplan_name}}">
-                        </td>
-                      </tr>
-                    </div>
-            <!--COMPANY NICKNAME-->
-                  <div class="row configRow" style="margin-left:10px;">
-                      <tr>
-                        <p class="configLabel" style="margin-left: px;">
-                          Company Nickname:
-                        </p>
-                        <td>
-                          <input class="textBlocks" type="text" name="company_nickname" placeholder="GradientOne" value="{{company_nickname}}">
-                        </td>
-                      </tr>
-                    </div>
-            <!--AUTHOR-->
-                    <div class="row configRow" style="margin-left:10px;">
-                      <tr>
-                        <p class="configLabel" style="margin-left: px;">
-                          Author:
-                        </p>
-                        <td>
-                          <input class="textBlocks" type="text" name="author" placeholder="James Bond" value="{{author}}">
-                        </td>
-                      </tr>
-                    </div>
-            <!--INSTRUMENT TYPE-->
-                    <div class="row" style="margin-left:10px; margin-bottom:15px;">
-                      <tr>
-                        <p class="configLabel" style="margin-left: px;">
-                          Instrument Type:
-                        </p>
-                        <td>
-                          <input style="border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;" class="textBlocks" type="text" name="instrument_type" placeholder="Oscilloscope" value="{{instrument_type}}">
-                        </td>
-                      </tr>
-                    </div>
-            <!--Vp TO Vp VOLTAGE-->
-                    <div class="row" style="margin-left:20px;">
-                      <tr>
-                        <td>
-                          <input data-toggle="collapse" data-target="#Vpp" aria-expanded="false" aria-controls="Vpp" type="checkbox" name="measurement_P2P" class="checkBoxBox">
-                        </td>
-                        
-                        <p class="checkBoxLabel"> Peak to Peak Voltage </p>
-                        
-                      </tr> 
-                      <div class="collapse" id="Vpp">
-                        <div class="dropDownBox">
-                            <tr>
-                                <td class="configLabel">
-                                   <p class="subLabel">V<sub>pp</sub></p> 
-                                </td>
-                                <td>
-                                    <input class="subTextBox" type="text" name="Vpp" placeholder="5 V" value="{{Vpp}}">
-                                </td>
-                            </tr>
-                        </div>
-                      </div>
-                    </div>
-            <!--Peak VOLTAGE-->
-                    <div class="row" style="margin-left:20px;">
-                      <tr>
-                        <td>
-                          <input data-toggle="collapse" data-target="#Vp" aria-expanded="false" aria-controls="Vp" type="checkbox" name="measurement_peak" class="checkBoxBox">
-                        </td>
-                        <p class="checkBoxLabel">Peak Voltage</p>       
-                      </tr> 
-                      <div class="collapse" id="Vp">
-                        <div class="dropDownBox">
-                            <tr>
-                                <td class="configLabel">
-                                  <p class="subLabel">V<sub>p</sub></p>  
-                                </td>
-                                <td>
-                                    <input class="subTextBox" type="text" name="Vp" placeholder="2.5 V" value="{{Vp}}">
-                                </td>
-                            </tr>
-                        </div>
-                      </div>
-                    </div>
-            <!-- ROOT MEAN SQUARED VOLTAGE-->
-                    <div class="row" style="margin-left:20px;">
-                      <tr>
-                        <td>
-                          <input data-toggle="collapse" data-target="#RMS" aria-expanded="false" aria-controls="RMS" type="checkbox" name="measurement_RMS" class="checkBoxBox">
-                        </td>
-                        <p class="checkBoxLabel">Root Mean Squared Voltage</p>
-                      </tr> 
-                      <div class="collapse" id="RMS">
-                        <div class="dropDownBox">
-                            <tr>
-                                <td class="configLabel">
-                                   <p class="subLabel">RMS Start Time</p>                    
-                                    <input class="subTextBox" type="text" name="RMS_time_start" placeholder="200 sec" value="{{RMS_time_start}}">
-                                </td>
-                            </tr>
-                        </div>
-                        <div class="dropDownBox">
-                            <tr style="">
-                                <td class="configLabel">
-                                  <p class="subLabel">RMS Stop Time</p> 
-                                </td>
-                                <td>
-                                    <input class="subTextBox" type="text" name="RMS_time_stop" placeholder="400 sec" value="{{RMS_time_stop}}">
-                                </td>
-                            </tr>
-                        </div>
-                      </div>
-                    </div>
-            <!--RISE TIME-->
-                    <div class="row" style="margin-left:20px;">
-                      <tr>
-                        <td>
-                          <input data-toggle="collapse" data-target="#RT" aria-expanded="false" aria-controls="RT" type="checkbox" name="measurement_RiseT" class="checkBoxBox">
-                        </td>
-                        <p class="checkBoxLabel">Rise Time</p>
-                      </tr>
-                      <div class="collapse" id="RT">
-                        <div class="dropDownBox">
-                            <tr>
-                                <td class="configLabel">
-                                </td>
-                                <td>
-                                    <input class="subTextBox" type="text" name="rise_time" placeholder="2 &mu;sec" value="{{rise_time}}">
-                                </td>
-                            </tr>
-                        </div>
-                      </div>
-                    </div>
-            <!--MAKE PUBLIC-->
-                    <div class="row" style="margin-left:20px;">
-                      <tr>
-                        <td>
-                          <input type="checkbox" name="public" class="checkBoxBox">                      
-                            <p class="checkBoxLabel">Make Public</p>
-                        </td>
-                      </tr> 
-                    </div>
-            <!--COMMENCE TEST NOW-->
-                    <div class="row" style="margin-left:20px;">
-                      <tr>
-                      <td>
-                        <input type="checkbox" name="commence_test" class="checkBoxBox">                      
-                        <p class="checkBoxLabel">Commence Test Now</p>
-                      </td>
-                      </tr> 
-                    </div>
-                    <input id="submitBtn" type="submit" value="SUBMIT">                  
-                  </form>   
-                </div> 
-
-
-
-
-
-                <div class="droppable">             
-<!-- O-SCOPE INST APP -->
-                <div class="appBox">
-                    <h4 class="appTitle">Instrument - Oscilloscope
-                    <span class="appRemove glyphicon glyphicon-remove-circle"></span>
-                    </h4>
-                    <form method="post" class="appForm">
-                        <div class="row appOrder">
-                            <tr>
-                                <td class="label">
-                                    <select id="orderSelect" class="form-control" style="position:relative; bottom:10px;">                          
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                        <option value="5">5</option>
-                                        <option value="6">6</option>
-                                        <option value="7">7</option>
-                                    </select>
-                                </td>
-                            </tr>                        
-                        </div>
-                        <div class="row appRow">
-                            <tr>
-                                <td class="label">
-                                    <p class="appLabel">Instrument:</p> 
-                                    <input class="appInput" style="border-top-right-radius: 5px; border-top-left-radius: 5px;" type="text" name="instrument_name" value="{{instrument_name}}">
-                                </td>
-                            </tr>
-                        </div>
-                        <div class="row appRow">
-                            <tr>
-                                <td class="label">
-                                    <p class="appLabel">Sample Rate (Hz):</p>  
-                                    <input class="appInput" type="text" name="sample_rate" value="{{sample_rate}}">
-                                </td>
-                            </tr>
-                        </div>
-                        <div class="row appRow">
-                            <tr>
-                                <td class="label">
-                                    <p class="appLabel">Num. of Samples:</p>  
-                                    <input class="appInput" style="border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;" type="text" name="number_of_samples" value="{{number_of_samples}}">
-                                </td>
-                            </tr>
-                        </div> 
-                        <input id="appSubmitBtn" type="submit" value="SUBMIT">
-                    </form>
-                </div>
-<!-- RMS MEAS APP-->
-                <div class="appBox">
-                    <h4 class="appTitle">Measurement - RMS
-                        <span class="appRemove glyphicon glyphicon-remove-circle"></span>
-                    </h4>
-                    <form method="post" class="appForm">
-                        <div class="row appOrder">
-                            <tr>
-                                <td class="label">
-                                    <select id="orderSelect" class="form-control" style="position:relative; bottom:10px;">                          
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                        <option value="5">5</option>
-                                        <option value="6">6</option>
-                                        <option value="7">7</option>
-                                    </select>
-                                </td>
-                            </tr>                        
-                        </div>
-                        <div class="row appRow">
-                            <tr>
-                                <td class="label">
-                                    <p class="appLabel">Start Time:</p> 
-                                    <input class="appInput" style="border-top-right-radius: 5px; border-top-left-radius: 5px;" type="text" name="instrument_name" value="{{RMS_time_start}}">
-                                </td>
-                            </tr>
-                        </div>
-                        <div class="row appRow">
-                            <tr>
-                                <td class="label">
-                                    <p class="appLabel">Stop Time:</p>  
-                                    <input style="border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;" class="appInput" type="text" name="sample_rate" value="{{RMS_time_stop}}">
-                                </td>
-                            </tr>
-                        </div>
-                        <input id="appSubmitBtn" type="submit" value="SUBMIT">
-                    </form>     
-                </div>
-<!-- PEAK POWER MEAS APP -->
-                <div data-ng-repeat="item in settings.items track by $index" class="appBox">
-                    <h4 class="appTitle">Measurement - Peak Power
-                        <span class="appRemove glyphicon glyphicon-remove-circle"></span>
-                    </h4> 
-                    <div class="row appRow">
-                        <tr>
-                            <td class="label">
-                                <p class="appLabel">Trigger Source:</p>
-                                <select id="sourceSelect" class="form-control appInput" style="position:relative; bottom:10px;">                          
-                                    <option value="External">External</option>
-                                    <option value="RF Burst">RF Burst</option>
-                                    <option value="Free Run">Free Run</option>
-                                </select>
-                            </td>
-                        </tr>                        
-                    </div>
-                    <div class="row appRow">
-                        <tr>
-                            <tr class="label">
-                                <p class="appLabel">Bandwidth:</p>
-                                <input class="appInput" placeholder="20 MHz" style="border-top-right-radius: 5px; border-top-left-radius: 5px;">    
-                            </tr>
-                        </tr>
-                    </div>
-                    <div class="row appRow">
-                        <tr>
-                            <tr class="label">
-                                <p class="appLabel">Trigger Delay:</p>
-                                <input class="appInput" placeholder="2 &mu;Sec" style="border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;">
-                            </tr>
-                        </tr>
-                    </div>
-
-                    <div class="btn-group btn-group-sm" style=" left: 300px; margin-bottom: 10px;" role="group">
-                        <button type="button" class="btn btn-success">Execute</button>
-                        <button type="button" class="btn btn-danger" data-ng-click="settings.removeItem($index)">Delete</button> 
-                        <span ng-bind="$parent.$eval(item)"></span>
-                    </div>                    
-                </div>
-<!-- DEVICE UNDER TEST -->
-                <div class="appBox">
-                    <h4 class="appTitle">Device Under Test - Arduino
-                        <span class="appRemove glyphicon glyphicon-remove-circle"></span>
-                    </h4>
-                    <form method="post" class="appForm">
-                        <div class="row appOrder">
-                            <tr>
-                                <td class="label">
-                                    <select id="orderSelect" class="form-control" style="position:relative; bottom:10px;">                          
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                        <option value="5">5</option>
-                                        <option value="6">6</option>
-                                        <option value="7">7</option>
-                                    </select>
-                                </td>
-                            </tr>                        
-                        </div>
-                        <div class="row appRow">
-                            <tr>
-                                <tr class="label">
-                                    <p class="appLabel">Settings:</p>
-                                    <input class="appInput">    
+<!--NEW TEST PLAN-->
+                <div class="appBox menu collapseNewTest" id="">
+                    <div class="row"> 
+                        <form method="post">
+                            <div class="col-md-4">
+                                <h3 style="text-align:left; color:white; margin-left:10px;">Test Plan Name :</h3>
+                            </div>
+                            <div class="col-md-3">
+                                <tr>
+                                    <td class="label">  
+                                      <input class="nameTestInput" type="text" name="testplan_name" value="{{testplan_name}}" placeholder="name goes here">
+                                      <input type="hidden" name="company_nickname" value="Acme">
+                                      <input type="hidden" name="hardware_name" value="Tahoe">
+                                      <input type="hidden" name="instrument_type" value="BitScope">
+                                      <input type="hidden" name="author" value="nedwards">
+                                      <input type="hidden" name="testpost" value=True>
+                                    </td>
                                 </tr>
-                            </tr>                            
-                        </div>
-                        <input id="appSubmitBtn" type="submit" value="SUBMIT">
-                    </form>    
-                </div>
-<!-- SEQUENCING-Power Sweep APP -->
-                <div class="appBox">
-                    <h4 class="appTitle">Sequencing - Power Sweep
-                        <span class="appRemove glyphicon glyphicon-remove-circle"></span>
-                    </h4>
-                    <form method="post" class="appForm">
-                        <div class="row appOrder">
-                            <tr>
-                                <td class="label">
-                                    <select id="orderSelect" class="form-control" style="position:relative; bottom:10px;">                          
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                        <option value="5">5</option>
-                                        <option value="6">6</option>
-                                        <option value="7">7</option>
-                                    </select>
-                                </td>
-                            </tr>                        
-                        </div>
-                        <div class="row appRow">
-                            <tr>
-                                <tr class="label">
-                                    <p class="appLabel">Voltage:</p>
-                                    <input class="appInput">
-                                </tr>
-                            </tr>
-                        </div>
-                        <div class="row appRow">
-                            <tr>
-                                <tr class="label">
-                                    <p class="appLabel">Start Time:</p>
-                                    <input class="appInput">
-                                </tr>
-                            </tr>
-                        </div>
-                        <div class="row appRow">
-                            <tr>
-                                <tr class="label">
-                                    <p class="appLabel">End Time:</p>
-                                    <input class="appInput">
-                                </tr>
-                            </tr>
-                        </div>
-                        <input id="appSubmitBtn" type="submit" value="SUBMIT">
-                    </form>    
+                            </div>       
+                            <input id="nameSubmitBtn" type="submit" value="SUBMIT" style="">
+                        </form>
+                    </div>       
                 </div>
 
+                <input type="hidden" value="0" id="theValue" />
+                <div id="testPlan" class="droppable">
                 </div>
+<!--START TIME-->
+                <div class="startTimeBox menu collapseNewTest" id="">
+                    <div class="row"> 
+                        <form method="post">
+                            <div class="col-md-4">
+                                <h3 style="text-align:left; color:white; margin-left:10px;">Test Start Time :</h3>
+                            </div>
+                            <div class="col-md-3">
+                                <tr>
+                                    <td class="label">  
+                                      <input class="nameTestInput" type="text" name="testplan_name" value="{{testplan_name}}" placeholder="time goes here">
+                                      <input type="hidden" name="company_nickname" value="Acme">
+                                      <input type="hidden" name="hardware_name" value="Tahoe">
+                                      <input type="hidden" name="instrument_type" value="BitScope">
+                                      <input type="hidden" name="author" value="nedwards">
+                                      <input type="hidden" name="testpost" value=True>
+                                    </td>
+                                </tr>
+                            </div>       
+                            <input id="nameSubmitBtn" type="submit" value="SUBMIT" style="">
+                        </form>
+                    </div>       
+                </div>        
             </fieldset>
         </div>
 <!--TEST REEL-->      
@@ -589,7 +255,19 @@
         </div> 
         <hr>
     </div> 
+    <script type="text/javascript" src="../static/js/widgets/instruments.js">
+    </script>
     <script type="text/javascript">$('#collapseOne').collapse("hide");</script>
-    <script type="text/javascript">$('#collapseConfig').collapse("hide");</script><!--stops accordion from loading open -->
+    <!--stops accordion from loading open -->
+    <script type="text/javascript">
+    //NEW TEST BUTTON
+    $(document).ready(function () {    
+      $(".collapseNewTest").hide();
+      $(".tog").click(function () {  
+          $(".collapseNewTest").fadeIn("fast"); 
+      });
+    });
+    //$("#save").prop('disabled', true);
+    </script>
 </body>
 </html>

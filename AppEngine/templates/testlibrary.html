@@ -41,11 +41,11 @@
     <div class="row">
       <div class="col-md-2 subMenu" style="margin-left:80px;">
         <h3 style="margin-bottom: 5px;" href='#' class="tog" data-id="planMenu">TEST PLANS</h3>
-        <hr class="subMenuLine">
+        <hr class="subMenuLine planMenuline">
       </div>
       <div class="col-md-2 subMenu">
         <h3 style="margin-bottom: 5px;" href='#' class="tog" data-id="resultsMenu">RESULTS</h3>
-        <hr class="subMenuLine">
+        <hr class="subMenuLine resultsMenuline">
       </div>
     </div>
 
@@ -215,14 +215,21 @@
 
 
 
-
-    $(document).ready(function () {    
+    //Sub MENU CONTROL
+    $(document).ready(function () { 
+      //show plan menu on load   
       $(".planMenu").show();
       $(".resultsMenu").hide();
+      $(".resultsMenuline").hide();
 
       $(".tog").click(function () {    
-          $(".menu").hide();
+          $(".menu").hide();         
           $("." + $(this).data('id')).fadeIn("fast");
+          //selected menu has underline
+          $(".subMenuLine").hide();
+          $("." + $(this).data('id')+'line').fadeIn("fast");
+
+
       });
     });
 </script>

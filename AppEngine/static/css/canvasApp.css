@@ -31,6 +31,22 @@
     border-color: black;
 }
 
+.nameTestInput{
+    color: white;
+    font-family: 'nexa_lightregular';
+    font-size: 180%;
+    position: relative;
+    left: -100px;
+    top: 2px;
+    height: 50px;
+    width: 400px;
+    background-color: rgb(33,33,33);
+    border-style: solid;
+    border-width: 0px;
+    border-color: black;
+    padding: 15px 0  0 5px;
+}
+
 .appLabel {
     position: relative;
     top: 25px;
@@ -65,8 +81,33 @@
     background-color: rgb(124,175,46);
 }
 
+#nameSubmitBtn {
+    color: black;
+    font-family: 'nexa_lightregular';
+    letter-spacing: 2px;
+    width: 80px;
+    height: 30px;
+    position: relative;
+    top: 15px;
+    left: 80px;
+    padding: 4px 0 0 0;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 5px;
+    border-color: rgb(38,38,39);
+    background-color: rgb(124,175,46);    
+}
+
 .appOrder {
     margin-top: 25px;
     margin-right: 500px;
     float: right;
+}
+
+.startTimeBox {
+    background-color: rgb(33,33,33);
+    border-radius: 5px;
+    border: 1px solid black;
+    margin: 5px 0 5px 0;
+
 }
