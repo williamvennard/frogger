@@ -25,8 +25,8 @@
     <style type="text/css"></style>
 </head>
 
-<body data-ng-app="controller" id="mainBackground">
-    <div data-ng-controller="SettingsController as settings" class="container">       
+<body id="mainBackground">
+    <div class="container">       
         <nav id="topNavBar" class="navbar navbar-inverse navbar-collapse collapse">
                 <div class="container-fluid">
                     <div class="navbar-header">
@@ -59,11 +59,12 @@
         <div class="row">
             <div class="col-md-3" style="width: 180px; margin-top: 20px;">
             <button id="newTestBtn" class="btn btn-default tog" href="#collapseNewTest">NEW TEST</button>
+            <button id="newTestBtn" class="btn btn-default" href="">OLD TEST</button>
                 <div class="panel-group" id="accordion" style="width: 140px;">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h5 class="panel-title">
-                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">Instruments</a>
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">Configs</a>
                             </h5>
                         </div>
                         <div id="collapseOne" class="panel-collapse collapse in">
@@ -104,7 +105,7 @@
                                 <table class="table">
                                     <tr>
                                         <td>
-                                            <a data-ng-click="settings.addItem(item)">Peak Power</a>
+                                            <a>Peak Power</a>
                                         </td>
                                     </tr>
                                     <tr>
@@ -137,7 +138,7 @@
                                 <table class="table">
                                     <tr>
                                         <td>
-                                            <a>DUT</a>
+                                            <a id="DUT">DUT</a>
                                         </td>
                                     </tr>
                                     <tr>
@@ -222,7 +223,7 @@
                 <div id="testPlan" class="droppable">
                 </div>
 <!--START TIME-->
-                <div class="startTimeBox menu collapseNewTest" id="">
+                <div class="startTimeBox menu collapseStartTest" id="">
                     <div class="row"> 
                         <form method="post">
                             <div class="col-md-4">
@@ -230,15 +231,17 @@
                             </div>
                             <div class="col-md-3">
                                 <tr>
-                                    <td class="label">  
-                                      <input class="nameTestInput" type="text" name="testplan_name" value="{{testplan_name}}" placeholder="time goes here">
+                                    <td class="label">                                        
+                                      <input class="nameTestInput" type="text" name="start_time" value="{{start_time}}" placeholder="time goes here">
                                       <input type="hidden" name="company_nickname" value="Acme">
-                                      <input type="hidden" name="hardware_name" value="Tahoe">
-                                      <input type="hidden" name="instrument_type" value="BitScope">
-                                      <input type="hidden" name="author" value="nedwards">
-                                      <input type="hidden" name="testpost" value=True>
+                                      <input type="hidden" name="timepost" value=True>
                                     </td>
                                 </tr>
+                                <p class="startNowLabel">Start Now:</p> 
+                                <td>                                          
+                                  <input class="startNow" type="checkbox" name="start_measurement_now">
+                                  <input type="hidden" name="timepost" value=True>
+                                </td>
                             </div>       
                             <input id="nameSubmitBtn" type="submit" value="SUBMIT" style="">
                         </form>
@@ -255,19 +258,26 @@
         </div> 
         <hr>
     </div> 
-    <script type="text/javascript" src="../static/js/widgets/instruments.js">
-    </script>
-    <script type="text/javascript">$('#collapseOne').collapse("hide");</script>
+    <script type="text/javascript" src="../static/js/widgets/instruments.js"></script>
+    <script type="text/javascript" src="../static/js/widgets/DUT.js"></script>
+
+    <script type="text/javascript">
+    $('#collapseOne').collapse("hide");
+    //$("#accordion").prop('disabled', true);
+    $("#accordion").hide();
+     </script>
     <!--stops accordion from loading open -->
     <script type="text/javascript">
     //NEW TEST BUTTON
-    $(document).ready(function () {    
+    $(document).ready(function () {
       $(".collapseNewTest").hide();
-      $(".tog").click(function () {  
+      $(".collapseStartTest").hide();
+      $(".tog").click(function () {
+          $("#accordion").show();  
           $(".collapseNewTest").fadeIn("fast"); 
       });
     });
-    //$("#save").prop('disabled', true);
+    
     </script>
 </body>
 </html>

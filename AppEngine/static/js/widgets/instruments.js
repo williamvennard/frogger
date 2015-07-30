@@ -1,4 +1,4 @@
-
+// INSTRUMENT(config) WIDGETS //    
     var testPlan = "";
     var index;
     function addOscope() {
@@ -45,7 +45,11 @@
         testPlan+= "</div>";
 
         document.getElementById("testPlan").innerHTML = testPlan; 
-        console.log('addOscope: testPlan = ', testPlan);         
+        console.log('addOscope: testPlan = ', testPlan);
+
+        $(document).ready(function () { 
+              $(".collapseStartTest").fadeIn("fast");           
+        });         
     };
 
 var d;
