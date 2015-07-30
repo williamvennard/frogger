@@ -4,6 +4,7 @@
     function addOscope() {
         console.log('addOscope!');
         var numi = document.getElementById('theValue');
+        //index + 1 when widget is added
         index = (document.getElementById('theValue').value -1) +2;
         numi.value = index;
         console.log('addOscope: index =', index);
@@ -54,7 +55,9 @@ var d;
         var olddiv = document.getElementById(index);
         d.removeChild(olddiv);
         //d = null;
+        console.log('removeOscope: testPlan = ', testPlan);
 
+        // index - 1 when widget is removed
         var sub = document.getElementById('theValue');
         index = (document.getElementById('theValue').value -1);
         sub.value = index;
