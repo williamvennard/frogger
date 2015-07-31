@@ -94,7 +94,6 @@ def bscope_acq(config):
     acq_dict = {}
     print "Starting: Attempting to open one device..."
     if BL_Open(MY_PROBE_FILE,1):
-        post_status('Acquiring')
         config_vars = check_config_vars(config)
         active_testplan_name = config_vars[0]
         config_name = config_vars[1]
@@ -120,9 +119,7 @@ def bscope_acq(config):
         DATA = BL_Acquire()
         SAMPLE_SIZE = len(DATA)
         MY_SAMPLE_INTERVAL = int(1/MY_RATE*1000000) #interval between sample in microsec
-        print MY_SAMPLE_INTERVAL, 'sample interval'
         Total_Slices = math.ceil((float(SAMPLE_SIZE)/(float(SLICE_SIZE))/float(MY_RATE/1000.0)))
-        print 'total slices', Total_Slices
         config_dict = {}
         plot_dict = {}
         inst_dict ={}
