@@ -1,106 +1,161 @@
+
 // DUT WIDGETS //
-    var testPlan = "";
-    var index;
-    function addDUT() {
+    function addWidget(type) {
+        console.log('addWidget: Type = ', type);
         console.log('addDUT!');
-        var numi = document.getElementById('theValue');
-        //index + 1 when widget is added
-        index = (document.getElementById('theValue').value -1) +2;
-        numi.value = index;
-        console.log('addDUT: index =', index);
+        var testPlanHTML = "";
+        var index;
+        var d = document.getElementById('testPlan');
+        var children = d.childNodes;
+        console.log('addDUT: children.length =',children.length);
+        console.log('addDUT: children =',children);
+        
+        for (index = 0; index < children.length; index++) {
+            console.log('removeDUT: index =',index);
+            var planItemType = children[index].getAttribute('type');
+            console.log('addDUT: type DUI? ',planItemType === 'DUT')
+            console.log('addDUT: planItemType =',planItemType);
+            if (planItemType === 'DUT') {
+                console.log('TYPE DUT');
+                console.log('addDUT: planItemType =',planItemType);
+                var theName = children[index].children[1].children[0].value;
+                var typeDUT = children[index].children[1].children[1].children[1].value;
 
-        testPlan+= "<div class='appBox' id='" + index + "'>";
-        testPlan+= "<h4 class='appTitle'>DUT <span onclick='removeDUT(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle'></span></h4>";
-        testPlan+= "<form method='post'>";
-        testPlan+= "<div class='row appOrder'><tr><td class='label'>";
-        testPlan+= "<select id='orderSelect' class='form-control' style='position:relative; bottom:10px;'>";
-        testPlan+= "<option value='1'>1</option>";
-        testPlan+= "<option value='2'>2</option>";
-        testPlan+= "<option value='3'>3</option>";
-        testPlan+= "<option value='4'>4</option>";
-        testPlan+= "</select></td></tr></div>";
-        testPlan+= "<div class='row appRow'><tr><td class='label'>";
-        testPlan+= "<p class='appLabel'>Device Under Test Type:</p>"; 
-        testPlan+= "<input class='appInput' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' name='dut_type' value='{{dut_type}}'></td></tr></div>";                           
-    /*
-                            <form method="post">
-      <table>
-          <tr>
-          <td class="label">
-            Test Plan Name:  
-          </td>
-          <td>
-            <input type="text" name="testplan_name" value="{{testplan_name}}">
-          </td>
-        </tr>
-        <tr>
-          <td class="label">
-            Device Under Test Type:  
-          </td>
-          <td>
-            <input type="text" name="dut_type" value="{{dut_type}}">
-          </td>
-        </tr>
-        <tr>
-        <td class="label">
-            Device Under Test Name:
-        </td>
+                testPlanHTML+= "<div type='DUT' class='appBox' id='" + String(index) + "'>";
+                testPlanHTML+= "<h4 class='appTitle'>DUT - <span onclick='removeDUT(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle'></span></h4>";
+                testPlanHTML+= "<form method='post'>";
+                testPlanHTML+= "<input id='name" + index;
+                testPlanHTML+= "' class='nameWidget' type='text' name='dut_name' value='" + theName;
+                testPlanHTML+= "' placeholder='name goes here'>";
+                testPlanHTML+= "<div class='row appRow'><tr><td class='label'>";
+                testPlanHTML+= "<p class='appLabel'>Device Under Test Type:</p>"; 
+                testPlanHTML+= "<input class='appInput' id='type" + index;
+                testPlanHTML+= "' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' name='dut_type' value='" + typeDUT;
+                testPlanHTML+= "'></td></tr></div>";
+                testPlanHTML+= "<input id='appSubmitBtn' type='submit' value='SUBMIT'>";                              
+                testPlanHTML+= "</form>";
+                testPlanHTML+= "<p id=order" + index + "></p>"; //HERE FOR TESTING
+                testPlanHTML+= "</div>";
+            }else if(planItemType === 'config') {
+                console.log('TYPE config');
+            }else if(planItemType === 'measurement') {
+                console.log('TYPE meas');
+            }else {
+                console.log('no type match :(')
+            }                          
+        };
+        if (type === 'DUT') {              
+            console.log('TYPE DUT')
+            testPlanHTML+= "<div type='DUT' class='appBox' id='" + String(index) + "'>";
+            testPlanHTML+= "<h4 class='appTitle'>DUT - <span onclick='removeDUT(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle'></span></h4>";
+            testPlanHTML+= "<form method='post'>";
+            testPlanHTML+= "<input id='name" + index;
+            testPlanHTML+= "' class='nameWidget' type='text' name='dut_name' value='{{dut_name}}' placeholder='name goes here'>";
+            testPlanHTML+= "<div class='row appRow'><tr><td class='label'>";
+            testPlanHTML+= "<p class='appLabel'>Device Under Test Type:</p>"; 
+            testPlanHTML+= "<input class='appInput' id='type" + index;
+            testPlanHTML+= "' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' name='dut_type' value='{{dut_type}}'></td></tr></div>";
+            testPlanHTML+= "<input id='appSubmitBtn' type='submit' value='SUBMIT'>"                              
+            testPlanHTML+= "</form>"
+            testPlanHTML+= "<p id=order" + index + "></p>"; //HERE FOR TESTING
+            testPlanHTML+= "</div>";
 
-          <td>
-            <input type="text" name="dut_name" value="{{dut_name}}">
-            <input type="hidden" name="company_nickname" value="Acme">
-            <input type="hidden" name="testplan_name" value="Smiley">
-            <input type="hidden" name="author" value="nedwards">
-            <input type="hidden" name="dutpost" value=True>
-          </td>
-          <tr>
-          <td class="label">
-            Settings:  
-          </td>
-          <td>
-            <input type="text" name="settings" value="{{settings}}">
-          </td>
-        </tr>
+            document.getElementById("testPlan").innerHTML = testPlanHTML; 
+            console.log('addDUT: testPlanHTML = ', testPlanHTML); 
+        }else if(type === 'Config') {
+            console.log('TYPE Config')
+            testPlanHTML+= "<div class='appBox' id='" + index + "'>";
+            testPlanHTML+= "<h4 class='appTitle'>Instrument - <span onclick='removeOscope(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle'></span></h4>";
+            testPlanHTML+= "<form method='post'>";
+            testPlanHTML+= "<input class='nameWidget' type='text' name='config_name' value='{{config_name}}' placeholder='name goes here'>";
+            testPlanHTML+= "<div class='row appOrder'><tr><td class='label'>";
+            testPlanHTML+= "<select id='orderSelect' class='form-control' style='position:relative; bottom:10px;'>";
+            testPlanHTML+= "<option value='1'>1</option>";
+            testPlanHTML+= "<option value='2'>2</option>";
+            testPlanHTML+= "<option value='3'>3</option>";
+            testPlanHTML+= "<option value='4'>4</option>";
+            testPlanHTML+= "</select></td></tr></div>";
+            testPlanHTML+= "<div class='row appRow'><tr><td class='label'>";
+            testPlanHTML+= "<p class='appLabel'>Instrument:</p>"; 
+            testPlanHTML+= "<input class='appInput' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' name='instrument_name' value='{{instrument_name}}'></td></tr></div>";                           
+            testPlanHTML+= "<input id='appSubmitBtn' type='submit' value='SUBMIT'>"                              
+            testPlanHTML+= "</form>"
+            testPlanHTML+= "</div>";
 
-      <tr>
-          <td class="label">
-          DUT  Test Order:  
-          </td>
-          <td>
-            <input type="text" name="dut_test_order" value="{{dut_test_order}}">
-          </td>
-        </tr>
-      <input type="submit">
-    </form>
-    */
-        testPlan+= "<input id='appSubmitBtn' type='submit' value='SUBMIT'>"                              
-        testPlan+= "</form>"
-        testPlan+= "</div>";
+            document.getElementById("testPlan").innerHTML = testPlanHTML; 
+            console.log('addDUT: testPlanHTML = ', testPlanHTML); 
+        }else if(type === 'measurement') {
 
-        document.getElementById("testPlan").innerHTML = testPlan; 
-        console.log('addDUT: testPlan = ', testPlan);  
-
+        }else {
+            console.log('NO TYPE MATCH')
+        };
         $(document).ready(function () { 
-              $(".collapseStartTest").fadeIn("fast");           
+              $(".collapseCommitTest").fadeIn("fast");           
         });         
     };
 
-var d;
-    function removeDUT(index) { 
 
-        d = document.getElementById('testPlan');
-        var olddiv = document.getElementById(index);
-        d.removeChild(olddiv);
-        //d = null;
-        console.log('removeDUT: testPlan = ', testPlan);
+    (function($) {
+        $.fn.getAttributes = function() {
+            var attributes = {}; 
 
-        // index - 1 when widget is removed
-        var sub = document.getElementById('theValue');
-        index = (document.getElementById('theValue').value -1);
-        sub.value = index;
-        console.log('index=', index);
+            if( this.length ) {
+                $.each( this[0].attributes, function( index, attr ) {
+                    attributes[ attr.name ] = attr.value;
+                } ); 
+            }
+            return attributes;
+        };
+    })(jQuery);
 
+    var d;
+    function removeDUT(index) {
+      d = document.getElementById('testPlan');
+      
+      console.log('removeDUT: d.haschildnodes =',d.hasChildNodes());
+      console.log('removeDUT: d.firstchild =',d.firstChild);
+      var olddiv = document.getElementById(index);
+      d.removeChild(olddiv);
+      //d.removeChild(d.firstChild);
+      var children = d.childNodes;
+      for (var i = 0; i < children.length; i++) {
+        console.log('removeDUT: i =',i);
+      }
     };
-    $("#DUT").click(function () {
-      addDUT();
+    //ADD WIDGET BUTTON CONTROL
+    $("#newDUT").click(function () {
+      addWidget('DUT');
     });
+    $("#newConfig").click(function () {
+      addWidget('Config');
+    });
+//CANVAS ORDER
+    $(document).ready(function() {
+    $(".droppable").sortable({
+      update: function( event, ui ) {
+        Dropped();
+        console.log('indexArray = ', indexArray);
+        indexArray=[];
+        console.log("New position: ", ui.item.index());
+        index ='dev 1  Position:' + ui.item.index();
+        
+      }
+    });    
+  });
+    var indexArray = [];
+  function Dropped(event, ui){
+    var apps = document.getElementsByClassName("appBox");
+    console.log('Dropped: apps.length =',apps.length);
+        for(var i = 0;i<apps.length;i++) {
+            var d = document.getElementById('testPlan');
+            var children = d.childNodes;
+            var planItemType = children[i].getAttribute('type');
+            var planItemName = children[i].children[1].children[0].value;
+            
+            var orderInfo = planItemType + ':' + planItemName + ':' + i;
+            indexArray.push(orderInfo); 
+
+        }
+    $(".draggable").each(function(){        
+    });
+  }  

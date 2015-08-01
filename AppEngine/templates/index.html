@@ -59,8 +59,31 @@
         <div class="row">
             <div class="col-md-3" style="width: 180px; margin-top: 20px;">
             <button id="newTestBtn" class="btn btn-default tog" href="#collapseNewTest">NEW TEST</button>
-            <button id="newTestBtn" class="btn btn-default" href="">OLD TEST</button>
+            <button id="newTestBtn" class="btn btn-default" href="">SAVED TEST</button>
                 <div class="panel-group" id="accordion" style="width: 140px;">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h5 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">DUT</a>
+                            </h5>
+                        </div>
+                        <div id="collapseThree" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <table class="table">
+                                    <tr>
+                                        <td>
+                                            <a id="newDUT">NEW</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <a>Saved:</a> <span></span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h5 class="panel-title">
@@ -72,22 +95,12 @@
                                 <table class="table">
                                     <tr>
                                         <td>
-                                            <a>VSG</a>
+                                            <a id="newConfig">NEW</a>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            <a>VNA</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a>VCO</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a id="OScope">O-Scope</a>                             
+                                            <a>Saved:</a>
                                         </td>
                                     </tr>
                                 </table>
@@ -127,67 +140,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h5 class="panel-title">
-                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">Sequencing</a>
-                            </h5>
-                        </div>
-                        <div id="collapseThree" class="panel-collapse collapse">
-                            <div class="panel-body">
-                                <table class="table">
-                                    <tr>
-                                        <td>
-                                            <a id="DUT">DUT</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a>Subroutine</a> <span></span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a>Power Sweep</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <span></span><a>Frequency Sweep</a>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h5 class="panel-title">
-                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour">Test Plans</a>
-                            </h5>
-                        </div>
-                        <div id="collapseFour" class="panel-collapse collapse">
-                            <div class="panel-body">
-                                <table class="table">
-                                    <tr>
-                                        <td>
-                                            <span></span><a>Components</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <span></span><a>Standards</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <span></span><a>Custom</a>
-                                        </td>
-                                    </tr>                                   
-                                </table>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -196,13 +148,13 @@
             <fieldset class="col-md-12" id="canvasBox" style="width: 80%;">
                 <span class="spacer"></span><legend class="text-uppercase" style="width: 118px;">Test Space</legend><span class="spacer"></span>
 <!--NEW TEST PLAN-->
-                <div class="appBox menu collapseNewTest" id="">
-                    <div class="row"> 
-                        <form method="post">
+                <div class="testSetupBox menu collapseNewTest" id="">
+                    <form method="post">
+                        <div class="row"> 
                             <div class="col-md-4">
-                                <h3 style="text-align:left; color:white; margin-left:10px;">Test Plan Name :</h3>
+                                <h3 class="testSetupLabel">Test Plan Name :</h3>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-5">
                                 <tr>
                                     <td class="label">  
                                       <input class="nameTestInput" type="text" name="testplan_name" value="{{testplan_name}}" placeholder="name goes here">
@@ -213,23 +165,13 @@
                                       <input type="hidden" name="testpost" value=True>
                                     </td>
                                 </tr>
-                            </div>       
-                            <input id="nameSubmitBtn" type="submit" value="SUBMIT" style="">
-                        </form>
-                    </div>       
-                </div>
-
-                <input type="hidden" value="0" id="theValue" />
-                <div id="testPlan" class="droppable">
-                </div>
-<!--START TIME-->
-                <div class="startTimeBox menu collapseStartTest" id="">
-                    <div class="row"> 
-                        <form method="post">
-                            <div class="col-md-4">
-                                <h3 style="text-align:left; color:white; margin-left:10px;">Test Start Time :</h3>
                             </div>
-                            <div class="col-md-3">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h3 class="testSetupLabel">Test Start Time :</h3>
+                            </div>
+                            <div class="col-md-4" style="height:25px;">
                                 <tr>
                                     <td class="label">                                        
                                       <input class="nameTestInput" type="text" name="start_time" value="{{start_time}}" placeholder="time goes here">
@@ -237,14 +179,25 @@
                                       <input type="hidden" name="timepost" value=True>
                                     </td>
                                 </tr>
-                                <p class="startNowLabel">Start Now:</p> 
-                                <td>                                          
-                                  <input class="startNow" type="checkbox" name="start_measurement_now">
-                                  <input type="hidden" name="timepost" value=True>
-                                </td>
-                            </div>       
+                                <div class="startNowBox">
+                                    <p class="startNowLabel">Start Now</p> 
+                                    <td>                                          
+                                      <input class="startNow" type="checkbox" name="start_measurement_now">
+                                      <input type="hidden" name="timepost" value=True>
+                                    </td>  
+                                </div>                               
+                            </div>
                             <input id="nameSubmitBtn" type="submit" value="SUBMIT" style="">
-                        </form>
+                        </div>                                
+                    </form>      
+                </div>
+<!--WIDGETS go HERE-->
+                
+                <div id="testPlan" class="droppable"></div>
+<!--COMMIT TEST-->
+                <div class="commitBox menu collapseCommitTest" id="">
+                    <div class="row">    
+                        <input id="commitBtn" type="submit" value="COMMIT" style="">      
                     </div>       
                 </div>        
             </fieldset>
@@ -258,26 +211,47 @@
         </div> 
         <hr>
     </div> 
-    <script type="text/javascript" src="../static/js/widgets/instruments.js"></script>
+
     <script type="text/javascript" src="../static/js/widgets/DUT.js"></script>
 
     <script type="text/javascript">
     $('#collapseOne').collapse("hide");
     //$("#accordion").prop('disabled', true);
     $("#accordion").hide();
-     </script>
+    </script>
     <!--stops accordion from loading open -->
     <script type="text/javascript">
+
     //NEW TEST BUTTON
     $(document).ready(function () {
       $(".collapseNewTest").hide();
-      $(".collapseStartTest").hide();
+      $(".collapseCommitTest").hide();
       $(".tog").click(function () {
           $("#accordion").show();  
           $(".collapseNewTest").fadeIn("fast"); 
       });
-    });
-    
+    });    
+    </script>
+    <script type="text/javascript">
+    widget_url = 'https://gradientone-dev1.appspot.com/testresults/widgets/Acme.json';
+      $.ajax({
+          async: true,
+          url: widget_url,            
+          dataType: 'json',
+       }).done(function (results) {
+          savedConfigs = results.configs;
+          savedDuts = results.duts;
+          savedSeq = results.sequences;
+          savedMeas = results.measurements;
+          savedTests = results.tests;
+
+          console.log('Saved Widgets: results', results);
+          console.log('Saved Widgets: savedConfigs', savedConfigs);
+          console.log('Saved Widgets: savedDuts', savedDuts);
+          console.log('Saved Widgets: savedSeq', savedSeq);
+          console.log('Saved Widgets: savedTests', savedTests);
+      
+      });
     </script>
 </body>
 </html>
