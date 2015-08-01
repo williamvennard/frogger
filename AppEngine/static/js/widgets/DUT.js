@@ -68,13 +68,6 @@
             testPlanHTML+= "<h4 class='appTitle'>Instrument - <span onclick='removeOscope(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle'></span></h4>";
             testPlanHTML+= "<form method='post'>";
             testPlanHTML+= "<input class='nameWidget' type='text' name='config_name' value='{{config_name}}' placeholder='name goes here'>";
-            testPlanHTML+= "<div class='row appOrder'><tr><td class='label'>";
-            testPlanHTML+= "<select id='orderSelect' class='form-control' style='position:relative; bottom:10px;'>";
-            testPlanHTML+= "<option value='1'>1</option>";
-            testPlanHTML+= "<option value='2'>2</option>";
-            testPlanHTML+= "<option value='3'>3</option>";
-            testPlanHTML+= "<option value='4'>4</option>";
-            testPlanHTML+= "</select></td></tr></div>";
             testPlanHTML+= "<div class='row appRow'><tr><td class='label'>";
             testPlanHTML+= "<p class='appLabel'>Instrument:</p>"; 
             testPlanHTML+= "<input class='appInput' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' name='instrument_name' value='{{instrument_name}}'></td></tr></div>";                           
