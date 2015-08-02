@@ -32,4 +32,4 @@ total_time = finish_time - start_time
 print 'thru post', thru_post
 print 'total post', total_post
 print 'response codes', response
-print 'total time', total_time
+print 'total time', total_time# this is the end 
