@@ -128,7 +128,7 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <a>RMS</a>
+                                            <a id="RMS">RMS</a>
                                         </td>
                                     </tr>
                                     <tr>
@@ -212,7 +212,7 @@
         <hr>
     </div> 
 
-    <script type="text/javascript" src="../static/js/widgets/DUT.js"></script>
+    <script type="text/javascript" src="../static/js/widgets.js"></script>
 
     <script type="text/javascript">
     $('#collapseOne').collapse("hide");
@@ -230,9 +230,10 @@
           $("#accordion").show();  
           $(".collapseNewTest").fadeIn("fast"); 
       });
-    });    
+    });     
     </script>
     <script type="text/javascript">
+$(document).ready(function () {
     widget_url = 'https://gradientone-dev1.appspot.com/testresults/widgets/Acme.json';
       $.ajax({
           async: true,
@@ -252,6 +253,7 @@
           console.log('Saved Widgets: savedTests', savedTests);
       
       });
+    }); 
     </script>
 </body>
 </html>

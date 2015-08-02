@@ -66,18 +66,39 @@
     var dynamicSliceEnd = 0;
     var getTestInfoCounter = 0;
     var rawPointSpacing;
+    var step = 0;
+    var traceTimerID;
+    var exploreTimerID;
 
-    function fetchDecData(){
-       dec_json_url = dec_url;
-       $.ajax({
+// EXPLORE MODE //
+
+function exploreMode() {
+      test_info_url = 'https://gradientone-dev1.appspot.com/traceresults/Acme/Tahoe/Primetime';
+      $.ajax({
           async: true,
-          url: dec_json_url,            
+          url: test_info_url,
           dataType: 'json',
-       }).done(function (results) {
-         var chaData = results.cha;
-         drawDecChart(chaData);
-      });
-    };
+       }).done(function (results) {       
+        testInfo = results;  
+
+        //DECIMATED DATA
+        var decData = testInfo.window_bscope.cha;
+        console.log('getTestInfo: decData =',decData);
+        drawDecChart(decData);
+
+        testSettings = testInfo.p_settings;
+        testSliceStart = testSettings.Start_TSE;    
+        decPointSpacing = (Number(testSettings.Dec_msec_btw_samples))/1000000;    
+        console.log('exploreMode: decPointSpacing = ', decPointSpacing);
+        instrumentName = 'Instrument: ' + testInfo.config_name;
+        hardwareName = 'Hardware: ' + testInfo.hardware_name;
+        document.getElementById("instrumentName").innerHTML = instrumentName;
+        document.getElementById("hardwareName").innerHTML = hardwareName;
+       });
+    exploreTimerID = setTimeout(exploreMode,50);
+};
+
+
 
     //LOADING URL
     //test_info_url = window.location.pathname + '.json';
@@ -87,7 +108,7 @@
     // https://gradientone-test.appspot.com/status/Acme/Tahoe
     var currentTestStatus;
     var statusArray = [];
-    
+/*    
     function getTestStatus() {
       //status_url = 'https://gradientone-test.appspot.com/testlibrary/Acme/NyquistB/1437712799600.json';
       status_url = 'https://gradientone-dev1.appspot.com/status/Acme/Tahoe';
@@ -106,12 +127,10 @@
        setTimeout(getTestStatus,200);
     };
     getTestStatus();
-    
+*/    
     //Continuously polling at: 
     //https://gradientone-dev1.appspot.com/testresults/Acme/Tahoe/LED
-    function getTestInfo() {
-
-      //test_info_url = 'https://gradientone-dev1.appspot.com/testlibrary/Acme/manufacturing/1436809506690.json';
+    function traceMode() {
       test_info_url = 'https://gradientone-dev1.appspot.com/traceresults/Acme/Tahoe/Primetime';
       $.ajax({
           async: true,
@@ -119,16 +138,15 @@
           dataType: 'json',
        }).done(function (results) {       
         testInfo = results;  
+
         //testSettings = testInfo;
         //console.log('getTestInfo: testInfo =',testInfo);
         testSettings = testInfo.p_settings;
-        //URLS DEC/RAW
-        dec_url = testInfo.dec_data_url;
+        //URLS RAW
         raw_urlPath = testInfo.raw_data_url;
-        //Test Info DEC/RAW
+        //Test Info RAW
         //testSliceStart = testSettings.start_tse;
-        testSliceStart = testSettings.Start_TSE;    
-        decPointSpacing = (Number(testSettings.Dec_msec_btw_samples))/1000;    
+        testSliceStart = testSettings.Start_TSE;       
         totalNumPages = testSettings.Total_Slices;
         numPages = Number(testSettings.Total_Slices); //not live version
 
@@ -139,7 +157,6 @@
         base_url = rawUrlSplit[0];
         sliceEnd = (Number(testSliceStart) + (numPages*sliceSize)) -10;
 
-        decOffset = (((Number(numPages) * Number(sliceSize))/10) * decPointSpacing)/2;
         rawOffset = Number(testSliceStart) + ((Number(numPages) * Number(sliceSize))/2);
         rawWidth = (Number(numPages) * Number(sliceSize)) * rawPointSpacing;
 
@@ -159,22 +176,14 @@
         //console.log('getTestInfoCounter =',getTestInfoCounter);
         if(getTestInfoCounter < numPages) {
           dynamicSliceEnd = (Number(testSliceStart) + getTestInfoCounter*sliceSize );
-        }else;
+        };
+
         buildSliceNames(Number(testSliceStart),dynamicSliceEnd,sliceSize);
         getTestInfoCounter++;
-/*
-        for (msec = Number(testSliceStart); msec <= sliceEnd;msec += sliceSize) {
-          name = String(msec);
-          if ($.inArray(name, sliceNames) == -1) {
-            sliceNames.push(name);
-          };
-        };
-*/           
+      
         name = String(sliceEnd);
         delete resultsCache.name;
         fetchSliceNames();
-
-        //fetchDecData();  //DEC DATA
 
         console.log('slice names = ',sliceNames);
         //console.log('decOffset = ',decOffset);
@@ -184,11 +193,8 @@
         //console.log('getTestInfo: sliceSize = ', sliceSize);   
         //console.log('getTestInfo: rawPointSpacing =',rawPointSpacing);  
        });
-          setTimeout(getTestInfo,1000);
-
-       //setTimeout(getTestInfo,200);   // change to 100 later
+         traceTimerID = setTimeout(traceMode,1000);
     };
-    //getTestInfo();  // called by googe setOnLoadCallback method
     
     // DEC CHART CODE //
 
@@ -197,44 +203,47 @@
         var data = new google.visualization.DataTable();
         data.addColumn('number', 'Time');
         data.addColumn('number', 'Ch1');
+        console.log('drawDecChart: decData =',decData);
+        console.log('drawDecChart: decPointSpacing =',decPointSpacing);
 
         for (i=0; i<decData.length; i++) {
-           var num = i*decPointSpacing - decOffset;
-           //console.log('drawDecChart: num =', decOffset);
+           var num = i*decPointSpacing;
+          //console.log('drawDecChart: num =', num);
            num = Math.ceil(num * 100) / 100;
            data.addRow([
              num, 
              decData[i],
              ]);
         };
-
+        console.log('drawDecChart: data=',data);
         decChartOptions = {
          title: '',
          titleTextStyle: {color:'lightgray', fontSize: 18, fontName: 'NexaLight'},
-         legend: {alignment:'center', textStyle:{color:'lightgray'}},
-         hAxis: {title: 'Time(sec)',titleTextStyle:{color:'lightgray', fontName: 'NexaLight'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'gray', count: 6}, minorGridlines:{color: 'gray', count: 1}, viewWindowMode:'explicit', viewWindow:{max: hMax, min: hMin}},
+         legend: 'none', //{alignment:'center', textStyle:{color:'lightgray'}},
+         hAxis: {title: 'Time(sec)',titleTextStyle:{color:'lightgray', fontName: 'NexaLight'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'gray', count: 6}, minorGridlines:{color: 'gray', count: 1}, viewWindowMode:'explicit'}, //viewWindow:{max: hMax, min: hMin}},
          vAxis: {title: '', titleTextStyle:{color:'lightgray'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'gray', count: 6}, minorGridlines:{color: 'gray', count: 1}, format: '##.###', viewWindowMode:'explicit', },
          backgroundColor: {fill:'none', stroke: 'black', strokeWidth: 0,},                 
          colors: ['rgb(2,255,253)','rgb(239,253,146)'],
+         chartArea:{backgroundColor:'', height:350, width:445},
          lineWidth: 2.5,
          curveType: 'function',
          crosshair: {trigger: 'both', selected:{opacity: 0.8}, focused:{opacity:0.8}},
+         explorer: {maxZoomOut: 5, maxZoomIn: 0.125},
         };
       //DRAW CHART
-         var chart = new google.visualization.LineChart($('#decChart').get(0));      
+         var chart = new google.visualization.LineChart($('#oChart').get(0));      
          chart.draw(data, decChartOptions);
       //DRAW TABLE
-         var table = new google.visualization.Table($('#decTable').get(0));
+         var table = new google.visualization.Table($('#oTable').get(0));
          table.draw(data); 
     };
 
-    //google.setOnLoadCallback(fetchDecData);
-
 // RAW CHART CODE //
-
+    var savedData = 0;
 // BUILD RAW DATA TABLE AND DRAW RAW CHART+TABLE
     function drawRawChart(){   
       var data = new google.visualization.DataTable();
+      savedData = data;
        data.addColumn('number', 'Time');
        data.addColumn('number', 'Ch1');
 
@@ -266,14 +275,14 @@
         hMin = hPosition;
 
       rawChartOptions = {
-         title: 'Raw Data',
+         title: '',
          titleTextStyle: {color:'lightgray', fontSize: 18, fontName: 'NexaLight'},
          legend: 'none', //{alignment:'center', textStyle:{color:'lightgray'}},
          hAxis: {title: 'Time(sec)',titleTextStyle:{color:'lightgray', fontName: 'NexaLight'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'gray', count: 6}, minorGridlines:{color: 'gray', count: 1}, viewWindowMode:'explicit', viewWindow:{max: hMax, min: hMin}},
          vAxis: {title: '', titleTextStyle:{color:'lightgray'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'gray', count: 6}, minorGridlines:{color: 'gray', count: 1}, format: '##.###', viewWindowMode:'explicit', },
          backgroundColor: {fill:'none', stroke: 'black', strokeWidth: 0,},                 
          colors: ['rgb(2,255,253)','rgb(239,253,146)'],
-         chartArea:{backgroundColor:'', height:300, width:445},
+         chartArea:{backgroundColor:'', height:350, width:445},
          lineWidth: 2.5,
          curveType: 'function',
          crosshair: {trigger: 'both', selected:{opacity: 0.8}, focused:{opacity:0.8}},
@@ -308,7 +317,7 @@
            };
         };
     };
-    google.setOnLoadCallback(getTestInfo);
+    //google.setOnLoadCallback(getTestInfo);   STOP from CALLING on AUTO
     // FETCH RAW DATA 
     function fetchData(base_url,sliceName,use_async){
 
@@ -328,6 +337,7 @@
     //https://gradientone-test.appspot.com/datamgmt/bscopedata/Acme/Tahoe/wildwood/1436937598030
 
     function saveStatus(status) {
+     document.getElementById("save").disabled = true; 
       console.log('saveStatus: sliceSize = ',sliceSize);
       console.log('saveStatus: totalNumPages = ',totalNumPages);
       formatSaveUrl = raw_urlPath.split('/');
@@ -356,12 +366,10 @@
     function moveWindow(){
         var width = rawWidth*(100/hZoom);
         
-
         hMax = hPosition + width;
         hMin = hPosition;
         console.log('moveWindow: hMax = ', hMax);
         console.log('moveWindow: hMin = ', hMin);
-
 
         console.log('moveWindow: H position = ',hPosition);
         console.log('moveWindow: H zoom = ',hZoom);
@@ -373,7 +381,7 @@
     }; 
      
     // replay button
-    var step = 0;
+  
     function Forward() {
       //console.log('rawPointSpacing!!!!!! =',rawPointSpacing);   
       var windowSize = rawWidth*(100/hZoom);
@@ -464,48 +472,101 @@
       };
     };
 // BUTTON CONTROLS
-  $(document).ready(function(){
-    //cleart interval 
+$(document).ready(function(){
+//REPLAY BUTTONS
+
     $('#replay').click(function(){
-      //clearInterval(timerID);
+
        replay();
     });
     $('#fastBackward').click(function(){
-      //clearInterval(timerID);
+
        fastBackward();
     });
     $('#backward').click(function(){
-       //clearInterval(timerID);
+
        backward();
     });
     $('#pause').click(function(){ 
        clearInterval(timerID);
     });
     $('#start').click(function(){
-      //clearInterval(timerID);
+
        start();
     });
     $('#forward').click(function(){
-      //clearInterval(timerID);
        Forward();
     });
     $('#fastForward').click(function(){
-      //clearInterval(timerID);
        fastForward();
     });
+//OPTION BUTTONS
+  //EXPLORE MODE
+  $("#exploreBtns").hide();
+  $("#exploreMode").click(function () {
+    clearTimeout(traceTimerID);
+    //document.getElementById(exploreMode).style.background = 'red';
+    $("#exploreBtns").fadeIn("fast");
+    $("#traceBtns").hide();
+    exploreMode();
   });
- 
-
-
-  $("#save").click(function () {
+  $("#exploreSave").click(function () {
       saveStatus('save');
-  });
-  $("#delete").click(function () {
+
+    });
+    $("#exploreDelete").click(function () {
       saveStatus('delete');
       statusArray = [];
-  });
-  $("#startStop").click(function () {
-    $(this).text(function(i, v){
-      return v === 'STOP' ? 'START' : 'STOP'
-    })
-  });
+    });
+
+  function exploreStart(el){
+      console.log('exploreStart !!!!!')
+      exploreMode();
+    }
+    function exploreStop(el){
+      console.log('exploreStop!!!!!')
+      clearTimeout(exploreTimerID);
+    }
+    $("#exploreStartStop").click(function() {
+      $(this).text(function(i, v){
+      return v === 'START' ? 'STOP' : 'START'
+      })
+      var el = this;
+      return (el.t = !el.t) ? exploreStop(el) : exploreStart(el);
+    });
+
+  //TRACE MODE   
+    $("#traceBtns").hide();
+    $("#traceMode").click(function () {
+      clearTimeout(exploreTimerID);
+      $("#traceBtns").fadeIn("fast");
+      $("#exploreBtns").hide();
+      traceMode();
+    });
+    $("#traceSave").click(function () {
+      saveStatus('save');
+
+    });
+    $("#traceDelete").click(function () {
+      saveStatus('delete');
+      statusArray = [];
+    });
+
+
+    function traceStart(el){
+      console.log('traceStart !!!!!')
+      traceMode();
+    }
+    function traceStop(el){
+      console.log('traceStop!!!!!')
+      clearTimeout(traceTimerID);
+    }
+    $("#traceStartStop").click(function() {
+      $(this).text(function(i, v){
+      return v === 'START' ? 'STOP' : 'START'
+      })
+      var el = this;
+      return (el.t = !el.t) ? traceStop(el) : traceStart(el);
+    }); 
+          
+});
