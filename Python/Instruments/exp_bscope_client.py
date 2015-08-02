@@ -30,10 +30,6 @@ HARDWARENAME ='Tahoe'
 def dt2ms(t):
     return int(t.strftime('%s'))*1000 + int(t.microsecond/1000)
 
-def check_start(config):
-    commence_test = str(config['commence_test'])
-    return commence_test
-
 def post_status(status):
     "posts hardware status updates to the server"
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
@@ -85,15 +81,20 @@ def check_config_url():
     r = s.get(config_url)
     if r:
         config = r.json()
-        if config['configs']:
-            config = config['configs'][0]
-            if check_start(config) == 'True':
+        if config['configs_exps']:
+            config = config['configs_exps'][0]
+            if config['commence_explore'] == 'True':
                 print "Starting API"
                 post_status('Starting')
-                if config['commence_explore'] == 'True':
-                    bscope_acq_exp(config, s)
-                else:
-                    bscope_acq(config, s)
+                bscope_acq_exp(config, s)
+        elif config['configs_tps_traces']:
+            config = config['configs_tps_traces'][0]    
+            if: config['commence_test'] == 'True':
+                print "Starting API"
+                post_status('Starting')
+                bscope_acq(config, s)
+            else:
+                pass
         else:
             print "No start order found"
     threading.Timer(1, check_config_url()).start()
@@ -179,8 +180,8 @@ def bscope_acq_exp(config, s):
             bits.transmitdec()
             r = s.get(config_url)
             config = r.json()
-            if config['configs']:
-                config = config['configs'][0]
+            if config['configs_exps']:
+                config = config['configs_exps'][0]
                 if config['commence_explore'] == 'False':
                     break
             time_dec = time.time()
