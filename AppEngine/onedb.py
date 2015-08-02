@@ -42,6 +42,19 @@ class DutDB(DictModel):
     settings = db.StringProperty(required = False)
     tests = db.ListProperty(db.Key)
 
+def MeasurementDB_key(name = 'default'):
+    return db.Key.from_path('company_nickname', name)
+
+class MeasurementDB(DictModel):
+    company_nickname = db.StringProperty(required = True)
+    date_created = db.DateTimeProperty(auto_now_add = True)
+    author = db.StringProperty(required = True)
+    meas_type = db.StringProperty(required = True)
+    meas_name = db.StringProperty(required = False)
+    meas_start_time = db.FloatProperty(required = False)
+    meas_stop_time = db.FloatProperty(required = False)
+    tests = db.ListProperty(db.Key)
+
 def OscopeDB_key(name = 'default'):
     return db.Key.from_path('oscope', name)
 
@@ -74,6 +87,7 @@ class TestDB(DictModel):
     configs = db.ListProperty(db.Key)
     start_time = db.DateTimeProperty(required = False)
     duts = db.ListProperty(db.Key)
+    measurements = db.ListProperty(db.Key)
     order = db.StringListProperty()
     stop_time = db.DateTimeProperty(required = False)
     test_ready = db.BooleanProperty(required = False)

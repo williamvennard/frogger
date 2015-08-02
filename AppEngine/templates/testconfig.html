@@ -33,6 +33,7 @@
       <input type="submit">
     </form>
 
+
     <form method="post">
       <table>
           <tr>
@@ -121,15 +122,11 @@
           <td>
             <input type="text" name="config_name" value="{{config_name}}">
           </td>
-         <select name ="instrument">
-              {% for d in dropdown %}
-           <option value ="{{d['config_name']}}">{{d['config_name']}}</option>
-             {% endfor %}
-          </select>
+
           <td>
             <input type="hidden" name="company_nickname" value="Acme">
             <input type="hidden" name="author" value="nedwards">
-            <input type="hidden" name="confpost" value=True>
+            <input type="hidden" name="selectpost" value=True>
           </td>
           <tr>
           <td class="label">
@@ -265,6 +262,64 @@
       <input type="submit">
     </form>
 
+    <form method="post">
+      <table>
+        <tr>
+          <td class="label">
+            Test Plan Name:  
+          </td>
+          <td>
+            <input type="text" name="testplan_name" value="{{testplan_name}}">
+            <input type="hidden" name="measpost" value=True>
+          </td>
+        </tr>
+          <tr>
+          <td class="label">
+            Measurement Type:  
+          </td>
+          <td>
+            <input type="text" name="meas_type" value="{{meas_type}}">
+          </td>
+        </tr>
+        <tr>
+        <tr>
+          <td class="label">
+            Measurement Name:
+          </td>
+          <td>
+            <input type="text" name="meas_name" value="{{meas_name}}">
+            <input type="hidden" name="author" value="nedwards">
+            <input type="hidden" name="company_nickname" value="Acme">
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Start Time:
+          </td>
+        <td>
+          <input type="text" name="meas_start_time" value="{{meas_start_time}}">
+          <input type="hidden" name="author" value="nedwards">
+        </td>
+        </tr> 
+        <tr>
+          <td>
+            Stop Time:
+          </td>
+        <td>
+          <input type="text" name="meas_stop_time" value="{{meas_start_time}}">
+        </td>
+        </tr> 
+          <tr>
+          <td class="label">
+          Measurement  Test Order:  
+          </td>
+          <td>
+            <input type="text" name="meas_test_order" value="{{meas_test_order}}">
+          </td>
+        </tr>
+
+      <input type="submit">
+    </form>
 
     </form>
   </body>

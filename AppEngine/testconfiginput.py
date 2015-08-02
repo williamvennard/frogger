@@ -10,6 +10,7 @@ from onedb import TestDB
 from onedb import DutDB
 from onedb import CapabilitiesDB
 from onedb import InstrumentsDB
+from onedb import MeasurementDB
 from datetime import datetime
 import jinja2
 import json
@@ -37,6 +38,7 @@ class Handler(InstrumentDataHandler):
         testplan_name = self.request.get('testplan_name')
         company_nickname = self.request.get('company_nickname')
         author = self.request.get('author')
+        print author
         config_name = self.request.get('config_name')
         analog_bandwidth = self.request.get('analog_bandwidth')
         analog_sample_rate = self.request.get('analog_sample_rate')
@@ -45,12 +47,17 @@ class Handler(InstrumentDataHandler):
         resolution = self.request.get('resolution')
         selectpost = self.request.get('selectpost')
         dut_name = self.request.get('dut_name')
+        meas_type = self.request.get('meas_type')
+        meas_name = self.request.get('meas_name')
+        meas_start_time = self.request.get('meas_start_time')
+        meas_stop_time = self.request.get('meas_stop_time')
         dut_type = self.request.get('dut_type')
         settings = self.request.get('settings')
         testpost = (self.request.get('testpost'))
         confpost = (self.request.get('confpost'))
         dutpost = (self.request.get('dutpost'))
         timepost = self.request.get('timepost')
+        measpost = self.request.get('measpost')
         if testpost == 'True': #this controls the POST functionality if someone is configuring test plan details.
             t = TestDB(key_name = testplan_name, parent = company_key(),
             testplan_name = testplan_name, 
@@ -72,7 +79,6 @@ class Handler(InstrumentDataHandler):
                 i = (InstrumentsDB.gql("Where instrument_type =:1", inst))
                 for entry in i:
                     avail.append((inst, entry.hardware_name))
-            print avail
             if len(avail) == 0:
                 selected_inst_type = "None Selected"
                 selected_hardware = "None Selected"
@@ -82,8 +88,6 @@ class Handler(InstrumentDataHandler):
                 selected_hardware = avail[0][1]
                 avail = avail
             self.render('testconfig.html', explanations = explanations, selected_inst_type = selected_inst_type, selected_hardware = selected_hardware, avail_inst = avail)
-
-      
         if dutpost == 'True': #this controls the POST functionality if someone is configuring instrument details.
             test_order = self.request.get('dut_test_order')
             test = TestDB.gql("Where testplan_name =:1", testplan_name).get()
@@ -109,7 +113,6 @@ class Handler(InstrumentDataHandler):
                 test.duts.append(dut.key())
                 test.put()    
             self.render('testconfig.html')
-
         if selectpost == 'True':
             instrument_type = self.request.get('selected_inst_type')
             hardware_name = self.request.get('selected_hardware')
@@ -138,6 +141,33 @@ class Handler(InstrumentDataHandler):
                 test.configs.append(conf.key())
                 test.put()
             self.render('testconfig.html')
+        if measpost == 'True': #this controls the POST functionality if someone is configuring measurement details.
+            meas_order = self.request.get('meas_test_order')
+            test = TestDB.gql("Where testplan_name =:1", testplan_name).get()
+            meas = MeasurementDB.gql("Where dut_name =:1", meas_name).get()
+            #print meas_type, meas_name, author, company_nickname, meas_start_time, meas_stop_time
+            if meas == None:  #if there is not an instrument with the inputted name, then create it in the DB
+                m = MeasurementDB(key_name = meas_name, parent = company_key(),
+                    company_nickname = company_nickname, author = author,
+                    meas_type = meas_type,
+                    meas_name = meas_name,             
+                    meas_start_time = float(meas_stop_time),
+                    meas_stop_time = float(meas_stop_time),
+                    )
+                m.put()
+            meas_order = 'meas'+':'+meas_name+':'+meas_order
+            test.order.append(meas_order)
+            test.put()
+            key = db.Key.from_path('MeasurementDB', meas_name, parent = company_key())
+            measurement = db.get(key)
+            if test.key() not in measurement.tests:  #add the test plan to the list property of the dut
+                measurement.tests.append(test.key())
+                measurement.put()
+            if measurement.key() not in test.measurements:  #add the  dut name to the list property ot the test plan
+                test.measurements.append(measurement.key())
+                test.put()    
+            self.render('testconfig.html')
+
 
         if timepost == 'True':
             testplan_name = self.request.get('testplan_name')
@@ -154,7 +184,6 @@ class Handler(InstrumentDataHandler):
             test.test_ready = True
             test.test_scheduled = True
             test.put()
-
             taskqueue.add(url = '/testmanager', method = 'POST', params={'info':(company_nickname,testplan_name)}, eta = date_object)
                        
         #self.redirect('/testplansummary/' + company_nickname + '/' + hardware_name)
