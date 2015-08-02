@@ -88,14 +88,15 @@ function exploreMode() {
 
         testSettings = testInfo.p_settings;
         testSliceStart = testSettings.Start_TSE;    
-        decPointSpacing = (Number(testSettings.Dec_msec_btw_samples))/1000000;    
+        //decPointSpacing = (Number(testSettings.Dec_msec_btw_samples))/1000000;
+        decPointSpacing = (0.004)   
         console.log('exploreMode: decPointSpacing = ', decPointSpacing);
         instrumentName = 'Instrument: ' + testInfo.config_name;
         hardwareName = 'Hardware: ' + testInfo.hardware_name;
         document.getElementById("instrumentName").innerHTML = instrumentName;
         document.getElementById("hardwareName").innerHTML = hardwareName;
        });
-    exploreTimerID = setTimeout(exploreMode,50);
+    exploreTimerID = setTimeout(exploreMode,60);
 };
 
 
@@ -165,15 +166,6 @@ function exploreMode() {
         document.getElementById("instrumentName").innerHTML = instrumentName;
         document.getElementById("hardwareName").innerHTML = hardwareName;
 
-        //move to function called buildSliceNames(start,end,sliceSize)
-        //give slice start and a number
-        //console.log('getTestInfo: hMaxMs =', hMaxMs);
-        //console.log('getTestInfo: dynamicSliceEnd <= sliceEnd ',dynamicSliceEnd <= sliceEnd);
-        //console.log('getTestInfo: sliceEnd = ', sliceEnd); 
-        //console.log('getTestInfo: dynamicSliceEnd = ', dynamicSliceEnd);
-        //console.log('getTestInfo:counter <= numPages ',getTestInfoCounter <= numPages);
-
-        //console.log('getTestInfoCounter =',getTestInfoCounter);
         if(getTestInfoCounter < numPages) {
           dynamicSliceEnd = (Number(testSliceStart) + getTestInfoCounter*sliceSize );
         };
@@ -193,7 +185,7 @@ function exploreMode() {
         //console.log('getTestInfo: sliceSize = ', sliceSize);   
         //console.log('getTestInfo: rawPointSpacing =',rawPointSpacing);  
        });
-         traceTimerID = setTimeout(traceMode,1000);
+         traceTimerID = setTimeout(traceMode,100);
     };
     
     // DEC CHART CODE //
@@ -203,7 +195,7 @@ function exploreMode() {
         var data = new google.visualization.DataTable();
         data.addColumn('number', 'Time');
         data.addColumn('number', 'Ch1');
-        console.log('drawDecChart: decData =',decData);
+        console.log('drawDecChart: decData =',decData.length);
         console.log('drawDecChart: decPointSpacing =',decPointSpacing);
 
         for (i=0; i<decData.length; i++) {
@@ -286,6 +278,7 @@ function exploreMode() {
          lineWidth: 2.5,
          curveType: 'function',
          crosshair: {trigger: 'both', selected:{opacity: 0.8}, focused:{opacity:0.8}},
+         explorer: {maxZoomOut: 5, maxZoomIn: 0.125},
       };
       var tableOptions = {
          showRowNumber: true,
@@ -505,7 +498,8 @@ $(document).ready(function(){
   $("#exploreBtns").hide();
   $("#exploreMode").click(function () {
     clearTimeout(traceTimerID);
-    //document.getElementById(exploreMode).style.background = 'red';
+    $("#traceMode").css("background-color", "rgb(150,150,150)"); //turn off color
+    $("#exploreMode").css("background-color", "rgb(124,175,46)"); //turn on color
     $("#exploreBtns").fadeIn("fast");
     $("#traceBtns").hide();
     exploreMode();
@@ -539,6 +533,8 @@ $(document).ready(function(){
     $("#traceBtns").hide();
     $("#traceMode").click(function () {
       clearTimeout(exploreTimerID);
+      $("#exploreMode").css("background-color", "rgb(150,150,150)"); //turn off color
+      $("#traceMode").css("background-color", "rgb(124,175,46)"); //turn on color
       $("#traceBtns").fadeIn("fast");
       $("#exploreBtns").hide();
       traceMode();

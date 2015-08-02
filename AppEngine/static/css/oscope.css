@@ -37,14 +37,29 @@ h3 {
     font-family: 'nexa_lightregular';
     font-size: 130%;
     text-align: center;
-    margin: 0 5px 5px 10px;
-    width: 200px;
+    margin: 0 0px 0px 0px;
+    width: 220px;
 }
 
 .optionsBtn {
-    border-radius: 2px;
+    background-color: rgb(150,150,150);
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+    border-radius: 3px;
     margin:2px 0 2px 0;
+    padding: 2px 6px 0 6px;    
  }
+
+.configBtn {
+    background-color: rgb(150,150,150);
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+    border-radius: 3px;
+    margin:10px 0 2px 0;
+    padding: 2px 6px 0 6px; 
+}
 
 #container {
     position: relative;
@@ -71,11 +86,12 @@ h3 {
     border: 1px solid;
     margin: 0 28px 0 0;
     overflow: hidden;
+    padding: 5px 5px 5px 5px;
 }
 
 #optionsBoxTitle {
     text-align: center;
-    margin:0 0 0 45px;
+    margin:0 0 0 50px;
     color: white;
     background-color: black; 
 }
@@ -126,13 +142,25 @@ h3 {
 }
 
 #knobBox {
+    padding:0 30px 5px 30px;
+    border-style: solid;
+    border-color: rgb(197,44,72);
+    border-width: 1px;
+    border-radius: 5px;
+    margin: 0px 30px 0px 5px;
+    min-height: 110px;   
+}
+
+#modeBox {
+    width: 100%;
     padding-top: 0px;
     border-style: solid;
     border-color: rgb(197,44,72);
     border-width: 1px;
     border-radius: 5px;
-    margin: 15px 10px 10px 10px;
-    min-height: 110px;   
+    margin: 0px 0px 5px 9px;
+    min-height: 50px; 
+    padding: 0 5px 5px 5px;  
 }
 
 #knobLabel{
@@ -170,7 +198,7 @@ h3 {
     border-color: rgb(197,44,72);
     border-radius: 5px;
     background-color: rgb(33,33,33);
-    margin: 0 0 180px 0;
+    margin: 80px 0 180px 0;
 }
 
 #submitBtn {
