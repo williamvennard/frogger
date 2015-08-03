@@ -2,7 +2,7 @@
     google.load('visualization', '1', {packages: ['corechart','table']});
        //DECIMATED DATA PLOT
     function fetchDecData(){
-       dec_base_url = 'https://gradientone-dev1.appspot.com/bscopedata/dec/Acme/';
+       //dec_base_url = 'https://gradientone-dev1.appspot.com/bscopedata/dec/Acme/';
        dec_urlPath = 'Tahoe/LED/1436809506690';
        //dec_urlPath = decPathname;
        dec_json_url = dec_base_url + dec_urlPath;
