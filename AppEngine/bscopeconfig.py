@@ -42,9 +42,10 @@ class Handler(InstrumentDataHandler):
             trace = True,
             )
         c.put() 
-        checkbox_names = ["commence_test"]
+        checkbox_names = ["commence_test", "commence_explore"]
         for name in checkbox_names:
             self.is_checked(c,name)
+            print c
         c.put()
         key = 'author & instrument_type & instrument_name = ', author + instrument_type + config_name
         memcache.delete(key)
