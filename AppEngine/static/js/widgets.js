@@ -400,6 +400,8 @@
         companyName = 'Acme';
         testPlanAuthor = 'nedwards';
         startTime = testSetUpInfo[3].children[1].children[1].children[0].value;
+        d = new Date(startTime);
+        var startMS = d.getTime();
         var startNowLogic = new Boolean(
   testSetUpInfo[3].children[1].children[1].children[3].children[1].checked);
         //LOOP FOR WIDGET SETTINGS 
@@ -445,7 +447,7 @@
         //var commit_url = 'https://gradientone-dev1.appspot.com/testconfiginput';
         var commit_url = window.location.origin + "/testconfiginput";
         console.log('commitBtn: indexArray = ', indexArray);
-        var commitData = JSON.stringify({"testplan_name":testPlanName,"author":testPlanAuthor,"company_nickname":companyName,"start_time":startTime,"start_now":startNowLogic,"configs":configArray,"meas":measArray,"duts":dutArray,"order":indexArray});
+        var commitData = JSON.stringify({"testplan_name":testPlanName,"author":testPlanAuthor,"company_nickname":companyName,"start_time":startMS,"start_now":startNowLogic,"configs":configArray,"meas":measArray,"duts":dutArray,"order":indexArray});
         console.log('commitBtn: commitData = ', commitData);
         $.ajax({
         type: "POST",
