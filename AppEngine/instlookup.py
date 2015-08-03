@@ -24,7 +24,7 @@ from google.appengine.api import taskqueue
 import appengine_config
 
 
-class Handler[InstrumentDataHandler):
+class Handler(InstrumentDataHandler):
     def get(self, company_nickname="", testplan_name=""):
         key = 'instlookup' + company_nickname + testplan_name
         memcache.get(key)
