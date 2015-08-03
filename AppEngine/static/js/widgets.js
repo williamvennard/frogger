@@ -315,7 +315,9 @@
         var testSetUpInfo = testSetUp.childNodes;
         var companyName = 'Acme';
         var testPlanName = testSetUpInfo[3].children[0].children[1].children[0].value;
-        var config_search_url = window.location.origin;
+        
+        var config_search_url = 'https://gradientone-test.appspot.com';
+        //var config_search_url = window.location.origin;
         config_search_url += "/instlookup/";
         config_search_url += companyName + "/" + testPlanName;
         console.log('configSearch: config_search_url = ',config_search_url);
@@ -332,21 +334,36 @@
             console.log('commitBtn: Ajax post was a success!');
         },
         });   
-        searchTimerID = setTimeout(getSearchResults, 1000);
+        searchTimerID = setTimeout(getSearchResults, 5000);
         function getSearchResults() {
             console.log('getSearchResults called!!!');
-            //widget_url = 'https://gradientone-dev1.appspot.com/testresults/widgets/Acme.json'
-              var search_results_url = window.location.origin ;
-              search_results_url += "/instlookup/" + companyName + "/" + testPlanName;
+            //widget_url = 'https://gradientone-test.appspot.com/testresults/widgets/Acme.json'
+              //var search_results_url = window.location.origin;
+              var search_results_url = 'https://gradientone-test.appspot.com';
+              search_results_url += "/instlookup/" + companyName + "/";
+              search_results_url += testPlanName;
               console.log('getSearchResults: search_results_url =',search_results_url);
               $.ajax({
                   async: true,
-                  url: widget_url,            
+                  url: search_results_url,            
                   dataType: 'json',
                }).done(function (results) {
                   searchResults = results;
+                  console.log('getSearchResults: results =', results);
+                  console.log('getSearchResults: i = ', i);
+
+                  var configResults = searchResults.explanations
+                  console.log(configResults);
+                  var configInstType = searchResults.selected_inst_type
+                  console.log(configInstType);
+                  var configHardware = searchResults.selected_hardware
+                  console.log(configHardware);
+                  var configAvail = searchResults.avail_inst
+                  console.log(configAvail);
+                  
+
               });
-               console.log('getSearchResults: results =', results);
+               
             clearTimeout(searchTimerID);
         };
     };
@@ -385,9 +402,9 @@
         d = new Date(startTime);
         var startMS = d.getTime();
         startNowLogic = new Boolean(
-      testSetUpInfo[3].children[1].children[1].children[3].children[1].checked);
+       testSetUpInfo[3].children[1].children[1].children[3].children[1].checked);
 
-        //var initInfo_url = 'https://gradientone-dev1.appspot.com/testconfiginput';
+        //var initInfo_url = 'https://gradientone-test.appspot.com/testconfiginput';
         var initInfo_url = window.location.origin;
         initInfo_url += "/testconfiginput";
         var initData = JSON.stringify({"testplan_name":testPlanName,"author":testPlanAuthor,"company_nickname":companyName,"start_time":startMS,"start_now":startNowLogic});
@@ -456,7 +473,7 @@
         };   
         
 
-        //var commit_url = 'https://gradientone-dev1.appspot.com/testconfiginput';
+        //var commit_url = 'https://gradientone-test.appspot.com/testconfiginput';
         var commit_url = window.location.origin + "/testconfiginput";
         console.log('commitBtn: indexArray = ', indexArray);
         var commitData = JSON.stringify({"testplan_name":testPlanName,"author":testPlanAuthor,"company_nickname":companyName,"start_time":startMS,"start_now":startNowLogic,"configs":configArray,"meas":measArray,"duts":dutArray,"order":indexArray});

@@ -73,7 +73,7 @@
 // EXPLORE MODE //
 
 function exploreMode() {
-      test_info_url = 'https://gradientone-dev1.appspot.com/traceresults/Acme/Tahoe/Primetime';
+      test_info_url = 'https://gradientone-test.appspot.com/traceresults/Acme/Tahoe/Primetime';
       $.ajax({
           async: true,
           url: test_info_url,
@@ -112,7 +112,7 @@ function exploreMode() {
 /*    
     function getTestStatus() {
       //status_url = 'https://gradientone-test.appspot.com/testlibrary/Acme/NyquistB/1437712799600.json';
-      status_url = 'https://gradientone-dev1.appspot.com/status/Acme/Tahoe';
+      status_url = 'https://gradientone-test.appspot.com/status/Acme/Tahoe';
       $.ajax({
           async: true,
           url: status_url,            
@@ -130,9 +130,9 @@ function exploreMode() {
     getTestStatus();
 */    
     //Continuously polling at: 
-    //https://gradientone-dev1.appspot.com/testresults/Acme/Tahoe/LED
+    //https://gradientone-test.appspot.com/testresults/Acme/Tahoe/LED
     function traceMode() {
-      test_info_url = 'https://gradientone-dev1.appspot.com/traceresults/Acme/Tahoe/Primetime';
+      test_info_url = 'https://gradientone-test.appspot.com/traceresults/Acme/Tahoe/Primetime';
       $.ajax({
           async: true,
           url: test_info_url,
@@ -334,8 +334,10 @@ function exploreMode() {
       console.log('saveStatus: SAVED!!');
       
       formatSaveUrl = raw_urlPath.split('/');
+
+
       var saveValue = status;
-      var save_url = 'https://gradientone-dev1.appspot.com/datamgmt/' + formatSaveUrl[formatSaveUrl.length-5] + '/' + formatSaveUrl[formatSaveUrl.length-4] + '/' + formatSaveUrl[formatSaveUrl.length-3] + '/' + formatSaveUrl[formatSaveUrl.length-2] + '/' + formatSaveUrl[formatSaveUrl.length-1];
+      var save_url = 'https://gradientone-test.appspot.com/datamgmt/' + formatSaveUrl[formatSaveUrl.length-5] + '/' + formatSaveUrl[formatSaveUrl.length-4] + '/' + formatSaveUrl[formatSaveUrl.length-3] + '/' + formatSaveUrl[formatSaveUrl.length-2] + '/' + formatSaveUrl[formatSaveUrl.length-1];
       console.log('saveStatus: save_url = ',save_url);
 
       var formData = JSON.stringify({"save_status":saveValue,"totalNumPages":totalNumPages,"sliceSize":sliceSize});
@@ -502,7 +504,7 @@ $(document).ready(function(){
     $("#exploreMode").css("background-color", "rgb(124,175,46)"); //turn on color
     $("#exploreBtns").fadeIn("fast");
     $("#traceBtns").hide();
-    exploreMode();
+    //exploreMode();
   });
   $("#exploreSave").click(function () {
       saveStatus('save');
@@ -513,23 +515,76 @@ $(document).ready(function(){
       statusArray = [];
     });
 
-  function exploreStart(el){
+
+    function exploreStart(el){
       console.log('exploreStart !!!!!')
+      formatStartUrl = raw_urlPath.split('/');
+      
+      var startValue = 'Start';
+      var start_url = 'https://gradientone-test.appspot.com/datamgmt/' + 'panelcontrol/Acme/Tahoe/' + formatStartUrl[formatStartUrl.length-2];
+      console.log('exploreStart: start_url =',start_url);
+
+      var startData = JSON.stringify({"start_status":startValue});
+      console.log('exploreStart: startData =', startData);
+     $.ajax({
+        type: "POST",
+        url: save_url,
+        data: formData,
+        dataType: 'json',
+        success: function(data, textStatus, jqXHR)
+        {
+          console.log('saveStatus: Ajax post was a success!');
+        },
+      });
       exploreMode();
     }
     function exploreStop(el){
       console.log('exploreStop!!!!!')
+      formatStartUrl = raw_urlPath.split('/');
+      
+      var startValue = 'Stop';
+      var start_url = 'https://gradientone-test.appspot.com/datamgmt/' + 'panelcontrol/Acme/Tahoe/' + formatStartUrl[formatStartUrl.length-2];
+      console.log('exploreStart: start_url =',start_url);
+
+      var startData = JSON.stringify({"start_status":startValue});
+      console.log('exploreStart: startData =', startData);
+     $.ajax({
+        type: "POST",
+        url: save_url,
+        data: formData,
+        dataType: 'json',
+        success: function(data, textStatus, jqXHR)
+        {
+          console.log('saveStatus: Ajax post was a success!');
+        },
+      });
       clearTimeout(exploreTimerID);
     }
     $("#exploreStartStop").click(function() {
       $(this).text(function(i, v){
-      return v === 'START' ? 'STOP' : 'START'
+      return v === 'STOP' ? 'START' : 'STOP'
       })
       var el = this;
-      return (el.t = !el.t) ? exploreStop(el) : exploreStart(el);
+      return (el.t = !el.t) ? exploreStart(el) : exploreStop(el);
     });
 
-  //TRACE MODE   
+    function exploreResume(el){
+      console.log('exploreResume !!!!!')
+      exploreMode();
+    }
+    function explorePause(el){
+      console.log('explorePause!!!!!')
+      clearTimeout(exploreTimerID);
+    }
+    $("#explorePause").click(function() {
+      $(this).text(function(i, v){
+      return v === 'RESUME' ? 'PAUSE' : 'RESUME'
+      })
+      var el = this;
+      return (el.t = !el.t) ?  explorePause(el) : exploreResume(el);
+    });
+
+  //TRACE MODE //  
     $("#traceBtns").hide();
     $("#traceMode").click(function () {
       clearTimeout(exploreTimerID);
@@ -537,7 +592,7 @@ $(document).ready(function(){
       $("#traceMode").css("background-color", "rgb(124,175,46)"); //turn on color
       $("#traceBtns").fadeIn("fast");
       $("#exploreBtns").hide();
-      traceMode();
+      //traceMode();
     });
     $("#traceSave").click(function () {
       saveStatus('save');
@@ -547,22 +602,72 @@ $(document).ready(function(){
       saveStatus('delete');
       statusArray = [];
     });
-
-
     function traceStart(el){
       console.log('traceStart !!!!!')
-      traceMode();
+      formatStartUrl = raw_urlPath.split('/');
+      
+      var startValue = 'Start';
+      var start_url = 'https://gradientone-test.appspot.com/datamgmt/' + 'panelcontrol/Acme/Tahoe/' + formatStartUrl[formatStartUrl.length-2];
+      console.log('exploreStart: start_url =',start_url);
+
+      var startData = JSON.stringify({"start_status":startValue});
+      console.log('exploreStart: startData =', startData);
+     $.ajax({
+        type: "POST",
+        url: save_url,
+        data: formData,
+        dataType: 'json',
+        success: function(data, textStatus, jqXHR)
+        {
+          console.log('saveStatus: Ajax post was a success!');
+        },
+      });
+      exploreMode();
     }
     function traceStop(el){
       console.log('traceStop!!!!!')
+      formatStartUrl = raw_urlPath.split('/');
+      
+      var startValue = 'Stop';
+      var start_url = 'https://gradientone-test.appspot.com/datamgmt/' + 'panelcontrol/Acme/Tahoe/' + formatStartUrl[formatStartUrl.length-2];
+      console.log('exploreStart: start_url =',start_url);
+
+      var startData = JSON.stringify({"start_status":startValue});
+      console.log('exploreStart: startData =', startData);
+     $.ajax({
+        type: "POST",
+        url: save_url,
+        data: formData,
+        dataType: 'json',
+        success: function(data, textStatus, jqXHR)
+        {
+          console.log('saveStatus: Ajax post was a success!');
+        },
+      });
       clearTimeout(traceTimerID);
     }
     $("#traceStartStop").click(function() {
       $(this).text(function(i, v){
-      return v === 'START' ? 'STOP' : 'START'
+      return v === 'STOP' ? 'START' : 'STOP'
       })
       var el = this;
-      return (el.t = !el.t) ? traceStop(el) : traceStart(el);
+      return (el.t = !el.t) ? traceStart(el) : traceStop(el);
+    });
+
+    function traceResume(el){
+      console.log('traceResume !!!!!')
+      traceMode();
+    }
+    function tracePause(el){
+      console.log('tracePause!!!!!')
+      clearTimeout(traceTimerID);
+    }
+    $("#tracePause").click(function() {
+      $(this).text(function(i, v){
+      return v === 'PAUSE' ? 'RESUME' : 'PAUSE'
+      })
+      var el = this;
+      return (el.t = !el.t) ? tracePause(el) : traceResume(el);
     }); 
           
 });
