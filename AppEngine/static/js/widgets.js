@@ -368,7 +368,8 @@
         companyName = 'Acme';
         testPlanAuthor = 'nedwards';
         startTime = testSetUpInfo[3].children[1].children[1].children[0].value;
-        startNowLogic = testSetUpInfo[3].children[1].children[1].children[3].children[1].checked;
+        startNowLogic = new Boolean(
+      testSetUpInfo[3].children[1].children[1].children[3].children[1].checked);
 
         var initInfo_url = 'https://gradientone-dev1.appspot.com/testconfiginput';
         var initData = JSON.stringify({"testplan_name":testPlanName,"author":testPlanAuthor,"company_nickname":companyName,"start_time":startTime,"start_now":startNowLogic});
