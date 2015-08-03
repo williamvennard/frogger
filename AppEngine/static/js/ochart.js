@@ -521,7 +521,7 @@ $(document).ready(function(){
       formatStartUrl = raw_urlPath.split('/');
       
       var startValue = 'Start';
-      var start_url = 'https://gradientone-test.appspot.com/datamgmt/' + 'panelcontrol/Acme/Tahoe/' + formatStartUrl[formatStartUrl.length-2];
+      var start_url = 'https://gradientone-test.appspot.com/datamgmt/' + 'panelcontrol/Acme/Tahoe/Primetime';// + formatStartUrl[formatStartUrl.length-2];
       console.log('exploreStart: start_url =',start_url);
 
       var startData = JSON.stringify({"start_status":startValue});
@@ -540,10 +540,10 @@ $(document).ready(function(){
     }
     function exploreStop(el){
       console.log('exploreStop!!!!!')
-      formatStartUrl = raw_urlPath.split('/');
+      //formatStartUrl = raw_urlPath.split('/');
       
       var startValue = 'Stop';
-      var start_url = 'https://gradientone-test.appspot.com/datamgmt/' + 'panelcontrol/Acme/Tahoe/' + formatStartUrl[formatStartUrl.length-2];
+      var start_url = 'https://gradientone-test.appspot.com/datamgmt/' + 'panelcontrol/Acme/Tahoe/Primetime';// + formatStartUrl[formatStartUrl.length-2];
       console.log('exploreStart: start_url =',start_url);
 
       var startData = JSON.stringify({"start_status":startValue});
@@ -607,7 +607,7 @@ $(document).ready(function(){
       formatStartUrl = raw_urlPath.split('/');
       
       var startValue = 'Start';
-      var start_url = 'https://gradientone-test.appspot.com/datamgmt/' + 'panelcontrol/Acme/Tahoe/' + formatStartUrl[formatStartUrl.length-2];
+      var start_url = 'https://gradientone-test.appspot.com/datamgmt/' + 'panelcontrol/Acme/Tahoe/Primetime';// + formatStartUrl[formatStartUrl.length-2];
       console.log('exploreStart: start_url =',start_url);
 
       var startData = JSON.stringify({"start_status":startValue});
@@ -629,7 +629,7 @@ $(document).ready(function(){
       formatStartUrl = raw_urlPath.split('/');
       
       var startValue = 'Stop';
-      var start_url = 'https://gradientone-test.appspot.com/datamgmt/' + 'panelcontrol/Acme/Tahoe/' + formatStartUrl[formatStartUrl.length-2];
+      var start_url = 'https://gradientone-test.appspot.com/datamgmt/' + 'panelcontrol/Acme/Tahoe/Primetime';// + formatStartUrl[formatStartUrl.length-2];
       console.log('exploreStart: start_url =',start_url);
 
       var startData = JSON.stringify({"start_status":startValue});
