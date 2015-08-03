@@ -209,7 +209,7 @@ app = webapp2.WSGIApplication([
     ('/upload/success',FileUploadSuccess),
     ('/upload/failure',FileUploadFailure),
     ('/testmanager', testmanager.Handler),
-    )'/instlookup/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', instlookup.Handler),
+    ('/instlookup/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', instlookup.Handler),
     ('/traceresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', traceresultsdata.Handler)
 ], debug=True)
 
