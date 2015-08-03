@@ -109,7 +109,7 @@
 
                 testPlanHTML+= "</form>";
                 testPlanHTML+= "</div>";
-                testPlanHTML+= "<input id='configSearchBtn' type='submit' value='SEARCH'>";   
+                testPlanHTML+= "<button id='configSearchBtn' onclick='configSearch(" + index + ")'>SEARCH</button>";   
                 testPlanHTML+= "</div>";
 
                 //$('#configSearchBtn').trigger('click'); 
@@ -218,7 +218,7 @@
 
             testPlanHTML+= "</form>";
             testPlanHTML+= "</div>";
-            testPlanHTML+= "<input id='configSearchBtn' value='SEARCH'>"; 
+            testPlanHTML+= "<button id='configSearchBtn' onclick='configSearch(" + index + ")'>SEARCH</button>"; 
             testPlanHTML+= "</div>";
 
             document.getElementById("testPlan").innerHTML = testPlanHTML; 
@@ -263,37 +263,7 @@
         };
     })(jQuery);
 
-    //CONFIG SEARCH BUTTON
-    var searchTimerID;
-    function configSearch() {
-        console.log('configSearch!!!!!');
-        var config_search_url = '';
-        //var searchInput = JSON.stringify({"testplan_name":testPlanName,"author":testPlanAuthor});
-        //console.log('configSearch: searchInput = ',searchInput);
-        $.ajax({
-        type: "POST",
-        url: config_search_url,
-        data: searchInput,
-        dataType: 'json',
-        success: function(data, textStatus, jqXHR)
-        {
-            console.log('commitBtn: Ajax post was a success!');
-        },
-        });   
-        searchTimerID = setTimeout(getSearchResults, 5000);
-        function getSearchResults() {
-            console.log('getSearchResults called!!!');
-            widget_url = 'https://gradientone-dev1.appspot.com/testresults/widgets/Acme.json';
-              $.ajax({
-                  async: true,
-                  url: widget_url,            
-                  dataType: 'json',
-               }).done(function (results) {
-                  searchResults = results;
-              });
-            clearTimeout(searchTimerID);
-        };
-    };
+    
 
     var d;
     function removeWidget(index) {
@@ -327,6 +297,45 @@
     $("#commitBtn").click(function () {
         commitBtn();
     });
+
+//CONFIG SEARCH BUTTON
+    var searchTimerID;
+    function configSearch(i) {
+        console.log('configSearch!!!!!');
+        var configBand = children[i].children[0].children[1].children[1].children[1].value
+        var configSampleRate = children[i].children[0].children[1].children[2].children[1].value
+        var configSampleSize = children[i].children[0].children[1].children[3].children[1].value
+        var configResolution = children[i].children[0].children[1].children[4].children[1].value
+        var configChNum = children[i].children[0].children[1].children[5].children[1].value
+
+        var config_search_url = '';
+        var searchInput = JSON.stringify({});
+        console.log('configSearch: searchInput = ',searchInput);
+        $.ajax({
+        type: "POST",
+        url: config_search_url,
+        data: searchInput,
+        dataType: 'json',
+        success: function(data, textStatus, jqXHR)
+        {
+            console.log('commitBtn: Ajax post was a success!');
+        },
+        });   
+        searchTimerID = setTimeout(getSearchResults, 1000);
+        function getSearchResults() {
+            console.log('getSearchResults called!!!');
+            widget_url = 'https://gradientone-dev1.appspot.com/testresults/widgets/Acme.json';
+              $.ajax({
+                  async: true,
+                  url: widget_url,            
+                  dataType: 'json',
+               }).done(function (results) {
+                  searchResults = results;
+              });
+               console.log('getSearchResults: results =', results);
+            clearTimeout(searchTimerID);
+        };
+    };
 //CANVAS ORDER
     $(document).ready(function() {
         $(".droppable").sortable({
@@ -350,6 +359,31 @@
     var measArray = [];
     var dutArray = [];
     var indexArray = [];
+
+    function postInitInfo() {
+        console.log('postInitInfo called!!!!');
+        var testSetUp = document.getElementById('testSetup');
+        var testSetUpInfo = testSetUp.childNodes;
+        testPlanName = testSetUpInfo[3].children[0].children[1].children[0].value;
+        companyName = 'Acme';
+        testPlanAuthor = 'nedwards';
+        startTime = testSetUpInfo[3].children[1].children[1].children[0].value;
+        startNowLogic = testSetUpInfo[3].children[1].children[1].children[3].children[1].checked;
+
+        var initInfo_url = 'https://gradientone-dev1.appspot.com/testconfiginput';
+        var initData = JSON.stringify({"testplan_name":testPlanName,"author":testPlanAuthor,"company_nickname":companyName,"start_time":startTime,"start_now":startNowLogic});
+        console.log('postInitInfo: initData = ', initData);
+        $.ajax({
+        type: "POST",
+        url: initInfo_url,
+        data: initData,
+        dataType: 'json',
+        success: function(data, textStatus, jqXHR)
+        {
+            console.log('commitBtn: Ajax post was a success!');
+        },
+        });
+    };
 
     function commitBtn() {
         Dropped(); //get order 
