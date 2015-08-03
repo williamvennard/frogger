@@ -324,7 +324,9 @@
         searchTimerID = setTimeout(getSearchResults, 1000);
         function getSearchResults() {
             console.log('getSearchResults called!!!');
-            widget_url = 'https://gradientone-dev1.appspot.com/testresults/widgets/Acme.json';
+            //widget_url = 'https://gradientone-dev1.appspot.com/testresults/widgets/Acme.json';
+              widget_utl = window.location.origin ;
+              widget_utl += "/testresults.widgets/Acme.json";
               $.ajax({
                   async: true,
                   url: widget_url,            
@@ -368,11 +370,15 @@
         companyName = 'Acme';
         testPlanAuthor = 'nedwards';
         startTime = testSetUpInfo[3].children[1].children[1].children[0].value;
+        d = new Date(startTime);
+        var startMS = d.getTime();
         startNowLogic = new Boolean(
       testSetUpInfo[3].children[1].children[1].children[3].children[1].checked);
 
-        var initInfo_url = 'https://gradientone-dev1.appspot.com/testconfiginput';
-        var initData = JSON.stringify({"testplan_name":testPlanName,"author":testPlanAuthor,"company_nickname":companyName,"start_time":startTime,"start_now":startNowLogic});
+        //var initInfo_url = 'https://gradientone-dev1.appspot.com/testconfiginput';
+        var initInfo_url = window.location.origin;
+        initInfo_url += "/testconfiginput";
+        var initData = JSON.stringify({"testplan_name":testPlanName,"author":testPlanAuthor,"company_nickname":companyName,"start_time":startMS,"start_now":startNowLogic});
         console.log('postInitInfo: initData = ', initData);
         $.ajax({
         type: "POST",
@@ -436,7 +442,8 @@
         };   
         
 
-        var commit_url = 'https://gradientone-dev1.appspot.com/testconfiginput';
+        //var commit_url = 'https://gradientone-dev1.appspot.com/testconfiginput';
+        var commit_url = window.location.origin + "/testconfiginput";
         console.log('commitBtn: indexArray = ', indexArray);
         var commitData = JSON.stringify({"testplan_name":testPlanName,"author":testPlanAuthor,"company_nickname":companyName,"start_time":startTime,"start_now":startNowLogic,"configs":configArray,"meas":measArray,"duts":dutArray,"order":indexArray});
         console.log('commitBtn: commitData = ', commitData);
