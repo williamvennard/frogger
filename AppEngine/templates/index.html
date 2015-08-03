@@ -175,7 +175,7 @@
                             <div class="col-md-4" style="height:25px;">
                                 <tr>
                                     <td class="label">                                        
-                                      <input class="nameTestInput" type="text" name="start_time" value="{{start_time}}" placeholder="time goes here">
+                                      <input class="nameTestInput" id="start_time" type="text" name="start_time" value="{{start_time}}" placeholder="time goes here">
                                       <input type="hidden" name="company_nickname" value="Acme">
                                       <input type="hidden" name="timepost" value=True>
                                     </td>
@@ -215,6 +215,10 @@
     <script type="text/javascript" src="../static/js/widgets.js"></script>
 
     <script type="text/javascript">
+    $(function() {
+      $("#start_time").datepicker();
+    });
+
     $('#collapseOne').collapse("hide");
     //$("#accordion").prop('disabled', true);
     $("#accordion").hide();
@@ -238,6 +242,7 @@
     <script type="text/javascript">
 $(document).ready(function () {
     widget_url = 'https://gradientone-dev1.appspot.com/testresults/widgets/Acme.json';
+    widget_url = window.location.origin + '/testresults/widgets/Acme.json';
       $.ajax({
           async: true,
           url: widget_url,            
