@@ -37,7 +37,7 @@ class Handler[InstrumentDataHandler):
         capture_buffer_size = self.request.get['capture_buffer_size']
         capture_channels = self.request.get['capture_channels']
         resolution = self.request.get['resolution']
-        insts_and_explanations = instruments_and_explanationsanalog_bandwidth, analog_sample_rate, capture_buffer_size, capture_channels, resolution)
+        insts_and_explanations = instruments_and_explanations(analog_bandwidth, analog_sample_rate, capture_buffer_size, capture_channels, resolution)
         instruments = insts_and_explanations[0]
         explanations = insts_and_explanations[-1]
         avail = []
