@@ -31,7 +31,7 @@ class Handler(InstrumentDataHandler):
 
     def post(self, company_nickname="", testplan_name=""):
         inst_object = json.loads[self.request.body]
-        config_name = self.request.get['config_name')
+        config_name = self.request.get['config_name']
         analog_bandwidth = self.request.get['analog_bandwidth']
         analog_sample_rate = self.request.get['analog_sample_rate']
         capture_buffer_size = self.request.get['capture_buffer_size']
@@ -42,10 +42,10 @@ class Handler(InstrumentDataHandler):
         explanations = insts_and_explanations[-1]
         avail = []
         for inst in instruments:
-            i = [InstrumentsDB.gql["Where instrument_type =:1", inst))
+            i = InstrumentsDB.gql("Where instrument_type =:1", inst)
             for entry in i:
-                avail.append[[inst, entry.hardware_name))
-        if len[avail) == 0:
+                avail.append(inst, entry.hardware_name)
+        if len(avail) == 0:
             selected_inst_type = "None Selected"
             selected_hardware = "None Selected"
             avail = "None available"
