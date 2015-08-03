@@ -52,7 +52,9 @@ import mainpage
 import configlookup
 import testmanager
 import traceresultsdata
-#import ordermanager
+import exploremodestop
+import exp_testconfiginput
+import panelcontrol
 from gradientone import InstrumentDataHandler
 
 authorized_users = ['charlie@gradientone.com',
@@ -170,15 +172,17 @@ app = webapp2.WSGIApplication([
     ('/instruments', instruments.Handler),
     ('/instruments/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', instruments.Handler),
     ('/instruments/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+.json)', instruments.Handler),
+    ('/panelcontrol/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-])', panelcontrol.Handler),
     ('/configinput', configinput.Handler),
     ('/bscopeconfiginput', bscopeconfig.Handler),
     ('/configoutput/([a-zA-Z0-9-]+)', configoutput.Handler),
     ('/configoutput/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', configoutput.Handler),
     ('/datamgmt/bscopedata/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', datamgmt.Handler),
-    ('/testconfiginput', testconfiginput.Handler),
+    ('/testconfiginput', exp_testconfiginput.Handler),
     ('/testconfigoutput/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', testconfigoutput.Handler),
     ('/testplansummary/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', testplansummary.Handler),
     ('/testplansummary/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', testplansummary.Handler),
+    ('/exploremodestop/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', exploremodestop.Handler),
     ('/communitytests', communitytests.Handler),
     ('/search', search.Handler),
     ('/status/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', status.Handler),
@@ -186,6 +190,7 @@ app = webapp2.WSGIApplication([
     ('/testresults', canvaspage.Handler),
     ('/testresults/([a-zA-Z0-9-]+)', testresultsdata.Handler),
     ('/testresults/([a-zA-Z0-9-]+.json)', canvaspage.Handler),
+    ('/testresults/widgets/([a-zA-Z0-9-]+.json)', canvaspage.Handler),
     ('/testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', testresultsdata.Handler),
     ('/testlibrary/([a-zA-Z0-9-]+)', testlibrary.Handler),
     ('/testlibrary/([a-zA-Z0-9-]+.json)', testlibrary.Handler),
@@ -204,7 +209,6 @@ app = webapp2.WSGIApplication([
     ('/upload/failure',FileUploadFailure),
     ('/testmanager', testmanager.Handler),
     ('/traceresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', traceresultsdata.Handler)
-#    ('/ordermanager', ordermanager.Handler),
 ], debug=True)
 
 
