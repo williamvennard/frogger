@@ -50,6 +50,10 @@ class Handler(InstrumentDataHandler):
             rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE company_nickname =:1 and commence_test =:2 and hardware_name =:3", 
                                 company_nickname, True, hardware_name)
             rows = list(rows)
-            config = query_to_dict(rows)
-            config = {'configs':config}
+            configs_tps_traces = query_to_dict(rows)
+            rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE company_nickname =:1 and commence_explore =:2 and hardware_name =:3", 
+                                company_nickname, True, hardware_name)
+            rows = list(rows)
+            configs_exps = query_to_dict(rows)
+            config = {'configs_exps':configs_exps, 'configs_tps_traces':configs_tps_traces}
             render_json(self, config)
