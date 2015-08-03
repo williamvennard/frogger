@@ -55,6 +55,7 @@ import traceresultsdata
 import exploremodestop
 import exp_testconfiginput
 import panelcontrol
+import instlookup
 from gradientone import InstrumentDataHandler
 
 authorized_users = ['charlie@gradientone.com',
@@ -208,6 +209,7 @@ app = webapp2.WSGIApplication([
     ('/upload/success',FileUploadSuccess),
     ('/upload/failure',FileUploadFailure),
     ('/testmanager', testmanager.Handler),
+    )'/instlookup/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', instlookup.Handler),
     ('/traceresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', traceresultsdata.Handler)
 ], debug=True)
 
