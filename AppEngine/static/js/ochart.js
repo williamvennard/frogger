@@ -528,8 +528,8 @@ $(document).ready(function(){
       console.log('exploreStart: startData =', startData);
      $.ajax({
         type: "POST",
-        url: save_url,
-        data: formData,
+        url: start_url,
+        data: startData,
         dataType: 'json',
         success: function(data, textStatus, jqXHR)
         {
@@ -550,8 +550,8 @@ $(document).ready(function(){
       console.log('exploreStart: startData =', startData);
      $.ajax({
         type: "POST",
-        url: save_url,
-        data: formData,
+        url: start_url,
+        data: startData,
         dataType: 'json',
         success: function(data, textStatus, jqXHR)
         {
@@ -614,8 +614,8 @@ $(document).ready(function(){
       console.log('exploreStart: startData =', startData);
      $.ajax({
         type: "POST",
-        url: save_url,
-        data: formData,
+        url: start_url,
+        data: startData,
         dataType: 'json',
         success: function(data, textStatus, jqXHR)
         {
@@ -636,8 +636,8 @@ $(document).ready(function(){
       console.log('exploreStart: startData =', startData);
      $.ajax({
         type: "POST",
-        url: save_url,
-        data: formData,
+        url: start_url,
+        data: startData,
         dataType: 'json',
         success: function(data, textStatus, jqXHR)
         {
