@@ -99,8 +99,6 @@ function exploreMode() {
     exploreTimerID = setTimeout(exploreMode,60);
 };
 
-
-
     //LOADING URL
     //test_info_url = window.location.pathname + '.json';
     // console.log(test_info_url);
@@ -185,7 +183,7 @@ function exploreMode() {
         //console.log('getTestInfo: sliceSize = ', sliceSize);   
         //console.log('getTestInfo: rawPointSpacing =',rawPointSpacing);  
        });
-         traceTimerID = setTimeout(traceMode,100);
+         traceTimerID = setTimeout(traceMode,10000);
     };
     
     // DEC CHART CODE //
@@ -622,7 +620,7 @@ $(document).ready(function(){
           console.log('saveStatus: Ajax post was a success!');
         },
       });
-      exploreMode();
+      traceMode();
     }
     function traceStop(el){
       console.log('traceStop!!!!!')
