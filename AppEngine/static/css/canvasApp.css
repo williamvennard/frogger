@@ -5,6 +5,14 @@
     margin: 5px 0 5px 0;
 }
 
+.configBox {
+    background-color: rgb(33,33,33);
+    border-radius: 5px;
+    border: 1px solid black;
+    margin: 5px 0 5px 0;
+    height: 210px;
+}
+
 .testSetupBox {
     background-color: rgb(33,33,33);
     border-radius: 5px;
@@ -37,7 +45,7 @@
 .appRemove {
     color: white;
     background-color: rgb(33,33,33); 
-    float: right;
+    position: relative;
     margin-right: 5px;
 }
 
@@ -48,10 +56,33 @@
 .appInput {
     width: 125px;
     position: relative;
-    left: 180px;
+    left: 145px;
+    top: -60px;
     border-style: solid;
     border-width: 1px;
     border-color: black;
+}
+
+.configResults {
+    width: 125px;
+    position: relative;
+    left: 145px;
+    top: -55px;
+    border-style: solid;
+    border-width: 0px;
+    border-color: black;
+    color: rgb(197,44,72);
+}
+
+.appLabel {
+    position: relative;
+    top: -20px;
+    left: 30px;
+    margin: 0 0 15px 0;
+    width: 120px;
+    color: white;
+    font-size: 13;
+    font-family: 'nexa_lightregular';
 }
 
 .testSetupLabel {
@@ -69,23 +100,12 @@
     left: -100px;
     top: 2px;
     height: 30px;
-    width: 380px;
+    width: 350px;
     background-color: rgb(33,33,33);
     border-style: solid;
     border-width: 0px;
     border-color: black;
     padding: 0 0  0 0;
-}
-
-.appLabel {
-    position: relative;
-    top: 25px;
-    left: 30px;
-    margin-bottom: 0px;
-    width: 135px;
-    color: white;
-    font-size: 13;
-    font-family: 'nexa_lightregular';
 }
 
 .appForm {
@@ -100,9 +120,10 @@
     font-family: 'nexa_lightregular';
     letter-spacing: 2px;
     width: 80px;
+    float: right;
     position: relative;
-    bottom: 15px;
-    margin: 10px 20px 15px 340px;
+    bottom: 40px;
+    margin: 0 130px 0px 0px;
     padding: 4px 0 0 0;
     border-style: solid;
     border-width: 1px;
@@ -112,20 +133,43 @@
 }
 
 #nameSubmitBtn {
+    text-align: center;
     color: black;
     font-family: 'nexa_lightregular';
     letter-spacing: 2px;
-    width: 80px;
+    width: 95px;
     height: 30px;
-    position: relative;
-    top: -25px;
-    left: 80px;
+    float: right;
+    margin:10px 120px 0 0;
     padding: 4px 0 0 0;
     border-style: solid;
     border-width: 1px;
     border-radius: 5px;
     border-color: rgb(38,38,39);
     background-color: rgb(124,175,46);    
+}
+
+#configSearchBtn {
+    color: black;
+    font-family: 'nexa_lightregular';
+    letter-spacing: 2px;
+    width: 80px;
+    float: left;
+    position: relative;
+    top:60px;
+    left: 93px;
+    margin: 8px 0px 0 0px;
+    padding: 4px 0 0 0;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 5px;
+    border-color: rgb(38,38,39);
+    background-color: rgb(124,175,46);
+}
+
+#configSearchResults {
+margin: 65px 0 0 0;
+
 }
 
 #commitBtn {
@@ -150,7 +194,10 @@
 }
 
 .commitBox {
-    margin: 5px 0 5px 0;
+    position: relative;
+    top: -20px;
+    height: 25px;
+    margin: 25px 0 5px 0;
 }
 
 .startNowBox {

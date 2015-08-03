@@ -38,7 +38,7 @@
                             <li class="dots glyphicon glyphicon-option-vertical"></li>
                             <li><a href="instruments">INSTRUMENTS</a></li>
                             <li class="dots glyphicon glyphicon-option-vertical"></li>
-                            <li><a href="testlibrary">TEST LIBRARY</a></li>
+                            <li><a href="testlibrary/acme">TEST LIBRARY</a></li>
                             <li class="dots glyphicon glyphicon-option-vertical"></li>
                             <li><a href="community">COMMUNITY</a></li>            
                         </ul>
@@ -148,7 +148,8 @@
             <fieldset class="col-md-12" id="canvasBox" style="width: 80%;">
                 <span class="spacer"></span><legend class="text-uppercase" style="width: 118px;">Test Space</legend><span class="spacer"></span>
 <!--NEW TEST PLAN-->
-                <div class="testSetupBox menu collapseNewTest" id="">
+                <div class="testSetupBox menu collapseNewTest" id="testSetup">
+                    <button id="nameSubmitBtn">CONTINUE</button> 
                     <form method="post">
                         <div class="row"> 
                             <div class="col-md-4">
@@ -187,9 +188,8 @@
                                     </td>  
                                 </div>                               
                             </div>
-                            <input id="nameSubmitBtn" type="submit" value="SUBMIT" style="">
-                        </div>                                
-                    </form>      
+                        </div>
+                    </form>                                 
                 </div>
 <!--WIDGETS go HERE-->
                 
@@ -227,8 +227,11 @@
       $(".collapseNewTest").hide();
       $(".collapseCommitTest").hide();
       $(".tog").click(function () {
-          $("#accordion").show();  
+          //$("#accordion").show();  
           $(".collapseNewTest").fadeIn("fast"); 
+      });
+      $("#nameSubmitBtn").click(function () {
+          $("#accordion").fadeIn("fast");  
       });
     });     
     </script>
