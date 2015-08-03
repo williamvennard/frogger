@@ -360,6 +360,7 @@
         testPlanAuthor = 'nedwards';
         startTime = testSetUpInfo[3].children[1].children[1].children[0].value;
         startNowLogic = testSetUpInfo[3].children[1].children[1].children[3].children[1].checked;
+        startNowLogic = String(startNowLogic);
         //LOOP FOR WIDGET SETTINGS 
         var d = document.getElementById('testPlan');
         var children = d.childNodes;
