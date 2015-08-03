@@ -44,7 +44,7 @@
                 testPlanHTML+= "</div>";
             }else if(planItemType === 'config') {
                 console.log('TYPE config');
-                //search
+                
                 var configName = children[index].children[0].children[1].children[0].value
                 var configBand = children[index].children[0].children[1].children[1].children[1].value
                 var configSampleRate = children[index].children[0].children[1].children[2].children[1].value
@@ -302,14 +302,25 @@
     var searchTimerID;
     function configSearch(i) {
         console.log('configSearch!!!!!');
+        var d = document.getElementById('testPlan');
+        var children = d.childNodes;
+
         var configBand = children[i].children[0].children[1].children[1].children[1].value
         var configSampleRate = children[i].children[0].children[1].children[2].children[1].value
         var configSampleSize = children[i].children[0].children[1].children[3].children[1].value
         var configResolution = children[i].children[0].children[1].children[4].children[1].value
         var configChNum = children[i].children[0].children[1].children[5].children[1].value
 
-        var config_search_url = '';
-        var searchInput = JSON.stringify({});
+        var testSetUp = document.getElementById('testSetup');
+        var testSetUpInfo = testSetUp.childNodes;
+        var companyName = 'Acme';
+        var testPlanName = testSetUpInfo[3].children[0].children[1].children[0].value;
+        var config_search_url = window.location.origin;
+        config_search_url += "/instlookup/";
+        config_search_url += companyName + "/" + testPlanName;
+        console.log('configSearch: config_search_url = ',config_search_url);
+
+        var searchInput = JSON.stringify({"analog_bandwidth":configBand,"analog_sample_rate":configSampleRate, "capture_buffer_size":configSampleSize, "capture_channels":configChNum, "resolution":configResolution});
         console.log('configSearch: searchInput = ',searchInput);
         $.ajax({
         type: "POST",
@@ -324,9 +335,10 @@
         searchTimerID = setTimeout(getSearchResults, 1000);
         function getSearchResults() {
             console.log('getSearchResults called!!!');
-            //widget_url = 'https://gradientone-dev1.appspot.com/testresults/widgets/Acme.json';
-              widget_utl = window.location.origin ;
-              widget_utl += "/testresults.widgets/Acme.json";
+            //widget_url = 'https://gradientone-dev1.appspot.com/testresults/widgets/Acme.json'
+              var search_results_url = window.location.origin ;
+              search_results_url += "/instlookup/" + companyName + "/" + testPlanName;
+              console.log('getSearchResults: search_results_url =',search_results_url);
               $.ajax({
                   async: true,
                   url: widget_url,            
