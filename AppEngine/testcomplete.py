@@ -102,9 +102,9 @@ class Handler(InstrumentDataHandler):
                     start_tse=(test_complete_content['start_tse']),
                     )
             to_save.append(r) 
-            #memcache.set(key, to_save)
             db.put(to_save)
-            result = db.GqlQuery("SELECT * FROM ConfigDB WHERE config_name =:1 and hardware_name =:2 and company_nickname =:3 and testplan_name =:4", config_name, hardware_name, company_nickname, testplan_name)
-            for r in result:
-                r.commence_test = False
-                r.put()
+            #memcache.set(key, to_save)
+            key = db.Key.from_path('ConfigDB', config_name, parent = company_key())
+            config = db.get(key)
+            config.commence_test = False
+            config.put()

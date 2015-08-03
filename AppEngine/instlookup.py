@@ -1,5 +1,6 @@
 from gradientone import InstrumentDataHandler
 from gradientone import render_json
+from gradientone import render_json_cached
 from gradientone import author_creation
 from gradientone import query_to_dict
 from gradientone import is_checked
@@ -27,16 +28,17 @@ import appengine_config
 class Handler(InstrumentDataHandler):
     def get(self, company_nickname="", testplan_name=""):
         key = 'instlookup' + company_nickname + testplan_name
-        memcache.get(key)
+        result = memcache.get(key)
+        render_json_cached(self, result)
 
     def post(self, company_nickname="", testplan_name=""):
-        inst_object = json.loads[self.request.body]
-        config_name = self.request.get['config_name']
-        analog_bandwidth = self.request.get['analog_bandwidth']
-        analog_sample_rate = self.request.get['analog_sample_rate']
-        capture_buffer_size = self.request.get['capture_buffer_size']
-        capture_channels = self.request.get['capture_channels']
-        resolution = self.request.get['resolution']
+        inst_object = json.loads(self.request.body)
+        print inst_object
+        analog_bandwidth = inst_object['analog_bandwidth']
+        analog_sample_rate = inst_object['analog_sample_rate']
+        capture_buffer_size = inst_object['capture_buffer_size']
+        capture_channels = inst_object['capture_channels']
+        resolution = inst_object['resolution']
         insts_and_explanations = instruments_and_explanations(analog_bandwidth, analog_sample_rate, capture_buffer_size, capture_channels, resolution)
         instruments = insts_and_explanations[0]
         explanations = insts_and_explanations[-1]
@@ -44,7 +46,7 @@ class Handler(InstrumentDataHandler):
         for inst in instruments:
             i = InstrumentsDB.gql("Where instrument_type =:1", inst)
             for entry in i:
-                avail.append(inst, entry.hardware_name)
+                avail.append((inst, entry.hardware_name))
         if len(avail) == 0:
             selected_inst_type = "None Selected"
             selected_hardware = "None Selected"
