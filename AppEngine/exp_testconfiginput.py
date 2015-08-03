@@ -36,7 +36,6 @@ class Handler(InstrumentDataHandler):
     def post(self):
         testplan_object = json.loads(self.request.body)
         print testplan_object
-        print type(testplan_object)
         configs = []
         testplan_name = testplan_object['testplan_name']
         author = testplan_object['author']
