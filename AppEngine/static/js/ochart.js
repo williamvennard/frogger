@@ -278,7 +278,7 @@ function exploreMode() {
          lineWidth: 2.5,
          curveType: 'function',
          crosshair: {trigger: 'both', selected:{opacity: 0.8}, focused:{opacity:0.8}},
-         explorer: {maxZoomOut: 5, maxZoomIn: 0.125},
+         explorer: {maxZoomOut: 10, maxZoomIn: 0.125},
       };
       var tableOptions = {
          showRowNumber: true,
@@ -330,9 +330,9 @@ function exploreMode() {
     //https://gradientone-test.appspot.com/datamgmt/bscopedata/Acme/Tahoe/wildwood/1436937598030
 
     function saveStatus(status) {
-     document.getElementById("save").disabled = true; 
-      console.log('saveStatus: sliceSize = ',sliceSize);
-      console.log('saveStatus: totalNumPages = ',totalNumPages);
+     document.getElementById("traceSave").disabled = true; 
+      console.log('saveStatus: SAVED!!');
+      
       formatSaveUrl = raw_urlPath.split('/');
       var saveValue = status;
       var save_url = 'https://gradientone-dev1.appspot.com/datamgmt/' + formatSaveUrl[formatSaveUrl.length-5] + '/' + formatSaveUrl[formatSaveUrl.length-4] + '/' + formatSaveUrl[formatSaveUrl.length-3] + '/' + formatSaveUrl[formatSaveUrl.length-2] + '/' + formatSaveUrl[formatSaveUrl.length-1];
