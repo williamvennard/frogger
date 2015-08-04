@@ -31,7 +31,7 @@
                 testPlanHTML+= "' placeholder='name goes here'>";
 
                 testPlanHTML+= "<div class='row appRow'><tr><td class='label'>";
-                testPlanHTML+= "<p class='appLabel'>Device Under Test Type:</p>"; 
+                testPlanHTML+= "<p class='appLabel'> ice Under Test Type:</p>"; 
                 testPlanHTML+= "<input class='appInput' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' name='dut_type' value='" + dutType;
                 testPlanHTML+= "'></td></tr></div>";
 
@@ -202,19 +202,23 @@
 
             testPlanHTML+= "<div class='row appRow'>";
             testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Results:</p>"; 
-            testPlanHTML+= "<p class='configResults'>{{ explanations }}</p></td></tr></div>";
+            testPlanHTML+= "<p class='configResults' id='results" + index;
+            testPlanHTML+= "'></p></td></tr></div>";
 
             testPlanHTML+= "<div class='row appRow'>";
             testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Instrument Type:</p>"; 
-            testPlanHTML+= "<p class='configResults' style='' type='text' name='selected_inst_type' value='{{selected_inst_type}}'></p></td></tr></div>";
+            testPlanHTML+= "<p class='configResults' style='' type='text' name='selected_inst_type' value='{{selected_inst_type}}' id='instType" + index;
+            testPlanHTML+= "'></p></td></tr></div>";
 
             testPlanHTML+= "<div class='row appRow'>";
             testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Hardware:</p>"; 
-            testPlanHTML+= "<p class='configResults' style='' type='text' name='selected_hardware' value='{{selected_hardware}}'></p></td></tr></div>";
+            testPlanHTML+= "<p class='configResults' style='' type='text' name='selected_hardware' value='{{selected_hardware}}' id='hardware" + index;
+            testPlanHTML+= "'></p></td></tr></div>";
 
             testPlanHTML+= "<div class='row appRow'>";
             testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Available Instruments:</p>"; 
-            testPlanHTML+= "<p class='configResults'>{{avail_inst}}</p></td></tr></div>";
+            testPlanHTML+= "<p class='configResults' id='avail" + index;
+            testPlanHTML+= "''></p></td></tr></div>";
 
             testPlanHTML+= "</form>";
             testPlanHTML+= "</div>";
@@ -334,7 +338,7 @@
             console.log('commitBtn: Ajax post was a success!');
         },
         });   
-        searchTimerID = setTimeout(getSearchResults, 5000);
+        searchTimerID = setTimeout(getSearchResults, 2000);
         function getSearchResults() {
             console.log('getSearchResults called!!!');
             //widget_url = 'https://gradientone-test.appspot.com/testresults/widgets/Acme.json'
@@ -352,16 +356,24 @@
                   console.log('getSearchResults: results =', results);
                   console.log('getSearchResults: i = ', i);
 
-                  var configResults = searchResults.explanations
-                  console.log(configResults);
-                  var configInstType = searchResults.selected_inst_type
-                  console.log(configInstType);
-                  var configHardware = searchResults.selected_hardware
-                  console.log(configHardware);
-                  var configAvail = searchResults.avail_inst
-                  console.log(configAvail);
-                  
-
+                  var configResults = searchResults.explanations;
+                  console.log('configResults = ',configResults);
+                  var configInstType = searchResults.selected_inst_type;
+                  console.log('configInstType = ',configInstType);
+                  var configHardware = searchResults.selected_hardware;
+                  console.log('configHardware = ',configHardware);
+                  var configAvail = searchResults.avail_inst;
+                  console.log('configAvail = ',configAvail);
+                
+                var d = document.getElementById('testPlan');
+                var children = d.childNodes;
+                  //children[i].children[1].children[0].children[0].children[1] = configResults;
+                  //children[i].children[1].children[0].children[1].children[1] = configInstType;
+                  //configResults = $('#results' + i).text();
+                  document.getElementById('results' + i).innerHTML = configResults;
+                  document.getElementById('instType' + i).innerHTML = configInstType;
+                  document.getElementById('hardware' + i).innerHTML = configHardware;
+                  document.getElementById('avail' + i).innerHTML = configAvail;
               });
                
             clearTimeout(searchTimerID);
