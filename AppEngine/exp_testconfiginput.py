@@ -11,7 +11,7 @@ from onedb import DutDB
 from onedb import CapabilitiesDB
 from onedb import InstrumentsDB
 from onedb import MeasurementDB
-from datetime import datetime
+import datetime
 import jinja2
 import json
 import logging
@@ -139,13 +139,13 @@ class Handler(InstrumentDataHandler):
 
         testplan_name = self.request.get('testplan_name')
         company_nickname = self.request.get('company_nickname')
-        start_time = str(self.request.get('start_time'))
+        start_time = testplan_object['start_time']
         checkbox_names = ["start_measurement_now"]
         start_measurement_now = self.request.get('start_measurement_now')
         if start_measurement_now == 'on':
-            date_object = datetime.now()
+            date_object = datetime.datetime.now()
         else:
-            date_object = datetime.strptime(start_time, '%b %d %Y %I:%M%p')
+            date_object = datetime.datetime.fromtimestamp(int(start_time)/1000)
         test = TestDB.gql("Where testplan_name =:1", testplan_name).get()
         test.scheduled_start_time = date_object
         test.test_ready = True

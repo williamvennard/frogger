@@ -26,12 +26,12 @@ import appengine_config
 
 
 class Handler(InstrumentDataHandler):
-    def get(self, company_nickname="", testplan_name=""):
-        key = 'instlookup' + company_nickname + testplan_name
+    def get(self, company_nickname="", testplan_name="", config_name=''):
+        key = 'instlookup' + company_nickname + testplan_name + config_name
         result = memcache.get(key)
         render_json_cached(self, result)
 
-    def post(self, company_nickname="", testplan_name=""):
+    def post(self, company_nickname="", testplan_name="", config_name=""):
         inst_object = json.loads(self.request.body)
         print inst_object
         analog_bandwidth = inst_object['analog_bandwidth']
@@ -57,6 +57,6 @@ class Handler(InstrumentDataHandler):
             avail = avail
         results = {'explanations':explanations, 'selected_inst_type':selected_inst_type, 'selected_hardware':selected_hardware, 'avail_inst':avail}
         results = json.dumps(results, ensure_ascii=True)
-        key = 'instlookup' + company_nickname + testplan_name
+        key = 'instlookup' + company_nickname + testplan_name + config_name
         memcache.set(key, results)
             
