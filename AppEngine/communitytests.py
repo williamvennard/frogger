@@ -35,6 +35,4 @@ from string import maketrans
 
 class Handler(InstrumentDataHandler):
     def get(self):
-        rows = db.GqlQuery("SELECT * FROM TestDB WHERE public =:1", True)
-        community_tests = [r.to_dict() for r in rows]
-        render_json(self, community_tests)
+        self.render('community.html')
