@@ -22,6 +22,7 @@ class ConfigDB(DictModel):
     sample_rate = db.IntegerProperty(required = False)
     number_of_samples = db.IntegerProperty(required = False)
     commence_test = db.BooleanProperty(required = False)
+    commence_explore = db.BooleanProperty(required = False)
     analog_bandwidth = db.StringProperty(required = False)
     test_plan = db.BooleanProperty(required = True)
     trace = db.BooleanProperty(required = True)

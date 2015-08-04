@@ -6,7 +6,7 @@ from gradientone import render_json_cached
 from gradientone import author_creation
 from gradientone import unic_to_ascii
 from onedb import BscopeDB
-from onedb import BscopeDB_key
+from onedb import company_key
 import collections
 import csv
 import datetime
@@ -34,7 +34,7 @@ from google.appengine.ext.webapp import blobstore_handlers
 from string import maketrans
 
 class Handler(InstrumentDataHandler):
-    def post(self, company_nickname="", hardware_name="",instrument_name="",start_tse=""):
+    def post(self, company_nickname="", hardware_name="",config_name="",start_tse=""):
         save = self.request.body
         print save
         save_object = json.loads(self.request.body)
@@ -45,7 +45,7 @@ class Handler(InstrumentDataHandler):
         check_slices = 0
         slicename = start_tse
         for s in range(0, slice_count):
-            key = 'bscopedata' + company_nickname + hardware_name + instrument_name + slicename
+            key = 'bscopedata' + company_nickname + hardware_name + config_name + slicename
             bscope_content = memcache.get(key)
             bscope_content = json.loads(bscope_content)
             original_p = bscope_content['p_settings']
@@ -53,14 +53,14 @@ class Handler(InstrumentDataHandler):
             new_p = unic_to_ascii(original_p)
             new_i = unic_to_ascii(original_i)
             to_save = []
-            r = BscopeDB(parent = BscopeDB_key(instrument_name), 
-                            instrument_name=instrument_name,
+            r = BscopeDB(parent = company_key(), key_name = slicename,
+                            config_name=config_name,
                              company_nickname = company_nickname,
                              hardware_name= hardware_name,
                              slicename=(slicename),
                              p_settings=str(new_p),
                              i_settings=str(new_i),
-                             cha=(bscope_content['cha']),
+                             cha=str((bscope_content['cha'])),
                              start_tse=int(bscope_content['start_tse'])
                              )
             to_save.append(r) 
