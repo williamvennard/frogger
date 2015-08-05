@@ -43,43 +43,32 @@
       </nav>
     </div>
     <div> <!--HEADER-->
-        <div class="" style="min-width: 100px;" id="compHeader">
-         <h1 class="compName" id="testPlanCompany">Test Results</h1> 
-        </div>
+      <div class="" style="min-width: 100px;" id="compHeader">
+         <h1 class="compName" id="testPlanCompany">Test Results: <span id="testNamehtml"></span></h1>
       </div>
+    </div>
     <div class="container">
       <div class="row testResultsBox"><!--TEST RESULTS BOX -->
-          <div class="col-md-4" id="testPlanInfoBox">
-            <h1 class="testPlanInfo" id="testPlanName"></h1>  
-              <h3 class="testPlanInfo" id="testPlanAuthor"></h3>
-              <p class="testPlanInfo" id="testPlanDate"></p>
-              
-          </div>
-          <br><br><br>
-          <div class="row-md-12" id="dataDisplayBox">
-            <div class="row-md-12;" id="resultsChartCSS">
-              <div id="rawChart" style="height: 90%; width: 1000px;"></div>
-              <div id="decChart" style="height: 200px; width: 600px;"></div>
-            </div>
-            <div style="text-align:center">
-            <input type="button" value="REPLAY" id="Replay">
-            <button type="button" id="Pause" class="btn" onclick="">
-              <i class="glyphicon glyphicon-pause"></i>
-            </button>
-            <button type="button" id="Start" class="btn" onclick="">
-              <i class="glyphicon glyphicon-play"></i>
-            </button>
-            <input type="button" value="REWIND" id="Rewind">
-          </div>
-            <div class="row-md-3"  id="resultsTableCSS">
-              <div id="rawTable" ></div>
-            </div>
-          </div>
-          <div class="row" >
-            <div class="col-md-12">
-              <div id="decTable"></div>   
-            </div>
-          </div> 
+        <div class="row-md-10;" id="resultsChartCSS">
+          <div id="rawChart" style="height: 450px; width: 850px;"></div>
+        </div>
+        <div class="row-md-2"  id="resultsTableCSS">
+          <div id="rawTable" ></div>
+        </div>
+        <div style="position:relative; left:360px;" class="replayBtn btn-group btn-xs col-md-4" data-toggle="buttons"> 
+          <label class="btn btn-default glyphicon glyphicon-backward playBtn" id="backward">
+            <input type="radio" autocomplete="off" checked> 
+          </label>
+          <label class="btn btn-default active glyphicon glyphicon-pause playBtn" id="pause">
+            <input type="radio" autocomplete="off" checked> 
+          </label>
+          <label class="btn btn-default glyphicon glyphicon-play playBtn" id="start">
+            <input type="radio" autocomplete="off" checked> 
+          </label>
+          <label class="btn btn-default glyphicon glyphicon-forward playBtn" id="forward">
+            <input type="radio" autocomplete="off" checked> 
+          </label>               
+        </div>             
       </div>
     </div>
 
@@ -126,6 +115,7 @@
     }); 
 
  // load chart lib
+    //google.load('visualization', '1', {packages: ['corechart','table']});
     google.load('visualization', '1', {packages: ['corechart','table']});
 
     var testInfo = [];
@@ -146,6 +136,8 @@
     var test_info_url;
     var rawChart;
     var moveWindowData;
+    var configName;
+    var testName;
     
     function fetchDecData(){
        dec_json_url = dec_url;
@@ -164,8 +156,7 @@
     console.log(test_info_url);
 
     function getTestInfo() {
-
-      //test_info_url = 'https://gradientone-test.appspot.com/testlibrary/Acme/NyquistB/1437712799600.json';
+      //test_info_url = 'https://gradientone-test.appspot.com/testlibrary/traceresults/Acme/Primetime/1438785769100.json';
       $.ajax({
           async: true,
           url: test_info_url,
@@ -174,11 +165,11 @@
         testInfo = results[0];
 
         //URLS DEC/RAW
-        dec_url = testInfo.dec_data_url;
+        //dec_url = testInfo.dec_data_url;
         raw_urlPath = testInfo.raw_data_url;
         //Test Info DEC/RAW
         testSliceStart = testInfo.start_tse;    
-        decPointSpacing = (testInfo.Dec_msec_btw_samples)/1000;    
+        //decPointSpacing = (testInfo.Dec_msec_btw_samples)/1000;    
         numPages = testInfo.Total_Slices;
         rawPointSpacing = (testInfo.Raw_msec_btw_samples)/1000000;
         sliceSize = Number(testInfo.Slice_Size_msec);
@@ -187,11 +178,12 @@
         base_url = rawUrlSplit[0];
         sliceEnd = (Number(testSliceStart) + (numPages*sliceSize)) -10;
         rawWidth = (Number(numPages) * Number(sliceSize)) * rawPointSpacing;
-        decOffset = (((Number(numPages) * Number(sliceSize))/10) * decPointSpacing)/2;
+        //decOffset = (((Number(numPages) * Number(sliceSize))/10) * decPointSpacing)/2;
         rawOffset = Number(testSliceStart) + ((Number(numPages) * Number(sliceSize))/2);
         console.log('getTestInfo: rawOffset =', rawOffset);
 
-        //decOffset = 0;
+        testName = testInfo.testplan_name;
+        document.getElementById("testNamehtml").innerHTML = String(testName);
 
         for (msec = Number(testSliceStart); msec <= Number(sliceEnd);msec += sliceSize) {
           name = String(msec);
@@ -199,9 +191,6 @@
             sliceNames.push(name);
           };
         };
-
-        fetchSliceNames();
-        fetchDecData()
         console.log('rawWidth = ',rawWidth);
         console.log('rawPointSpacing = ',rawPointSpacing);
         //console.log('slice names = ',sliceNames);
@@ -214,7 +203,7 @@
         //console.log('getTestInfo: sliceSize = ', sliceSize);     
        });
     };
-    
+    getTestInfo();
 
     // DEC CHART CODE //
 
@@ -254,16 +243,26 @@
     //google.setOnLoadCallback(fetchDecData);
 
 // RAW CHART CODE //
-
+// have start button reset these for live tests 
+    var savedData = 0;
+    var firstChartSlice = 0;
 // BUILD RAW DATA TABLE AND DRAW RAW CHART+TABLE
-    function drawRawChart(){   
-      var data = new google.visualization.DataTable();
-       data.addColumn('number', 'Time');
-       data.addColumn('number', 'Ch1');
+    function drawRawChart(){ 
+      var data;  
+      if (savedData == 0) {
+        data = new google.visualization.DataTable(); 
+        data.addColumn('number', 'Time');
+        data.addColumn('number', 'Ch1'); 
+        console.log('drawRawChart:  initializing data'); 
+      }else {
+        data = savedData;
+      };
+      
+      
 
-       for (idx = 0; idx < numPages; idx++) {
+      for (idx = firstChartSlice; idx < numPages; idx++) {
             sliceName = sliceNames[idx];
-            if (!(sliceName in resultsCache)) { return; }
+            if (!(sliceName in resultsCache)) {firstChartSlice = idx; return; }
             var gatheredResults = resultsCache[sliceName];
             //console.log('drawRawChart: gatheredResults = ',resultsCache[sliceName]);
             var rawData = gatheredResults;
@@ -276,39 +275,47 @@
                (((Number(sliceName) - testSliceStart)/1000) + i*rawPointSpacing),
                parseFloat(rawCha[i]),
                ]);
+             savedData = data;
            };
-         };
-      
-         var width = rawWidth*(100/hZoom);
-        hMax = hPosition + width;
-        hMin = hPosition; 
+      };
 
+      firstChartSlice = numPages;
+      var width = rawWidth*(100/hZoom);
+      hMax = hPosition + width;
+      hMin = hPosition; 
+      //viewWindow:{max: hMax, min: hMin}},
       rawChartOptions = {
-         title: 'Raw Data',
+         title: '',
          titleTextStyle: {color:'lightgray', fontSize: 18, fontName: 'NexaLight'},
          legend: {alignment:'center', textStyle:{color:'lightgray'}},
          hAxis: {title: 'Time(sec)',titleTextStyle:{color:'lightgray', fontName: 'NexaLight'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'gray', count: 6}, minorGridlines:{color: 'gray', count: 1}, viewWindowMode:'explicit', viewWindow:{max: hMax, min: hMin}},
          vAxis: {title: '', titleTextStyle:{color:'lightgray'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'gray', count: 6}, minorGridlines:{color: 'gray', count: 1}, format: '##.###', viewWindowMode:'explicit', },
          backgroundColor: {fill:'none', stroke: 'black', strokeWidth: 0,},                 
          colors: ['rgb(2,255,253)','rgb(239,253,146)'],
-         //chartArea:{backgroundColor:'', height:300, width:445},
+         chartArea:{backgroundColor:'', height:300, width:700},
          lineWidth: 2,
          curveType: 'function',
          crosshair: {trigger: 'both', selected:{opacity: 0.8}, focused:{opacity:0.8}},
-         explorer: {},
+         explorer: {maxZoomOut: 5, maxZoomIn: 0.125},
       };
+
       var tableOptions = {
-         showRowNumber: true,
+        showRowNumber: true,
       };   
-          moveWindowData = data;
+        moveWindowData = data;
          //DRAW CHART
          //var chart = new google.visualization.LineChart($('#rawChart').get(0));
-         rawChart = new google.visualization.LineChart($('#rawChart').get(0));      
+         rawChart = new google.visualization.LineChart($('#rawChart').get(0));
+        //rawChart = new google.charts.Line($('#rawChart').get(0));       
          //chart.draw(data, rawChartOptions);
-         rawChart.draw(data, rawChartOptions);
+
+        rawChartOptions.hAxis.viewWindow.max = hMax;
+        rawChartOptions.hAxis.viewWindow.min = hMin;
+        rawChart.draw(moveWindowData, rawChartOptions);
          //DRAW TABLE
          var table = new google.visualization.Table($('#rawTable').get(0));
-         table.draw(data, tableOptions);  
+         //var table = new google.charts.Table($('#rawTable').get(0));
+         table.draw(data);  
     };
     function fetchSliceNames() {
         for (idx in sliceNames) {
@@ -317,7 +324,7 @@
            };
         };
     };
-    google.setOnLoadCallback(getTestInfo);
+    google.setOnLoadCallback(fetchSliceNames);
     // FETCH RAW DATA 
     function fetchData(base_url,sliceName,use_async){
         json_url = base_url + sliceName;
@@ -344,60 +351,38 @@
 
         console.log('moveWindow: H position = ',hPosition);
         console.log('moveWindow: H zoom = ',hZoom);
-        rawChartOptions.hAxis.viewWindow.max = hMax;
-        rawChartOptions.hAxis.viewWindow.min = hMin;
 
         rawChart.draw(moveWindowData, rawChartOptions); // REDRAW CHART
+
         console.log('moveWindow: vew window =',rawChartOptions.hAxis.viewWindow);
     }; 
      
     // replay button
-    function replay() {
-      //console.log('rawPointSpacing!!!!!! =',rawPointSpacing);
-      step = 0;
-      var windowSize = rawWidth*(100/hZoom);
-      timerID = setInterval(increment, 100);
-      function increment () {
+    var step = 0;
+    var windowSize = 0;
+    var incrementTimerID;
+    function increment () {
         if (step <= rawWidth) {
           step = step + rawPointSpacing*2
         }else {
-         clearInterval(timerID); 
-        }  
+          console.log('increment: out of data');
+          return;
+         //clearInterval(timerID); 
+        };
         rhMax = step + windowSize;
         rhMin = step; 
         rawChartOptions.hAxis.viewWindow.max = rhMax;
         rawChartOptions.hAxis.viewWindow.min = rhMin;
 
         rawChart.draw(moveWindowData, rawChartOptions);
+        incrementTimerID = setTimeout(increment,2);
+        console.log('increment: incrementTimerID=',incrementTimerID);
       };
-    };
-    // pause / start / rewind
-    function start() {   
-      var windowSize = rawWidth*(100/hZoom);
-      timerID = setInterval(increment, 100);
-      function increment () {
-        if (step <= rawWidth) {
-          step = step + rawPointSpacing*2
-        }else {
-         clearInterval(timerID); 
-        }  
-        rhMax = step + windowSize;
-        rhMin = step; 
-        rawChartOptions.hAxis.viewWindow.max = rhMax;
-        rawChartOptions.hAxis.viewWindow.min = rhMin;
-
-        rawChart.draw(moveWindowData, rawChartOptions);
-      };
-    };
-
-    function rewind() {  
-      var windowSize = rawWidth*(100/hZoom); 
-      timerID = setInterval(increment, 100);
-      function increment () {
+    function reverseIncrement () {
         if (step >= 0) {
           step = step - rawPointSpacing*2
         }else {
-         clearInterval(timerID); 
+          return;
         }; 
         rhMax = step + windowSize;
         rhMin = step; 
@@ -405,21 +390,82 @@
         rawChartOptions.hAxis.viewWindow.min = rhMin;
 
         rawChart.draw(moveWindowData, rawChartOptions);
+        incrementTimerID = setTimeout(reverseIncrement,2);
       };
+
+
+    function replay() {
+      console.log('rawPointSpacing!!!!!! =',rawPointSpacing);
+      step = 0;
+      windowSize = rawWidth*(100/hZoom);
+      //timerID = setInterval(increment, 100);
+      
+      increment();
+    };
+    // pause / start / rewind
+    function start() {   
+      windowSize = rawWidth*(100/hZoom);
+      //timerID = setInterval(increment, 100);
+      increment();
+      /*
+      function increment () {
+        if (step <= rawWidth) {
+          step = step + rawPointSpacing*2
+        }else {
+         clearTimeout(incrementTimerID); 
+        }  
+        rhMax = step + windowSize;
+        rhMin = step; 
+        rawChartOptions.hAxis.viewWindow.max = rhMax;
+        rawChartOptions.hAxis.viewWindow.min = rhMin;
+
+        rawChart.draw(moveWindowData, rawChartOptions);
+
+      };
+      */
+    };
+
+    function backward() {  
+      windowSize = rawWidth*(100/hZoom);
+      reverseIncrement(); 
+      //timerID = setInterval(increment, 100);
     };
 // BUTTON CONTROLS
   $(document).ready(function(){
-    $('#Replay').click(function(){
-       replay();
+
+    $('#backward').click(function(){
+      clearTimeout(incrementTimerID);
+      backward();
     });
-    $('#Pause').click(function(){ 
-       clearInterval(timerID);
+    $('#pause').click(function(){ 
+      clearTimeout(incrementTimerID);
+    });
+    $('#start').click(function(){
+      clearTimeout(incrementTimerID);
+      replay();
+    });
+    $('#forward').click(function(){
+      clearTimeout(incrementTimerID);
+      start();
+    });
+
+
+    $('#Replay').click(function(){
+      clearTimeout(incrementTimerID);
+      replay();
+    });
+    $('#Pause').click(function(){   
+      console.log('pause calling clearTimeout: incrementTimerID=',incrementTimerID)
+      clearTimeout(incrementTimerID);
     });
     $('#Start').click(function(){
-       start();
+      clearTimeout(incrementTimerID);
+      start();
     });
     $('#Rewind').click(function(){
-       rewind();
+      clearTimeout(incrementTimerID);
+
+      rewind();
     });
   });
 
