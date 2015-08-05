@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="../static/css/custom.css">
     <link rel="stylesheet" type="text/css" href="../static/css/testLibrary.css">
     <link rel="stylesheet" type="text/css" href="../static/bootstrap/css/bootstrap.min.css">
+    <script src="../static/js/addons/angular.min.js"></script>
   </head>
 
   <body id="mainBackground">
@@ -59,7 +60,7 @@
 
     <div class="col-md-12" id="testListBox">
       <h3 class="instType">Tektronix Oscilloscope</h3>
-       <h5 class="colTitle text-uppercase">Start Time <span style="margin-right: 300px"></span> Details</h5>
+       <h5 class="colTitle text-uppercase">Start Time <span style="margin-right: 400px"></span> Details</h5>
       <hr class="headerLine">
  
       <form method="post">
@@ -69,13 +70,15 @@
           </tr>
 
           {% for r in results_oscope %}
-             <a class="resultsLink" href ="testlibrary/oscopedata/{{results_oscope[r][1]}}/{{r}}">{{ r }}  </a><span style="margin-right: 400px"></span><p class="configInfo">{{results_oscope[r]}}</p>
+             <a class="resultsLink" href ="testlibrary/oscopedata/{{results_oscope[r][1]}}/{{r}}">{{ r | date:'yyyy-MM-dd HH:mm:ss' }}  </a><span style="margin-right: 400px"></span><p class="configInfo">{{results_oscope[r]}}</p>
 
             <br><br>   
           {% endfor %}
         </table>
       </form>
     </div>
+    <p></p>
+
   </body>
 </html>
 

@@ -12,15 +12,14 @@
     <script type="text/javascript" src="../static/js/chart1.js"></script>
     <script type="text/javascript" src="../static/js/chart2.js"></script>
     <script type="text/javascript" src="../static/js/chart3.js"></script>
-    <script type="text/javascript" src="../static/js/addons/appDrag.js"></script>
-     
+    <script type="text/javascript" src="../static/js/addons/appDrag.js"></script> 
     <link rel="stylesheet" type="text/css" href="../static/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../static/css/custom.css">
     <link rel="stylesheet" type="text/css" href="../static/css/hoverzoom.css">
     <link rel="stylesheet" type="text/css" href="../static/css/fonts/stylesheet.css" charset="utf-8" /> 
     <script src="../static/js/addons/angular.min.js"></script>
     <script type="text/javascript" src="../static/js/addons/clickadd.js"></script>
-    <link rel="stylesheet" type="text/css" href="../static/css/testConfig.css">
+    
     <link rel="stylesheet" type="text/css" href="../static/css/canvasApp.css">
     <style type="text/css"></style>
 </head>
@@ -158,7 +157,7 @@
                             <div class="col-md-5">
                                 <tr>
                                     <td class="label">  
-                                      <input class="nameTestInput" type="text" name="testplan_name" value="{{testplan_name}}" placeholder="name goes here">
+                                      <input class="nameTestInput" type="text" name="testplan_name" value="" placeholder="name goes here">
                                       <input type="hidden" name="company_nickname" value="Acme">
                                       <input type="hidden" name="hardware_name" value="Tahoe">
                                       <input type="hidden" name="instrument_type" value="BitScope">
@@ -175,7 +174,7 @@
                             <div class="col-md-4" style="height:25px;">
                                 <tr>
                                     <td class="label">                                        
-                                      <input class="nameTestInput" id="start_time" type="text" name="start_time" value="{{start_time}}" placeholder="time goes here">
+                                      <input class="nameTestInput" id="start_time" type="text" name="start_time" value="" placeholder="time goes here">
                                       <input type="hidden" name="company_nickname" value="Acme">
                                       <input type="hidden" name="timepost" value=True>
                                     </td>
@@ -192,7 +191,6 @@
                     </form>                                 
                 </div>
 <!--WIDGETS go HERE-->
-                
                 <div id="testPlan" class="droppable"></div>
 <!--COMMIT TEST-->
                 <div class="commitBox menu collapseCommitTest" id="">

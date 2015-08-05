@@ -1,7 +1,8 @@
 .error {
     color: red
 }
-#testConfigBox {
+
+.testConfigBox {
     min-height: 400px;
     width: 435px;
     margin: 0 0 10px 0;
@@ -12,6 +13,7 @@
     background-color: rgb(33,33,33);
     /*background-image: radial-gradient(rgb(33,33,33));*/
 }
+
 .textBlocks {
     border-style: solid;
     border-width: 1px;
@@ -19,6 +21,7 @@
     margin-right: 10%;
     float: right;
 }
+
 .configLabel {
     position: relative;
     top: 25px;
@@ -29,13 +32,16 @@
     font-size: 13;
     font-family: 'nexa_lightregular';
 }
+
 .configRow {
     height: 25px;
 }
+
 .dropDownBox {   
     float:right;
     margin-right: 10%;   
 }
+
 #breakLine {
     border-top: 1px;
     border-style: solid;
@@ -43,6 +49,7 @@
     margin-bottom: 0px;
     margin-top: 0px;
 }
+
 #submitBtn {
     color: black;
     font-family: 'nexa_lightregular';
@@ -58,6 +65,7 @@
     background-color: rgb(124,175,46);
     /*background-image: radial-gradient(#32CD32, #5cb85c);*/
 }
+
 .checkBoxLabel {
     float: left;
     margin-left: 7px; 
@@ -66,9 +74,11 @@
     font-size: 13;
     font-family: 'nexa_lightregular';
 }
+
 .checkBoxBox {
     float: left;
 }
+
 .subLabel {
     position: relative;
     float:left;
@@ -76,6 +86,7 @@
     color: #c0c0c0;
     font-family: 'nexa_lightregular';
 }
+
 .subTextBox {
     border-style: solid;
     border-width: 1px;

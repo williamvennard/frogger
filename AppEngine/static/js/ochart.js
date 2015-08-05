@@ -183,7 +183,7 @@ function exploreMode() {
         //console.log('getTestInfo: sliceSize = ', sliceSize);   
         //console.log('getTestInfo: rawPointSpacing =',rawPointSpacing);  
        });
-         traceTimerID = setTimeout(traceMode,10000);
+         traceTimerID = setTimeout(traceMode,1000);
     };
     
     // DEC CHART CODE //
