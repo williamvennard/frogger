@@ -10,7 +10,7 @@ def company_key(name = 'default'):
 
 def ConfigDB_key(company_nickname ="", config_name =""):
     print 'onedb', config_name
-    return db.Key.from_path(company_nickname, config_name)
+    return db.Key.from_path('ConfigDB',company_nickname+config_name)
 
 class ConfigDB(DictModel):
     company_nickname = db.StringProperty(required = True)
