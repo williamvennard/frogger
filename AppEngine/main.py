@@ -56,6 +56,8 @@ import exploremodestop
 import exp_testconfiginput
 import panelcontrol
 import instlookup
+import testlibrarytrace
+import testlibrarytest
 from gradientone import InstrumentDataHandler
 
 authorized_users = ['charlie@gradientone.com',
@@ -195,8 +197,10 @@ app = webapp2.WSGIApplication([
     ('/testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', testresultsdata.Handler),
     ('/testlibrary/([a-zA-Z0-9-]+)', testlibrary.Handler),
     ('/testlibrary/([a-zA-Z0-9-]+.json)', testlibrary.Handler),
-    ('/testlibrary/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', testlibrary.Handler),
-    ('/testlibrary/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+.json)', testlibrary.Handler),
+    ('/testlibrary/testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', testlibrarytest.Handler),
+    ('/testlibrary/testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+.json)', testlibrarytest.Handler),
+    ('/testlibrary/traceresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', testlibrarytrace.Handler),
+    ('/testlibrary/traceresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+.json)', testlibrarytrace.Handler),
     ('/testanalyzer/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', testanalyzer.Handler),
     ('/oscopedata/([a-zA-Z0-9-]+)', oscopedata.Handler),
     ('/oscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)', oscopedata.Handler),

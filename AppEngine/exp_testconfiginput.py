@@ -46,23 +46,12 @@ class Handler(InstrumentDataHandler):
         measurements = testplan_object['meas']
         configs = testplan_object['configs']
         start_now = testplan_object['start_now']
-        
-        #config_name = self.request.get('config_name')
-        #analog_bandwidth = self.request.get('analog_bandwidth')
-        #analog_sample_rate = self.request.get('analog_sample_rate')
-        #capture_buffer_size = self.request.get('capture_buffer_size')
-        #capture_channels = self.request.get('capture_channels')
-        #resolution = self.request.get('resolution')
-        
-        #dut_name = self.request.get('dut_name')
-        #meas_type = self.request.get('meas_type')
-        #meas_name = self.request.get('meas_name')
-        #meas_start_time = self.request.get('meas_start_time')
-        #meas_stop_time = self.request.get('meas_stop_time')
-        #dut_type = self.request.get('dut_type')
-        #settings = self.request.get('settings')
-
-
+        start_time = testplan_object['start_time']
+        checkbox_names = ["start_measurement_now"]
+        if start_now == True:
+            date_object = datetime.datetime.now()
+        else:
+            date_object = datetime.datetime.fromtimestamp(int(start_time)/1000)
         t = TestDB(key_name = testplan_name, parent = company_key(),
             testplan_name = testplan_name, 
             company_nickname = company_nickname, 
@@ -70,8 +59,9 @@ class Handler(InstrumentDataHandler):
             order = order,
             test_plan = True,
             trace = False,
-            test_ready = False,
-            test_scheduled = False
+            scheduled_start_time = date_object,
+            test_ready = True,
+            test_scheduled = True,
             )
         t.put() 
         key = db.Key.from_path('TestDB', testplan_name, parent = company_key())
@@ -114,8 +104,6 @@ class Handler(InstrumentDataHandler):
             if measurement.key() not in test.measurements:  #add the  dut name to the list property ot the test plan
                 test.measurements.append(measurement.key())
                 test.put()    
-        
-
         for item in configs:
             config = ConfigDB.gql("Where config_name =:1", item['config_name']).get()
             if config == None:  #if there is not an instrument with the inputted name, then create it in the DB
@@ -137,21 +125,7 @@ class Handler(InstrumentDataHandler):
                 test.configs.append(measurement.key())
                 test.put()    
 
-        testplan_name = self.request.get('testplan_name')
-        company_nickname = self.request.get('company_nickname')
-        start_time = testplan_object['start_time']
-        checkbox_names = ["start_measurement_now"]
-        start_measurement_now = self.request.get('start_measurement_now')
-        if start_measurement_now == 'on':
-            date_object = datetime.datetime.now()
-        else:
-            date_object = datetime.datetime.fromtimestamp(int(start_time)/1000)
-        test = TestDB.gql("Where testplan_name =:1", testplan_name).get()
-        test.scheduled_start_time = date_object
-        test.test_ready = True
-        test.test_scheduled = True
-        test.put()
-        taskqueue.add(url = '/testmanager', method = 'POST', params={'info':(company_nickname,testplan_name)}, eta = date_object)
+        #taskqueue.add(url = '/testmanager', method = 'POST', params={'info':(company_nickname,testplan_name)}, eta = date_object)
                        
         #self.redirect('/testplansummary/' + company_nickname + '/' + hardware_name)
 
