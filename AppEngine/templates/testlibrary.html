@@ -55,6 +55,11 @@
         <hr class="headerLine">
         <div id="configTable" style="color:white;" class=""></div>
       </div>
+      <div class="col-md-12" id="testListBox">
+        <h4 class="colTitle text-uppercase">Trace Configs</h4>
+        <hr class="headerLine">
+        <div id="traceConfigTable" style="color:white;" class=""></div>
+      </div>     
     </div>
 
     <div class="menu resultsMenu" id="resultsMenu">
@@ -89,10 +94,12 @@
           url: test_lib_url,            
           dataType: 'json',
        }).done(function (results) {
-        var testArray = results.configs;
+        var testArray = results.test_configs;
+        var configArray = results.config_configs;
         var resultsArray = results.results;
         console.log(testArray.length);
         //TEST PLANS TAB
+        //test_configs == configTable
         var configTable = "<div>";
         for (var i=0;i<testArray.length;i++) {
           console.log(testArray[i].testplan_name);
@@ -104,6 +111,21 @@
         };
         configTable+="</div>"
         console.log('configTable = ', configTable);
+
+        //config_config == traceConfigTable
+        var traceConfigTable = "<div>"
+        for (var i=0;i<configArray.length;i++) {
+          console.log(configArray[i].testplan_name);
+            traceConfigTable+="<div style='margin-bottom:20px;'>";
+            traceConfigTable+="<span class='name'> Name: </span>" + "<span  class='testName text-capitalize'>" + configArray[i].config_name + "</span>";
+            traceConfigTable+="<br>"
+            traceConfigTable+="<span class='instType'> Inst Type: </span>" + "<span>" + configArray[i].instrument_type + "</span>";
+            traceConfigTable+="<br>"
+            traceConfigTable+="<span class='startTime'> Date Created: </span>" + "<span>" + configArray[i].date_created + "</span>";
+            traceConfigTable+="</div>"
+        };
+        traceConfigTable+="</div>"
+        console.log('traceConfigTable = ', traceConfigTable);
         //RESULTS TAB
         var testTable = "<div>";
         var traceTable = "<div>";
@@ -150,6 +172,7 @@
         traceTable+="</div>";
 
         document.getElementById("configTable").innerHTML = configTable;
+        document.getElementById("traceConfigTable").innerHTML = traceConfigTable;
         document.getElementById("testTable").innerHTML = testTable;
         document.getElementById("traceTable").innerHTML = traceTable;
         });

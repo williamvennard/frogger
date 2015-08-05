@@ -68,25 +68,30 @@
     height: 100px;
     width: 150px;
 }
-.testName {
 
+.testName {
     font-family: 'nexa_boldregular'
 }
+
 .name {
     margin-left: 30px;
     color:rgb(197,44,72);
     font-family: 'nexa_boldregular'
 }
 
-.startTime {
+.instType {
     color:rgb(197,44,72);
-    font-family: 'nexa_lightregular';
+    font-family: 'nexa_lightregular';    
 }
 
 .resultsLink {
-    margin: 0 0 0 90px;
     color: white;
     font-family: 'nexa_lightregular';    
+}
+
+.startTime {
+    color:rgb(197,44,72);
+    font-family: 'nexa_lightregular';
 }
 
 .endTime {
