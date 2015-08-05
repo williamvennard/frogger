@@ -51,21 +51,26 @@
                 var configSampleSize = children[index].children[0].children[1].children[3].children[1].value
                 var configResolution = children[index].children[0].children[1].children[4].children[1].value
                 var configChNum = children[index].children[0].children[1].children[5].children[1].value
+                //Search results
+                var configResults = children[index].children[1].children[0].children[0].children[1].innerHTML;
+                var configInstType = children[index].children[1].children[0].children[1].children[1].innerHTML;
+                var configHardware = children[index].children[1].children[0].children[2].children[1].innerHTML;
+                var configAvail = children[index].children[1].children[0].children[3].children[1].innerHTML;
 
                 testPlanHTML+= "<div type='config' class='configBox' id='" + String(index) + "'>";
                 testPlanHTML+= "<div id='configSearch' class='col-md-4'>";
-                testPlanHTML+= "<h4 class='appTitle'>Instrument - <span onclick='removeWidget(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle' style='left:740px;'></span></h4>";
+                testPlanHTML+= "<h4 class='appTitle'>Config - <span onclick='removeWidget(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle' style='left:777px;'></span></h4>";
                 testPlanHTML+= "<form method='post'>";
                 testPlanHTML+= "<input class='nameWidget' type='text' name='config_name' value='" + configName;
                 testPlanHTML+= "' placeholder='name goes here'>";
 
                 testPlanHTML+= "<div class='row appRow'>";
-                testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Bandwidth:</p>"; 
+                testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Bandwidth(Hz):</p>"; 
                 testPlanHTML+= "<input class='appInput' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' name='analog_bandwidth' value='" + configBand;
                 testPlanHTML+= "'></td></tr></div>";
 
                 testPlanHTML+= "<div class='row appRow'>";
-                testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Sample Rate:</p>"; 
+                testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Sample Rate(sps):</p>"; 
                 testPlanHTML+= "<input class='appInput' type='text' name='analog_sample_rate' value='" + configSampleRate;
                 testPlanHTML+= "'></td></tr></div>";
 
@@ -93,19 +98,27 @@
 
                 testPlanHTML+= "<div class='row appRow'>";
                 testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Results:</p>"; 
-                testPlanHTML+= "<p class='configResults'>{{ explanations }}</p></td></tr></div>";
+                testPlanHTML+= "<p class='configResults' style='width: 180px;' id='results" + index;
+                testPlanHTML+= "'>" + configResults;
+                testPlanHTML+= "</p></td></tr></div>";
 
                 testPlanHTML+= "<div class='row appRow'>";
                 testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Instrument Type:</p>"; 
-                testPlanHTML+= "<p class='configResults' style='' type='text' name='selected_inst_type' value='{{selected_inst_type}}'></p></td></tr></div>";
+                testPlanHTML+= "<p class='configResults' style='' type='text' name='selected_inst_type' value='{{selected_inst_type}}' id='instType" + index;
+                testPlanHTML+= "'>" + configInstType;
+                testPlanHTML+= "</p></td></tr></div>";
 
                 testPlanHTML+= "<div class='row appRow'>";
                 testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Hardware:</p>"; 
-                testPlanHTML+= "<p class='configResults' style='' type='text' name='selected_hardware' value='{{selected_hardware}}'></p></td></tr></div>";
+                testPlanHTML+= "<p class='configResults' style='' type='text' name='selected_hardware' value='{{selected_hardware}}' id='hardware" + index;
+                testPlanHTML+= "'>" + configHardware;
+                testPlanHTML+= "</p></td></tr></div>";
 
                 testPlanHTML+= "<div class='row appRow'>";
                 testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Available Instruments:</p>"; 
-                testPlanHTML+= "<p class='configResults'>{{avail_inst}}</p></td></tr></div>";
+                testPlanHTML+= "<p class='configResults' id='avail" + index;
+                testPlanHTML+= "''>" + configAvail;
+                testPlanHTML+= "</p></td></tr></div>";
 
                 testPlanHTML+= "</form>";
                 testPlanHTML+= "</div>";
@@ -132,12 +145,12 @@
                 testPlanHTML+= "<input class='appInput' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' name='meas_type' placeholder='RMS' value='" + measType;
                 testPlanHTML+= "'></td></div>";
                 testPlanHTML+= "<div class='row appRow'>";
-                testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Start Time:</p>";                   
-                testPlanHTML+= "<input class='appInput' type='text' name='meas_start_time' placeholder='200 sec' value='" + measStart;
+                testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Start Time(sec):</p>";                   
+                testPlanHTML+= "<input class='appInput' type='text' name='meas_start_time' placeholder='200' value='" + measStart;
                 testPlanHTML+= "'></td></div>";
                 testPlanHTML+= "<div class='row appRow'>";
-                testPlanHTML+= "<td class='label'><p class='appLabel'>Stop Time:</p>"
-                testPlanHTML+= "<input class='appInput' style='border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='text' name='meas_stop_time' placeholder='400 sec' value='" + measStop;
+                testPlanHTML+= "<td class='label'><p class='appLabel'>Stop Time(sec):</p>"
+                testPlanHTML+= "<input class='appInput' style='border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='text' name='meas_stop_time' placeholder='400' value='" + measStop;
                 testPlanHTML+= "'></td></tr></div>";                                                       
                 testPlanHTML+= "</form>";
                 testPlanHTML+= "</div>";
@@ -151,15 +164,15 @@
             testPlanHTML+= "<h4 class='appTitle'>DUT - <span onclick='removeWidget(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle' style='left:810px;'></span></h4>";
             testPlanHTML+= "<form method='post'>";
 
-            testPlanHTML+= "<input class='nameWidget' type='text' name='dut_name' value='{{dut_name}}' placeholder='name goes here'>";
+            testPlanHTML+= "<input class='nameWidget' type='text' name='dut_name' value='' placeholder='name goes here'>";
 
             testPlanHTML+= "<div class='row appRow'>";
             testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Device Under Test Type:</p>"; 
-            testPlanHTML+= "<input class='appInput' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' name='dut_type' value='{{dut_type}}'></td></tr></div>";
+            testPlanHTML+= "<input class='appInput' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' name='dut_type' value=''></td></tr></div>";
 
             testPlanHTML+= "<div style='position:relative; top:20px;' class='row appRow'>";
             testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Settings:</p>"; 
-            testPlanHTML+= "<input class='appInput' style='border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='text' name='settings' value='{{settings}}'></td></tr></div>";
+            testPlanHTML+= "<input class='appInput' style='border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='text' name='settings' value=''></td></tr></div>";
                            
             testPlanHTML+= "</form>";
             testPlanHTML+= "</div>";
@@ -170,29 +183,29 @@
             console.log('TYPE Config')
             testPlanHTML+= "<div type='config' class='configBox' id='" + String(index) + "'>";
             testPlanHTML+= "<div id='configSearch' class='col-md-4'>";
-            testPlanHTML+= "<h4 class='appTitle'>Instrument - <span onclick='removeWidget(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle' style='left:740px;'></span></h4>";
+            testPlanHTML+= "<h4 class='appTitle'>Config - <span onclick='removeWidget(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle' style='left:777px;'></span></h4>";
             testPlanHTML+= "<form method='post'>";
             testPlanHTML+= "<input class='nameWidget' type='text' name='config_name' value='{{config_name}}' placeholder='name goes here'>";
 
             testPlanHTML+= "<div class='row appRow'>";
-            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Bandwidth:</p>"; 
-            testPlanHTML+= "<input class='appInput' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' name='analog_bandwidth' value='{{analog_bandwidth}}'></td></tr></div>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Bandwidth(Hz):</p>"; 
+            testPlanHTML+= "<input class='appInput' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' placeholder='20,000,000' name='analog_bandwidth' value='{{analog_bandwidth}}'></td></tr></div>";
 
             testPlanHTML+= "<div class='row appRow'>";
-            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Sample Rate:</p>"; 
-            testPlanHTML+= "<input class='appInput' type='text' name='analog_sample_rate' value='{{analog_sample_rate}}'></td></tr></div>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Sample Rate(sps):</p>"; 
+            testPlanHTML+= "<input class='appInput' type='text' placeholder='20,000,000' name='analog_sample_rate' value='{{analog_sample_rate}}'></td></tr></div>";
 
             testPlanHTML+= "<div class='row appRow'>";
             testPlanHTML+= "<tr><td class='label'><p class='appLabel'> Buffer Size: </p>"; 
-            testPlanHTML+= "<input class='appInput' type='text' name='capture_buffer_size' value='{{capture_buffer_size}}'></td></tr></div>";
+            testPlanHTML+= "<input class='appInput' type='text' placeholder='12,000' name='capture_buffer_size' value='{{capture_buffer_size}}'></td></tr></div>";
 
             testPlanHTML+= "<div class='row appRow'>";
             testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Resolution: </p>"; 
-            testPlanHTML+= "<input class='appInput' type='text' name='resolution' value='{{resolution}}'></td></tr></div>";
+            testPlanHTML+= "<input class='appInput' type='text' placeholder='12' name='resolution' value='{{resolution}}'></td></tr></div>";
 
             testPlanHTML+= "<div style='margin-bottom:10px;' class='row appRow'>";
             testPlanHTML+= "<tr><td class='label'><p class='appLabel'># of Channels: </p>"; 
-            testPlanHTML+= "<input class='appInput' style='margin-bottom:0px; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='text' name='capture_channels' value='{{capture_channels}}'></td></tr></div>";
+            testPlanHTML+= "<input class='appInput' style='margin-bottom:0px; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='text' placeholder='2' name='capture_channels' value='{{capture_channels}}'></td></tr></div>";
                             
             testPlanHTML+= "</form>";
             testPlanHTML+= "</div>";
@@ -202,7 +215,7 @@
 
             testPlanHTML+= "<div class='row appRow'>";
             testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Results:</p>"; 
-            testPlanHTML+= "<p class='configResults' id='results" + index;
+            testPlanHTML+= "<p class='configResults' style='width: 180px;' id='results" + index;
             testPlanHTML+= "'></p></td></tr></div>";
 
             testPlanHTML+= "<div class='row appRow'>";
@@ -236,11 +249,11 @@
             testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Meas Type:</p>";                   
             testPlanHTML+= "<input class='appInput' type='text' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' name='meas_type' placeholder='RMS' value='{{meas_type}}'></td></div>";
             testPlanHTML+= "<div class='row appRow'>";
-            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Start Time:</p>";                   
-            testPlanHTML+= "<input class='appInput' type='text' name='meas_start_time' placeholder='200 sec' value='{{meas_start_time}}'></td></div>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Start Time(sec):</p>";                   
+            testPlanHTML+= "<input class='appInput' type='text' name='meas_start_time' placeholder='200' value='{{meas_start_time}}'></td></div>";
             testPlanHTML+= "<div class='row appRow'>";
-            testPlanHTML+= "<td class='label'><p class='appLabel'>Stop Time:</p>";
-            testPlanHTML+= "<input class='appInput' style='border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='text' name='meas_stop_time' placeholder='400 sec' value='{{meas_stop_time}}'></td></tr></div>";                                                         
+            testPlanHTML+= "<td class='label'><p class='appLabel'>Stop Time(sec):</p>";
+            testPlanHTML+= "<input class='appInput' style='border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='text' name='meas_stop_time' placeholder='400' value='{{meas_stop_time}}'></td></tr></div>";                                                         
             testPlanHTML+= "</form>";
             testPlanHTML+= "</div>";
 
@@ -304,11 +317,13 @@
 
 //CONFIG SEARCH BUTTON
     var searchTimerID;
+    var searchResults;
     function configSearch(i) {
         console.log('configSearch!!!!!');
         var d = document.getElementById('testPlan');
         var children = d.childNodes;
 
+        var configName = children[i].children[0].children[1].children[0].value
         var configBand = children[i].children[0].children[1].children[1].children[1].value
         var configSampleRate = children[i].children[0].children[1].children[2].children[1].value
         var configSampleSize = children[i].children[0].children[1].children[3].children[1].value
@@ -323,7 +338,8 @@
         var config_search_url = 'https://gradientone-test.appspot.com';
         //var config_search_url = window.location.origin;
         config_search_url += "/instlookup/";
-        config_search_url += companyName + "/" + testPlanName;
+        config_search_url += companyName + "/" + testPlanName + "/";
+        config_search_url += configName;
         console.log('configSearch: config_search_url = ',config_search_url);
 
         var searchInput = JSON.stringify({"analog_bandwidth":configBand,"analog_sample_rate":configSampleRate, "capture_buffer_size":configSampleSize, "capture_channels":configChNum, "resolution":configResolution});
@@ -333,19 +349,22 @@
         url: config_search_url,
         data: searchInput,
         dataType: 'json',
+        //headers: { 'Access-Control-Allow-Origin': '*' },
+
         success: function(data, textStatus, jqXHR)
         {
             console.log('commitBtn: Ajax post was a success!');
         },
         });   
-        searchTimerID = setTimeout(getSearchResults, 2000);
+        searchTimerID = setTimeout(getSearchResults, 3000);
         function getSearchResults() {
             console.log('getSearchResults called!!!');
             //widget_url = 'https://gradientone-test.appspot.com/testresults/widgets/Acme.json'
               //var search_results_url = window.location.origin;
               var search_results_url = 'https://gradientone-test.appspot.com';
               search_results_url += "/instlookup/" + companyName + "/";
-              search_results_url += testPlanName;
+              search_results_url += testPlanName + "/";
+              search_results_url += configName;
               console.log('getSearchResults: search_results_url =',search_results_url);
               $.ajax({
                   async: true,
@@ -364,20 +383,24 @@
                   console.log('configHardware = ',configHardware);
                   var configAvail = searchResults.avail_inst;
                   console.log('configAvail = ',configAvail);
-                
+
+                  console.log('SEARCHING');
+                  console.log('after searching =results.length ',results.length)
+
                 var d = document.getElementById('testPlan');
                 var children = d.childNodes;
-                  //children[i].children[1].children[0].children[0].children[1] = configResults;
-                  //children[i].children[1].children[0].children[1].children[1] = configInstType;
-                  //configResults = $('#results' + i).text();
-                  document.getElementById('results' + i).innerHTML = configResults;
-                  document.getElementById('instType' + i).innerHTML = configInstType;
-                  document.getElementById('hardware' + i).innerHTML = configHardware;
-                  document.getElementById('avail' + i).innerHTML = configAvail;
-              });
-               
-            clearTimeout(searchTimerID);
-        };
+                var resultsTextNode = document.createTextNode(configResults);
+                  children[i].children[1].children[0].children[0].children[1].appendChild(resultsTextNode);
+                var typeTextNode = document.createTextNode(configInstType);
+                  children[i].children[1].children[0].children[1].children[1].appendChild(typeTextNode);
+                var hardwareTextNode = document.createTextNode(configHardware);
+                  children[i].children[1].children[0].children[2].children[1].appendChild(hardwareTextNode);
+                var availTextNode = document.createTextNode(configAvail);
+                  children[i].children[1].children[0].children[3].children[1].appendChild(availTextNode);
+              }); 
+              console.log('STOP POLLING FOR SEARCH RESULTS!!');
+              clearTimeout(searchTimerID);   
+        }; 
     };
 //CANVAS ORDER
     $(document).ready(function() {
@@ -467,6 +490,8 @@
                 var configSampleSize = children[index].children[0].children[1].children[3].children[1].value
                 var configResolution = children[index].children[0].children[1].children[4].children[1].value
                 var configChNum = children[index].children[0].children[1].children[5].children[1].value
+                //config search results
+
 
                 var configJsonObj = {"config_name":configName,"analog_bandwidth":configBand,"analog_sample_rate":configSampleRate,"capture_buffer_size":configSampleSize,"resolution":configResolution,"capture_channels":configChNum,};
                 configArray.push(configJsonObj);
