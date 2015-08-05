@@ -41,15 +41,16 @@ class Handler(InstrumentDataHandler):
         #if not self.authcheck():
         #    return
         key = 'testresults' + hardware_name + config_name
-        memcache.get(key)
         output = memcache.get(key)
-        render_json_cached(self, output)
-        #rows = db.GqlQuery("""SELECT * FROM TestResultsDB WHERE company_nickname =:1 and hardware_name =:2
-        #                        AND config_name = :3 and test_complete_bool =:4""", company_nickname, hardware_name, config_name, False)  
-        #rows = list(rows)
-        #data = query_to_dict(rows)
-        #output = {"data":data}
-        #render_json(self, output)
+        if output == None:
+            rows = db.GqlQuery("""SELECT * FROM TestResultsDB WHERE company_nickname =:1 and hardware_name =:2
+                               AND config_name = :3 and test_complete_bool =:4""", company_nickname, hardware_name, config_name, False)  
+            rows = list(rows)
+            data = query_to_dict(rows)
+            output = {"data":data}
+            render_json(self, output)
+        else:
+            render_json_cached(self, output)
     def post(self,company_nickname= "", testplan_name="",start_tse=""):
         "store data by intstrument name and time slice name"
         testresults_content = json.loads(self.request.body)
