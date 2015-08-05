@@ -25,13 +25,13 @@
           </div>
           <div id="navbar">
             <ul class="topmenu nav navbar-nav">
-              <li><a class="currentPage" href="index.html" style="color: rgb(124,175,46);">CANVAS</a></li>
+              <li><a href="../../../testresults">CANVAS</a></li>
               <li class="dots glyphicon glyphicon-option-vertical"></li>
-              <li><a href="instruments.html">INSTRUMENTS</a></li>
+              <li><a href="../../../instruments.html">INSTRUMENTS</a></li>
               <li class="dots glyphicon glyphicon-option-vertical"></li>
-              <li><a href="testlibrary">TEST LIBRARY</a></li>
+              <li><a href="../../../testlibrary/acme" style="color: rgb(124,175,46);">TEST LIBRARY</a></li>
               <li class="dots glyphicon glyphicon-option-vertical"></li>
-              <li><a href="community.html">COMMUNITY</a></li>          
+              <li><a href="../../../community.html">COMMUNITY</a></li>          
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a class="glyphicon glyphicon-envelope" href="../navbar-static-top/"></a></li>
@@ -53,55 +53,12 @@
             <h1 class="testPlanInfo" id="testPlanName"></h1>  
               <h3 class="testPlanInfo" id="testPlanAuthor"></h3>
               <p class="testPlanInfo" id="testPlanDate"></p>
-              <div id="measurementsBox">
-                <p>-horizontal-</p>
-                <div class="knobs" style="width:100px;">
-                        <section>
-                          <div id="knob1">
-                            <p id="knob1Label">Position</p>
-                            <input 
-                            type="text" 
-                            value="0"
-                            data-step=".05"
-                            data-min="-1"
-                            data-max="1" 
-                            class="hPosKnob"
-                            data-cursor= "10"
-                            data-width="50"
-                            data-fgColor="rgb(2,255,253)"
-                            data-thickness=".5"
-                            data-bgColor="white"
-                            data-angleOffset="-125"
-                            data-angleArc="250">
-
-                          </div>
-                        </section>
-                        <section id="horiz">
-                          <div id="knob2">
-                            <p id="knob2Label">Zoom</p>
-                            <input 
-                            type="text" 
-                            value="0"
-                            data-min="10"
-                            data-max="1000" 
-                            class="hZoomKnob"
-                            data-cursor= "10"
-                            data-width="50"
-                            data-fgColor="rgb(2,255,253)"
-                            data-thickness=".5"
-                            data-angleOffset="-125"
-                            data-angleArc="250"
-                            data-bgColor="white">
-                          </div>
-                        </section>
-                      </div>
-                <div  id="testMeasRes"></div>
-              </div>
+              
           </div>
           <br><br><br>
-          <div class="row-md-7" id="dataDisplayBox">
-            <div class="row-md-6;" id="resultsChartCSS">
-              <div id="rawChart" style="height: 450px; width: 600px;"></div>
+          <div class="row-md-12" id="dataDisplayBox">
+            <div class="row-md-12;" id="resultsChartCSS">
+              <div id="rawChart" style="height: 90%; width: 1000px;"></div>
               <div id="decChart" style="height: 200px; width: 600px;"></div>
             </div>
             <div style="text-align:center">
@@ -122,8 +79,7 @@
             <div class="col-md-12">
               <div id="decTable"></div>   
             </div>
-          </div>
-          
+          </div> 
       </div>
     </div>
 
