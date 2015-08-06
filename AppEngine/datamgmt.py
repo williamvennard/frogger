@@ -48,8 +48,11 @@ class Handler(InstrumentDataHandler):
             key = 'bscopedata' + company_nickname + hardware_name + config_name + slicename
             bscope_content = memcache.get(key)
             bscope_content = json.loads(bscope_content)
+            print bscope_content
             original_p = bscope_content['p_settings']
             original_i = bscope_content['i_settings']
+            test_plan = bscope_content['test_plan']
+            testplan_name = bscope_content['testplan_name']
             new_p = unic_to_ascii(original_p)
             new_i = unic_to_ascii(original_i)
             to_save = []
@@ -71,10 +74,11 @@ class Handler(InstrumentDataHandler):
             slicename = str(slicename)
         if check_slices == slice_count:
             print check_slices, "Successfully saved."
-            if trace == True:
+            if test_plan == 'False':
                 key_name = config_name + testplan_name
                 key = db.Key.from_path('TestResultsDB', key_name, parent = company_key())
                 configuration = db.get(key)
+                print configuration.config_name
                 configuration.saved_state = True
                 configuration.put()
         else:

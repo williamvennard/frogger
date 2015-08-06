@@ -107,22 +107,27 @@ class Handler(InstrumentDataHandler):
         for item in configs:
             config = ConfigDB.gql("Where config_name =:1", item['config_name']).get()
             if config == None:  #if there is not an instrument with the inputted name, then create it in the DB
-                c = ConfigDB(key_name = item['config_name'], parent = company_key(),
+                c = ConfigDB(key_name = (item['config_name']+testplan_name), parent = company_key(),
                 company_nickname = company_nickname, author = author,
-                analog_bandwidth = analog_bandwidth,
-                capture_channels = capture_channels,
-                analog_sample_rate = analog_sample_rate,
-                resolution = resolution,
-                capture_buffer_size = capture_buffer_size,
+                analog_bandwidth = item['analog_bandwidth'],
+                capture_channels = item['capture_channels'],
+                analog_sample_rate = item['analog_sample_rate'],
+                resolution = item['resolution'],
+                capture_buffer_size = item['capture_buffer_size'],
+                instrument_type = item['instrument_type'],
+                hardware_name = item['hardware'],
+                test_plan = True,
+                active_testplan_name = testplan_name,
+                trace = False,
                 )
-                m.put()
-            key = db.Key.from_path('ConfigDB', item['config_name'], parent = company_key())
+                c.put()
+            key = db.Key.from_path('ConfigDB', (item['config_name']+testplan_name), parent = company_key())
             configuration = db.get(key)
             if test.key() not in configuration.tests:  #add the test plan to the list property of the dut
                 configuration.tests.append(test.key())
                 configuration.put()
             if configuration.key() not in test.configs:  #add the  dut name to the list property ot the test plan
-                test.configs.append(measurement.key())
+                test.configs.append(configuration.key())
                 test.put()    
 
         #taskqueue.add(url = '/testmanager', method = 'POST', params={'info':(company_nickname,testplan_name)}, eta = date_object)

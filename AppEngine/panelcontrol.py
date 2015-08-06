@@ -40,7 +40,7 @@ class Handler(InstrumentDataHandler):
         control_object = json.loads(self.request.body)
         order = control_object['command']
         if order == 'Stop':
-            config.commence_explor = False
+            config.commence_explore = False
         elif order == 'Start':
             config.commence_explore = True
         config.put()

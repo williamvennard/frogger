@@ -67,6 +67,9 @@ class Handler(InstrumentDataHandler):
         data_length = len(test_results_data)
         slice_size = int(test_results['p_settings']['Slice_Size_msec'])
         sample_rate = int(test_results['i_settings']['Sample_Rate_Hz'])
+        test_plan = test_results['test_plan']
+        testplan_name = test_results['testplan_name']
+        print testplan_name
         sample_per_slice = int((float(sample_rate)/1000)*float(slice_size))
         print slice_size, sample_rate, sample_per_slice
         print data_length
@@ -77,8 +80,8 @@ class Handler(InstrumentDataHandler):
             stuffing = chunk
             key = 'bscopedata' + company_nickname + hardware_name + config_name + str(slicename)
             stuffing = convert_str_to_cha_list(stuffing)
-            window_bscope = {'i_settings':test_results['i_settings'], 'p_settings':test_results['p_settings'], 'cha':stuffing, 
-            'start_tse':start_tse, 'company_nickname':company_nickname, 'slicename':slicename, 'hardware_name':hardware_name, 'config_name':config_name}
+            window_bscope = {'i_settings':test_results['i_settings'], 'p_settings':test_results['p_settings'], 'cha':stuffing, 'testplan_name':testplan_name,
+            'start_tse':start_tse, 'company_nickname':company_nickname, 'slicename':slicename, 'hardware_name':hardware_name, 'config_name':config_name, 'test_plan':test_plan}
             out_bscope = json.dumps(window_bscope, ensure_ascii=True)
             memcache.set(key, out_bscope)
             slicename += slice_size
