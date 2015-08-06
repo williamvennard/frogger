@@ -39,11 +39,16 @@ class Handler(InstrumentDataHandler):
         config = db.get(key)
         control_object = json.loads(self.request.body)
         order = control_object['command']
-        if order == 'Stop':
+        if order == 'Stop_Explore':
             config.commence_explore = False
-        elif order == 'Start':
+        elif order == 'Start_Explore':
             config.commence_explore = True
+        elif order == 'Stop_Trace':
+            config.commence_test = False
+        else order == 'Start_Trace':
+            config.commence_test = True
         config.put()
+
 
 
 
