@@ -64,7 +64,7 @@
     var moveWindowData;
     var sliceSize = 0;
     var dynamicSliceEnd = 0;
-    var getTestInfoCounter = 0;
+    var traceModeCounter = 0;
     var rawPointSpacing;
     var step = 0;
     var traceTimerID;
@@ -96,7 +96,7 @@ function exploreMode() {
         document.getElementById("instrumentName").innerHTML = instrumentName;
         document.getElementById("hardwareName").innerHTML = hardwareName;
        });
-    exploreTimerID = setTimeout(exploreMode,60);
+    exploreTimerID = setTimeout(exploreMode,50);
 };
 
     //LOADING URL
@@ -164,12 +164,14 @@ function exploreMode() {
         document.getElementById("instrumentName").innerHTML = instrumentName;
         document.getElementById("hardwareName").innerHTML = hardwareName;
 
-        if(getTestInfoCounter < numPages) {
-          dynamicSliceEnd = (Number(testSliceStart) + getTestInfoCounter*sliceSize );
-        };
+        //if(traceModeCounter < numPages) {
+          dynamicSliceEnd = sliceEnd;
+          console.log('traceMode: dynamicSliceEnd =',dynamicSliceEnd);
+          //(Number(testSliceStart) + getTestInfoCounter*sliceSize );
+        //};
 
         buildSliceNames(Number(testSliceStart),dynamicSliceEnd,sliceSize);
-        getTestInfoCounter++;
+        traceModeCounter++;
       
         name = String(sliceEnd);
         delete resultsCache.name;
@@ -234,35 +236,35 @@ function exploreMode() {
     function drawRawChart(){   
       var data = new google.visualization.DataTable();
       savedData = data;
-       data.addColumn('number', 'Time');
-       data.addColumn('number', 'Ch1');
+      data.addColumn('number', 'Time');
+      data.addColumn('number', 'Ch1');
 
-       for (idx = 0; idx < sliceNames.length; idx++) {
-            sliceName = sliceNames[idx];
-            //console.log('drawRawChart: SHOULD CHANGE sliceName = ', sliceName);
-            if (!(sliceName in resultsCache)) { return; }
-            var gatheredResults = resultsCache[sliceName];
-            //console.log('drawRawChart: gatheredResults =', gatheredResults)
-            var rawData = gatheredResults;
-            var rawCha = rawData.cha;
-            //console.log('drawRawChart: rawCha=', rawCha);
+      for (idx = 0; idx < sliceNames.length; idx++) {
+        sliceName = sliceNames[idx];
+        //console.log('drawRawChart: SHOULD CHANGE sliceName = ', sliceName);
+        if (!(sliceName in resultsCache)) { break; }
+        var gatheredResults = resultsCache[sliceName];
+        //console.log('drawRawChart: gatheredResults =', gatheredResults)
+        var rawData = gatheredResults;
+        var rawCha = rawData.cha;
+        //console.log('drawRawChart: rawCha=', rawCha);
 
-            //BUILD DATA TABLE ADDING ROWS TIME AND CHA
-           for (i = 0; i < rawCha.length; i++) {
+        //BUILD DATA TABLE ADDING ROWS TIME AND CHA
+        for (i = 0; i < rawCha.length; i++) {
 
-             data.addRow([
-               (((Number(sliceName) - testSliceStart)/1000) + i*rawPointSpacing),
-               parseFloat(rawCha[i]),
-               ]);
-           };
-         };
-        //console.log('drawRawChart: THIS SHOULD SHOW UP data =', data);
-         //range = (Number(sliceNames[numPages]) - Number(sliceNames[0]))/1000;
-         //hMax = range/2;
-         //hMin = (- rawWidth/2); 
-        var width = rawWidth*(100/hZoom);  
-        hMax = hPosition + width;
-        hMin = hPosition;
+          data.addRow([
+           (((Number(sliceName) - testSliceStart)/1000) + i*rawPointSpacing),
+           parseFloat(rawCha[i]),
+          ]);
+        };
+      };
+      //console.log('drawRawChart: THIS SHOULD SHOW UP data =', data);
+       //range = (Number(sliceNames[numPages]) - Number(sliceNames[0]))/1000;
+       //hMax = range/2;
+       //hMin = (- rawWidth/2); 
+      var width = rawWidth*(100/hZoom);  
+      hMax = hPosition + width;
+      hMin = hPosition;
 
       rawChartOptions = {
          title: '',
@@ -281,14 +283,14 @@ function exploreMode() {
       var tableOptions = {
          showRowNumber: true,
       };   
-          moveWindowData = data;
-          //console.log('drawRawChart: data=',data)
-         //DRAW CHART
-         rawChart = new google.visualization.LineChart($('#oChart').get(0));      
-         rawChart.draw(data, rawChartOptions);
-         //DRAW TABLE
-         var table = new google.visualization.Table($('#oTable').get(0));
-         table.draw(data, tableOptions);  
+      moveWindowData = data;
+      //console.log('drawRawChart: data=',data)
+      //DRAW CHART
+      rawChart = new google.visualization.LineChart($('#oChart').get(0));      
+      rawChart.draw(data, rawChartOptions);
+      //DRAW TABLE
+      var table = new google.visualization.Table($('#oTable').get(0));
+      table.draw(data, tableOptions);  
     };
     function buildSliceNames(start,end,interval) {
       //console.log('buildSliceNames',start);
