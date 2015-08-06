@@ -485,7 +485,7 @@ $(document).ready(function(){
       console.log('exploreStart !!!!!')
       //formatStartUrl = raw_urlPath.split('/');
       
-      var startValue = 'Start';
+      var startValue = 'Start_Explore';
       var start_url = 'https://gradientone-test.appspot.com/' + 'panelcontrol/Acme/Tahoe/Primetime';// + formatStartUrl[formatStartUrl.length-2];
       console.log('exploreStart: start_url =',start_url);
 
@@ -507,7 +507,7 @@ $(document).ready(function(){
       console.log('exploreStop!!!!!')
       //formatStartUrl = raw_urlPath.split('/');
       
-      var startValue = 'Stop';
+      var startValue = 'Stop_Explore';
       var start_url = 'https://gradientone-test.appspot.com/' + 'panelcontrol/Acme/Tahoe/Primetime';// + formatStartUrl[formatStartUrl.length-2];
       console.log('exploreStart: start_url =',start_url);
 
@@ -571,7 +571,7 @@ $(document).ready(function(){
       console.log('traceStart !!!!!')
       //formatStartUrl = raw_urlPath.split('/');
       
-      var startValue = 'Start';
+      var startValue = 'Start_Trace';
       var start_url = 'https://gradientone-test.appspot.com/' + 'panelcontrol/Acme/Tahoe/Primetime';// + formatStartUrl[formatStartUrl.length-2];
       console.log('exploreStart: start_url =',start_url);
 
@@ -593,7 +593,7 @@ $(document).ready(function(){
       console.log('traceStop!!!!!')
       //formatStartUrl = raw_urlPath.split('/');
       
-      var startValue = 'Stop';
+      var startValue = 'Stop_Trace';
       var start_url = 'https://gradientone-test.appspot.com/' + 'panelcontrol/Acme/Tahoe/Primetime';// + formatStartUrl[formatStartUrl.length-2];
       console.log('exploreStart: start_url =',start_url);
 
