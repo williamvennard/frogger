@@ -39,7 +39,6 @@ class Handler(InstrumentDataHandler):
             company_nickname_check = company_nickname.split('.')
             company_nickname = company_nickname_check[0]
         if company_nickname and company_nickname_check[-1] == 'json':
-            print 'looking for json'
             rows = db.GqlQuery("SELECT * FROM TestResultsDB where company_nickname =:1", company_nickname) #saved data only
             rows = list(rows) 
             rows = query_to_dict(rows)        

@@ -46,7 +46,7 @@ class Handler(InstrumentDataHandler):
             key = 'TestResultsDB'+testplan_name+config_name
             test_plan = True
             trace = False
-            r = TestResultsDB(key_name = key, parent = TestResultsDB_key(testplan_name), testplan_name=testplan_name,
+            r = TestResultsDB(key_name = testplan_name, parent = company_key(), testplan_name=testplan_name,
                         company_nickname = company_nickname, 
                         Total_Slices=int((test_complete_content['p_settings']['Total_Slices'])),
                         Dec_msec_btw_samples=(test_complete_content['p_settings']['Dec_msec_btw_samples']),
@@ -85,7 +85,8 @@ class Handler(InstrumentDataHandler):
             config_name = test_complete_content['config_name']
             hardware_name = test_complete_content['hardware_name']
             to_save = []
-            r = TestResultsDB(parent = TestResultsDB_key(testplan_name), testplan_name=testplan_name,
+            key = config_name + testplan_name
+            r = TestResultsDB(parent = company_key(), testplan_name=testplan_name, key_name = key,
                     company_nickname = company_nickname, 
                     Total_Slices=int(test_complete_content['p_settings']['Total_Slices']),
                     Dec_msec_btw_samples=(test_complete_content['p_settings']['Dec_msec_btw_samples']),
@@ -104,7 +105,8 @@ class Handler(InstrumentDataHandler):
             to_save.append(r) 
             db.put(to_save)
             #memcache.set(key, to_save)
-            key = db.Key.from_path('ConfigDB', config_name, parent = company_key())
+            key = config_name+testplan_name
+            key = db.Key.from_path('ConfigDB', key, parent = company_key())
             config = db.get(key)
             config.commence_test = False
             config.put()

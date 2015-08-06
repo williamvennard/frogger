@@ -30,9 +30,10 @@ class Handler(InstrumentDataHandler):
         config_name = self.request.get('config_name')
         sample_rate = int(self.request.get('sample_rate'))
         testplan_name = self.request.get('testplan_name')
+        key_name = config_name + testplan_name
         number_of_samples = int(self.request.get('number_of_samples'))
         print config_name, company_nickname, author, hardware_name, instrument_type, number_of_samples, sample_rate, testplan_name
-        c = ConfigDB(key_name = config_name, parent = company_key(),
+        c = ConfigDB(key_name = key_name, parent = company_key(),
             company_nickname = company_nickname, author = author,
             hardware_name = hardware_name, instrument_type = instrument_type,
             config_name = config_name,             

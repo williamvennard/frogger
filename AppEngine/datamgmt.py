@@ -71,5 +71,11 @@ class Handler(InstrumentDataHandler):
             slicename = str(slicename)
         if check_slices == slice_count:
             print check_slices, "Successfully saved."
+            if trace == True:
+                key_name = config_name + testplan_name
+                key = db.Key.from_path('TestResultsDB', key_name, parent = company_key())
+                configuration = db.get(key)
+                configuration.saved_state = True
+                configuration.put()
         else:
             print "Error:", check_slices, "saved.  The server was expecting to save:", slice_count
