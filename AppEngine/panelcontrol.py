@@ -45,7 +45,7 @@ class Handler(InstrumentDataHandler):
             config.commence_explore = True
         elif order == 'Stop_Trace':
             config.commence_test = False
-        else order == 'Start_Trace':
+        elif order == 'Start_Trace':
             config.commence_test = True
         config.put()
 
