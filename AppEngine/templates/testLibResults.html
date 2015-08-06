@@ -139,17 +139,7 @@
     var configName;
     var testName;
     
-    function fetchDecData(){
-       dec_json_url = dec_url;
-       $.ajax({
-          async: true,
-          url: dec_json_url,            
-          dataType: 'json',
-       }).done(function (results) {
-         var chaData = results.cha;
-         drawDecChart(chaData);
-      });
-    };
+  
 
     //LOADING URL
     test_info_url = window.location.pathname + '.json';
@@ -208,40 +198,7 @@
     // DEC CHART CODE //
 
     // BUILD DEC DATA TABLE AND DRAW DEC CHART
-    function drawDecChart(decData) {
-        var data = new google.visualization.DataTable();
-        data.addColumn('number', 'Time');
-        data.addColumn('number', 'Ch1');
-
-        for (i=0; i<decData.length; i++) {
-           var num = i*decPointSpacing - decOffset;
-           num = Math.ceil(num * 100) / 100;
-           data.addRow([
-             num, 
-             decData[i],
-             ]);
-        };
-        decChartOptions = {
-         title: 'Preview',
-         titleTextStyle: {color:'lightgray', fontSize: 18, fontName: 'NexaLight'},
-         legend: {alignment:'center', textStyle:{color:'lightgray'}},
-         hAxis: {title: 'Time(sec)',titleTextStyle:{color:'lightgray', fontName: 'NexaLight'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'none', count: 5},viewWindowMode:'explicit'},
-         vAxis: {title: '', titleTextStyle:{color:'lightgray'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'none', count: 0}, format: '##.###', viewWindowMode:'explicit'},
-         backgroundColor: {fill:'none', stroke: 'black', strokeWidth: 0,},
-         colors: ['rgb(2,255,253)','rgb(239,253,146)'],
-         lineWidth: 2,
-         curveType: 'function',
-        };
-      //DRAW CHART
-         var chart = new google.visualization.LineChart($('#decChart').get(0));      
-         chart.draw(data, decChartOptions);
-      //DRAW TABLE
-         var table = new google.visualization.Table($('#decTable').get(0));
-         table.draw(data); 
-    };
-
-    //google.setOnLoadCallback(fetchDecData);
-
+    
 // RAW CHART CODE //
 // have start button reset these for live tests 
     var savedData = 0;
@@ -363,7 +320,7 @@
     var incrementTimerID;
     function increment () {
         if (step <= rawWidth) {
-          step = step + rawPointSpacing*2
+          step = step + rawPointSpacing
         }else {
           console.log('increment: out of data');
           return;
@@ -380,7 +337,7 @@
       };
     function reverseIncrement () {
         if (step >= 0) {
-          step = step - rawPointSpacing*2
+          step = step - rawPointSpacing
         }else {
           return;
         }; 
@@ -468,10 +425,7 @@
       rewind();
     });
   });
-
 </script>
-
-
 
 </body>
 </html>
