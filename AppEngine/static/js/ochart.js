@@ -375,69 +375,32 @@ function exploreMode() {
      
     // replay button
   
-    function Forward() {
-      //console.log('rawPointSpacing!!!!!! =',rawPointSpacing);   
-      var windowSize = rawWidth*(100/hZoom);
-      timerID = setInterval(increment, 100);
-      function increment () {
+      // replay button
+    var step = 0;
+    var windowSize = 0;
+    var incrementTimerID;
+    function increment () {
         if (step <= rawWidth) {
           step = step + rawPointSpacing*2
         }else {
-         clearInterval(timerID); 
-        }  
+          console.log('increment: out of data');
+          return;
+         //clearInterval(timerID); 
+        };
         rhMax = step + windowSize;
         rhMin = step; 
         rawChartOptions.hAxis.viewWindow.max = rhMax;
         rawChartOptions.hAxis.viewWindow.min = rhMin;
 
         rawChart.draw(moveWindowData, rawChartOptions);
+        incrementTimerID = setTimeout(increment,2);
+        console.log('increment: incrementTimerID=',incrementTimerID);
       };
-    };
-    function fastForward() {   
-      var windowSize = rawWidth*(100/hZoom);
-      timerID = setInterval(increment, 100);
-      function increment () {
-        if (step <= rawWidth) {
-          step = step + rawPointSpacing*20
-        }else {
-         clearInterval(timerID); 
-        }  
-        rhMax = step + windowSize;
-        rhMin = step; 
-        rawChartOptions.hAxis.viewWindow.max = rhMax;
-        rawChartOptions.hAxis.viewWindow.min = rhMin;
-
-        rawChart.draw(moveWindowData, rawChartOptions);
-      };
-    };
-    // pause / start / rewind
-    function start() {   
-      var windowSize = rawWidth*(100/hZoom);
-      timerID = setInterval(increment, 100);
-      function increment () {
-        if (step <= rawWidth) {
-          step = step + rawPointSpacing*2
-        }else {
-         clearInterval(timerID); 
-        }  
-        rhMax = step + windowSize;
-        rhMin = step; 
-        rawChartOptions.hAxis.viewWindow.max = rhMax;
-        rawChartOptions.hAxis.viewWindow.min = rhMin;
-
-        rawChart.draw(moveWindowData, rawChartOptions);
-      };
-    };
-
-
-    function backward() {  
-      var windowSize = rawWidth*(100/hZoom); 
-      timerID = setInterval(increment, 100);
-      function increment () {
+    function reverseIncrement () {
         if (step >= 0) {
           step = step - rawPointSpacing*2
         }else {
-         clearInterval(timerID); 
+          return;
         }; 
         rhMax = step + windowSize;
         rhMin = step; 
@@ -445,54 +408,58 @@ function exploreMode() {
         rawChartOptions.hAxis.viewWindow.min = rhMin;
 
         rawChart.draw(moveWindowData, rawChartOptions);
+        incrementTimerID = setTimeout(reverseIncrement,2);
       };
+
+
+    function replay() {
+      console.log('rawPointSpacing!!!!!! =',rawPointSpacing);
+      step = 0;
+      windowSize = rawWidth*(100/hZoom);
+      //timerID = setInterval(increment, 100);
+      
+      increment();
     };
-    function fastBackward() {  
-      var windowSize = rawWidth*(100/hZoom); 
-      timerID = setInterval(increment, 100);
-      function increment () {
-        if (step >= 0) {
-          step = step - rawPointSpacing*20
-        }else {
-         clearInterval(timerID); 
-        }; 
-        rhMax = step + windowSize;
-        rhMin = step; 
-        rawChartOptions.hAxis.viewWindow.max = rhMax;
-        rawChartOptions.hAxis.viewWindow.min = rhMin;
+    // pause / start / rewind
+    function start() {   
+      windowSize = rawWidth*(100/hZoom);
+      //timerID = setInterval(increment, 100);
+      increment();
 
-        rawChart.draw(moveWindowData, rawChartOptions);
-      };
+    };
+
+    function backward() {  
+      windowSize = rawWidth*(100/hZoom);
+      reverseIncrement(); 
+      //timerID = setInterval(increment, 100);
     };
 // BUTTON CONTROLS
 $(document).ready(function(){
 //REPLAY BUTTONS
+  
+    $('#backward').click(function(){
+      clearTimeout(incrementTimerID);
+      backward();
+    });
+    $('#pause').click(function(){ 
+      clearTimeout(incrementTimerID);
+    });
+    $('#start').click(function(){
+      clearTimeout(incrementTimerID);
+      replay();
+    });
+    $('#forward').click(function(){
+      clearTimeout(incrementTimerID);
+      start();
+    });
+
+
 
     $('#replay').click(function(){
 
        replay();
     });
-    $('#fastBackward').click(function(){
-
-       fastBackward();
-    });
-    $('#backward').click(function(){
-
-       backward();
-    });
-    $('#pause').click(function(){ 
-       clearInterval(timerID);
-    });
-    $('#start').click(function(){
-
-       start();
-    });
-    $('#forward').click(function(){
-       Forward();
-    });
-    $('#fastForward').click(function(){
-       fastForward();
-    });
+   
 //OPTION BUTTONS
   //EXPLORE MODE
   $("#exploreBtns").hide();
@@ -519,7 +486,7 @@ $(document).ready(function(){
       //formatStartUrl = raw_urlPath.split('/');
       
       var startValue = 'Start';
-      var start_url = 'https://gradientone-test.appspot.com/datamgmt/' + 'panelcontrol/Acme/Tahoe/Primetime';// + formatStartUrl[formatStartUrl.length-2];
+      var start_url = 'https://gradientone-test.appspot.com/' + 'panelcontrol/Acme/Tahoe/Primetime';// + formatStartUrl[formatStartUrl.length-2];
       console.log('exploreStart: start_url =',start_url);
 
       var startData = JSON.stringify({"start_status":startValue});
@@ -541,7 +508,7 @@ $(document).ready(function(){
       //formatStartUrl = raw_urlPath.split('/');
       
       var startValue = 'Stop';
-      var start_url = 'https://gradientone-test.appspot.com/datamgmt/' + 'panelcontrol/Acme/Tahoe/Primetime';// + formatStartUrl[formatStartUrl.length-2];
+      var start_url = 'https://gradientone-test.appspot.com/' + 'panelcontrol/Acme/Tahoe/Primetime';// + formatStartUrl[formatStartUrl.length-2];
       console.log('exploreStart: start_url =',start_url);
 
       var startData = JSON.stringify({"start_status":startValue});
@@ -605,7 +572,7 @@ $(document).ready(function(){
       //formatStartUrl = raw_urlPath.split('/');
       
       var startValue = 'Start';
-      var start_url = 'https://gradientone-test.appspot.com/datamgmt/' + 'panelcontrol/Acme/Tahoe/Primetime';// + formatStartUrl[formatStartUrl.length-2];
+      var start_url = 'https://gradientone-test.appspot.com/' + 'panelcontrol/Acme/Tahoe/Primetime';// + formatStartUrl[formatStartUrl.length-2];
       console.log('exploreStart: start_url =',start_url);
 
       var startData = JSON.stringify({"start_status":startValue});
@@ -627,7 +594,7 @@ $(document).ready(function(){
       //formatStartUrl = raw_urlPath.split('/');
       
       var startValue = 'Stop';
-      var start_url = 'https://gradientone-test.appspot.com/datamgmt/' + 'panelcontrol/Acme/Tahoe/Primetime';// + formatStartUrl[formatStartUrl.length-2];
+      var start_url = 'https://gradientone-test.appspot.com/' + 'panelcontrol/Acme/Tahoe/Primetime';// + formatStartUrl[formatStartUrl.length-2];
       console.log('exploreStart: start_url =',start_url);
 
       var startData = JSON.stringify({"start_status":startValue});
