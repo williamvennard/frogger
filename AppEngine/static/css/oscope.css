@@ -198,7 +198,8 @@ h3 {
     border-color: rgb(197,44,72);
     border-radius: 5px;
     background-color: rgb(33,33,33);
-    margin: 80px 0 180px 0;
+    margin: 10px 0 80px 0;
+    padding: 0 0 0 0;
 }
 
 #submitBtn {
@@ -207,7 +208,7 @@ h3 {
     letter-spacing: 2px;
     width: 80px;
     position: relative;
-    margin: 10px 20px 5px 65px;
+    margin: 30px 20px 5px 65px;
     padding: 4px 0 0 0;
     border-style: solid;
     border-width: 1px;
@@ -218,8 +219,7 @@ h3 {
 }
 
 .configRow {
-    position: relative;
-    bottom: 20px;
+
     height: 28px;
 }
 
@@ -252,6 +252,19 @@ h3 {
     left: 0px;
     height: 54px;
     width: 100px;
+}
+
+.configInfoBox {
+    color: white;
+    background-color: black;
+    border-radius: 10px;
+    border: 1px solid;
+    font-family: 'nexa_lightregular';
+    position: relative;
+    top: 2px;
+    left: 0px;
+    height: 54px;
+    width: 290px;
 }
 
 .replayBtn {

@@ -158,21 +158,21 @@
                                                      
                         </div> 
                         <!--CONFIG FORM-->
-                        <div id="collapseConfig" class="collapse in configBox">           
-                            <form method="post">
+                        <div id="collapseConfig" class="collapse in configBox">
+                          <div id="configSettings">          
                             <div class="row configRow">
                                 <tr>
                                   <td class="label">
                                     <p class="configLabel">Config Name:</p>
-                                    <input class="configInput" style="border-top-right-radius: 5px; border-top-left-radius: 5px;" type="text" name="config_name" value="">
+                                    <input class="configInput" style="border-top-right-radius: 5px; border-top-left-radius: 5px;" type="text" placeholder='name' value="">
                                   </td>
                                 </tr>
                               </div>
                               <div class="row configRow">
                                 <tr>
                                   <td class="label">
-                                    <p class="configLabel">Instrument:</p> 
-                                    <input class="configInput" type="text" name="instrument_name" value="">
+                                    <p class="configLabel">Bandwidth(Hz):</p> 
+                                    <input class="configInput" type="text" placeholder='20,000,000' value="">
                                   </td>
                                 </tr>
                               </div>
@@ -180,21 +180,37 @@
                               <div class="row configRow">
                                 <tr>
                                   <td class="label">
-                                    <p class="configLabel">Sample Rate (Hz):</p>  
-                                    <input class="configInput" type="text" name="sample_rate" value="">
+                                    <p class="configLabel">Sample Rate(sps):</p>  
+                                    <input class="configInput" type="text" placeholder='20,000,000' value="">
                                   </td>
                                 </tr>
                               </div>
                               <div class="row configRow">
                                 <tr>
                                   <td class="label">
-                                    <p class="configLabel">Num. of Samples:</p>  
-                                    <input class="configInput" style="border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;" type="text" name="number_of_samples" value="">
+                                    <p class="configLabel">Buffer Size:</p>  
+                                    <input class="configInput" type="text" placeholder='1000' value="">
+                                  </td>
+                                </tr>
+                              </div>
+                              <div class="row configRow">
+                                <tr>
+                                  <td class="label">
+                                    <p class="configLabel">Resolution:</p>  
+                                    <input class="configInput" type="text" placeholder='1000' value="">
+                                  </td>
+                                </tr>
+                              </div>
+                              <div class="row configRow">
+                                 <tr>
+                                  <td class="label">
+                                    <p class="configLabel"># of Channels:</p>  
+                                    <input class="configInput" style="border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;" type="text" placeholder='2' value="">
                                   </td>
                                 </tr>
                               </div> 
-                            <button id="submitBtn" type="button">Submit</button>
-                          </form>
+                              <button id="submitBtn" type="button" onclick="instConfig()">Submit</button>
+                          </div> 
                         </div>
 
                         <fieldset class="col-md-12" id="knobBox" style="width: 95%; margin-top:10px;">
@@ -300,10 +316,12 @@
 
                       </div>
                       <div class="col-md-3 statusInfoBox">
-                        <h5 style="margin-bottom: 0px;">Status: <span id="currentStatus" class="status"></span> </h5>   
+                        <h5 style="margin-bottom: 0px; text-align:center;">Status <span id="currentStatus" class="status"></span> </h5>   
                       </div>
-                      <div class="col-md-3 configInfoBox">
-                        <h5 style="margin-bottom: 0px;">Settings: <span id="currentConfig" class="configSettings"></span> </h5>   
+                      <div id="settingsDisplay" class="col-md-3 configInfoBox">
+                        <h6 style="margin-bottom: 0px;"><span style="margin-right:3px;">Bandwidth:</span><span class="configSettings"></span><span style="margin-left:63px; margin-right:3px;">Buffer Size:</span><span></span></h6>
+                        <h6 style="margin-bottom: 0px;"><span style="margin-right:3px;">Sample Rate:</span><span class="configSettings"></span><span style="margin-left:50px; margin-right:3px;">Resolution:</span><span></span></h6>
+                         
                       </div>
                     </div>
                   </div>                 

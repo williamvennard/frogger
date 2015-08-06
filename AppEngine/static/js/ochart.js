@@ -329,6 +329,48 @@ function exploreMode() {
     //want save button to create this url and post true or
     //https://gradientone-test.appspot.com/datamgmt/bscopedata/Acme/Tahoe/wildwood/1436937598030
 
+    //CONFIG FORM SUBMIT
+    function instConfig() {
+      var d = document.getElementById('configSettings');
+        var children = d.childNodes;
+
+      var configName = children[1].children[1].value;
+      var configBand = children[3].children[1].value;
+      var configSampleRate =  children[5].children[1].value;
+      var configSampleSize = children[7].children[1].value; 
+      var configResolution = children[9].children[1].value; 
+      var configChNum = children[11].children[1].value; 
+
+      var configSettings = document.getElementById('settingsDisplay');
+        var setChildren = configSettings.childNodes;
+
+      setChildren[1].children[1].innerHTML = configBand;
+      setChildren[3].children[1].innerHTML = configSampleRate;
+      setChildren[1].children[3].innerHTML = configSampleSize;
+      setChildren[3].children[3].innerHTML = configResolution;
+
+      var config_url = 'https://gradientone-test.appspot.com/';
+      console.log('saveStatus: config_url = ',config_url);
+
+      var configSettings = JSON.stringify({"config_name":configName,"analog_bandwidth":configBand,
+            "analog_sample_rate":configSampleRate, "capture_buffer_size":configSampleSize,
+             "capture_channels":configChNum, "resolution":configResolution,"timepost":false});
+      console.log('instConfig: configSettings = ',configSettings);
+     $.ajax({
+        type: "POST",
+        url: config_url,
+        data: configSettings,
+        dataType: 'json',
+        success: function(data, textStatus, jqXHR)
+        {
+            console.log('saveStatus: Ajax post was a success!');
+        },
+      }); 
+
+
+    };
+
+
     function saveStatus(status) {
      document.getElementById("traceSave").disabled = true; 
       console.log('saveStatus: SAVED!!');
