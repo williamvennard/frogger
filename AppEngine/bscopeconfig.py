@@ -25,7 +25,7 @@ class Handler(InstrumentDataHandler):
     def post(self):
         author = author_creation()
         company_nickname = self.request.get('company_nickname')
-        hardware_name = self.request.get('hardware_name')
+        hardware = self.request.get('hardware')
         instrument_type = self.request.get('instrument_type')
         config_name = self.request.get('config_name')
         sample_rate = int(self.request.get('sample_rate'))
@@ -33,15 +33,19 @@ class Handler(InstrumentDataHandler):
         key_name = config_name + testplan_name
         number_of_samples = int(self.request.get('number_of_samples'))
         print config_name, company_nickname, author, hardware_name, instrument_type, number_of_samples, sample_rate, testplan_name
-        c = ConfigDB(key_name = key_name, parent = company_key(),
-            company_nickname = company_nickname, author = author,
-            hardware_name = hardware_name, instrument_type = instrument_type,
-            config_name = config_name,             
-            sample_rate = sample_rate, number_of_samples = number_of_samples,
-            test_plan = False,
-            active_testplan_name = testplan_name,
-            trace = True,
-            )
+        c = ConfigDB(key_name = (config_name+testplan_name), parent = company_key(),
+                company_nickname = company_nickname, author = author,
+                analog_bandwidth = analog_bandwidth,
+                capture_channels = capture_channels,
+                analog_sample_rate = analog_sample_rate,
+                resolution = resolution,
+                capture_buffer_size = capture_buffer_size,
+                instrument_type = instrument_type,
+                hardware_name = hardware,
+                test_plan = True,
+                active_testplan_name = testplan_name,
+                trace = False,
+                )
         c.put() 
         checkbox_names = ["commence_test", "commence_explore"]
         for name in checkbox_names:

@@ -36,10 +36,10 @@ from string import maketrans
 
 class Handler(InstrumentDataHandler):
     "An HTTP GET will present test plans.  Queries that include just company and hardware name are used to present instructions to the instrument for testing."
-    def get(self, company_nickname="", hardware_name="", testplan_name=""):
+    def get(self, company_nickname="", hardware_name="", config_name=""):
         if company_nickname and hardware_name:
-            rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE company_nickname =:1 and commence_explore =:2 and hardware_name =:3", 
-                                company_nickname, False, hardware_name)
+            rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE company_nickname =:1 and commence_explore =:2 and hardware_name =:3 and config_name =:4", 
+                                company_nickname, False, hardware_name, config_name)
             rows = list(rows)
             config_exps = query_to_dict(rows)
             config = {'configs_exps':config_exps}
