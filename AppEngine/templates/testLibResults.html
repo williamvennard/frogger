@@ -332,7 +332,7 @@
         rawChartOptions.hAxis.viewWindow.min = rhMin;
 
         rawChart.draw(moveWindowData, rawChartOptions);
-        incrementTimerID = setTimeout(increment,2);
+        incrementTimerID = setTimeout(increment,40);
         console.log('increment: incrementTimerID=',incrementTimerID);
       };
     function reverseIncrement () {
@@ -347,7 +347,7 @@
         rawChartOptions.hAxis.viewWindow.min = rhMin;
 
         rawChart.draw(moveWindowData, rawChartOptions);
-        incrementTimerID = setTimeout(reverseIncrement,2);
+        incrementTimerID = setTimeout(reverseIncrement,40);
       };
 
 

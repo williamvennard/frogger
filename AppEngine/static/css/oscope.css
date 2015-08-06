@@ -112,7 +112,7 @@ h3 {
 
 #oChart{
     height: 420px;
-    width:550px;
+    width: 550px;
     margin: 10px 0 5px 30px;
     display: inline-block;
     vertical-align: left;
@@ -251,12 +251,12 @@ h3 {
     top: 2px;
     left: 0px;
     height: 54px;
-    width: 375px;
+    width: 100px;
 }
 
 .replayBtn {
     height: 50px;
-    width: 168px;
+    width: 130px;
     margin: 5px 5px 0 45px;
     padding: 0;
 }

@@ -133,26 +133,27 @@
                             <h2 style="margin-bottom: 0px; font-family:'nexa_lightregular';">Options</h2>
                         </div>
                         <!--BUTTONS-->
-                        <div class="optionsButtons">
-                        <button style="width:130px; margin-left:18px;" class="text-uppercase configBtn" data-toggle="collapse" data-parent="#accordion" href="#collapseConfig">Configure</button> 
+                        <div class="optionsButtons"> 
                         <!--EXPLORE TRACE MODES-->
                           <fieldset class="col-md-12" id="modeBox">
                           <span class="spacer"></span><legend class="text-uppercase" style="width: 80px; padding-left: 5px; margin-bottom:0px;">mode</legend>
 
-                              <button style="width:100px;" class="text-uppercase optionsBtn" type="button" id="exploreMode">Explore</button>
-                              <button style="width:100px;" class="text-uppercase optionsBtn" type="button" id="traceMode">Trace</button>
+                              <button style="width:100px;" class="text-capitalize optionsBtn" type="button" id="exploreMode">Explore</button>
+                              <button style="width:100px;" class="text-capitalize optionsBtn" type="button" id="traceMode">Trace</button>
                           </fieldset> 
                           <div id="exploreBtns">
-                            <button style="margin-left:15px" class="text-uppercase optionsBtn" type="button" id="exploreStartStop">Start</button>
-                            <button style="" class="text-uppercase optionsBtn" type="button" id="explorePause">Pause</button> 
-                            <button style="margin-left:15px" class="text-uppercase optionsBtn" type="button" id="exploreSave">save</button>
-                            <button style="" class="text-uppercase optionsBtn" data-toggle="collapse" data-parent="#accordion" href="#collapseTable">Table</botton>
+                            <button style="margin-left:15px" class="text-capitalize optionsBtn" type="button" id="exploreStartStop">Start</button>
+                            <button style="" class="text-capitalize optionsBtn" type="button" id="explorePause">Pause</button> 
+                            <button style="margin-left:15px" class="text-capitalize optionsBtn" type="button" id="exploreSave">save</button>
+                            <button style="" class="text-capitalize optionsBtn" data-toggle="collapse" data-parent="#accordion" href="#collapseTable">Table</botton>
+                            <button style="width:130px; margin-left:18px;" class="text-capitalize configBtn" data-toggle="collapse" data-parent="#accordion" href="#collapseConfig">Configure</button>
                           </div> 
                           <div id="traceBtns">
-                            <button style="margin-left:15px" class="text-uppercase optionsBtn" type="button" id="traceStartStop">Start</button>
-                            <button style="" class="text-uppercase optionsBtn" type="button" id="tracePause">Pause</button>
-                            <button style="margin-left:15px" class="text-uppercase optionsBtn" type="button" id="traceSave">save</button>
-                            <button style="" class="text-uppercase optionsBtn" data-toggle="collapse" data-parent="#accordion" href="#collapseTable">Table</botton> 
+                            <button style="margin-left:15px" class="text-capitalize optionsBtn" type="button" id="traceStartStop">Start</button>
+                            <button style="" class="text-capitalize optionsBtn" type="button" id="tracePause">Pause</button>
+                            <button style="margin-left:15px" class="text-capitalize optionsBtn" type="button" id="traceSave">save</button>
+                            <button style="" class="text-capitalize optionsBtn" data-toggle="collapse" data-parent="#accordion" href="#collapseTable">Table</botton>
+                            <button style="width:130px; margin-left:18px;" class="text-capitalize configBtn" data-toggle="collapse" data-parent="#accordion" href="#collapseConfig">Configure</button> 
                           </div>  
                                                      
                         </div> 
@@ -163,7 +164,7 @@
                                 <tr>
                                   <td class="label">
                                     <p class="configLabel">Config Name:</p>
-                                    <input class="configInput" style="border-top-right-radius: 5px; border-top-left-radius: 5px;" type="text" name="config_name" value="{{config_name}}">
+                                    <input class="configInput" style="border-top-right-radius: 5px; border-top-left-radius: 5px;" type="text" name="config_name" value="">
                                   </td>
                                 </tr>
                               </div>
@@ -171,7 +172,7 @@
                                 <tr>
                                   <td class="label">
                                     <p class="configLabel">Instrument:</p> 
-                                    <input class="configInput" type="text" name="instrument_name" value="{{instrument_name}}">
+                                    <input class="configInput" type="text" name="instrument_name" value="">
                                   </td>
                                 </tr>
                               </div>
@@ -180,7 +181,7 @@
                                 <tr>
                                   <td class="label">
                                     <p class="configLabel">Sample Rate (Hz):</p>  
-                                    <input class="configInput" type="text" name="sample_rate" value="{{sample_rate}}">
+                                    <input class="configInput" type="text" name="sample_rate" value="">
                                   </td>
                                 </tr>
                               </div>
@@ -188,16 +189,16 @@
                                 <tr>
                                   <td class="label">
                                     <p class="configLabel">Num. of Samples:</p>  
-                                    <input class="configInput" style="border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;" type="text" name="number_of_samples" value="{{number_of_samples}}">
+                                    <input class="configInput" style="border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;" type="text" name="number_of_samples" value="">
                                   </td>
                                 </tr>
                               </div> 
-                            <input id="submitBtn" type="submit" value="SUBMIT">
+                            <button id="submitBtn" type="button">Submit</button>
                           </form>
                         </div>
 
                         <fieldset class="col-md-12" id="knobBox" style="width: 95%; margin-top:10px;">
-                        <span class="spacer"></span><legend class="text-uppercase" style="width: 300px; padding-left: 5px; margin-bottom: 0px;">Horizontal</legend><span class="spacer"></span>   
+                        <span class="spacer"></span><legend class="text-capitalize" style="width: 300px; padding-left: 5px; margin-bottom: 0px;">Horizontal</legend><span class="spacer"></span>   
                           <div class="Knobs">
                             <section>
                               <div id="PosKnob">
@@ -239,7 +240,7 @@
                           </div>
                         </fieldset>
                         <fieldset class="col-md-12" id="knobBox" style="width: 95%; margin-top:10px;">
-                        <span class="spacer"></span><legend class="text-uppercase" style="width: 300px; padding-left: 5px; margin-bottom: 0px;">Vertical</legend><span class="spacer"></span>   
+                        <span class="spacer"></span><legend class="text-capitalize" style="width: 300px; padding-left: 5px; margin-bottom: 0px;">Vertical</legend><span class="spacer"></span>   
                           <div class="Knobs">
                             <section>
                               <div id="PosKnob">
@@ -300,6 +301,9 @@
                       </div>
                       <div class="col-md-3 statusInfoBox">
                         <h5 style="margin-bottom: 0px;">Status: <span id="currentStatus" class="status"></span> </h5>   
+                      </div>
+                      <div class="col-md-3 configInfoBox">
+                        <h5 style="margin-bottom: 0px;">Settings: <span id="currentConfig" class="configSettings"></span> </h5>   
                       </div>
                     </div>
                   </div>                 

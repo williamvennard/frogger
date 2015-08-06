@@ -381,7 +381,7 @@ function exploreMode() {
     var incrementTimerID;
     function increment () {
         if (step <= rawWidth) {
-          step = step + rawPointSpacing*2
+          step = step + rawPointSpacing;
         }else {
           console.log('increment: out of data');
           return;
@@ -398,7 +398,7 @@ function exploreMode() {
       };
     function reverseIncrement () {
         if (step >= 0) {
-          step = step - rawPointSpacing*2
+          step = step - rawPointSpacing;
         }else {
           return;
         }; 
