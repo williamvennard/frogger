@@ -280,8 +280,6 @@
         };
     })(jQuery);
 
-    
-
     var d;
     function removeWidget(index) {
       d = document.getElementById('testPlan');

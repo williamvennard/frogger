@@ -140,7 +140,7 @@
             var formatEndDate = (ed.getMonth()+1) + "/" + ed.getDate() + "/" + ed.getFullYear() + " " + ed.getHours() + ":" + ed.getMinutes() + ":" + ed.getSeconds() + "." + ed.getMilliseconds();
             //TEST IF test_plan or trace
             if (resultsArray[i].test_plan  === 'True') {
-                testTable+="<div style='margin-bottom: -60px;'>";
+                testTable+="<div class='libraryEntry' style='margin-bottom: -60px;'>";
                 testTable+="<span class='name'>" + "Name: "  + "</span>" + "<span  class='testName text-capitalize'>" + resultsArray[i].testplan_name + "</span>";
                 testTable+="<br>";
                 testTable+="<span class='startTime'>" + "Start Time: " + "</span>" + "<span class='libTime'>" + formatStartDate + "</span>";
@@ -149,12 +149,12 @@
                 testTable+="<br>";
                 testTable+="<a class='resultsLink' href='https://gradientone-test.appspot.com/testlibrary/testresults/" + resultsArray[i].company_nickname + "/" + resultsArray[i].config_name + "/" + resultsArray[i].start_tse + "'>Results</a>";
                 testTable+="<div class='decChart hoverzoom showHidden' id='decChart" + index + "'></div>";
-                testTable+="<div class='hiddenInfo' style='color:white;'>Stuff shown on hover</div>"
+                testTable+="<div class='hiddenInfo' style='color:white;'></div>"
                 testTable+="</div>"; 
 
                 fetchDecData(resultsArray[i],index)
             }else if (resultsArray[i].trace === 'True') {
-                traceTable+= "<div style='margin-bottom: -60px;'>"
+                traceTable+= "<div class='libraryEntry' style='margin-bottom: -60px;'>"
                 traceTable+= "<span class='name'>" + "Name: "  + "</span>" + "<span  class='testName text-capitalize'>" + resultsArray[i].testplan_name + "</span>";
                 traceTable+="<br>";
                 traceTable+="<span class='startTime'>" + "Start Time: " + "</span>" + "<span class='libTime'>" + formatStartDate + "</span>";
@@ -163,7 +163,7 @@
                 traceTable+="<br>";
                 traceTable+="<a class='resultsLink' href='https://gradientone-test.appspot.com/testlibrary/traceresults/" + resultsArray[i].company_nickname + "/" + resultsArray[i].config_name + "/" + resultsArray[i].start_tse + "'>Results</a>";
                 traceTable+="<div class='decChart hoverzoom showHidden' id='decChart" + index + "'></div>";
-                traceTable+="<div class='hiddenInfo' style='color:white;'>Stuff shown on hover</div>"
+                traceTable+="<div class='hiddenInfo' style='color:white;'></div>"
                 traceTable+="</div>"; 
 
                 fetchDecData(resultsArray[i],index)
@@ -218,12 +218,13 @@
              ]);
         };
         decChartOptions = {
-         title: 'Preview',
+         title: '',
          titleTextStyle: {color:'lightgray', fontSize: 18, fontName: 'NexaLight'},
          legend: 'none',
          hAxis: {title: '',titleTextStyle:{color:'lightgray', fontName: ''}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'none', count: 5},viewWindowMode:'explicit'},
          vAxis: {title: '', titleTextStyle:{color:'lightgray'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'none', count: 0}, format: '##.###', viewWindowMode:'explicit'},
          backgroundColor: {fill:'none', stroke: 'black', strokeWidth: 0,},
+         chartArea:{backgroundColor:'', height:60, width:230},
          colors: ['rgb(2,255,253)','rgb(239,253,146)'],
          lineWidth: 2,
          curveType: 'function',

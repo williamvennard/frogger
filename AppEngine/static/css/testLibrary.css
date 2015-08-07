@@ -6,6 +6,11 @@
     color: red;
 }
 
+.libraryEntry {
+    height: 150px;
+    margin:35px 0 35px 0;
+}
+
 .subMenu {
     text-align: center;
     margin: 0 5px 0 5px;
@@ -62,11 +67,11 @@
 
 .decChart {
     position: relative;
-    left: 250px;
-    bottom: 90px;
+    left: 200px;
+    bottom: 140px;
     margin: 10px 0 0 0;
-    height: 100px;
-    width: 150px;
+    height: 60px;
+    width: 230px;
 }
 
 .testName {

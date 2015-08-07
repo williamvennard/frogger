@@ -21,10 +21,15 @@
     <script type="text/javascript" src="../static/js/addons/clickadd.js"></script>
     
     <script type="text/javascript">
-        function checkTextField(field) {
-            if (field.value == '') {
+        function checkTextField() {
+            var testPlanName = document.getElementById("tesPlanName")
+            var testSpace = document.getElementById("testPlan")
+            if (testPlanName.value == '') {
                 console.log('field is empty');
                 $("#accordion").hide();
+            }else if (!(testSpace.innerHTML == '')) {
+                $(".collapseCommitTest").fadeIn("fast"); 
+                $("#accordion").fadeIn("fast"); 
             }else {
                 $("#accordion").fadeIn("fast");   
             }  
@@ -68,8 +73,8 @@
         </div>
         <div class="row">
             <div class="col-md-3" style="width: 180px; margin-top: 20px;">
-            <button id="newTestBtn" class="btn btn-default tog" href="#collapseNewTest">NEW TEST</button>
-            <button id="newTestBtn" class="btn btn-default" href="">SAVED TEST</button>
+            <button id="newTestBtn" class="btn btn-default tog" href="#collapseNewTest" onclick="checkTextField()">NEW TEST</button>
+            <button id="newTestBtn" class="btn btn-default savedTests">SAVED TEST</button>
                 <div class="panel-group" id="accordion" style="width: 140px;">
                     <div class="panel panel-default">
                         <div class="panel-heading">
@@ -167,7 +172,7 @@
                             <div class="col-md-5">
                                 <tr>
                                     <td class="label">  
-                                      <input class="nameTestInput" type="text" onblur="checkTextField(this);" value="" placeholder="name goes here">
+                                      <input id="tesPlanName" class="nameTestInput" type="text" onblur="checkTextField();" value="" placeholder="name goes here">
                                     </td>
                                 </tr>
                             </div>
@@ -234,8 +239,14 @@
       $(".collapseNewTest").hide();
       $(".collapseCommitTest").hide();
       $(".tog").click(function () {
-          //$("#accordion").show();  
           $(".collapseNewTest").fadeIn("fast"); 
+          $(".droppable").fadeIn("fast");
+      });
+      $(".savedTests").click(function () {
+          $(".collapseNewTest").hide();
+          $(".droppable").hide();
+          $(".collapseCommitTest").hide();
+          $("#accordion").hide();
       });
       $(".startNow").change(function (){
            if (this.checked) {
