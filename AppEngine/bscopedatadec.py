@@ -37,17 +37,17 @@ from string import maketrans
 
 
 class Handler(InstrumentDataHandler):
-    def get(self,company_nickname="", hardware_name="",instrument_name="",start_tse=""):
+    def get(self,company_nickname="", hardware_name="",config_name="",start_tse=""):
         "retrieve decimated BitScope data by intstrument name and time slice name"
         #if not self.authcheck():
         #    return
-        key = 'bscopedatadec' + company_nickname + hardware_name + instrument_name + start_tse
+        key = 'bscopedatadec' + company_nickname + hardware_name + config_name + start_tse
         start_tse = int(start_tse)
         bscope_payload = memcache.get(key)
         print bscope_payload
         if bscope_payload is None:
             logging.error("BscopeData:get: query")
-            rows = db.GqlQuery("""SELECT * FROM BscopeDB WHERE company_nickname =:1 and hardware_name =:2 and instrument_name =:3 AND start_tse= :4 ORDER BY slicename ASC""", company_nickname, hardware_name, instrument_name, start_tse)  
+            rows = db.GqlQuery("""SELECT * FROM BscopeDB WHERE company_nickname =:1 and hardware_name =:2 and config_name =:3 AND start_tse= :4 ORDER BY slicename ASC""", company_nickname, hardware_name, config_name, start_tse)  
             rows = list(rows)
             data = query_to_dict(rows)
             test_results = create_decimation(data)
@@ -59,8 +59,8 @@ class Handler(InstrumentDataHandler):
                 render_json_cached(self, bscope_payload)
             else:
                 render_json(self, bscope_payload)
-    def post(self,company_nickname="", hardware_name="", instrument_name="",slicename=""):
+    def post(self,company_nickname="", hardware_name="", config_name="",slicename=""):
         "store data by intstrument name and time slice name"
-        key = 'bscopedatadec' + company_nickname + hardware_name + instrument_name + slicename
+        key = 'bscopedatadec' + company_nickname + hardware_name + config_name + slicename
         print self.request.body
         memcache.set(key, self.request.body)

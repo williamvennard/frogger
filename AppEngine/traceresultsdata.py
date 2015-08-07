@@ -40,7 +40,7 @@ class Handler(InstrumentDataHandler):
         "HTTP GETs from the Instrument Page in the UI provide data to faciliate plotting"
         #if not self.authcheck():
         #    return
-        key = 'testresults' + hardware_name + config_name
+        key = 'traceresults' + company_nickname + hardware_name + config_name
         output = memcache.get(key)
         if output == None:
             rows = db.GqlQuery("""SELECT * FROM TestResultsDB WHERE company_nickname =:1 and hardware_name =:2
@@ -51,11 +51,14 @@ class Handler(InstrumentDataHandler):
             render_json(self, output)
         else:
             render_json_cached(self, output)
-    def post(self,company_nickname= "", testplan_name="",start_tse=""):
+    def post(self,company_nickname= "", hardware_name="", config_name = ""):
         "store data by intstrument name and time slice name"
         testresults_content = json.loads(self.request.body)
+        print testresults_content
+        i_settings = testresults_content['i_settings']
+        cha = testresults_content['window_bscope']['cha']
+        start_tse = testresults_content['start_tse']
         config_name=str(testresults_content['config_name'])
-        hardware_name=str(testresults_content['hardware_name'])
         test_plan = testresults_content['test_plan']
         if test_plan == 'True':
             testresults_content['test_plan'] = True
@@ -66,7 +69,10 @@ class Handler(InstrumentDataHandler):
         testresults_content['test_complete_bool'] = False
         testresults_content['p_settings'] = unic_to_ascii(testresults_content['p_settings'])
         testresults_content = unic_to_ascii(testresults_content)
-        key = 'testresults' + hardware_name + config_name
-        testresults_content = json.dumps(testresults_content)
+        window_bscope = {'i_settings':i_settings, 'p_settings':testresults_content['p_settings'], 'cha':cha, 'start_tse':start_tse}
+        window_bscope = json.dumps(window_bscope)
+        key = 'bscopedatadec' + company_nickname + hardware_name + config_name + str(start_tse)
+        memcache.set(key, window_bscope)
+        key = 'traceresults' + company_nickname + hardware_name + config_name
         print testresults_content
         memcache.set(key, testresults_content)
