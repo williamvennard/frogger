@@ -14,7 +14,7 @@ import scipy.signal
 
 #Default settings.  MY_RATE & MY_SIZE are configurable.  This may change.
 MY_DEVICE = 0 # one open device only
-MY_CHANNEL = 0 # channel to capture and display
+MY_CHANNEL = 1 # channel to capture and display
 MY_PROBE_FILE = "" # default probe file if unspecified 
 MY_MODE = BL_MODE_FAST # preferred capture mode
 MY_RATE = 1000 # default sample rate we'll use for capture (hertz).  1 sample every 1 milisecond.
@@ -35,7 +35,7 @@ def post_status(status):
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
     window = {'status':status, 'time':time.time()}
     status = json.dumps(window, ensure_ascii=True)
-    url_s = "https://gradientone-dev1.appspot.com/status/" + COMPANYNAME + '/' + HARDWARENAME
+    url_s = "https://gradientone-test.appspot.com/status/" + COMPANYNAME + '/' + HARDWARENAME
     s = requests.post(url_s, data=status, headers=headers)
     print "s.reason=",s.reason
     print "s.status_code=",s.status_code
@@ -75,26 +75,25 @@ def make_json(payload):
 
 def check_config_url():
     """polls the configuration URL for a start signal @ 1sec intervals"""
-    config_url = "https://gradientone-dev1.appspot.com/testplansummary/" + COMPANYNAME + '/' + HARDWARENAME
+    config_url = "https://gradientone-test.appspot.com/testplansummary/" + COMPANYNAME + '/' + HARDWARENAME
    
     s = requests.session()
     r = s.get(config_url)
     if r:
+        print 'checking'
         config = r.json()
         if config['configs_exps']:
             config = config['configs_exps'][0]
             if config['commence_explore'] == 'True':
-                print "Starting API"
+                print "Starting API Exp Mode"
                 post_status('Starting')
                 bscope_acq_exp(config, s)
         elif config['configs_tps_traces']:
             config = config['configs_tps_traces'][0]    
-            if: config['commence_test'] == 'True':
+            if config['commence_test'] == 'True':
                 print "Starting API"
                 post_status('Starting')
                 bscope_acq(config, s)
-            else:
-                pass
         else:
             print "No start order found"
     threading.Timer(1, check_config_url()).start()
@@ -113,9 +112,7 @@ def get_frequency(data, sample_rate):
 def bscope_acq_exp(config, s):    
     """sets the configuration for the bitscope API and calls the BitScope class"""
     acq_dict = {}
-    config_url = "https://gradientone-dev1.appspot.com/testplansummary/" + COMPANYNAME + '/' + HARDWARENAME
-
-    print "Starting: Attempting to open one device..."
+    print "Starting: Attempting to open one exp device..."
     if BL_Open(MY_PROBE_FILE,1):
         #post_status('Acquiring')
         print check_state()
@@ -139,6 +136,7 @@ def bscope_acq_exp(config, s):
         BL_Range(BL_Count(BL_COUNT_RANGE)); # maximum range
         BL_Offset(BL_ZERO); # optional, default 0
         BL_Enable(TRUE); # at least one channel must be initialised 
+        config_url = "https://gradientone-test.appspot.com/exploremodestop/" + COMPANYNAME + '/' + HARDWARENAME + '/' + config_name
         while True:
             time_bs = time.time()
             print 'calling BS_Trace ...'
@@ -188,7 +186,7 @@ def bscope_acq_exp(config, s):
             #bits.transmitraw()
             time_stop = time.time()
             #bits.transmitblob()
-            bits.testcomplete()
+            #bits.testcomplete()
             #post_status('Idle')
             dec_time = time_dec - time_start
             raw_time = time_stop - time_dec
@@ -197,7 +195,10 @@ def bscope_acq_exp(config, s):
             #print 'time between data acq and transmit dec data', dec_time
             #print 'time after dec transmission and transmit raw data', raw_time
             print 'total time', total_time
-        print "do bl close"
+        BL_Close()
+        print "Finished: Library closed, resources released." 
+
+
        # do test complete
         #time.sleep(5)
     else:
