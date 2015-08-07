@@ -1,0 +1,449 @@
+* -*- mode: outline; -*- Time-stamp: "FIX.txt: Tue Nov 12 13:38:19 2013"
+
+* Beta 2.0 Build DK06B | 23106
+
+** Patched regression affecting some BS1xx models | 23096 06
+   The change made for Linux kernel 3.8+ compatibility broke on some
+   older revisions of the kernel when used with some BS1xx revisions.
+
+** Fixed connection bug with Linux 3.8+ kernels for older models | 23096 05
+   A change made to the linux kernel after version 3.8 affected connection
+   with some USB model BitScopes (it depends on the hardware revision). If
+   you have a BS310, BS50 or some BS1xx models and you use a recent linux
+   distribution including Fedora 19 and Ubuntu 13.10, we recommend you
+   upgrade to this release to avoid any connectivity issues
+
+** Mac OS X 10.9 Maverick Update | 23093
+   Apple's latest OS X update seems to be a smooth upgrade from Mountain
+   Lion but there are some little issues it has created for the BitScope
+   apps so we've published this update to address them.
+
+* Beta 2.0 Build DC01R | 21710
+
+** Added full version reporting to the library | 22343 06
+   The BL_Version function now accepts one of six arguments. The
+   first two are the most often used (device and library version).
+   The others provide additional information about the build used
+   for the library and are required for diagnostic feedback in the
+   case technical support for an installation is required.
+
+** Fixed slow memory leak when using diagnostic log | 22398 05
+   The library provides the BL_Log function to return a log of library
+   activity in response to client programming via the library API. The
+   logger had a slow memory leak whereby extensive use of the log would
+   result in a slowly increasing memory footprint for the library (and
+   any application using it). Fixed.
+
+** Fixed analog data duplication for BS325 | 22433
+   A subtle bug in could result in the data from channel A being
+   replicated on channel B when BS325 was capturing mixed mode
+   (i.e. when capturing all 10 channels). Fixed.
+
+** Changed Windows calling conventions to cdecl | 20274 02
+   Previously the library used stdcall calling conventions. This
+   has been changed to cdecl per numerous customer requests.
+
+** Added more environment validation checks | 22359
+   The library is used in a variety of environments where information
+   provided to it (e.g. client buffers pointers, sizes etc) may not be
+   correct. There may also be sources of memory corruption emanating
+   from the code into which the library is linked. The library now
+   applies a range of validation checks to be as robust as possible
+   against these sorts of errors. 
+
+** Improved bad client request handling | 22090 05
+   Clients of the library may ask for the impossible (e.g. due to
+   client programmer mistakes). Any such error should be handled by
+   the library gracefully with information available via BL_Log as
+   to what mistake was made. This change improves the handling of
+   these errors with more informational error reporting.
+
+** Fixed analog channel count reporting | 22090 05 21875 27
+   The library reports the number of analog channels available via
+   BL_Count. The number it reports depends on the device model and
+   the capture mode (BL_Mode). In some cases, the library failed to
+   report the correct number in some modes on some devices. Fixed.
+
+** Fixed state transition sequence error on some platforms | 22367
+   When used asynchronously and erroneously, it was possible for a
+   all sequence made to the library to lock up the state transition
+   logic. If an incomplete trace (BL_Trace) was manually terminated
+   using BL_Halt and further transactions were attempted before the
+   state was reported as done (BL_State), this illegal state could
+   be entered preventing further progress and effectively locking
+   the calling application. This erroneous client calling sequence
+   is now detected and the state sequence corrected.
+
+** Updated library build platform to eliminate suspected SEGV | 22359
+   A code compilation error in GNU binutils that could result in a
+   SEGV error in the library when accessed asynchronously has been
+   fixed.
+
+** Added full link error recovery handling to agency | 22355
+   If a link fails catastrophically (e.g. the USB or network cable is
+   unplugged from the device or any other fatal error occurs preventing
+   further communications with the device) the library offers automatic
+   recovery when the link is restored (e.g. cable plugged back in). It
+   protects against man in the middle attacks such that only the device
+   that was disconnected will be accepted for reconnection (important
+   if traversing public network links). When the link is down BL_Trace
+   returns FALSE if called synchronously. If called asynchronously,
+   BL_Status returns BL_STATE_ERROR. In either case, BL_Acquire should
+   not be used or if it is, the return value will be zero (no data is
+   acquired) which value must be checked before relying on the data.
+
+** Fixed possibly partially initialized buffers via Python Bindings | 22084 10
+   There are several ways to call BL_Acquire via the Python Bindings.
+   In two of them the return buffer is allocated by BL_Acquire itself.
+   If the data size returned was less than the size requested, this
+   buffer was allocated the size requested but initialized only up
+   to the data actually available. This was ambiguous (how much data
+   does the buffer contain?). Normally one knows a priori but subtle
+   client coding errors could result in less data being acquired than
+   was requested with no way of knowing this occurred (e.g. because
+   one asks to acquire more data than one traced, or more data than
+   the device has buffers for was requested). This change makes this
+   type of programming error obvious; the return buffer is allocated
+   a size equal to the data actually acquired. 
+
+** Fixed potential stale data acquisition when used asynchronously | 21875 26
+   After calling BL_Trace asynchronously, the client must wait until
+   BL_State reports BL_STATE_DONE before using BL_Acquire to acquire
+   the data. However a bug (fixed here) meant that with some devices 
+   it was possible that data from the previous capture frame would be
+   returned if the BL_Acquire call arrived within a clock tick of the
+   completion of the preceding BL_Trace call notwithstanding BL_State
+   reporting BL_STATE_DONE (i.e. it should have been legal to acquire
+   the data at this point but it wasn't). This bug has been fixed such
+   that as soon as BL_State reports BL_STATE_DONE it is now guaranteed
+   to be safe to then acquire the data with BL_Acquire. Note: this did
+   not affect synchronous operation with timeouts of 20ms or more but
+   it could have resulted in stale data with shorter timeouts even if
+   used synchronously in certain circumstances. This is fixed too.
+
+** Fixed slow sample rate calculation error | 21875 25
+   When a very low sample rate was specified with BL_Rate for a BS3xx
+   of BS4xx device, which rate was significantly lower than the device
+   was physically capable of, the buffer size and capture time were not
+   correctly calculated resulting in erroneous values. In practice this
+   applied to sample rates below 5Hz on BS3xx or 1Hz on BS4xx devices.
+
+** Modified capture time API (BL_Time) to simplify use | 21875 24
+   Assignment of a capture time with BL_Time was somewhat ambiguous;
+   does one modify the sample rate, capture size or both? Previously
+   BL_Time did both. If there was sufficient buffer to capture for the
+   specified time it changed the capture size only otherwise it adjusted
+   (reduced) the sample rate sufficiently to ensure the specified time
+   was captured (if possible). Our beta testers reported that this was
+   confusing to use because it required checking the resulting sample
+   rate and buffer size after using it. We've simplified it so that it
+   now adjusts the capture size only; it is in effect a proxy for the
+   BL_Size API but which takes into account the prevailing sample rate.
+   If a duration longer than that which is possible (given the device 
+   buffer size and prevailing sample rate) is required the client must
+   now explicitly reduce the sample rate. We recommend using BL_Size
+   to assign the capture duration explicitly and then use BL_Time to
+   ask the library what the capture duration is.
+
+** Improved slow clock trigger point precision | 22037 05
+   The trigger point is now calculated with greater precision when
+   capturing on some mode BitScopes that use the slow clock capture
+   mechanism. This includes BS300, BS310, BS320 and BS50. The newer
+   models do not need or use slow clock capture.
+
+** Fixed pre-trigger calculus for BL_Intro on some devices | 22084 07
+   When a non-zero pre-trigger (BL_Intro) was specified, the value
+   calculated for the driver internally was incorrect when applied
+   on some BitScope models. Fixed. A related problem affected this
+   when accessed via the Python bindings. Also fixed.
+
+** Fixed regression that omitted BL_Coupling call | 21875 23
+   This call makes DC, AC and RF coupling selections available (for
+   devices that support these options). The selected coupling is
+   applied to the prevailing source on the selected channel on the
+   selected device. Note: not all sources on all devices support AC
+   or RF coupling but all devices support DC coupling. For those that
+   don't support AC or RF, similar results can often be achieved when
+   using input offset controls (see the DSO 2.5 user guide for more
+   information on how to do this).
+
+** Fixed device connection termination/re-open bug | 21875 21 22
+   Previously closing the devices (BL_Close) and the re-opening one
+   or more of them could fail depending on the order in which they
+   were re-opened if the library was not shutdown in the interim.
+   This problem could be seen in C code which did not finalize the
+   library after closing devices before re-opening them. Fixed.
+
+** Removed device arguments from legacy calls | 22040 19
+   Various lesser used API calls (e.g. BL_Name, BL_Send and BL_Receive)
+   now conform to the V2.0 API which uses the BL_Select call exclusively
+   to choose the target device. This completes the transition to V2.0.
+
+** Modified API for opening devices | 22040 18
+   Previously BL_Open expected an (optional) boolean second argument
+   which specified whether to open one or open all devices listed in
+   the first argument returning a boolean indicating success. This is
+   changes to become an integer instead which specifies the number of
+   devices to (attempt to) open returning an integer which indicates
+   the number successfully opened.
+
+** Modified API for trigger programming | 22040 16
+   The BL_Trigger call previously required the channel to be specified
+   via the first parameter. This violated the BitLib 2.0 API design which
+   requires that channel selection is via BL_Select (BL_SELECT_CHANNEL).
+   This change eliminates confusion as to which channel is the currently
+   selected one; it's always the one most recently selected via BL_Select.
+
+** Fixed dual channel capture on BS325N | 22084 02
+   Dual channel (analog) capture was broken; it captured CH-A (twice)
+   instead of switching to CH-B when required. This was a bug in the
+   capture engine when used with direct input capture devices (i.e.
+   it affected BS1xx, BS32x and BS44x devices). Now fixed.
+
+** Simplified capture mode selection | 22040 15
+   The library no longer requires user selection between single A/D 
+   and multi-A/D devices. Instead this is decided automatically and
+   all the application needs to know is whether the device performs
+   multi-channel capture (e.g. BS445, BS325, BS120) or alternating
+   capture (e.g. BS310, BS10 etc) when performing high speed analog
+   data acquisition. Note that the later class of devices offer an
+   alternative mode (CHOP) which uses channel multiplexing instead.
+
+** Added new C Programming Examples | 22077
+   Replaced the old BitLib 1.4 examples with two new examples for
+   use with BitLib V2.0. The first (report.c) parses the probe file
+   to open and report on all the devices listed there. The second
+   (capture.c) opens the first device in the probe file and performs
+   a single channel capture. Taken together they provide examples
+   of how to use the library in C.
+
+** Fixed subtle probe file parsing bug | 18838 12
+   If the probe file contained blank lines (technically illegal) it
+   was possible to bomb the parser if they appeared at the end of
+   the file. This change makes such lines legal (but redundant) and
+   ensures that the library does not bomb when they are encountered.
+
+** Migrated to BitLib 2.0 API | 22040
+   The API has been modified too far to remain 1.x compatible so the
+   version has been bumped to 2.0. This cleans up the API in a way
+   which is more compatible with the much more powerfule agency API
+   (on which it's based) while remaining reasonably compatible with
+   the legacy 1.x API. Migrating to this library will require some
+   changes to existing client code but the modus operandi is close
+   enough that these changes should not be significant.
+
+** Myriad API clean-up and minor modifications | 21874 09..13
+   BL_Open now uses its argument as a literal link specification if
+   it's not a probe file name. BL_ChannelCount has been deleted and
+   replaced by BL_Count and the latter has semantics to allow counts
+   of devices, analog and logic channels, and ranges. BL_Version is
+   modified to report a bindings version (called from a different
+   language such as Python) to allow binding/library version mis-
+   matches to be detected in client code (e.g. if using the wrong
+   library or bindings). BL_SelectBitScope and BL_SelectChannel are
+   replaced with BL_Select providing extendable selection.
+
+* Alpha 1.5 Build DA21G | 21710
+
+** Library now provides built-in device simulators | 21016
+   It is now possible to specify a "NIL device" of a specified type 
+   (e.g. NIL:BS010003). Opening a NIL device creates a new simulated 
+   instance of that device (when a physical instance is unavailable).
+   This allows library clients to check their operation against any
+   supported BitScope device without the need for physical hardware.
+   The simulator generates sawtooth waveforms running full scale on
+   each input with a frequency locked to the selected sample rate.
+   This makes checking the sample rate, buffer size and input range
+   handling in the client code easy (i.e. by viewing the simulated
+   waveform on almost any type of display).
+
+** Modified multiple device handling via the library | 21903 08
+   The library has always handled multiple concurrent devices but
+   it now treats each one completely independently of the others.
+   This means that device specific parameters (e.g. capture rate,
+   buffer size, capture mode etc) are maintained per device which
+   means they no longer need to be programmed (again) if switching
+   from one device to another (i.e. the client code does not need
+   to remember it, the library now does). The recent API changes
+   make it possible to "ask the library" what various values are
+   (i.e. usually by specifying 0 or -1 depending on the call). 
+
+** Modified channel count/enable BL_ChannelCount/Enable | 21874 07 08
+   These APIs now require one argument only; the type of channel to 
+   enumerate (0=>analog, 1=>logic) or (dis/en)able. They do this on
+   the currently selected channel (it's no longer required to specify
+   this on each call). There is no differentiation between channel 
+   inputs (BNC/POD) when making these calls as all models that have
+   both types of input have the same number of channels for each.
+
+** Modified the data acquisition API BL_Acquire | 21874 06
+   This API now returns the number of samples acquired instead of
+   a boolean. This means that if fewer than the number requested
+   is returned (which can happen if more than are available in
+   the trace buffer is requested), the caller can know how many
+   samples are valid. Normally the return value will be the same
+   as the number requested so inequality can be used to determine
+   if something went wrong during the acquisition.
+
+** Renamed the channel selection API BL_SelectChannel | 21874 05
+   This API used to be called BL_ChannelSelect but this obscured its
+   purpose when compared with BL_SelectBitScope. This change also 
+   modifies the return value to be like BL_SelectBitScope; it now
+   returns the selected channel. This makes it possible to find out
+   the prevailing channel without change it (by calling with -1).
+
+** Modified mode selection API BL_Mode | 21874 04
+   This function now returns the currently selected mode instead of
+   a boolean reflecting whether the requested mode was selected okay.
+   The return value will be the requested value if the mode is legal
+   on the selected device, otherwise it will be the most recently
+   selected legal mode on that device (which is 0 by default). This
+   change also makes it possible to find out the mode without making
+   any changes (by calling with the argument -1).
+
+** Fixed capture time and timeout calculations | 21875 08,09
+   Previously the library did not calculate the capture time or allow
+   it to be assigned. Normally one uses sample rate and capture size
+   where the capture time is therefore implicit. With this type of
+   usage this bug may be unnoticed. However the library now allows
+   the capture time to be specified directly in which case the rate
+   and capture size may be adjusted to suit. This now works. In a
+   related fix the timeout duration is now calculated correctly.
+
+** Added library logging features for beta releases | 21908
+   To assist with performance improvements, bug fixes and programming
+   tutorials and examples the BL_Log() function has been reinstated.
+   This provides insight into the operation of the library and can help
+   uncover user programming errors using the library.
+
+** Library bug fixes and performance improvements | 21875 21896
+   The library is now much more responsive. Previously access latencies
+   reduced the maximum capture frame rate to around 10Hz. With these
+   changes frame rates to beyond 100Hz are now possible (subject to
+   the speed of the device, PC and link). Only tested with BS10U.
+
+** Python Bindings are now packaged with a simple unit test | 21717 07
+   The python bindings (bitlibmodule.c) now include a simple unit test
+   (test-bitlib.py) which we recommend you run after installing both
+   the library and the bindings and after successfully connecting with
+   the BitScope (using BitScope DSO to set up the probe file, or you
+   can manually edit the probe file if you know what you're doing).
+
+** Python Bindings for Trace and Acquire are simplified | 21800
+   The BL_Trace() and BL_Acquire() functions are much easier to use via
+   the Python Bindings because the arguments default to sensible values
+   and the BL_Acquire() function may be called in several ways, two of
+   which are more idiomatic of typical Python usage.
+
+** Updated library initialization default values | 21820
+   To make the library easier to use, especially interactively used via
+   a dynamic language such as Python, default values are now established
+   when the device is opened. The first capture mode with the largest
+   buffer and highest sample rate is automatically selected. The first
+   analog POD connected input is enabled with the least sensitive range
+   and prescale turned off. If these defaults are what you need to get
+   started, most calls establishing these parameters are not required.
+
+** Modified parameter constraint algorithms | 21787
+   This change makes the library easier to understand and use in respect
+   of sample rate and buffer size calculations Previously the library
+   automatically calculated the required buffers size for a given sample
+   rate and capture duration. This produced buffer sizes which could not
+   be easily calculated in advance (unless you know the internal details
+   of the device you're using). With this change buffer size is explicit;
+   it's now set directly via BL_BufferSize. Capture sample rate and duration
+   assignment can no longer result in a change in the buffer size. Instead
+   changing the sample rate now changes the duration subject to the buffer
+   size previously chosen (and vice versa).
+
+** Updated initialization and connection paradigms | 19752 65
+   The library no longer requires BL_Initialize to be called explicitly.
+   Similarly BL_SelectBitScope, BL_SelectChannel and BL_Mode are optional.
+   The only usage requirement is that at least one device must be opened
+   successfully (with BL_Open or BL_OpenLink) before any device specific
+   API call is used. This simplifies its use (see C example for details).
+
+* Release 1.4 Build AK10B | 15903 
+
+** C/C++ demo fixes | 15881
+   The .lib library import file is now included for Visual Studio
+   users and the C/C++ demos updates to use load time linking.
+
+** Installer fixes for Windows Vista & 7 | 15882
+   Bux fixes for Windows 7 installer and example apps so that
+   stale Start menu items are now correctly deleted or replaced
+   when a new version of the package is installed.
+
+* Release 1.4 Build AJ21A | 15731
+
+** vm120 support added | 15592
+   The new VM120 machine is supported in this release. New features
+   include support for the new sample clock generator modes, sub-
+   sampling triggers and waveform capture and support for the new
+   DSP based waveform generator (coming soon with BitGenLib).
+
+* Release 1.4 Build AJ07A | 15546
+
+** Calibration bug fixed | 15518 
+   BS50 calibration file now reads data correctly. Previously
+   BS50U calibration data was not recorded or read correctly.
+
+** BS50 wavegen bug fix | 15488
+   Probe affecting waveform generation in the BS50U model
+   is fixed in this update.
+
+** LED fix | 15396
+   Front panel LEDs follow DSO behaviour. Channel LEDs now 
+   illuminate when the associated BNC input is selected.
+
+* Release 1.4 Build AG01A | 14322
+
+** Fixed BS44501 buffer bug | 14320
+   The buffer access calculation for BitScope BS44501 units was flawed
+   resulting in the possible buffer wrap or data corruption. Fixed.
+
+** Fixed BS44501 POD bug | 14323
+   This model has 4 POD connected analog inputs but the library only
+   recognised 2 of them. Fixed.
+
+* Release 1.4 Build AF22A | 14274
+
+** Fixed slow clock rate bug | 14272
+   Calculates slow clock rates correctly for older model BitScopes
+   including BS50, BS300 and BS310.
+
+** Fixed BS445 bug | 14228
+   Now selects BS445 channels correctly.
+
+** Fixed PreTrigger bug | 14216
+   Pre-trigger (BL_PreTrigger) now accounts for clock settling delay so
+   that correct sample rates are used for the entire capture duration.
+   Before this fix is was possible that the first few samples were
+   captured at a (slightly) wrong sample rate. Fixed.
+
+** Fixed minor error in BS325 sample rate table | 14175
+   A sample rate table typo resulted in a 0.5% sample rate error at
+   one clock rate in the BS325 model. No other model affected.
+
+** Prevent invalid wavegen calls | 14167
+   Waveform generator API calls made on BitScopes that do not have
+   this feature produced errors. Fixed.
+
+* Release 1.4 Build AD19B | 14160
+
+** Redefined BL_WaveLevel and BL_WaveOffset API | 14073
+   These functions now return the value set for each parameter
+   instead of a boolean result. They now work like BL_SampleRate
+   reporting the value assigned (which may be different to the
+   value requested depending on the hardware).
+
+* Release 1.0 Build AC24B | 13557
+
+** Minor bug fixes | 13557
+   Probe extension must be used on BL_Open call.
+
+* Release 1.0 Build AC24A | 13545
+
+** Minor bug fixes | 13545
+   BitScope PreTrigger bug fixed. Unknown BitScopes now handled 
+   correctly. BS300 GND state disabled.

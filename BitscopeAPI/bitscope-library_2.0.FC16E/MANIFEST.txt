@@ -1,0 +1,21 @@
+ --------------------------------------------------------------------
+
+              BITLIB - DISTRIBUTION ARCHIVE MANIFEST
+
+    Copyright (C) 2009-2013 BitScope Designs. All Rights Reserved.
+
+ --------------------------------------------------------------------
+
+ The files in this archive are:
+
+  libBitLib.so    - BitScope BitLib Library
+  FIX.txt         - list of fixed bugs
+  Library.html    - Library Reference Document
+  bitlib.h        - API function definitions
+  LICENSE.txt     - the BitLib software license
+  README.txt      - library overview and description
+  MANIFEST.txt    - this file
+ 
+ --------------------------------------------------------------------
+                BitScope Designs. January 21, 2013
+ --------------------------------------------------------------------
