@@ -20,6 +20,17 @@
     <script src="../static/js/addons/angular.min.js"></script>
     <script type="text/javascript" src="../static/js/addons/clickadd.js"></script>
     
+    <script type="text/javascript">
+        function checkTextField(field) {
+            if (field.value == '') {
+                console.log('field is empty');
+                $("#accordion").hide();
+            }else {
+                $("#accordion").fadeIn("fast");   
+            }  
+        };
+    </script>
+
     <link rel="stylesheet" type="text/css" href="../static/css/canvasApp.css">
     <style type="text/css"></style>
 </head>
@@ -147,8 +158,7 @@
             <fieldset class="col-md-12" id="canvasBox" style="width: 80%;">
                 <span class="spacer"></span><legend class="text-uppercase" style="width: 118px;">Test Space</legend><span class="spacer"></span>
 <!--NEW TEST PLAN-->
-                <div class="testSetupBox menu collapseNewTest" id="testSetup">
-                    <button id="nameSubmitBtn">CONTINUE</button> 
+                <div class="testSetupBox menu collapseNewTest" id="testSetup">   
                     <form method="post">
                         <div class="row"> 
                             <div class="col-md-4">
@@ -157,12 +167,7 @@
                             <div class="col-md-5">
                                 <tr>
                                     <td class="label">  
-                                      <input class="nameTestInput" type="text" name="testplan_name" value="" placeholder="name goes here">
-                                      <input type="hidden" name="company_nickname" value="Acme">
-                                      <input type="hidden" name="hardware_name" value="Tahoe">
-                                      <input type="hidden" name="instrument_type" value="BitScope">
-                                      <input type="hidden" name="author" value="nedwards">
-                                      <input type="hidden" name="testpost" value=True>
+                                      <input class="nameTestInput" type="text" onblur="checkTextField(this);" value="" placeholder="name goes here">
                                     </td>
                                 </tr>
                             </div>
@@ -182,7 +187,7 @@
                                 <div class="startNowBox">
                                     <p class="startNowLabel">Start Now</p> 
                                     <td>                                          
-                                      <input class="startNow" type="checkbox" name="start_measurement_now">
+                                      <input id="startNowCheck" class="startNow" type="checkbox" name="start_measurement_now">
                                       <input type="hidden" name="timepost" value=True>
                                     </td>  
                                 </div>                               
@@ -232,8 +237,15 @@
           //$("#accordion").show();  
           $(".collapseNewTest").fadeIn("fast"); 
       });
-      $("#nameSubmitBtn").click(function () {
-          $("#accordion").fadeIn("fast");  
+      $(".startNow").change(function (){
+           if (this.checked) {
+                console.log('start now checked');
+                document.getElementById("start_time").disabled = true;
+                document.getElementById("start_time").value = '';
+           }else if(!this.checked) {
+                console.log('start now unchecked');
+                document.getElementById("start_time").disabled = false;
+           } 
       });
     });     
     </script>

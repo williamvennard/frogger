@@ -31,13 +31,13 @@
                 testPlanHTML+= "' placeholder='name goes here'>";
 
                 testPlanHTML+= "<div class='row appRow'><tr><td class='label'>";
-                testPlanHTML+= "<p class='appLabel'> ice Under Test Type:</p>"; 
-                testPlanHTML+= "<input class='appInput' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' name='dut_type' value='" + dutType;
+                testPlanHTML+= "<p class='appLabel'>Device Under Test Type:</p>"; 
+                testPlanHTML+= "<input autocomplete='off' class='appInput' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' name='dut_type' value='" + dutType;
                 testPlanHTML+= "'></td></tr></div>";
 
                 testPlanHTML+= "<div style='position:relative; top:20px;' class='row appRow'><tr><td class='label'>";
                 testPlanHTML+= "<p class='appLabel'>Settings:</p>"; 
-                testPlanHTML+= "<input class='appInput' style='border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='text' name='settings' value='" + dutSettings;
+                testPlanHTML+= "<input autocomplete='off' class='appInput' style='border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='text' name='settings' value='" + dutSettings;
                 testPlanHTML+= "'></td></tr></div>";
                              
                 testPlanHTML+= "</form>";
@@ -63,30 +63,30 @@
                 testPlanHTML+= "<form method='post'>";
                 testPlanHTML+= "<input class='nameWidget' type='text' name='config_name' value='" + configName;
                 testPlanHTML+= "' placeholder='name goes here'>";
-
+                
                 testPlanHTML+= "<div class='row appRow'>";
                 testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Bandwidth(Hz):</p>"; 
-                testPlanHTML+= "<input class='appInput' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' name='analog_bandwidth' value='" + configBand;
+                testPlanHTML+= "<input autocomplete='off' class='appInput' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' name='analog_bandwidth' placeholder='20,000,000' value='" + configBand;
                 testPlanHTML+= "'></td></tr></div>";
 
                 testPlanHTML+= "<div class='row appRow'>";
                 testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Sample Rate(sps):</p>"; 
-                testPlanHTML+= "<input class='appInput' type='text' name='analog_sample_rate' value='" + configSampleRate;
+                testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' name='analog_sample_rate' placeholder='20,000,000' value='" + configSampleRate;
                 testPlanHTML+= "'></td></tr></div>";
 
                 testPlanHTML+= "<div class='row appRow'>";
                 testPlanHTML+= "<tr><td class='label'><p class='appLabel'> Buffer Size: </p>"; 
-                testPlanHTML+= "<input class='appInput' type='text' name='capture_buffer_size' value='" + configSampleSize;
+                testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' name='capture_buffer_size' placeholder='12,000' value='" + configSampleSize;
                 testPlanHTML+= "'></td></tr></div>";
 
                 testPlanHTML+= "<div class='row appRow'>";
                 testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Resolution: </p>"; 
-                testPlanHTML+= "<input class='appInput' type='text' name='resolution' value='" + configResolution;
+                testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' name='resolution' placeholder='12' value='" + configResolution;
                 testPlanHTML+= "'></td></tr></div>";
 
                 testPlanHTML+= "<div style='margin-bottom:10px;' class='row appRow'>";
                 testPlanHTML+= "<tr><td class='label'><p class='appLabel'># of Channels: </p>"; 
-                testPlanHTML+= "<input class='appInput' style='margin-bottom:0px; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='text' name='capture_channels' value='" + configChNum;
+                testPlanHTML+= "<input autocomplete='off' class='appInput' style='margin-bottom:0px; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='text' placeholder='2' name='capture_channels' value='" + configChNum;
                 testPlanHTML+= "'></td></tr></div>";
 
                           
@@ -142,15 +142,15 @@
                 testPlanHTML+= "' placeholder='name goes here'>";
                 testPlanHTML+= "<div class='row appRow'>";
                 testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Meas Type:</p>";                   
-                testPlanHTML+= "<input class='appInput' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' name='meas_type' placeholder='RMS' value='" + measType;
+                testPlanHTML+= "<input autocomplete='off' class='appInput' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' name='meas_type' placeholder='RMS' value='" + measType;
                 testPlanHTML+= "'></td></div>";
                 testPlanHTML+= "<div class='row appRow'>";
                 testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Start Time(sec):</p>";                   
-                testPlanHTML+= "<input class='appInput' type='text' name='meas_start_time' placeholder='200' value='" + measStart;
+                testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' name='meas_start_time' placeholder='200' value='" + measStart;
                 testPlanHTML+= "'></td></div>";
                 testPlanHTML+= "<div class='row appRow'>";
                 testPlanHTML+= "<td class='label'><p class='appLabel'>Stop Time(sec):</p>"
-                testPlanHTML+= "<input class='appInput' style='border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='text' name='meas_stop_time' placeholder='400' value='" + measStop;
+                testPlanHTML+= "<input autocomplete='off' class='appInput' style='border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='text' name='meas_stop_time' placeholder='400' value='" + measStop;
                 testPlanHTML+= "'></td></tr></div>";                                                       
                 testPlanHTML+= "</form>";
                 testPlanHTML+= "</div>";
@@ -168,11 +168,11 @@
 
             testPlanHTML+= "<div class='row appRow'>";
             testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Device Under Test Type:</p>"; 
-            testPlanHTML+= "<input class='appInput' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' name='dut_type' value=''></td></tr></div>";
+            testPlanHTML+= "<input autocomplete='off' class='appInput' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' name='dut_type' value=''></td></tr></div>";
 
             testPlanHTML+= "<div style='position:relative; top:20px;' class='row appRow'>";
             testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Settings:</p>"; 
-            testPlanHTML+= "<input class='appInput' style='border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='text' name='settings' value=''></td></tr></div>";
+            testPlanHTML+= "<input autocomplete='off' class='appInput' style='border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='text' name='settings' value=''></td></tr></div>";
                            
             testPlanHTML+= "</form>";
             testPlanHTML+= "</div>";
@@ -189,23 +189,23 @@
 
             testPlanHTML+= "<div class='row appRow'>";
             testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Bandwidth(Hz):</p>"; 
-            testPlanHTML+= "<input class='appInput' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' placeholder='20,000,000' name='analog_bandwidth' value=''></td></tr></div>";
+            testPlanHTML+= "<input autocomplete='off' class='appInput' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' placeholder='20,000,000' name='analog_bandwidth' value=''></td></tr></div>";
 
             testPlanHTML+= "<div class='row appRow'>";
             testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Sample Rate(sps):</p>"; 
-            testPlanHTML+= "<input class='appInput' type='text' placeholder='20,000,000' name='analog_sample_rate' value=''></td></tr></div>";
+            testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' placeholder='20,000,000' name='analog_sample_rate' value=''></td></tr></div>";
 
             testPlanHTML+= "<div class='row appRow'>";
             testPlanHTML+= "<tr><td class='label'><p class='appLabel'> Buffer Size: </p>"; 
-            testPlanHTML+= "<input class='appInput' type='text' placeholder='12,000' name='capture_buffer_size' value=''></td></tr></div>";
+            testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' placeholder='12,000' name='capture_buffer_size' value=''></td></tr></div>";
 
             testPlanHTML+= "<div class='row appRow'>";
             testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Resolution: </p>"; 
-            testPlanHTML+= "<input class='appInput' type='text' placeholder='12' name='resolution' value=''></td></tr></div>";
+            testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' placeholder='12' name='resolution' value=''></td></tr></div>";
 
             testPlanHTML+= "<div style='margin-bottom:10px;' class='row appRow'>";
             testPlanHTML+= "<tr><td class='label'><p class='appLabel'># of Channels: </p>"; 
-            testPlanHTML+= "<input class='appInput' style='margin-bottom:0px; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='text' placeholder='2' name='capture_channels' value=''></td></tr></div>";
+            testPlanHTML+= "<input class='appInput' style='margin-bottom:0px; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='text' placeholder='2' name='capture_channels' autocomplete='off' value=''></td></tr></div>";
                             
             testPlanHTML+= "</form>";
             testPlanHTML+= "</div>";
@@ -247,13 +247,13 @@
             testPlanHTML+= "<input style='left:190px;' class='nameWidget' type='text' name='meas_name' value='' placeholder='name goes here'>";
             testPlanHTML+= "<div class='row appRow'>";
             testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Meas Type:</p>";                   
-            testPlanHTML+= "<input class='appInput' type='text' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' name='meas_type' placeholder='RMS' value=''></td></div>";
+            testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' name='meas_type' placeholder='RMS' value=''></td></div>";
             testPlanHTML+= "<div class='row appRow'>";
             testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Start Time(sec):</p>";                   
-            testPlanHTML+= "<input class='appInput' type='text' name='meas_start_time' placeholder='200' value=''></td></div>";
+            testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' name='meas_start_time' placeholder='200' value=''></td></div>";
             testPlanHTML+= "<div class='row appRow'>";
             testPlanHTML+= "<td class='label'><p class='appLabel'>Stop Time(sec):</p>";
-            testPlanHTML+= "<input class='appInput' style='border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='text' name='meas_stop_time' placeholder='400' value=''></td></tr></div>";                                                         
+            testPlanHTML+= "<input autocomplete='off' class='appInput' style='border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='text' name='meas_stop_time' placeholder='400' value=''></td></tr></div>";                                                         
             testPlanHTML+= "</form>";
             testPlanHTML+= "</div>";
 
@@ -332,7 +332,7 @@
         var testSetUp = document.getElementById('testSetup');
         var testSetUpInfo = testSetUp.childNodes;
         var companyName = 'Acme';
-        var testPlanName = testSetUpInfo[3].children[0].children[1].children[0].value;
+        var testPlanName = testSetUpInfo[1].children[0].children[1].children[0].value;
         
         var config_search_url = 'https://gradientone-test.appspot.com';
         //var config_search_url = window.location.origin;
