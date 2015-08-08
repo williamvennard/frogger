@@ -73,6 +73,7 @@
 // EXPLORE MODE //
 
 function exploreMode() {
+  console.log('exploreMode active');
       test_info_url = 'https://gradientone-test.appspot.com/traceresults/Acme/Tahoe/Primetime';
       $.ajax({
           async: true,
@@ -80,7 +81,7 @@ function exploreMode() {
           dataType: 'json',
        }).done(function (results) {       
         testInfo = results;  
-
+        console.log('exploreMode: afterAjax results = ', results);
         //DECIMATED DATA
         var decData = testInfo.window_bscope.cha;
         console.log('getTestInfo: decData =',decData);
@@ -88,8 +89,8 @@ function exploreMode() {
 
         testSettings = testInfo.p_settings;
         testSliceStart = testSettings.Start_TSE;    
-        //decPointSpacing = (Number(testSettings.Dec_msec_btw_samples))/1000000;
-        decPointSpacing = (0.004)   
+        decPointSpacing = (Number(testSettings.Dec_msec_btw_samples))/1000000;
+        //decPointSpacing = (0.004)   
         console.log('exploreMode: decPointSpacing = ', decPointSpacing);
         instrumentName = 'Instrument: ' + testInfo.config_name;
         hardwareName = 'Hardware: ' + testInfo.hardware_name;
@@ -344,12 +345,14 @@ function exploreMode() {
       var configSettings = document.getElementById('settingsDisplay');
         var setChildren = configSettings.childNodes;
 
+
+
       setChildren[1].children[1].innerHTML = configBand;
       setChildren[3].children[1].innerHTML = configSampleRate;
       setChildren[1].children[3].innerHTML = configSampleSize;
       setChildren[3].children[3].innerHTML = configResolution;
 
-      var config_url = 'https://gradientone-test.appspot.com/';
+      var config_url = 'https://gradientone-test.appspot.com/bscopeconfiginput';
       console.log('saveStatus: config_url = ',config_url);
 
       var configSettings = JSON.stringify({"config_name":configName,"analog_bandwidth":configBand,
@@ -460,8 +463,7 @@ function exploreMode() {
       console.log('rawPointSpacing!!!!!! =',rawPointSpacing);
       step = 0;
       windowSize = rawWidth*(100/hZoom);
-      //timerID = setInterval(increment, 100);
-      
+      //timerID = setInterval(increment, 100); 
       increment();
     };
     // pause / start / rewind
@@ -497,8 +499,6 @@ $(document).ready(function(){
       start();
     });
 
-
-
     $('#replay').click(function(){
 
        replay();
@@ -517,18 +517,11 @@ $(document).ready(function(){
   });
   $("#exploreSave").click(function () {
       saveStatus('save');
-
-    });
-    $("#exploreDelete").click(function () {
-      saveStatus('delete');
-      statusArray = [];
-    });
-
+  });
 
     function exploreStart(el){
       console.log('exploreStart !!!!!')
       //formatStartUrl = raw_urlPath.split('/');
-      
       var startValue = 'Start_Explore';
       var start_url = 'https://gradientone-test.appspot.com/' + 'panelcontrol/Acme/Tahoe/Primetime';// + formatStartUrl[formatStartUrl.length-2];
       console.log('exploreStart: start_url =',start_url);
@@ -568,7 +561,7 @@ $(document).ready(function(){
         },
       });
       clearTimeout(exploreTimerID);
-    }
+    };
     $("#exploreStartStop").click(function() {
       $(this).text(function(i, v){
       return v === 'STOP' ? 'START' : 'STOP'
@@ -580,14 +573,14 @@ $(document).ready(function(){
     function exploreResume(el){
       console.log('exploreResume !!!!!')
       exploreMode();
-    }
+    };
     function explorePause(el){
       console.log('explorePause!!!!!')
       clearTimeout(exploreTimerID);
-    }
+    };
     $("#explorePause").click(function() {
       $(this).text(function(i, v){
-      return v === 'RESUME' ? 'PAUSE' : 'RESUME'
+      return v === 'Resume' ? 'Pause' : 'Resume'
       })
       var el = this;
       return (el.t = !el.t) ?  explorePause(el) : exploreResume(el);
@@ -632,7 +625,7 @@ $(document).ready(function(){
         },
       });
       traceMode();
-    }
+    };
     function traceStop(el){
       console.log('traceStop!!!!!')
       //formatStartUrl = raw_urlPath.split('/');
@@ -654,7 +647,7 @@ $(document).ready(function(){
         },
       });
       clearTimeout(traceTimerID);
-    }
+    };
     $("#traceStartStop").click(function() {
       $(this).text(function(i, v){
       return v === 'STOP' ? 'START' : 'STOP'
@@ -666,14 +659,14 @@ $(document).ready(function(){
     function traceResume(el){
       console.log('traceResume !!!!!')
       traceMode();
-    }
+    };
     function tracePause(el){
       console.log('tracePause!!!!!')
       clearTimeout(traceTimerID);
-    }
+    };
     $("#tracePause").click(function() {
       $(this).text(function(i, v){
-      return v === 'PAUSE' ? 'RESUME' : 'PAUSE'
+      return v === 'Resume' ? 'Pause' : 'Resume'
       })
       var el = this;
       return (el.t = !el.t) ? tracePause(el) : traceResume(el);
