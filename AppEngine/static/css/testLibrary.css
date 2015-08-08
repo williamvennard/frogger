@@ -19,9 +19,10 @@
 }
 
 .subMenuLine {
-    margin: 0 0 10px 0;
+    margin: 0 0 10px 40px;
     border-color: rgb(197,44,72);
     border-style: solid;
+    width: 125px;
 }
 
 .headerLine {
