@@ -79,9 +79,10 @@ function exploreMode() {
           async: true,
           url: test_info_url,
           dataType: 'json',
-       }).done(function (results) {       
+       }).done(function (results) { 
+        console.log('exploreMode: afterAjax results = ', results);      
         testInfo = results;  
-        console.log('exploreMode: afterAjax results = ', results);
+        
         //DECIMATED DATA
         var decData = testInfo.window_bscope.cha;
         console.log('getTestInfo: decData =',decData);
@@ -89,8 +90,8 @@ function exploreMode() {
 
         testSettings = testInfo.p_settings;
         testSliceStart = testSettings.Start_TSE;    
-        decPointSpacing = (Number(testSettings.Dec_msec_btw_samples))/1000000;
-        //decPointSpacing = (0.004)   
+        //decPointSpacing = (Number(testSettings.Dec_msec_btw_samples))/1000000;
+        decPointSpacing = (0.002)   
         console.log('exploreMode: decPointSpacing = ', decPointSpacing);
         instrumentName = 'Instrument: ' + testInfo.config_name;
         hardwareName = 'Hardware: ' + testInfo.hardware_name;
@@ -131,6 +132,7 @@ function exploreMode() {
     //Continuously polling at: 
     //https://gradientone-test.appspot.com/testresults/Acme/Tahoe/LED
     function traceMode() {
+      console.log('traceMode active');
       test_info_url = 'https://gradientone-test.appspot.com/traceresults/Acme/Tahoe/Primetime';
       $.ajax({
           async: true,
