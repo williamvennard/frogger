@@ -84,18 +84,14 @@
                         </div>
                         <div id="collapseThree" class="panel-collapse collapse">
                             <div class="panel-body">
-                                <table class="table">
+                                <table class="table" style="margin-bottom:0px;">
                                     <tr>
                                         <td>
-                                            <a id="newDUT">NEW</a>
+                                            <a id='newDUT'>NEW</a>
                                         </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a>Saved:</a> <span></span>
-                                        </td>
-                                    </tr>
+                                    </tr>    
                                 </table>
+                                <table id="savedDuts" class="table"></table>
                             </div>
                         </div>
                     </div>
@@ -107,18 +103,14 @@
                         </div>
                         <div id="collapseOne" class="panel-collapse collapse in">
                             <div class="panel-body">
-                                <table class="table">
+                                <table class="table" style="margin-bottom:0px;">
                                     <tr>
                                         <td>
                                             <a id="newConfig">NEW</a>
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td>
-                                            <a>Saved:</a>
-                                        </td>
-                                    </tr>
                                 </table>
+                                <table id="savedConfigs" class="table"></table>
                             </div>
                         </div>
                     </div>
@@ -261,28 +253,88 @@
     });     
     </script>
     <script type="text/javascript">
+
+    function createDut(index, savedResults) {
+            var d = document.getElementById('testPlan');
+            var children = d.childNodes;
+            console.log('createDut: savedResults = ',savedResults);
+            console.log('createDut: children = ',children);
+                
+                
+                dutWidget = "";
+                dutWidget+= "<div type='dut' class='appBox' id='" + String(index) + "'>";
+                dutWidget+= "<h4 class='appTitle'>DUT - <span onclick='removeWidget(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle' style='left:810px;'></span></h4>";
+                dutWidget+= "<form method='post'>";
+
+                dutWidget+= "<input class='nameWidget' type='text' name='dut_name' value='' placeholder='name goes here'>";
+
+                dutWidget+= "<div class='row appRow'>";
+                dutWidget+= "<tr><td class='label'><p class='appLabel'>Device Under Test Type:</p>"; 
+                dutWidget+= "<input autocomplete='off' class='appInput' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' name='dut_type' value=''></td></tr></div>";
+
+                dutWidget+= "<div style='position:relative; top:20px;' class='row appRow'>";
+                dutWidget+= "<tr><td class='label'><p class='appLabel'>Settings:</p>"; 
+                dutWidget+= "<input autocomplete='off' class='appInput' style='border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='text' name='settings' value=''></td></tr></div>"; 
+
+                dutWidget+= "</form>";
+                dutWidget+= "</div>";
+
+               // var dutNode = document.createElement(dutWidget);
+                //console.log('createDut: dutNode = ', dutNode);
+               // d.appendChild(dutNode);
+               addWidget()
+               d.innerHTML += dutWidget;
+            };     
+
+
+
 $(document).ready(function () {
     widget_url = 'https://gradientone-test.appspot.com/testresults/widgets/Acme.json';
-    widget_url = window.location.origin + '/testresults/widgets/Acme.json';
-      $.ajax({
-          async: true,
-          url: widget_url,            
-          dataType: 'json',
-       }).done(function (results) {
-          savedConfigs = results.configs;
-          savedDuts = results.duts;
-          savedSeq = results.sequences;
-          savedMeas = results.measurements;
-          savedTests = results.tests;
 
-          console.log('Saved Widgets: results', results);
-          console.log('Saved Widgets: savedConfigs', savedConfigs);
-          console.log('Saved Widgets: savedDuts', savedDuts);
-          console.log('Saved Widgets: savedSeq', savedSeq);
-          console.log('Saved Widgets: savedTests', savedTests);
-      
-      });
-    }); 
+    //widget_url = window.location.origin + '/testresults/widgets/Acme.json';
+    console.log('widget_url', widget_url);
+        $.ajax({
+            async: true,
+            url: widget_url,            
+            dataType: 'json',
+        }).done(function (results) {
+            var savedWidgets = results
+            savedConfigs = results.configs;
+            savedDuts = results.duts;
+            savedSeq = results.sequences;
+            savedMeas = results.measurements;
+            savedTests = results.tests;
+
+            //console.log('Saved Widgets: results', results);
+            console.log('Saved Widgets: savedConfigs', savedConfigs);
+            console.log('Saved Widgets: savedDuts', savedDuts);
+            console.log('Saved Widgets: savedSeq', savedSeq);
+            console.log('Saved Widgets: savedTests', savedTests);
+
+            
+//SAVED DUTS
+            var savedDutsHTML = "";
+            savedDutsHTML += "<tr><td><p class='savedTitle'>Saved:</p></td></tr>";                    
+            for (var i=0;i<savedDuts.length;i++){
+                savedDutsHTML+= "<tr><td><a onclick='createDut(" + i + ")'>" + savedDuts[i].dut_name + "</a></td></tr>";                                                  
+            };
+            console.log('savedDutsHTML = ',savedDutsHTML);
+            document.getElementById("savedDuts").innerHTML = savedDutsHTML;
+// SAVED CONFIGS                      
+            var savedConfigsHTML = "";
+            savedConfigsHTML += "<tr><td><p class='savedTitle'>Saved:</p></td></tr>";
+            for (var i=0;i<savedConfigs.length;i++){
+                savedConfigsHTML+= "<tr><td><a onclick='createConfig()'>" + savedConfigs[i].config_name + "</a></td></tr>";                                                  
+            };
+            console.log('savedConfigsHTML = ',savedConfigsHTML);
+            document.getElementById("savedConfigs").innerHTML = savedConfigsHTML;
+            function createConfig() {
+
+            };
+        }); //end of ajax
+        
+
+    }); //end doc ready 
     </script>
 </body>
 </html>

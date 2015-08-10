@@ -156,7 +156,7 @@
                 testPlanHTML+= "</div>";
             }else {
                 console.log('no type match :(');
-            }                          
+            };                          
         };
         if (type === 'dut') {              
             console.log('TYPE DUT')
