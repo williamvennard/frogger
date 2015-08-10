@@ -253,37 +253,14 @@
     });     
     </script>
     <script type="text/javascript">
+var savedResults;
+    function createDut(index) {
+        savedSettings = savedResults.duts[index]
+            addWidget('dut',savedSettings);
 
-    function createDut(index, savedResults) {
-            var d = document.getElementById('testPlan');
-            var children = d.childNodes;
-            console.log('createDut: savedResults = ',savedResults);
-            console.log('createDut: children = ',children);
-                
-                
-                dutWidget = "";
-                dutWidget+= "<div type='dut' class='appBox' id='" + String(index) + "'>";
-                dutWidget+= "<h4 class='appTitle'>DUT - <span onclick='removeWidget(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle' style='left:810px;'></span></h4>";
-                dutWidget+= "<form method='post'>";
-
-                dutWidget+= "<input class='nameWidget' type='text' name='dut_name' value='' placeholder='name goes here'>";
-
-                dutWidget+= "<div class='row appRow'>";
-                dutWidget+= "<tr><td class='label'><p class='appLabel'>Device Under Test Type:</p>"; 
-                dutWidget+= "<input autocomplete='off' class='appInput' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' name='dut_type' value=''></td></tr></div>";
-
-                dutWidget+= "<div style='position:relative; top:20px;' class='row appRow'>";
-                dutWidget+= "<tr><td class='label'><p class='appLabel'>Settings:</p>"; 
-                dutWidget+= "<input autocomplete='off' class='appInput' style='border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='text' name='settings' value=''></td></tr></div>"; 
-
-                dutWidget+= "</form>";
-                dutWidget+= "</div>";
-
-               // var dutNode = document.createElement(dutWidget);
-                //console.log('createDut: dutNode = ', dutNode);
-               // d.appendChild(dutNode);
-               addWidget()
-               d.innerHTML += dutWidget;
+            console.log('createDut: index = ',index);
+            //console.log('createDut: savedResults = ',savedResults);
+            //console.log('createDut: dut results = ',savedResults.duts[index]);
             };     
 
 
@@ -305,6 +282,7 @@ $(document).ready(function () {
             savedMeas = results.measurements;
             savedTests = results.tests;
 
+            savedResults = results;
             //console.log('Saved Widgets: results', results);
             console.log('Saved Widgets: savedConfigs', savedConfigs);
             console.log('Saved Widgets: savedDuts', savedDuts);

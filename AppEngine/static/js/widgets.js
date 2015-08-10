@@ -1,9 +1,11 @@
 
 
 // DUT WIDGETS //
-    function addWidget(type) {
+    function addWidget(type,savedSettings) {
         console.log('addWidget: Type = ', type);
-        console.log('addDUT!');
+        console.log('addWidget!');
+        console.log('addWidget: savedSettings = ',savedSettings);
+
         var testPlanHTML = "";
         var index;
         var d = document.getElementById('testPlan');
@@ -12,7 +14,7 @@
         console.log('addWidget: children =',children);
         
         for (index = 0; index < children.length; index++) {
-            console.log('removeDUT: index =',index);
+            //console.log('removeDUT: index =',index);
             var planItemType = children[index].getAttribute('type');
             console.log('addWidget: type DUT? ',planItemType === 'dut')
             console.log('addWidget: planItemType =',planItemType);
@@ -464,14 +466,14 @@
         Dropped(); //get order 
         var testSetUp = document.getElementById('testSetup');
         var testSetUpInfo = testSetUp.childNodes;
-        testPlanName = testSetUpInfo[3].children[0].children[1].children[0].value;
+        testPlanName = testSetUpInfo[1].children[0].children[1].children[0].value;
         companyName = 'Acme';
         testPlanAuthor = 'nedwards';
-        startTime = testSetUpInfo[3].children[1].children[1].children[0].value;
+        startTime = testSetUpInfo[1].children[1].children[1].children[0].value;
         d = new Date(startTime);
         var startMS = d.getTime();
         var startNowLogic = new Boolean(
-  testSetUpInfo[3].children[1].children[1].children[3].children[1].checked);
+  testSetUpInfo[1].children[1].children[1].children[3].children[1].checked);
         //LOOP FOR WIDGET SETTINGS 
         var d = document.getElementById('testPlan');
         var children = d.childNodes;
