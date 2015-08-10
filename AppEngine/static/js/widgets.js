@@ -4,7 +4,6 @@
     function addWidget(type,savedSettings) {
         console.log('addWidget: Type = ', type);
         console.log('addWidget!');
-        console.log('addWidget: savedSettings = ',savedSettings);
 
         var testPlanHTML = "";
         var index;
@@ -261,8 +260,34 @@
 
             document.getElementById("testPlan").innerHTML = testPlanHTML; 
             console.log('addDUT: testPlanHTML = ', testPlanHTML);
-        }else {
-            console.log('NO TYPE MATCH')
+        }else if(type === 'sdut') {
+            
+            var sdutName = savedSettings.dut_name;
+            var sdutType = savedSettings.dut_type
+            var sdutSettings = savedSettings.settings;
+
+            testPlanHTML+= "<div type='dut' class='appBox' id='" + String(index) + "'>";
+            testPlanHTML+= "<h4 class='appTitle'>DUT - <span onclick='removeWidget(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle' style='left:810px;'></span></h4>";
+            testPlanHTML+= "<form method='post'>";
+
+            testPlanHTML+= "<input class='nameWidget' type='text' name='dut_name' value='" + sdutName;
+            testPlanHTML+= "' placeholder='name goes here'>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Device Under Test Type:</p>"; 
+            testPlanHTML+= "<input autocomplete='off' class='appInput' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' name='dut_type' value='" + sdutType;
+            testPlanHTML+= "'></td></tr></div>";
+
+            testPlanHTML+= "<div style='position:relative; top:20px;' class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Settings:</p>"; 
+            testPlanHTML+= "<input autocomplete='off' class='appInput' style='border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='text' name='settings' value='" + sdutSettings;
+            testPlanHTML+= "'></td></tr></div>";
+                           
+            testPlanHTML+= "</form>";
+            testPlanHTML+= "</div>";
+            document.getElementById("testPlan").innerHTML = testPlanHTML;  
+        }else if(type === 'sconfig') {
+            console.log('addWidget: savedSettings sconfig= ',savedSettings);
         };
         $(document).ready(function () { 
               $(".collapseCommitTest").fadeIn("fast");           
@@ -350,7 +375,6 @@
         url: config_search_url,
         data: searchInput,
         dataType: 'json',
-        //headers: { 'Access-Control-Allow-Origin': '*' },
 
         success: function(data, textStatus, jqXHR)
         {
@@ -551,8 +575,7 @@
                 }else {
                     var planItemName = children[i].children[1].children[0].value;
                 }
-                
-                
+
                 var orderInfo = planItemType + ':' + planItemName + ':' + i;
                 indexArray.push(orderInfo); 
 

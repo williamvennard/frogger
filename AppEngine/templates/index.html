@@ -253,17 +253,16 @@
     });     
     </script>
     <script type="text/javascript">
-var savedResults;
+    var savedResults;
     function createDut(index) {
-        savedSettings = savedResults.duts[index]
-            addWidget('dut',savedSettings);
-
-            console.log('createDut: index = ',index);
-            //console.log('createDut: savedResults = ',savedResults);
-            //console.log('createDut: dut results = ',savedResults.duts[index]);
-            };     
-
-
+        var savedSettings = savedResults.duts[index]
+        addWidget('sdut',savedSettings);
+        //console.log('createDut: index = ',index);
+    }; 
+    function createConfig(index) {
+        var savedSettings = savedResults.configs[index]
+        addWidget('sconfig',savedSettings);
+    };    
 
 $(document).ready(function () {
     widget_url = 'https://gradientone-test.appspot.com/testresults/widgets/Acme.json';
@@ -302,13 +301,10 @@ $(document).ready(function () {
             var savedConfigsHTML = "";
             savedConfigsHTML += "<tr><td><p class='savedTitle'>Saved:</p></td></tr>";
             for (var i=0;i<savedConfigs.length;i++){
-                savedConfigsHTML+= "<tr><td><a onclick='createConfig()'>" + savedConfigs[i].config_name + "</a></td></tr>";                                                  
+                savedConfigsHTML+= "<tr><td><a onclick='createConfig(" + i + ")'>" + savedConfigs[i].config_name + "</a></td></tr>";                                                
             };
             console.log('savedConfigsHTML = ',savedConfigsHTML);
             document.getElementById("savedConfigs").innerHTML = savedConfigsHTML;
-            function createConfig() {
-
-            };
         }); //end of ajax
         
 
