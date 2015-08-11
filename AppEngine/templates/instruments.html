@@ -150,13 +150,25 @@
                           </div> 
                           <div id="traceBtns">
                             <button style="margin-left:15px" class="text-capitalize optionsBtn" type="button" id="traceStartStop">Start</button>
-                            <button style="" class="text-capitalize optionsBtn" type="button" id="tracePause">Pause</button>
-                            <button style="margin-left:15px" class="text-capitalize optionsBtn" type="button" id="traceSave">save</button>
-                            <button style="" class="text-capitalize optionsBtn" data-toggle="collapse" data-parent="#accordion" href="#collapseTable">Table</botton>
-                            <button style="width:130px; margin-left:18px;" class="text-capitalize configBtn" data-toggle="collapse" data-parent="#accordion" href="#collapseConfig">Configure</button> 
+                            <button style="margin-left:15px" class="text-capitalize optionsBtn" type="button" id="traceSave" data-toggle="collapse" data-parent="#accordion" href="#collapseSave">save</button>
+                            <button style="margin-left:16px; padding-left:2px;" class="text-capitalize optionsBtn" data-toggle="collapse" data-parent="#accordion" href="#collapseConfig">Configure</button> 
+                            <button style="margin-left:17px;" class="text-capitalize optionsBtn" data-toggle="collapse" data-parent="#accordion" href="#collapseTable">Table</botton>
+                  
                           </div>  
                                                      
                         </div> 
+                        <!--SAVE FORM-->
+                        <div id="collapseSave" class="collapse in configBox" style="margin-bottom:180px;">
+                            <div class="row saveRow">
+                              <tr>
+                                <td class="label">
+                                  <p class="saveLabel">Trace Name:</p>
+                                  <input class="saveInput" style="border-radius: 5px;" type="text" placeholder='name goes here' value="">
+                                </td>
+                              </tr>
+                              <button id="submitBtn" type="button" onclick="saveStatus('save')">Save</button>
+                            </div>  
+                        </div>
                         <!--CONFIG FORM-->
                         <div id="collapseConfig" class="collapse in configBox">
                           <div id="configSettings">          
@@ -334,6 +346,7 @@
     <script type="text/javascript">$('#collapseTwo').collapse("hide");</script>
     <script type="text/javascript">$('#collapseThree').collapse("hide");</script>
     <script type="text/javascript">$('#collapseTable').collapse("hide");</script>
+    <script type="text/javascript">$('#collapseSave').collapse("hide");</script>
     <script type="text/javascript">$('#collapseConfig').collapse("hide");</script>
 </body>
 </html>
