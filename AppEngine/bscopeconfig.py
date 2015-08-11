@@ -35,11 +35,13 @@ class Handler(InstrumentDataHandler):
         testplan_name = config_data['trace_name']
         key_name = config_name + testplan_name
         capture_buffer_size = int(config_data['capture_buffer_size'])
-        print config_name, company_nickname, author, hardware_name, instrument_type, number_of_samples, sample_rate, testplan_name
+        if instrument_type == 'BitScope':
+            analog_bandwidth == 20000000
         c = ConfigDB(key_name = (config_name+testplan_name), parent = company_key(),
                 company_nickname = company_nickname, author = author,
                 capture_channels = capture_channels,
                 analog_sample_rate = analog_sample_rate,
+                analog_bandwidth = analog_bandwidth,
                 resolution = resolution,
                 capture_buffer_size = capture_buffer_size,
                 instrument_type = instrument_type,
