@@ -1,4 +1,4 @@
-// SETTING UP FOR LIVE DATA STREAM TEST //
+ // SETTING UP FOR LIVE DATA STREAM TEST //
 
   //VERTICAL KNOBS
     var vZoom = 100;
@@ -379,7 +379,7 @@ function exploreMode() {
     function saveStatus(status) {
      document.getElementById("traceSave").disabled = true; 
       console.log('saveStatus: SAVED!!');
-      
+      $('#collapseSave').collapse("hide");
       formatSaveUrl = raw_urlPath.split('/');
 
 
@@ -598,10 +598,10 @@ $(document).ready(function(){
       $("#exploreBtns").hide();
       //traceMode();
     });
-    $("#traceSave").click(function () {
-      saveStatus('save');
+    //$("#traceSave").click(function () {
+    //  saveStatus('save');
 
-    });
+   // });
     $("#traceDelete").click(function () {
       saveStatus('delete');
       statusArray = [];
@@ -609,7 +609,7 @@ $(document).ready(function(){
     function traceStart(el){
       console.log('traceStart !!!!!')
       //formatStartUrl = raw_urlPath.split('/');
-      
+      //https://gradientone-test.appspot.com/panelcontrol/Acme/Tahoe/Primetime
       var startValue = 'Start_Trace';
       var start_url = 'https://gradientone-test.appspot.com/' + 'panelcontrol/Acme/Tahoe/Primetime';// + formatStartUrl[formatStartUrl.length-2];
       console.log('exploreStart: start_url =',start_url);
@@ -657,21 +657,5 @@ $(document).ready(function(){
       var el = this;
       return (el.t = !el.t) ? traceStart(el) : traceStop(el);
     });
-
-    function traceResume(el){
-      console.log('traceResume !!!!!')
-      traceMode();
-    };
-    function tracePause(el){
-      console.log('tracePause!!!!!')
-      clearTimeout(traceTimerID);
-    };
-    $("#tracePause").click(function() {
-      $(this).text(function(i, v){
-      return v === 'Resume' ? 'Pause' : 'Resume'
-      })
-      var el = this;
-      return (el.t = !el.t) ? tracePause(el) : traceResume(el);
-    }); 
-          
+             
 });
