@@ -35,7 +35,9 @@ from string import maketrans
 
 class Handler(InstrumentDataHandler):
     def post(self, company_nickname="", hardware_name="",config_name=""):
-        key = db.Key.from_path('ConfigDB', config_name, parent = company_key())
+        testplan_name = 'Noob'
+        key_name = config_name + testplan_name
+        key = db.Key.from_path('ConfigDB', key_name, parent = company_key())
         config = db.get(key)
         control_object = json.loads(self.request.body)
         print control_object
