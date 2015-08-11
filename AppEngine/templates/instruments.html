@@ -150,25 +150,12 @@
                           </div> 
                           <div id="traceBtns">
                             <button style="margin-left:15px" class="text-capitalize optionsBtn" type="button" id="traceStartStop">Start</button>
-                            <button style="margin-left:15px" class="text-capitalize optionsBtn" type="button" id="traceSave" data-toggle="collapse" data-parent="#accordion" href="#collapseSave">save</button>
+                            <button style="margin-left:15px" class="text-capitalize optionsBtn" type="button" id="traceSave" onclick="saveStatus('save')">Save</button>
                             <button style="margin-left:16px; padding-left:2px;" class="text-capitalize optionsBtn" data-toggle="collapse" data-parent="#accordion" href="#collapseConfig">Configure</button> 
                             <button style="margin-left:17px;" class="text-capitalize optionsBtn" data-toggle="collapse" data-parent="#accordion" href="#collapseTable">Table</botton>
                   
-                          </div>  
-                                                     
+                          </div>                            
                         </div> 
-                        <!--SAVE FORM-->
-                        <div id="collapseSave" class="collapse in configBox" style="margin-bottom:180px;">
-                            <div class="row saveRow">
-                              <tr>
-                                <td class="label">
-                                  <p class="saveLabel">Trace Name:</p>
-                                  <input class="saveInput" style="border-radius: 5px;" type="text" placeholder='name goes here' value="">
-                                </td>
-                              </tr>
-                              <button id="submitBtn" type="button" onclick="saveStatus('save')">Save</button>
-                            </div>  
-                        </div>
                         <!--CONFIG FORM-->
                         <div id="collapseConfig" class="collapse in configBox">
                           <div id="configSettings">          
@@ -177,6 +164,14 @@
                                   <td class="label">
                                     <p class="configLabel">Config Name:</p>
                                     <input class="configInput" style="border-top-right-radius: 5px; border-top-left-radius: 5px;" type="text" placeholder='name' value="">
+                                  </td>
+                                </tr>
+                              </div>
+                              <div class="row configRow">
+                                 <tr>
+                                  <td class="label">
+                                    <p class="configLabel">Trace Name:</p>  
+                                    <input class="configInput" type="text" placeholder='name' value="">
                                   </td>
                                 </tr>
                               </div>
@@ -209,15 +204,7 @@
                                 <tr>
                                   <td class="label">
                                     <p class="configLabel">Resolution:</p>  
-                                    <input class="configInput" type="text" placeholder='1000' value="">
-                                  </td>
-                                </tr>
-                              </div>
-                              <div class="row configRow">
-                                 <tr>
-                                  <td class="label">
-                                    <p class="configLabel"># of Channels:</p>  
-                                    <input class="configInput" style="border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;" type="text" placeholder='2' value="">
+                                    <input class="configInput" style="border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;" type="text" placeholder='1000' value="">
                                   </td>
                                 </tr>
                               </div> 
@@ -346,7 +333,6 @@
     <script type="text/javascript">$('#collapseTwo').collapse("hide");</script>
     <script type="text/javascript">$('#collapseThree').collapse("hide");</script>
     <script type="text/javascript">$('#collapseTable').collapse("hide");</script>
-    <script type="text/javascript">$('#collapseSave').collapse("hide");</script>
     <script type="text/javascript">$('#collapseConfig').collapse("hide");</script>
 </body>
 </html>

@@ -338,11 +338,12 @@ function exploreMode() {
         var children = d.childNodes;
 
       var configName = children[1].children[1].value;
-      var configBand = children[3].children[1].value;
-      var configSampleRate =  children[5].children[1].value;
-      var configSampleSize = children[7].children[1].value; 
-      var configResolution = children[9].children[1].value; 
-      var configChNum = children[11].children[1].value; 
+      var traceName = children[3].children[1].value;
+      var configBand = children[5].children[1].value;
+      var configSampleRate =  children[7].children[1].value;
+      var configSampleSize = children[9].children[1].value; 
+      var configResolution = children[11].children[1].value; 
+      //var configChNum = children[11].children[1].value; 
 
       var configSettings = document.getElementById('settingsDisplay');
         var setChildren = configSettings.childNodes;
@@ -359,7 +360,7 @@ function exploreMode() {
 
       var configSettings = JSON.stringify({"config_name":configName,"analog_bandwidth":configBand,
             "analog_sample_rate":configSampleRate, "capture_buffer_size":configSampleSize,
-             "capture_channels":configChNum, "resolution":configResolution,"timepost":false});
+             "trace_name":traceName, "resolution":configResolution,"timepost":false});
       console.log('instConfig: configSettings = ',configSettings);
      $.ajax({
         type: "POST",
@@ -379,9 +380,7 @@ function exploreMode() {
     function saveStatus(status) {
      document.getElementById("traceSave").disabled = true; 
       console.log('saveStatus: SAVED!!');
-      $('#collapseSave').collapse("hide");
       formatSaveUrl = raw_urlPath.split('/');
-
 
       var saveValue = status;
       var save_url = 'https://gradientone-test.appspot.com/datamgmt/' + formatSaveUrl[formatSaveUrl.length-5] + '/' + formatSaveUrl[formatSaveUrl.length-4] + '/' + formatSaveUrl[formatSaveUrl.length-3] + '/' + formatSaveUrl[formatSaveUrl.length-2] + '/' + formatSaveUrl[formatSaveUrl.length-1];
@@ -528,7 +527,7 @@ $(document).ready(function(){
       var start_url = 'https://gradientone-test.appspot.com/' + 'panelcontrol/Acme/Tahoe/Primetime';// + formatStartUrl[formatStartUrl.length-2];
       console.log('exploreStart: start_url =',start_url);
 
-      var startData = JSON.stringify({"start_status":startValue});
+      var startData = JSON.stringify({"command":startValue});
       console.log('exploreStart: startData =', startData);
      $.ajax({
         type: "POST",
@@ -550,7 +549,7 @@ $(document).ready(function(){
       var start_url = 'https://gradientone-test.appspot.com/' + 'panelcontrol/Acme/Tahoe/Primetime';// + formatStartUrl[formatStartUrl.length-2];
       console.log('exploreStart: start_url =',start_url);
 
-      var startData = JSON.stringify({"start_status":startValue});
+      var startData = JSON.stringify({"command":startValue});
       console.log('exploreStart: startData =', startData);
      $.ajax({
         type: "POST",
@@ -614,7 +613,7 @@ $(document).ready(function(){
       var start_url = 'https://gradientone-test.appspot.com/' + 'panelcontrol/Acme/Tahoe/Primetime';// + formatStartUrl[formatStartUrl.length-2];
       console.log('exploreStart: start_url =',start_url);
 
-      var startData = JSON.stringify({"start_status":startValue});
+      var startData = JSON.stringify({"command":startValue});
       console.log('exploreStart: startData =', startData);
      $.ajax({
         type: "POST",
@@ -636,7 +635,7 @@ $(document).ready(function(){
       var start_url = 'https://gradientone-test.appspot.com/' + 'panelcontrol/Acme/Tahoe/Primetime';// + formatStartUrl[formatStartUrl.length-2];
       console.log('exploreStart: start_url =',start_url);
 
-      var startData = JSON.stringify({"start_status":startValue});
+      var startData = JSON.stringify({"command":startValue});
       console.log('exploreStart: startData =', startData);
      $.ajax({
         type: "POST",
