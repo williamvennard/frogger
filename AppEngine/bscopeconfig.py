@@ -24,16 +24,17 @@ class Handler(InstrumentDataHandler):
         else:
             setattr(c,param,False)
     def post(self):
-        #author = author_creation()
-        print json.loads(self.request.get)
-        company_nickname = self.request.get('company_nickname')
-        hardware = self.request.get('hardware')
-        instrument_type = self.request.get('instrument_type')
-        config_name = self.request.get('config_name')
-        sample_rate = int(self.request.get('sample_rate'))
-        testplan_name = self.request.get('testplan_name')
+        author = author_creation()
+        config_data = json.loads(self.request.body)
+        print config_data
+        company_nickname = config_data['company_nickname']
+        hardware = config_data['hardware_name']
+        instrument_type = config_data['inst_type']
+        config_name = config_data['config_name']
+        sample_rate = int(config_data['sample_rate'])
+        testplan_name = config_data['trace_name']
         key_name = config_name + testplan_name
-        number_of_samples = int(self.request.get('number_of_samples'))
+        number_of_samples = int(config_data['number_of_samples'])
         print config_name, company_nickname, author, hardware_name, instrument_type, number_of_samples, sample_rate, testplan_name
         c = ConfigDB(key_name = (config_name+testplan_name), parent = company_key(),
                 company_nickname = company_nickname, author = author,
