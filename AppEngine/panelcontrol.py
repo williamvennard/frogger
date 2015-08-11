@@ -38,7 +38,9 @@ class Handler(InstrumentDataHandler):
         key = db.Key.from_path('ConfigDB', config_name, parent = company_key())
         config = db.get(key)
         control_object = json.loads(self.request.body)
+        print control_object
         order = control_object['command']
+        print order
         if order == 'Stop_Explore':
             config.commence_explore = False
         elif order == 'Start_Explore':
