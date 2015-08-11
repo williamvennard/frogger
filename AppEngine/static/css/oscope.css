@@ -222,23 +222,6 @@ h3 {
 
     height: 28px;
 }
-.saveInput {
-    width: 110px;
-    position: relative;
-    left: 125px;
-    border-style: solid;
-    border-width: 1px;
-    border-color: black;
-}
-
-.saveLabel {
-    position: relative;
-    top: 18px;
-    left: 25px;
-    top: 35px;
-    color: white;
-    font-family: 'nexa_lightregular';
-}
 
 .configInput {
     width: 100px;
