@@ -2,6 +2,7 @@ from gradientone import InstrumentDataHandler
 from gradientone import author_creation
 from onedb import ConfigDB
 from onedb import company_key
+import json
 import itertools
 import jinja2
 import webapp2
@@ -23,7 +24,8 @@ class Handler(InstrumentDataHandler):
         else:
             setattr(c,param,False)
     def post(self):
-        author = author_creation()
+        #author = author_creation()
+        print json.loads(self.request.get)
         company_nickname = self.request.get('company_nickname')
         hardware = self.request.get('hardware')
         instrument_type = self.request.get('instrument_type')
