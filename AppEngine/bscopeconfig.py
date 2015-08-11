@@ -36,7 +36,7 @@ class Handler(InstrumentDataHandler):
         key_name = config_name + testplan_name
         capture_buffer_size = int(config_data['capture_buffer_size'])
         if instrument_type == 'BitScope':
-            analog_bandwidth = 20000000
+            analog_bandwidth = '20000000'
         c = ConfigDB(key_name = (config_name+testplan_name), parent = company_key(),
                 company_nickname = company_nickname, author = author,
                 capture_channels = 0,
