@@ -175,7 +175,7 @@ app = webapp2.WSGIApplication([
     ('/instruments', instruments.Handler),
     ('/instruments/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', instruments.Handler),
     ('/instruments/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+.json)', instruments.Handler),
-    ('/panelcontrol/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-])', panelcontrol.Handler),
+    ('/panelcontrol/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', panelcontrol.Handler),
     ('/configinput', configinput.Handler),
     ('/bscopeconfiginput', bscopeconfig.Handler),
     ('/configoutput/([a-zA-Z0-9-]+)', configoutput.Handler),
