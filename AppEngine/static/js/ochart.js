@@ -339,9 +339,9 @@ function exploreMode() {
 
       var configName = children[1].children[1].value;
       var traceName = children[3].children[1].value;
-      var configBand = children[5].children[1].value;
-      var configSampleRate =  children[7].children[1].value;
-      var configSampleSize = children[9].children[1].value; 
+      //var configBand = children[5].children[1].value;
+      var configSampleRate =  children[5].children[1].value;
+      var configSampleSize = children[7].children[1].value; 
       //var configResolution = children[11].children[1].value; 
       //var configChNum = children[11].children[1].value; 
 
@@ -352,15 +352,15 @@ function exploreMode() {
 
       setChildren[1].children[1].innerHTML = traceName;
       setChildren[3].children[1].innerHTML = configSampleSize;
-      setChildren[1].children[3].innerHTML = configBand;
+      //setChildren[1].children[3].innerHTML = configBand;
       setChildren[3].children[3].innerHTML = configSampleRate;
 
       var config_url = 'https://gradientone-test.appspot.com/bscopeconfiginput';
       console.log('saveStatus: config_url = ',config_url);
 
-      var configSettings = JSON.stringify({"config_name":configName,"analog_bandwidth":configBand,
-            "analog_sample_rate":configSampleRate, "capture_buffer_size":configSampleSize,
-             "trace_name":traceName, "hardware_name":"Tahoe","inst_name":"BitScope","timepost":false});
+      var configSettings = JSON.stringify({"config_name":configName,"analog_sample_rate":configSampleRate,
+       "capture_buffer_size":configSampleSize,"trace_name":traceName, "hardware_name":"Tahoe",
+       "inst_name":"BitScope","company_nickname":"Acme"});
       console.log('instConfig: configSettings = ',configSettings);
      $.ajax({
         type: "POST",
