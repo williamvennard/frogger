@@ -350,9 +350,9 @@ function exploreMode() {
 
 
 
-      setChildren[1].children[1].innerHTML = traceName;
+      setChildren[1].children[1].innerHTML = configName;
       setChildren[3].children[1].innerHTML = configSampleSize;
-      //setChildren[1].children[3].innerHTML = configBand;
+      setChildren[1].children[3].innerHTML = traceName;
       setChildren[3].children[3].innerHTML = configSampleRate;
 
       var config_url = 'https://gradientone-test.appspot.com/bscopeconfiginput';
