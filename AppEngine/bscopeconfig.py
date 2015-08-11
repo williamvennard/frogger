@@ -28,23 +28,24 @@ class Handler(InstrumentDataHandler):
         config_data = json.loads(self.request.body)
         print config_data
         company_nickname = config_data['company_nickname']
-        hardware = config_data['hardware_name']
-        instrument_type = config_data['inst_type']
+        hardware_name = config_data['hardware_name']
+        instrument_type = config_data['inst_name']
         config_name = config_data['config_name']
-        sample_rate = int(config_data['sample_rate'])
+        analog_sample_rate = int(config_data['analog_sample_rate'])
         testplan_name = config_data['trace_name']
         key_name = config_name + testplan_name
-        number_of_samples = int(config_data['number_of_samples'])
-        print config_name, company_nickname, author, hardware_name, instrument_type, number_of_samples, sample_rate, testplan_name
+        capture_buffer_size = int(config_data['capture_buffer_size'])
+        if instrument_type == 'BitScope':
+            analog_bandwidth = 20000000
         c = ConfigDB(key_name = (config_name+testplan_name), parent = company_key(),
                 company_nickname = company_nickname, author = author,
-                analog_bandwidth = analog_bandwidth,
                 capture_channels = capture_channels,
                 analog_sample_rate = analog_sample_rate,
+                analog_bandwidth = analog_bandwidth,
                 resolution = resolution,
                 capture_buffer_size = capture_buffer_size,
                 instrument_type = instrument_type,
-                hardware_name = hardware,
+                hardware_name = hardware_name,
                 test_plan = True,
                 active_testplan_name = testplan_name,
                 trace = False,
@@ -58,6 +59,4 @@ class Handler(InstrumentDataHandler):
         key = 'author & instrument_type & instrument_name = ', author + instrument_type + config_name
         memcache.delete(key)
         self.redirect('/configoutput/' + (author + '/' + instrument_type + '/' + config_name))
-
-
 
