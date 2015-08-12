@@ -179,7 +179,7 @@ class BitScope:
         p_settings['Dec_msec_btw_samples'] = 10
         i_settings = self.bscope_test_results['i_settings']
         start_tse = int(self.bscope_test_results['Start_TSE'])
-        #self.post_complete(active_testplan_name, config_name, test_plan, stop_tse, i_settings, p_settings, start_tse)
+        self.post_complete(active_testplan_name, config_name, test_plan, stop_tse, i_settings, p_settings, start_tse)
 
 
 if __name__ == "__main__":

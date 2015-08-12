@@ -46,15 +46,15 @@ def check_config_vars(config):
     if config['test_plan'] == 'True':
         active_testplan_name = config['active_testplan_name']
         config_name = config['config_name']
-        MY_RATE = config['sample_rate']
-        MY_SIZE = config['number_of_samples']
+        MY_RATE = config['analog_sample_rate']
+        MY_SIZE = config['capture_buffer_size']
         test_plan =config['test_plan']
     else:
         active_testplan_name = config['active_testplan_name']
         test_plan = 'False'
         config_name = config['config_name']
-        MY_RATE = config['sample_rate']
-        MY_SIZE = config['number_of_samples']
+        MY_RATE = config['analog_sample_rate']
+        MY_SIZE = config['capture_buffer_size']
     return active_testplan_name, config_name, MY_RATE, MY_SIZE, test_plan
 
 def check_state():
@@ -144,6 +144,7 @@ def bscope_acq_exp(config, s):
             BL_Trace(BL_TRACE_FORCED, BL_SYNCHRONOUS)
             tse = dt2ms(datetime.datetime.now())
             DATA = BL_Acquire()
+            print DATA
             time_bs = time.time()
             SAMPLE_SIZE = len(DATA)
             MY_SAMPLE_INTERVAL = int(1/MY_RATE*1000000) #interval between sample in microsec
