@@ -334,6 +334,7 @@ function exploreMode() {
 
     //CONFIG FORM SUBMIT
     function instConfig() {
+      $('#collapseConfig').collapse("hide");
       var d = document.getElementById('configSettings');
         var children = d.childNodes;
 
