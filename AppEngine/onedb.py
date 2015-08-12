@@ -19,8 +19,8 @@ class ConfigDB(DictModel):
     author = db.StringProperty(required = True)
     instrument_type = db.StringProperty(required = True)
     config_name = db.StringProperty(required = False)
-    sample_rate = db.IntegerProperty(required = False)
-    number_of_samples = db.IntegerProperty(required = False)
+    analog_sample_rate = db.IntegerProperty(required = False)
+    capture_buffer_size = db.IntegerProperty(required = False)
     commence_test = db.BooleanProperty(required = False)
     commence_explore = db.BooleanProperty(required = False)
     analog_bandwidth = db.StringProperty(required = False)
@@ -28,8 +28,8 @@ class ConfigDB(DictModel):
     trace = db.BooleanProperty(required = True)
     active_testplan_name = db.StringProperty(required = False)
     instrument_status = db.StringProperty(required = False)
+    capture_channels = db.IntegerProperty(required = False)
     tests = db.ListProperty(db.Key)
-
 
 def DutDB_key(name = 'default'):
     return db.Key.from_path('company_nickname', name)
