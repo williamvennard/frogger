@@ -559,7 +559,7 @@
         },
         });
         alert('Test Plan Commited');
-
+        //clear old test plan
         d.innerHTML = '';
         testSetUpInfo[1].children[0].children[1].children[0].value = '';
         testSetUpInfo[1].children[1].children[1].children[0].value = '';

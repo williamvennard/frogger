@@ -15,6 +15,7 @@
     <script type="text/javascript" src="../static/js/addons/appDrag.js"></script> 
     <link rel="stylesheet" type="text/css" href="../static/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../static/css/custom.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/savedTestPlans.css">
     <link rel="stylesheet" type="text/css" href="../static/css/hoverzoom.css">
     <link rel="stylesheet" type="text/css" href="../static/css/fonts/stylesheet.css" charset="utf-8" /> 
     <script src="../static/js/addons/angular.min.js"></script>
@@ -199,7 +200,9 @@
                     <div class="row">    
                         <input id="commitBtn" type="submit" value="COMMIT" style="">      
                     </div>       
-                </div>        
+                </div> 
+<!--SAVED TEST PLANS-->
+                <div id="savedTestPlans" class="savedTestsBox"></div>    
             </fieldset>
         </div>
 <!--TEST REEL-->      
@@ -220,7 +223,8 @@
     });
 
     $('#collapseOne').collapse("hide");
-    //$("#accordion").prop('disabled', true);
+    $(".savedTestsBox").hide();
+    
     $("#accordion").hide();
     </script>
     <!--stops accordion from loading open -->
@@ -233,12 +237,14 @@
       $(".tog").click(function () {
           $(".collapseNewTest").fadeIn("fast"); 
           $(".droppable").fadeIn("fast");
+          $(".savedTestsBox").hide();
       });
       $(".savedTests").click(function () {
           $(".collapseNewTest").hide();
           $(".droppable").hide();
           $(".collapseCommitTest").hide();
           $("#accordion").hide();
+          $(".savedTestsBox").fadeIn("fast");
       });
       $(".startNow").change(function (){
            if (this.checked) {
@@ -287,7 +293,14 @@ $(document).ready(function () {
             console.log('Saved Widgets: savedDuts', savedDuts);
             console.log('Saved Widgets: savedSeq', savedSeq);
             console.log('Saved Widgets: savedTests', savedTests);
-
+//SAVED TESTS
+            var savedPlansHTML = "";
+            for (var i=0;i<savedTests.length;i++) {
+                savedPlansHTML+= "<h4 class='savedTestName'>" + savedTests[i].testplan_name + "</h4>";
+                savedPlansHTML+= "<p class='savedDateCreated'>Date Created: " + savedTests[i].date_created + "</p>"
+                savedPlansHTML+= "<br>"
+            };
+            document.getElementById("savedTestPlans").innerHTML = savedPlansHTML;
             
 //SAVED DUTS
             var savedDutsHTML = "";
