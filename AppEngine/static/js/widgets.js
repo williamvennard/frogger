@@ -1,5 +1,4 @@
 
-
 // DUT WIDGETS //
     function addWidget(type,savedSettings) {
         console.log('addWidget: Type = ', type);
@@ -288,6 +287,7 @@
             document.getElementById("testPlan").innerHTML = testPlanHTML;  
         }else if(type === 'sconfig') {
             console.log('addWidget: savedSettings sconfig= ',savedSettings);
+
         };
         $(document).ready(function () { 
               $(".collapseCommitTest").fadeIn("fast");           
@@ -558,6 +558,14 @@
             console.log('commitBtn: Ajax post was a success!');
         },
         });
+        alert('Test Plan Commited');
+
+        d.innerHTML = '';
+        testSetUpInfo[1].children[0].children[1].children[0].value = '';
+        testSetUpInfo[1].children[1].children[1].children[0].value = '';
+        $(".collapseNewTest").hide();
+        $(".collapseCommitTest").hide();
+        $("#accordion").hide();
     };
    
     function Dropped(event, ui){
