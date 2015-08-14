@@ -5,3 +5,18 @@
 .savedTestName {
 	color: white;
 }
+
+.viewBtn {
+	color: black;
+    font-family: 'nexa_lightregular';
+    letter-spacing: 2px;
+    width: 50px;
+    margin: 0 0px 20px 0px;
+    padding: 4px 0 0 0;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 5px;
+    border-color: rgb(38,38,39);
+    background-color: rgb(124,175,46);
+		
+}

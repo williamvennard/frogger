@@ -270,6 +270,24 @@
         addWidget('sconfig',savedSettings);
     };    
 
+    function savedTestView(index) {
+        console.log('View button clicked!') 
+        var testPlanName = document.getElementById("tesPlanName")
+
+        var savedTestsJson = savedResults.tests[index];
+        console.log('readOnlyViewer: savedTests = ', savedTestsJson);
+        $(".savedTestsBox").hide(); 
+        $(".collapseNewTest").fadeIn("fast"); 
+        $(".droppable").fadeIn("fast");
+        $(".collapseCommitTest").fadeIn("fast");
+        $("#accordion").fadeIn("fast");
+        
+
+        document.getElementById("tesPlanName").value = savedTestsJson.testplan_name;
+        document.getElementById("start_time").value = savedTestsJson.scheduled_start_time;
+
+    };
+
 $(document).ready(function () {
     widget_url = 'https://gradientone-test.appspot.com/testresults/widgets/Acme.json';
 
@@ -296,10 +314,12 @@ $(document).ready(function () {
 //SAVED TESTS
             var savedPlansHTML = "";
             for (var i=0;i<savedTests.length;i++) {
+                $('.readOnlyView' + i).hide();
                 savedPlansHTML+= "<h4 class='savedTestName'>" + savedTests[i].testplan_name + "</h4>";
-                savedPlansHTML+= "<p class='savedDateCreated'>Date Created: " + savedTests[i].date_created + "</p>"
-                savedPlansHTML+= "<br>"
-            };
+                savedPlansHTML+= "<p class='savedDateCreated'>Date Created: " + savedTests[i].date_created + "</p>";
+                savedPlansHTML+= "<button class='viewBtn btn btn-xs' onclick='savedTestView(" + i + ")'>View</button>";
+                savedPlansHTML+= "<br>"      
+            }; 
             document.getElementById("savedTestPlans").innerHTML = savedPlansHTML;
             
 //SAVED DUTS
