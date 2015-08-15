@@ -40,7 +40,7 @@ class BitScope:
         self.config_name = bscope_test_results['config_name']
         self.test_plan = bscope_test_results['test_plan']
         self.s = s
-        self.dec_factor = 4
+        self.dec_factor = 10.0
 
     def dt2ms(self, t):
         return int(t.strftime('%s'))*1000 + int(t.microsecond/1000)
@@ -92,13 +92,13 @@ class BitScope:
                 #url = "http://localhost:18080/dec/bscopedata/arduino/%s" % slicename
                 status = {'status':'Transmitting'}
                 url_b = "https://gradientone-test.appspot.com/bscopedata/dec/" + COMPANYNAME + '/' + HARDWARENAME +'/' + config_name + "/%s" % start_tse
-                url_t = "https://gradientone-test.appspot.com/traceresults/" + COMPANYNAME + '/' + active_testplan_name + '/' + config_name
+                url_t = "https://gradientone-test.appspot.com/traceresults/" + COMPANYNAME + '/' + HARDWARENAME + '/' + config_name
                 #url_s = "https://gradientone-test.appspot.com/status/" + COMPANYNAME + '/' + HARDWARENAME
                 #URL_list = [url_b, url_t, url_s]
                 raw_url = "https://gradientone-test.appspot.com/bscopedata/" + COMPANYNAME + '/' + HARDWARENAME +'/' + config_name + "/%s" % str(start_tse)
                 dec_url = "https://gradientone-test.appspot.com/bscopedata/dec/" + COMPANYNAME + '/'+ HARDWARENAME +'/' + config_name + "/%s" % str(start_tse)
                 window_bscope = {'cha':stuffing}
-                test_controls = {'p_settings':p_settings,'dec_data_url':dec_url,'test_plan':test_plan, 'raw_data_url':raw_url, 'start_tse':start_tse, 'config_name':config_name, 'hardware_name':HARDWARENAME, 'window_bscope':window_bscope}
+                test_controls = {'i_settings':i_settings, 'p_settings':p_settings,'dec_data_url':dec_url,'test_plan':test_plan, 'raw_data_url':raw_url, 'start_tse':start_tse, 'config_name':config_name, 'hardware_name':HARDWARENAME, 'window_bscope':window_bscope}
                 test_controls = json.dumps(test_controls, ensure_ascii=True)
                 r = s.post(url_t, data=test_controls, headers=headers)
                 #payload_dict = {url_b:window_bscope, url_t:window_testresults, url_s:status}
@@ -126,14 +126,15 @@ class BitScope:
         active_testplan_name = self.active_testplan_name
         p_settings = self.bscope_test_results['p_settings']
         raw_msec_btw_samples = int(p_settings['Raw_msec_btw_samples'])
-        p_settings['Dec_msec_btw_samples'] = dec_factor * raw_msec_btw_samples
+        p_settings['Dec_msec_btw_samples'] = 10 * raw_msec_btw_samples
         i_settings = self.bscope_test_results['i_settings']
         start_tse = int(self.bscope_test_results['Start_TSE'])
         slicename = start_tse
         test_plan = self.test_plan
+        print test_plan
         new_results = test_results[:6001]
         results_arr = np.array(new_results)  #puts the test data in an array
-        dec = scipy.signal.decimate(results_arr, dec_factor, ftype='fir', axis = 0)  #performs the decimation function
+        dec = scipy.signal.decimate(results_arr, 5, ftype='fir', axis = 0)  #performs the decimation function
         test_results = dec.tolist()
         self.post_creation_data(i_settings, p_settings, test_results, start_tse, parent, config_name, active_testplan_name, test_plan)
 
@@ -145,7 +146,7 @@ class BitScope:
         i_settings = self.bscope_test_results['i_settings']
         p_settings = self.bscope_test_results['p_settings']
         raw_msec_btw_samples = int(p_settings['Raw_msec_btw_samples'])
-        p_settings['Dec_msec_btw_samples'] = dec_factor * raw_msec_btw_samples
+        p_settings['Dec_msec_btw_samples'] = 10 * raw_msec_btw_samples
         test_plan = self.test_plan
         config_name = self.config_name
         active_testplan_name = self.active_testplan_name

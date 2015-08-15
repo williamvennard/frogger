@@ -14,7 +14,7 @@ import scipy.signal
 
 #Default settings.  MY_RATE & MY_SIZE are configurable.  This may change.
 MY_DEVICE = 0 # one open device only
-MY_CHANNEL = 1 # channel to capture and display
+MY_CHANNEL = 0 # channel to capture and display
 MY_PROBE_FILE = "" # default probe file if unspecified 
 MY_MODE = BL_MODE_FAST # preferred capture mode
 MY_RATE = 1000 # default sample rate we'll use for capture (hertz).  1 sample every 1 milisecond.
@@ -144,7 +144,6 @@ def bscope_acq_exp(config, s):
             BL_Trace(BL_TRACE_FORCED, BL_SYNCHRONOUS)
             tse = dt2ms(datetime.datetime.now())
             DATA = BL_Acquire()
-            print DATA
             time_bs = time.time()
             SAMPLE_SIZE = len(DATA)
             MY_SAMPLE_INTERVAL = int(1/MY_RATE*1000000) #interval between sample in microsec
