@@ -213,9 +213,9 @@ function exploreMode() {
         console.log('drawDecChart: data=',data);
         decChartOptions = {
          title: '',
-         titleTextStyle: {color:'lightgray', fontSize: 18, fontName: 'NexaLight'},
+         titleTextStyle: {color:'lightgray', fontSize: 18, fontName: 'Inconsolata'},
          legend: 'none', //{alignment:'center', textStyle:{color:'lightgray'}},
-         hAxis: {title: 'Time(sec)',titleTextStyle:{color:'lightgray', fontName: 'NexaLight'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'gray', count: 6}, minorGridlines:{color: 'gray', count: 1}, viewWindowMode:'explicit'}, //viewWindow:{max: hMax, min: hMin}},
+         hAxis: {title: 'Time(sec)',titleTextStyle:{color:'lightgray', fontName: 'Inconsolata'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'gray', count: 6}, minorGridlines:{color: 'gray', count: 1}, viewWindowMode:'explicit'}, //viewWindow:{max: hMax, min: hMin}},
          vAxis: {title: '', titleTextStyle:{color:'lightgray'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'gray', count: 6}, minorGridlines:{color: 'gray', count: 1}, format: '##.###', viewWindowMode:'explicit', },
          backgroundColor: {fill:'none', stroke: 'black', strokeWidth: 0,},                 
          colors: ['rgb(2,255,253)','rgb(239,253,146)'],
@@ -271,9 +271,9 @@ function exploreMode() {
 
       rawChartOptions = {
          title: '',
-         titleTextStyle: {color:'lightgray', fontSize: 18, fontName: 'NexaLight'},
+         titleTextStyle: {color:'lightgray', fontSize: 18, fontName: 'Inconsolata'},
          legend: 'none', //{alignment:'center', textStyle:{color:'lightgray'}},
-         hAxis: {title: 'Time(sec)',titleTextStyle:{color:'lightgray', fontName: 'NexaLight'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'gray', count: 6}, minorGridlines:{color: 'gray', count: 1}, viewWindowMode:'explicit', viewWindow:{max: hMax, min: hMin}},
+         hAxis: {title: 'Time(sec)',titleTextStyle:{color:'lightgray', fontName: 'Inconsolata'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'gray', count: 6}, minorGridlines:{color: 'gray', count: 1}, viewWindowMode:'explicit', viewWindow:{max: hMax, min: hMin}},
          vAxis: {title: '', titleTextStyle:{color:'lightgray'}, textStyle:{color:'lightgray'}, baselineColor:'white', gridlines:{color: 'gray', count: 6}, minorGridlines:{color: 'gray', count: 1}, format: '##.###', viewWindowMode:'explicit', },
          backgroundColor: {fill:'none', stroke: 'black', strokeWidth: 0,},                 
          colors: ['rgb(2,255,253)','rgb(239,253,146)'],
