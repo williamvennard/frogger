@@ -39,15 +39,16 @@ class Handler(InstrumentDataHandler):
             analog_bandwidth = '20000000'
         c = ConfigDB(key_name = (config_name+testplan_name), parent = company_key(),
                 company_nickname = company_nickname, author = author,
+                config_name = config_name,
                 capture_channels = 0,
                 analog_sample_rate = analog_sample_rate,
                 analog_bandwidth = analog_bandwidth,
                 capture_buffer_size = capture_buffer_size,
                 instrument_type = instrument_type,
                 hardware_name = hardware_name,
-                test_plan = True,
+                test_plan = False,
                 active_testplan_name = testplan_name,
-                trace = False,
+                trace = True,
                 )
         c.put() 
         checkbox_names = ["commence_test", "commence_explore"]
