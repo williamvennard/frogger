@@ -46,6 +46,8 @@ def author_creation():
         active_user = user.email()
         active_user= active_user.split('@')
         author = active_user[0]
+    else:
+        self.redirect(users.create_login_url(self.request.uri))
     return author
 
 def dropdown_creation():

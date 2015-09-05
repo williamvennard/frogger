@@ -24,7 +24,14 @@ class Handler(InstrumentDataHandler):
     def get(self, author="", instrument_type="", instrument_name=""):
         #if not self.authcheck():
         #    return
-        author = author_creation()
+        #author = author_creation()
+        user = users.get_current_user()
+        if user:
+            active_user = user.email()
+            active_user= active_user.split('@')
+            author = active_user[0]
+        else:
+            self.redirect(users.create_login_url(self.request.uri))
         instrument_name = instrument_name.split('.')
         if instrument_name[-1] == 'json':
             rows = db.GqlQuery("""SELECT * FROM ConfigDB WHERE author =:1 
