@@ -161,4 +161,19 @@ class InstrumentsDB(DictModel):
     company_nickname = db.StringProperty(required = False)
     serial_number = db.StringProperty(required = False)
 
+def UserDB_key(name = 'default'):
+    return db.Key.from_path('emails', name)
+
+class UserDB(DictModel):
+    company_nickname = db.StringProperty(required = False)
+    email = db.StringProperty(required = False)
+    admin = db.BooleanProperty(required = False)
+
+def CopmanyDB_key(name = 'default'):
+    return db.Key.from_path('emails', name)
+
+class CompanyDB(DictModel):
+    company_nickname = db.StringProperty(required = True)
+    users = db.ListProperty(db.Key)
+
 

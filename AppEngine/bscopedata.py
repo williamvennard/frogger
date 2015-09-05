@@ -79,6 +79,7 @@ class Handler(InstrumentDataHandler):
             chunk = str(test_results_data[i:i + sample_per_slice])
             stuffing = chunk
             key = 'bscopedata' + company_nickname + hardware_name + config_name + str(slicename)
+            print key
             stuffing = convert_str_to_cha_list(stuffing)
             window_bscope = {'i_settings':test_results['i_settings'], 'p_settings':test_results['p_settings'], 'cha':stuffing, 'testplan_name':testplan_name,
             'start_tse':start_tse, 'company_nickname':company_nickname, 'slicename':slicename, 'hardware_name':hardware_name, 'config_name':config_name, 'test_plan':test_plan}

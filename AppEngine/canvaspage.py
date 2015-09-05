@@ -22,12 +22,14 @@ from google.appengine.api import oauth
 from google.appengine.api import users
 from google.appengine.ext import db
 import appengine_config
+import hashlib
+
 
 class Handler(InstrumentDataHandler):
     "Currently on the canvas page.  It presents to the user all of the completed tests, with a path that supports specific test entries"
     def get(self, company_nickname=""):
-        #if not self.authcheck():
-        #    return
+        if not self.canvascookie():
+           return
         company_nickname_check = company_nickname.split('.')
         company_nickname = company_nickname_check[0]
         if company_nickname_check[-1] == 'json':

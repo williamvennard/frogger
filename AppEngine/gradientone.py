@@ -11,6 +11,8 @@ from onedb import CapabilitiesDB
 from google.appengine.api import users
 from google.appengine.api import memcache
 from google.appengine.ext import db
+import hashlib
+
 
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
@@ -177,8 +179,39 @@ class InstrumentDataHandler(webapp2.RequestHandler):
         self.write(self.render_str(template, **kw))
     def authcheck(self, check_admin=False):
         user = users.get_current_user()
+        print user
         if user:
             if user.email() in authorized_users:
+                return True
+            # todo: put in try block and handle exception
+            cursor = db.GqlQuery("""SELECT * FROM UserDB 
+                                  WHERE email = :1""", 
+                                 user.email())
+            result = cursor.get()
+            if result:
+                if user.email() == result.email:
+                    if check_admin:
+                        if result.admin:
+                            authorized = True
+                        else:
+                            authorized = False
+                    else:
+                        authorized = True
+            else:
+                authorized = False
+        else:
+            authorized = False
+        if not authorized:
+            self.redirect('/static/autherror.html')
+        return authorized
+    def canvascookie(self, check_admin = False):
+        user = users.get_current_user()
+        if user:
+            if user.email() in authorized_users:
+                utf8username = user.email().encode("utf-8")
+                cookie_hash = hashlib.sha1(user.email()).hexdigest()
+                print cookie_hash
+                self.response.headers.add_header('Set-Cookie', 'user= %s|%s' % (utf8username, cookie_hash))
                 return True
             # todo: put in try block and handle exception
             cursor = db.GqlQuery("""SELECT * FROM UserDB 

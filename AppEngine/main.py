@@ -58,6 +58,7 @@ import panelcontrol
 import instlookup
 import testlibrarytrace
 import testlibrarytest
+import onedb
 from gradientone import InstrumentDataHandler
 
 authorized_users = ['charlie@gradientone.com',
@@ -82,14 +83,7 @@ class DictModel(db.Model):
     def to_dict(self):
        return dict([(p, unicode(getattr(self, p))) for p in self.properties()])
 
-def UserDB_key(name = 'default'):
-    return db.Key.from_path('emails', name)
 
-
-class UserDB(DictModel):
-    email = db.StringProperty(required = True)
-    company_nickname = db.StringProperty(required = True)
-    admin = db.BooleanProperty(required = False)
 
 
 class FileBlob(db.Model):
