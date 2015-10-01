@@ -40,6 +40,13 @@ class Handler(InstrumentDataHandler):
         "HTTP GETs from the Instrument Page in the UI provide data to faciliate plotting"
         #if not self.authcheck():
         #    return
+        user = users.get_current_user()
+        if user:
+            active_user = user.email()
+            active_user= active_user.split('@')
+            author = active_user[0]
+        else:
+            self.redirect(users.create_login_url(self.request.uri))
         key = 'testresults' + testplan_name + config_name
         memcache.get(key)
         output = memcache.get(key)

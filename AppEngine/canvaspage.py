@@ -28,8 +28,14 @@ import hashlib
 class Handler(InstrumentDataHandler):
     "Currently on the canvas page.  It presents to the user all of the completed tests, with a path that supports specific test entries"
     def get(self, company_nickname=""):
-        if not self.canvascookie():
-           return
+        user = users.get_current_user()
+        if user:
+            active_user = user.email()
+            active_user= active_user.split('@')
+            author = active_user[0]
+            print author
+        else:
+            self.redirect(users.create_login_url(self.request.uri))
         company_nickname_check = company_nickname.split('.')
         company_nickname = company_nickname_check[0]
         if company_nickname_check[-1] == 'json':
