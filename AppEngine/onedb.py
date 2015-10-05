@@ -169,11 +169,25 @@ class UserDB(DictModel):
     email = db.StringProperty(required = False)
     admin = db.BooleanProperty(required = False)
 
-def CopmanyDB_key(name = 'default'):
+def CompanyDB_key(name = 'default'):
     return db.Key.from_path('emails', name)
 
 class CompanyDB(DictModel):
     company_nickname = db.StringProperty(required = True)
     users = db.ListProperty(db.Key)
 
+#def CommunityPostDB_key(name = 'default'):
+#    return db.Key.from_path('emails', name)
+
+class CommunityPostDB(DictModel):
+    title           = db.StringProperty(required = True)
+    author          = db.StringProperty(required = True)
+    date_created    = db.DateTimeProperty(auto_now_add = True)    
+    test_ref        = db.ReferenceProperty(TestDB, collection_name = 'community_posts')
+    privacy         = db.StringProperty(required = False)
+
+    # TODO
+    # comment_key
+    # rating_counter
+    # share_counter
 
