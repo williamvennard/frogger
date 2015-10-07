@@ -6,7 +6,7 @@ from gradientone import render_json
 from gradientone import unic_to_ascii
 from gradientone import author_creation
 from onedb import TestDB
-from onedb import TestDB_key
+from onedb import TestResultsDB
 from onedb import UserDB
 from onedb import CommunityPostDB
 import collections
@@ -34,6 +34,7 @@ import decimate
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
 from string import maketrans
+from datetime import datetime
 
 class Handler(InstrumentDataHandler):
 	def get(self):
@@ -41,44 +42,116 @@ class Handler(InstrumentDataHandler):
 		q = UserDB.all().filter("email =", session_user.email())
 		user = q.get()
 		tests = TestDB.all()
+
+		if not user:
+			company_nickname = "No_Company"
+		else:
+			company_nickname = user.company_nickname
+		tests.filter("company_nickname =", company_nickname)
+		
         # Get all posts
-		posts = CommunityPostDB.all().order('-date_created')
+		public_posts = CommunityPostDB.all().order('-date_created')
+
 	   	if user:
 			# Limit to posts of user's company and public posts
-			p1 = posts.filter("privacy IN", (user.company_nickname, "public"))
-			self.render('communitytests.html', posts=posts, tests=tests, counter=6)
+			group_posts = CommunityPostDB.all().order('-date_created')
+			group_posts.filter("privacy =", "group")
+			group_posts.filter("company_nickname =", user.company_nickname)
+
+			public_posts.filter("privacy =", "public")
+			self.render('communitytests.html', group_posts=group_posts, 
+						public_posts=public_posts, tests=tests, p_count=0, 
+						g_count=0)
 		else:
 			# Limit to just public posts
-			posts.filter("privacy =", "public")
-			self.render('communitytests.html', posts=posts, tests=tests, counter=6)
+			public_posts = public_posts.filter("privacy =", "public")
+			public_posts.filter("privacy =", "public")
+			self.render('communitytests.html', public_posts=public_posts, 
+						tests=tests, p_count=0)
 
 	def post(self):
-		user = users.get_current_user()
+		session_user = users.get_current_user()
+		q = UserDB.all().filter("email =", session_user.email())
+		user = q.get()
 
 		# get user requested test to post 
-		testkey = self.request.get("test")
-		q = TestDB.all().filter('__key__>', testkey)
-		test_to_post = q.get()
+		testkey = self.request.get("testkey")
+		test = db.get(testkey)
 
 		title = self.request.get("title")
 		privacy = self.request.get("privacy")
-
+		
+		if not user:
+			company_nickname = "No_Company"
+		else:
+			company_nickname = user.company_nickname
 		# Create CommunityPostDB object from test
 		newpost = CommunityPostDB(title=title,
-								  author=user.nickname(),
-								  test_ref=test_to_post,
+								  author=session_user.nickname(),
+								  test_ref=test,
 								  privacy=privacy,
+								  company_nickname=company_nickname,
 								  )
 		newpost.put()
 
 		self.redirect("/community")
 
+class SavePostToTest(InstrumentDataHandler):
+
+	def clone_entity(self, e, **extra_args):
+		"""Clones an entity, adding or overriding constructor attributes.
+
+		The cloned entity will have exactly the same property values as the original
+		entity, except where overridden. By default it will have no parent entity or
+		key name, unless supplied.
+
+		Args:
+		e: The entity to clone
+		extra_args: Keyword arguments to override from the cloned entity and pass
+		  to the constructor.
+		Returns:
+		A cloned, possibly modified, copy of entity e.
+		"""
+		klass = e.__class__
+		props = dict((k, v.__get__(e, klass)) for k, v in klass.properties().iteritems())
+		props.update(extra_args)
+		return klass(**props)
+
+
+	def post(self):
+		"""Clones the selected testpost and saves the test to the library with
+		a new company_nickname for the user to view later"""
+
+		session_user = users.get_current_user()
+		q = UserDB.all().filter("email =", session_user.email())
+		user = q.get()
+
+		postkey = self.request.get("postkey")
+		testpost = db.get(postkey)
+
+		if not user:
+			company_nickname = "No_Company"
+		else:
+			company_nickname = user.company_nickname
+
+		# Check if test company is same as users. If so skip saving as it is already in library
+		if testpost.test_ref.company_nickname == company_nickname:
+			self.redirect("/community")
+		else:
+			saved_test = self.clone_entity(testpost.test_ref, company_nickname=company_nickname)
+			saved_test.put()
+			self.redirect("/community")		
+
+
 class PrivateHandler(InstrumentDataHandler):
 	def get (self):
+		session_user = users.get_current_user()
+
         # Get all posts 
 		posts = CommunityPostDB.all().order('-date_created')
 		# Limit to just public posts
-		posts.filter("privacy =", "private") 
+		posts.filter("privacy =", "private")
+		posts.filter("author =", session_user.nickname())
 
 		tests = TestDB.all()
 

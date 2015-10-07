@@ -182,6 +182,7 @@ app = webapp2.WSGIApplication([
     ('/exploremodestop/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', exploremodestop.Handler),
     ('/community', communitytests.Handler),
     ('/communityprivate', communitytests.PrivateHandler),
+    ('/saveposttotest', communitytests.SavePostToTest),
     ('/search', search.Handler),
     ('/status/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', status.Handler),
     ('/testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', testcomplete.Handler),

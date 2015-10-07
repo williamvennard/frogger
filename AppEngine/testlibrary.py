@@ -6,6 +6,7 @@ from gradientone import render_json
 from gradientone import author_creation
 from onedb import TestResultsDB
 from onedb import TestResultsDB_key
+from onedb import UserDB
 import ast
 import collections
 import csv
@@ -35,6 +36,11 @@ from string import maketrans
 
 class Handler(InstrumentDataHandler):
     def get(self, company_nickname=""):
+        #session_user = users.get_current_user()
+        #q = UserDB.all().filter("email =", session_user.email())
+        #user = q.get()
+        #company_nickname = user.company_nickname
+
         if company_nickname:
             company_nickname_check = company_nickname.split('.')
             company_nickname = company_nickname_check[0]
