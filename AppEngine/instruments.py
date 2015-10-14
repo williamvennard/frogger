@@ -9,6 +9,12 @@ from onedb import ConfigDB
 from onedb import ConfigDB_key
 from onedb import OscopeDB
 from onedb import OscopeDB_key
+from onedb import Scope
+from onedb import agilentBaseScope
+from onedb import agilentBaseInfiniiVision
+from onedb import agilent7000
+from onedb import agilent7000A
+from onedb import agilentMSO7014A
 import jinja2
 import json
 import logging
@@ -18,6 +24,7 @@ from google.appengine.api import oauth
 from google.appengine.api import users
 from google.appengine.ext import db
 import appengine_config
+#from send_script_post import Script
 
 
 class Handler(InstrumentDataHandler):
@@ -25,6 +32,10 @@ class Handler(InstrumentDataHandler):
         #if not self.authcheck():
         #    return
         #author = author_creation()
+        #name_of_inst = 'myscope'
+        #company_name = 'Acme'
+        #key = name_of_inst+company_name
+        #myscope = agilentMSO7014A(key_name = key)
         user = users.get_current_user()
         if user:
             active_user = user.email()

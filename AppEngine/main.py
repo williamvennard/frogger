@@ -59,6 +59,7 @@ import instlookup
 import testlibrarytrace
 import testlibrarytest
 import onedb
+import scriptconfig
 from gradientone import InstrumentDataHandler
 
 authorized_users = ['charlie@gradientone.com',
@@ -209,6 +210,7 @@ app = webapp2.WSGIApplication([
     ('/upload/success',FileUploadSuccess),
     ('/upload/failure',FileUploadFailure),
     ('/testmanager', testmanager.Handler),
+    ('/scriptconfig', scriptconfig.Handler),
     ('/instlookup/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', instlookup.Handler),
     ('/traceresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', traceresultsdata.Handler)
 ], debug=True)
