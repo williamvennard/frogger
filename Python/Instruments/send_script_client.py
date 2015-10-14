@@ -12,7 +12,7 @@ from send_script_post import Script
 #Default settings.  MY_RATE & MY_SIZE are configurable.  This may change.
 COMPANYNAME = 'Acme'
 HARDWARENAME ='Tahoe'
-
+instrument_ivi_type = 'agilentMSO7014A'
 name = 'myscope'
 config = {'channel_probe_id': u'None', 'timebase_window_position': u'0.0', 'channel_scale': u'None', 'channel_input_impedance': u'None', 
     'timebase_position': u'0.0', 'display_labels': u'True', 'acquisition_time_per_record': u'None', 'digital_channel_name': u'None', 
@@ -26,9 +26,9 @@ config = {'channel_probe_id': u'None', 'timebase_window_position': u'0.0', 'chan
     'analog_channel_name': u'None', 'channel_coupling': u'None', 'acquisition_segmented_index': u'1.0', 'trigger_holdoff': u'None', 
     'trigger_coupling': u'None', 'analog_channel_count': u'4', 'acquisition_number_of_points_minimum': u'None', 'acquisition_segmented_count': u'2.0'}
 
-def send_config(config, name):    
+def send_config(config, name, instrument_ivi_type):    
     """send the config info to the post program"""
-    context = Script(config,name)
+    context = Script(config,name,instrument_ivi_type)
     context.transmit_config()
 
-send_config(config, name)
+send_config(config, name, instrument_ivi_type)

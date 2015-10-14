@@ -27,15 +27,18 @@ class Script:
     COMPANYNAME = 'Acme'
     HARDWARENAME = 'Tahoe'
 
-    def __init__(self, config,name):
+    def __init__(self, config, name, instrument_ivi_type):
         self.config = config
         self.name = name
+        self.instrument_ivi_type = instrument_ivi_type
 
     def transmit_config(self):
         config = self.config
         name = self.name
+        instrument_ivi_type = self.instrument_ivi_type
         print config
-        config['name'] = name
+        config['key_name'] = name
+        config['instrument_ivi_type'] = instrument_ivi_type
         out = json.dumps(config)
         url = "http://localhost:18080/scriptconfig" 
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
