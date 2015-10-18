@@ -60,6 +60,7 @@ import testlibrarytrace
 import testlibrarytest
 import onedb
 import scriptconfig
+import u2000_configinput
 from gradientone import InstrumentDataHandler
 
 authorized_users = ['charlie@gradientone.com',
@@ -212,7 +213,8 @@ app = webapp2.WSGIApplication([
     ('/testmanager', testmanager.Handler),
     ('/scriptconfig', scriptconfig.Handler),
     ('/instlookup/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', instlookup.Handler),
-    ('/traceresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', traceresultsdata.Handler)
+    ('/traceresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', traceresultsdata.Handler),
+    ('/u2000_configinput', u2000_configinput.Handler)
 ], debug=True)
 
 

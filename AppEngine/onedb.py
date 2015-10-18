@@ -21,7 +21,7 @@ class ConfigDB(DictModel):
     config_name = db.StringProperty(required = False)
     analog_sample_rate = db.IntegerProperty(required = False)
     capture_buffer_size = db.IntegerProperty(required = False)
-    commence_test = db.BooleanProperty(required = False)
+    commence_test = db.BooleanProperty(default = False)
     commence_explore = db.BooleanProperty(required = False)
     analog_bandwidth = db.StringProperty(required = False)
     test_plan = db.BooleanProperty(required = True)
@@ -264,4 +264,40 @@ class agilentMSO7014A(agilent7000A):
     bandwidth = db.StringProperty(default = '100e6')
     horizontal_divisions = db.StringProperty(default = '10')
     vertical_divisions = db.StringProperty(default = '8')
+
+
+class pwrmeter(DictModel):
+    channel_range_lower = db.StringProperty(default = '0.0')
+    channel_range_upper = db.StringProperty(default = '0.0')
+    trigger_source = db.StringProperty(default = 'IMM')  #possible values: BUS, INTernal[1], EXTernal, HOLD, IMMediate
+    trigger_internal_event_source = db.StringProperty(default = '')
+    trigger_internal_level = db.StringProperty(default = '0.0')
+    trigger_internal_slope = db.StringProperty(default = 'positive')
+    send_software_trigger = db.StringProperty(default = '')
+    duty_cycle_enabled  = db.StringProperty(default = 'True') 
+    duty_cycle_value = db.StringProperty(default = '50.0')
+    averaging_count   = db.StringProperty(default = 'tbd')
+    zero_state= db.StringProperty(default = '')
+    calibration_state = db.StringProperty(default = '')
+    reference_oscillator_enabled = db.StringProperty(default = 'False') 
+    reference_oscillator_frequency = db.StringProperty(default = '10e6')
+    reference_oscillator_level = db.StringProperty(default = '0.0')
+
+def agilentU2000_key(name = 'default'):
+    return db.Key.from_path('company_nickname', name)
+    
+class agilentU2000(pwrmeter):
+    company_nickname = db.StringProperty(required = True)
+    config_name = db.StringProperty(required = False)
+    channel_count = db.StringProperty(default = '1')
+    frequency_low = db.StringProperty(default = '10e6')
+    frequency_high = db.StringProperty(default = '6e9')
+    power_low = db.StringProperty(default = '-60')
+    power_high = db.StringProperty(default = '20')
+    averaging_count_auto = db.StringProperty(default = 'True')
+    correction_frequency = db.StringProperty(default = '50e6')
+    offset = db.StringProperty(default = '0.0')
+    range_auto = db.StringProperty(default = 'True')
+    units = db.StringProperty(default = 'dBm')
+
 

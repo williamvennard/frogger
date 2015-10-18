@@ -6,6 +6,7 @@ from gradientone import render_json
 from gradientone import getTestKey
 from onedb import ConfigDB
 from onedb import ConfigDB_key
+from onedb import agilentU2000
 import ast
 import collections
 import csv
@@ -51,9 +52,18 @@ class Handler(InstrumentDataHandler):
                                 company_nickname, True, hardware_name)
             rows = list(rows)
             configs_tps_traces = query_to_dict(rows)
+            nested_config_name = configs_tps_traces[0]['config_name']
+            nested_instrument_type = configs_tps_traces[0]['instrument_type']
+            print nested_config_name
+
+            rows = db.GqlQuery("SELECT * FROM agilentU2000 WHERE company_nickname =:1 and config_name =:2", 
+                                company_nickname, nested_config_name)
+            nested_config = query_to_dict(rows)
+            print nested_config
+
             rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE company_nickname =:1 and commence_explore =:2 and hardware_name =:3", 
                                 company_nickname, True, hardware_name)
             rows = list(rows)
             configs_exps = query_to_dict(rows)
-            config = {'configs_exps':configs_exps, 'configs_tps_traces':configs_tps_traces}
+            config = {'configs_exps':configs_exps, 'configs_tps_traces':configs_tps_traces, 'nested_config':nested_config}
             render_json(self, config)
