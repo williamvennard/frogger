@@ -267,8 +267,11 @@ class agilentMSO7014A(agilent7000A):
 
 
 class pwrmeter(DictModel):
+    company_nickname = db.StringProperty(required = False) 
+    config_name = db.StringProperty(default = 'channel1')  
     channel_range_lower = db.StringProperty(default = '0.0')
     channel_range_upper = db.StringProperty(default = '0.0')
+    range_auto = db.StringProperty(default = 'True')
     trigger_source = db.StringProperty(default = 'IMM')  #possible values: BUS, INTernal[1], EXTernal, HOLD, IMMediate
     trigger_internal_event_source = db.StringProperty(default = '')
     trigger_internal_level = db.StringProperty(default = '0.0')
@@ -278,6 +281,7 @@ class pwrmeter(DictModel):
     duty_cycle_value = db.StringProperty(default = '50.0')
     averaging_count   = db.StringProperty(default = 'tbd')
     zero_state= db.StringProperty(default = '')
+    zero = db.StringProperty(default = '')
     calibration_state = db.StringProperty(default = '')
     reference_oscillator_enabled = db.StringProperty(default = 'False') 
     reference_oscillator_frequency = db.StringProperty(default = '10e6')
@@ -287,17 +291,9 @@ def agilentU2000_key(name = 'default'):
     return db.Key.from_path('company_nickname', name)
     
 class agilentU2000(pwrmeter):
-    company_nickname = db.StringProperty(required = True)
-    config_name = db.StringProperty(required = False)
     channel_count = db.StringProperty(default = '1')
-    frequency_low = db.StringProperty(default = '10e6')
-    frequency_high = db.StringProperty(default = '6e9')
-    power_low = db.StringProperty(default = '-60')
-    power_high = db.StringProperty(default = '20')
     averaging_count_auto = db.StringProperty(default = 'True')
     correction_frequency = db.StringProperty(default = '50e6')
     offset = db.StringProperty(default = '0.0')
-    range_auto = db.StringProperty(default = 'True')
     units = db.StringProperty(default = 'dBm')
-
 
