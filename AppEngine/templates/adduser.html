@@ -18,14 +18,20 @@
     <img class="logo" src="../static/images/Glogo.png" style="width:110px; float:left;" alt="Gradient One logo"> 
     <h1 style="float:left">Account Management</h1>
     </div>     
-      <div class="" id="adduserbox">
+      <div class="col-md-6" id="adduserbox">
         <h2>Add User</h2>      
         <form method="post">
           <div>
             <label class="admin">
               <input type="checkbox" name="admin"> Admin
             </label>
-          </div>    
+          </div>
+          <div class="form-group">
+            <input type="text" class="form-control" name="name" placeholder="Name" value="{{name}}">
+            <li class="error">
+            {{error_name}}
+            </li>
+          </div>
           <div class="form-group">
             <input type="text" class="form-control" name="email" placeholder="Email" value="{{email}}">
             <li class="error">
