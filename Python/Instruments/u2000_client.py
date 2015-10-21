@@ -28,6 +28,17 @@ def post_status(status):
     print "s.status_code=",s.status_code
     #print "dir(s)=",dir(s)
 
+def post_complete(self, config_name, s):
+    s = self.s
+    window_complete = {'commence_test':False}
+    out_complete = json.dumps(window_complete, ensure_ascii=True)
+    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+    url_c = "https://gradientone-dev.appspot.com/temp_testcomplete/" + COMPANYNAME + '/' + config_name 
+    c = s.post(url_c, data=out_complete, headers=headers)
+    print "c.reason=",c.reason
+    print "c.status_code=",c.status_code
+    #print "dir(c)=",dir(c)
+
 def check_config_vars(config, nested_config):
     "creates config variables to pass to the main u2000 code"
     if config['test_plan'] == 'True':
@@ -83,6 +94,9 @@ def check_config_url():
                 print "Starting API"
                 post_status('Starting')
                 u2000_acq(config, nested_config, s)
+                config_vars = check_config_vars(config, nested_config)
+                config_name = config_vars[1]
+                post_complete(config_name,s)
         else:
             print "No start order found"
     threading.Timer(1, check_config_url()).start()
