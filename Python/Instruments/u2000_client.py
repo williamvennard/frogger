@@ -28,7 +28,7 @@ def post_status(status):
     print "s.status_code=",s.status_code
     #print "dir(s)=",dir(s)
 
-def post_complete(self, config_name, s):
+def post_complete(config_name, s):
     s = self.s
     window_complete = {'commence_test':False}
     out_complete = json.dumps(window_complete, ensure_ascii=True)
