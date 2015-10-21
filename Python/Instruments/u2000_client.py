@@ -5,7 +5,7 @@ import time   # time is a module here
 import math
 import datetime
 import threading
-from u2000_post import u2000
+from u2000_post import agilentu2000
 import numpy as np
 import numpy.fft as fft
 import scipy.signal 
@@ -99,32 +99,29 @@ def u2000_acq(config, nested_config, s):
     u2000.channels['channel1']
     print 'instantiated simulated device and now configuring channel'
     u2000.channels['channel1'].correction_frequency = config_vars[2]
-    u2000.channels['channel1'].offset = config_vars[3]
-    u2000.channels['channel1'].range_auto = config_vars[4]
-    u2000.channels['channel1'].units = config_vars[5]
+    #u2000.channels['channel1'].offset = config_vars[3]
+    #u2000.channels['channel1'].range_auto = config_vars[4]
+    #u2000.channels['channel1'].units = config_vars[5]
     #   initiate measurement
     u2000.measurement.initiate()
     # read out channel 1 power data
     #post_status('Acquiring')
     power = u2000.measurement.fetch()
-    print power
     tse = dt2ms(datetime.datetime.now())
     config_dict = {}
     plot_dict = {}
     inst_dict ={}
     inst_dict = set_v_for_k(inst_dict, 'correction_frequency', config_vars[2])
-    inst_dict = set_v_for_k(inst_dict, 'offset', config_vars[3]) 
-    inst_dict = set_v_for_k(inst_dict, 'range_auto', config_vars[4])
-    inst_dict = set_v_for_k(inst_dict, 'units', config_vars[5])
+    acq_dict = set_v_for_k(acq_dict, 'i_settings', inst_dict)    
+    acq_dict = set_v_for_k(acq_dict, 'config_name', config_vars[1]) 
     acq_dict = set_v_for_k(acq_dict, 'active_testplan_name', config_vars[0])
     acq_dict = set_v_for_k(acq_dict, 'test_plan', config_vars[6])
-    acq_dict = set_v_for_k(acq_dict, 'Start_TSE', tse)    
-    bits = u2000(acq_dict,s)
-    bits.transmitdec()
+    acq_dict = set_v_for_k(acq_dict, 'Start_TSE', tse) 
+    acq_dict = set_v_for_k(acq_dict, 'data', power)  
+    bits = agilentu2000(acq_dict,s)
     bits.transmitraw()
-    #bits.transmitblob()
-    bits.testcomplete()
-    post_status('Idle')
+    #bits.testcomplete()
+    #post_status('Idle')
 
 #post_status('Idle')
 check_config_url()
