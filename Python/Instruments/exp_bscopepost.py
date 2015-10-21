@@ -175,6 +175,7 @@ class BitScope:
         stop_tse = self.dt2ms(datetime.datetime.now())
         active_testplan_name = self.active_testplan_name
         config_name = self.config_name
+        print config_name
         test_plan = self.test_plan
         p_settings = self.bscope_test_results['p_settings']
         p_settings['Dec_msec_btw_samples'] = 10
