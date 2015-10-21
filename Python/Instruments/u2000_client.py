@@ -94,7 +94,7 @@ def u2000_acq(config, nested_config, s):
     acq_dict = {}
     print "Starting: Attempting to open one device..."
     config_vars = check_config_vars(config, nested_config)
-    u2000 = ivi.agilent.agilentU2000(("USB::0x0957::0x2b18::INSTR"))
+    u2000 = ivi.agilent.agilentU2001A(("USB::0x0957::0x2b18::INSTR"))
     u2000.channels['channel1']
     print 'instantiated simulated device and now configuring channel'
     u2000.channels['channel1'].correction_frequency = config_vars[2]
