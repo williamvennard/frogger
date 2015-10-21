@@ -29,7 +29,6 @@ def post_status(status):
     #print "dir(s)=",dir(s)
 
 def post_complete(config_name, s):
-    s = self.s
     window_complete = {'commence_test':False}
     out_complete = json.dumps(window_complete, ensure_ascii=True)
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
