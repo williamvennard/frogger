@@ -70,7 +70,7 @@ def check_config_url():
     """polls the configuration URL for a start signal @ 1sec intervals"""
     #config_url = "http://localhost:18080/testplansummary/Acme/MSP"
     config_url = "https://gradientone-dev.appspot.com/testplansummary/" + COMPANYNAME + '/' + HARDWARENAME
-   
+    #config_url = "https://gradientone-dev.appspot.com/testplansummary/Acme/MSP"
     s = requests.session()
     r = s.get(config_url)
     if r:
