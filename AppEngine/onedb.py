@@ -175,9 +175,18 @@ class UserDB(DictModel):
 def CompanyDB_key(name = 'default'):
     return db.Key.from_path('emails', name)
 
+class ProfileDB(DictModel):
+    bio = db.StringProperty(required = False)
+    company_nickname = db.StringProperty(required = False)
+    email = db.StringProperty(required = False)
+    admin = db.BooleanProperty(required = False)
+    name = db.StringProperty(required = False)
+    groups = db.StringListProperty()
+
 class CompanyDB(DictModel):
     company_nickname = db.StringProperty(required = True)
     users = db.ListProperty(db.Key)
+    groups = db.StringListProperty()
 
 # def CommunityPostDB_key(name = 'default'):
 #     return db.Key.from_path('emails', name)
