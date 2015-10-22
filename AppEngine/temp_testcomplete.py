@@ -27,6 +27,7 @@ from string import maketrans
 class Handler(InstrumentDataHandler):
     def post(self, company_nickname="", config_name=""):
         key = config_name
+        print key
         key = db.Key.from_path('ConfigDB', key, parent = company_key())
         config = db.get(key)
         config.commence_test = False
