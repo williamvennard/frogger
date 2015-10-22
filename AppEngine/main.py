@@ -61,7 +61,13 @@ import testlibrarytest
 import onedb
 import profile
 import scriptconfig
+<<<<<<< HEAD
 # import u2000_configinput
+=======
+import u2000_configinput
+import u2000data
+import temp_testcomplete
+>>>>>>> 04b3d4b11eca600476370ed0cb3667710c215b90
 from gradientone import InstrumentDataHandler
 from onedb import ProfileDB
 from onedb import UserDB
@@ -239,7 +245,9 @@ app = webapp2.WSGIApplication([
     ('/scriptconfig', scriptconfig.Handler),
     ('/instlookup/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', instlookup.Handler),
     ('/traceresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', traceresultsdata.Handler),
-   # ('/u2000_configinput', u2000_configinput.Handler)
+    ('/u2000_configinput', u2000_configinput.Handler),
+    ('/u2000data/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000data.Handler),
+    ('temp_testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', temp_testcomplete.Handler)
 ], debug=True)
 
 

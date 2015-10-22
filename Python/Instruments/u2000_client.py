@@ -5,7 +5,7 @@ import time   # time is a module here
 import math
 import datetime
 import threading
-from u2000_post import u2000
+from u2000_post import agilentu2000
 import numpy as np
 import numpy.fft as fft
 import scipy.signal 
@@ -27,6 +27,16 @@ def post_status(status):
     print "s.reason=",s.reason
     print "s.status_code=",s.status_code
     #print "dir(s)=",dir(s)
+
+def post_complete(config_name, s):
+    window_complete = {'commence_test':False}
+    out_complete = json.dumps(window_complete, ensure_ascii=True)
+    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+    url_c = "https://gradientone-dev.appspot.com/temp_testcomplete/" + COMPANYNAME + '/' + config_name 
+    c = s.post(url_c, data=out_complete, headers=headers)
+    print "c.reason=",c.reason
+    print "c.status_code=",c.status_code
+    #print "dir(c)=",dir(c)
 
 def check_config_vars(config, nested_config):
     "creates config variables to pass to the main u2000 code"
@@ -68,9 +78,9 @@ def make_json(payload):
 
 def check_config_url():
     """polls the configuration URL for a start signal @ 1sec intervals"""
-    config_url = "http://localhost:18080/testplansummary/Acme/MSP"
-    #config_url = "https://gradientone-test.appspot.com/testplansummary/" + COMPANYNAME + '/' + HARDWARENAME
-   
+    #config_url = "http://localhost:18080/testplansummary/Acme/MSP"
+    config_url = "https://gradientone-dev.appspot.com/testplansummary/" + COMPANYNAME + '/' + HARDWARENAME
+    #config_url = "https://gradientone-dev.appspot.com/testplansummary/Acme/MSP"
     s = requests.session()
     r = s.get(config_url)
     if r:
@@ -83,6 +93,9 @@ def check_config_url():
                 print "Starting API"
                 post_status('Starting')
                 u2000_acq(config, nested_config, s)
+                config_vars = check_config_vars(config, nested_config)
+                config_name = config_vars[1]
+                post_complete(config_name,s)
         else:
             print "No start order found"
     threading.Timer(1, check_config_url()).start()
@@ -94,37 +107,33 @@ def u2000_acq(config, nested_config, s):
     acq_dict = {}
     print "Starting: Attempting to open one device..."
     config_vars = check_config_vars(config, nested_config)
-    u2000 = ivi.agilent.agilentU2000()
-    u2000._set_driver_operation_simulate(True)
+    u2000 = ivi.agilent.agilentU2001A(("USB::0x0957::0x2b18::INSTR"))
     u2000.channels['channel1']
     print 'instantiated simulated device and now configuring channel'
     u2000.channels['channel1'].correction_frequency = config_vars[2]
-    u2000.channels['channel1'].offset = config_vars[3]
-    u2000.channels['channel1'].range_auto = config_vars[4]
-    u2000.channels['channel1'].units = config_vars[5]
+    #u2000.channels['channel1'].offset = config_vars[3]
+    #u2000.channels['channel1'].range_auto = config_vars[4]
+    #u2000.channels['channel1'].units = config_vars[5]
     #   initiate measurement
     u2000.measurement.initiate()
     # read out channel 1 power data
     #post_status('Acquiring')
     power = u2000.measurement.fetch()
-    print power
     tse = dt2ms(datetime.datetime.now())
     config_dict = {}
     plot_dict = {}
     inst_dict ={}
     inst_dict = set_v_for_k(inst_dict, 'correction_frequency', config_vars[2])
-    inst_dict = set_v_for_k(inst_dict, 'offset', config_vars[3]) 
-    inst_dict = set_v_for_k(inst_dict, 'range_auto', config_vars[4])
-    inst_dict = set_v_for_k(inst_dict, 'units', config_vars[5])
+    acq_dict = set_v_for_k(acq_dict, 'i_settings', inst_dict)    
+    acq_dict = set_v_for_k(acq_dict, 'config_name', config_vars[1]) 
     acq_dict = set_v_for_k(acq_dict, 'active_testplan_name', config_vars[0])
     acq_dict = set_v_for_k(acq_dict, 'test_plan', config_vars[6])
-    acq_dict = set_v_for_k(acq_dict, 'Start_TSE', tse)    
-    bits = u2000(acq_dict,s)
-    bits.transmitdec()
+    acq_dict = set_v_for_k(acq_dict, 'Start_TSE', tse) 
+    acq_dict = set_v_for_k(acq_dict, 'data', power)  
+    bits = agilentu2000(acq_dict,s)
     bits.transmitraw()
-    #bits.transmitblob()
-    bits.testcomplete()
-    post_status('Idle')
+    #bits.testcomplete()
+    #post_status('Idle')
 
 #post_status('Idle')
 check_config_url()
