@@ -39,6 +39,8 @@ from datetime import datetime
 class Handler(InstrumentDataHandler):
 	def get(self):
 		user = users.get_current_user()
+		if not user:
+			self.redirect("/")
 		q = ProfileDB.all().filter("email =", user.email())
 		profile = q.get()
 		tests = TestDB.all()
@@ -75,6 +77,8 @@ class Handler(InstrumentDataHandler):
 
 	def post(self):
 		user = users.get_current_user()
+		if not user:
+			self.redirect("/")
 		q = ProfileDB.all().filter("email =", user.email())
 		profile = q.get()
 
@@ -125,9 +129,8 @@ class SavePostToTest(InstrumentDataHandler):
 	def post(self):
 		"""Clones the selected testpost and saves the test to the library with
 		a new company_nickname for the user to view later"""
-
-		session_user = users.get_current_user()
-		q = ProfileDB.all().filter("email =", session_user.email())
+		user = users.get_current_user()
+		q = ProfileDB.all().filter("email =", user.email())
 		profile = q.get()
 
 		postkey = self.request.get("postkey")

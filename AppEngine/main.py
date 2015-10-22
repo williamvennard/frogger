@@ -61,9 +61,6 @@ import testlibrarytest
 import onedb
 import profile
 import scriptconfig
-<<<<<<< HEAD
-# import u2000_configinput
-=======
 import u2000_configinput
 import u2000data
 import temp_testcomplete
