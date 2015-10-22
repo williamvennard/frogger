@@ -14,12 +14,28 @@
 
   <body>
     <h2>Users ({{company}})</h2>
+    <a href="/profile">Return to Profile</a>
     <table>
-    <tr><th>email</th><th>company</th><th>admin</th></tr>
+    <tr><th>email</th><th>company</th><th>admin</th><th>groups</th><th>edit</th></tr>
     {% for user in users %}
-       <tr>
-       <td>{{user.email}}</td><td>{{user.companyname}}</td><td>{{user.admin}}</td>
-       </tr>
+      <tr>
+       <td>{{user.email}}</td>
+       <td>{{user.company_nickname}}</td>
+       <td>{{user.admin}}</td>
+       <td>
+       {% for group in user.groups %}
+       {{group}},
+       {% endfor %}
+       </td>
+       <td>
+       <form action="/listusers" method="post">
+         <input type="text" name="group" value="{{group}}" placeholder="add new group">
+         <input type="text" name="group_to_delete" value="{{group_to_delete}}" placeholder="group to remove">
+         <input type="hidden" name="user_email" value={{user.email}}>
+         <input type="submit">
+       </form>
+       </td>
+     </tr>
     {% endfor %}
     </table>
   </body>

@@ -75,6 +75,7 @@
             <div class="col-md-6 well well-sm" style="width: 300px; margin-left: 15%; background-color: lightgray;">
                 <h4>{{post.title}}</h4> 
                 <p>Posted by: {{post.author}}</p>
+                <p>Shared to: "{{post.privacy}}"</p>
                 <a href="#">Likes<span class="badge">2</span></a>
                 <a href="#">Comments<span class="badge">4</span></a>
                 <a href="#">Shares<span class="badge">2</span></a>
@@ -116,6 +117,7 @@
             <div class="col-md-6 well well-sm" style="width: 300px; margin-left: 15%; background-color: lightgray;">
                 <h4>{{post.title}}</h4> 
                 <p>Posted by: {{post.author}}</p>
+                <p>Shared to: "{{post.privacy}}"</p>
                 <a href="#">Likes<span class="badge">2</span></a>
                 <a href="#">Comments<span class="badge">4</span></a>
                 <a href="#">Shares<span class="badge">2</span></a>
@@ -158,6 +160,9 @@
                         <option value="public"> Public </option>
                         <option value="company"> Company </option>
                         <option value="private"> Private </option>
+                        {% for group in groups %}
+                        <option value="{{group}}"> {{group}} </option>
+                        {% endfor %}
                     </select>
                     <select name="testkey">
                     {% for test in tests %}

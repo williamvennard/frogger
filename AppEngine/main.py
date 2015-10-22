@@ -126,6 +126,7 @@ class FileUploadFailure(InstrumentDataHandler):
 
 class ListUsersPage(InstrumentDataHandler):
     def get(self):
+        self.admincheck()
         users = db.GqlQuery("SELECT * FROM ProfileDB WHERE company_nickname = 'GradientOne'").fetch(None)
         print "ListUsersPage:get: users =",users
         if len(users) > 0:
@@ -134,6 +135,22 @@ class ListUsersPage(InstrumentDataHandler):
         else:
             self.render('listusers.html',company="new company?",
                         users=users)
+    def post(self):
+        email = self.request.get('user_email')
+        q = ProfileDB.all().filter("email =", email)
+        profile = q.get()
+
+        group = self.request.get('group')
+        profile.groups.append(group)
+        profile.put()
+
+        group_to_delete = self.request.get('group_to_delete')
+        profile.groups.remove(group_to_delete)
+        profile.put()
+        profile.groups = filter(None, profile.groups)
+        profile.put()
+
+        self.redirect('/listusers')
 
 
 class AdduserPage(InstrumentDataHandler):
@@ -142,21 +159,19 @@ class AdduserPage(InstrumentDataHandler):
         if not u:
             self.redirect('/')
             return
-        """
-        if not self.authcheck():
-            self.response.headers['Content-Type'] = 'text/html; charset=utf-8'
-            self.response.write('Hello, ' + u.email())
-            self.response.write(' you are not authorized to add users.')
-            return
-        """
+
+        # check for admin, if fails then redirects to auth error
+        self.admincheck()
+        
         admin_email = u.email()
         self.render('adduser.html')
+
     def post(self):
-        username = self.request.get('email')
+        email = self.request.get('email')
         companyname = self.request.get('companyname')
         name = self.request.get('name')
         # TODO - handle spaces in companyname
-        s = ProfileDB(email = username, company_nickname = companyname, name = name) 
+        s = ProfileDB(email = email, company_nickname = companyname, name = name) 
         s.put()
         checked_box = self.request.get("admin")
         if checked_box:
@@ -170,25 +185,11 @@ class AdduserPage(InstrumentDataHandler):
         s.put()
         self.redirect('/profile')
 
-class BioPage(webapp2.RequestHandler):
-    def get(self):
-        user = users.get_current_user()
-        if user:
-            profile = ProfileDB.get_or_insert(key_name=user.user_id())
-            if not profile.bio:
-                profile.bio = "No bio entered yet."
-            profile.save()
-            self.response.headers['Content-Type'] = 'text/plain'
-            self.response.out.write('Hello, ' + user.nickname() + ' Bio: ' + profile.bio)
-        else:
-            self.redirect(users.create_login_url(self.request.uri))
-
 
 app = webapp2.WSGIApplication([
     ('/', mainpage.Handler),
     ('/help', mainpage.Handler),
     ('/adduser', AdduserPage),
-    ('/biopage', BioPage),
     ('/listusers', ListUsersPage),
     ('/profile', profile.Handler),
     ('/configlookup', configlookup.Handler),

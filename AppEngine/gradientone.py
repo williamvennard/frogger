@@ -8,6 +8,7 @@ from onedb import BscopeDB_key
 from onedb import OscopeDB
 from onedb import OscopeDB_key
 from onedb import CapabilitiesDB
+from onedb import ProfileDB
 from google.appengine.api import users
 from google.appengine.api import memcache
 from google.appengine.ext import db
@@ -236,6 +237,14 @@ class InstrumentDataHandler(webapp2.RequestHandler):
         if not authorized:
             self.redirect('/static/autherror.html')
         return authorized
+    def admincheck(self):
+        user = users.get_current_user()
+        q = ProfileDB.all().filter("email =", user.email())
+        profile = q.get()
+        if profile.admin:
+            return True
+        else:
+            self.redirect('/static/autherror.html')    
 
 
 def instruments_and_explanations(analog_bandwidth, analog_sample_rate, capture_buffer_size, capture_channels, resolution):

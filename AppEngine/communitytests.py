@@ -53,21 +53,25 @@ class Handler(InstrumentDataHandler):
 		public_posts = CommunityPostDB.all().order('-date_created')
 
 	   	if profile:
-			# Limit to posts of user's company and public posts
+			# Limit to posts of user's company and group posts
+			filterlist = []
+			filterlist.append("company")
+			filterlist.extend(profile.groups)
 			group_posts = CommunityPostDB.all().order('-date_created')
-			group_posts.filter("privacy =", "company")
+			group_posts.filter("privacy IN", filterlist)
 			group_posts.filter("company_nickname =", profile.company_nickname)
 
+			# Limit to public posts
 			public_posts.filter("privacy =", "public")
 			self.render('communitytests.html', group_posts=group_posts, 
 						public_posts=public_posts, tests=tests, p_count=0, 
-						g_count=0)
+						g_count=0, groups=profile.groups)
 		else:
 			# Limit to just public posts
 			public_posts = public_posts.filter("privacy =", "public")
 			public_posts.filter("privacy =", "public")
 			self.render('communitytests.html', public_posts=public_posts, 
-						tests=tests, p_count=0)
+						tests=tests, p_count=0, groups=profile.groups)
 
 	def post(self):
 		user = users.get_current_user()
