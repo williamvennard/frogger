@@ -40,7 +40,8 @@ class Handler(InstrumentDataHandler):
 	def get(self):
 		user = users.get_current_user()
 		if not user:
-			self.redirect("/")
+			self.redirect('/')
+			return
 		q = ProfileDB.all().filter("email =", user.email())
 		profile = q.get()
 		tests = TestDB.all()
@@ -58,7 +59,8 @@ class Handler(InstrumentDataHandler):
 			# Limit to posts of user's company and group posts
 			filterlist = []
 			filterlist.append("company")
-			filterlist.extend(profile.groups)
+			groups = self.request.cookies.get("groups")
+			filterlist.extend(groups.split("|"))
 			group_posts = CommunityPostDB.all().order('-date_created')
 			group_posts.filter("privacy IN", filterlist)
 			group_posts.filter("company_nickname =", profile.company_nickname)

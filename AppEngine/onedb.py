@@ -182,6 +182,7 @@ class ProfileDB(DictModel):
     admin = db.BooleanProperty(required = False)
     name = db.StringProperty(required = False)
     groups = db.StringListProperty()
+    userid = db.StringProperty(required = False)
 
 class CompanyDB(DictModel):
     company_nickname = db.StringProperty(required = True)
