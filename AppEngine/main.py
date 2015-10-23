@@ -61,7 +61,6 @@ import testlibrarytest
 import onedb
 import profile
 import scriptconfig
-import u2000_configinput
 import u2000data
 import temp_testcomplete
 from gradientone import InstrumentDataHandler
@@ -174,7 +173,9 @@ class AdduserPage(InstrumentDataHandler):
         companyname = self.request.get('companyname')
         name = self.request.get('name')
         # TODO - handle spaces in companyname
-        s = ProfileDB(email = email, company_nickname = companyname, name = name) 
+        s = ProfileDB(email = email, 
+                      company_nickname = companyname, 
+                      name = name)
         s.put()
         checked_box = self.request.get("admin")
         if checked_box:
@@ -242,7 +243,6 @@ app = webapp2.WSGIApplication([
     ('/scriptconfig', scriptconfig.Handler),
     ('/instlookup/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', instlookup.Handler),
     ('/traceresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', traceresultsdata.Handler),
-    ('/u2000_configinput', u2000_configinput.Handler),
     ('/u2000data/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000data.Handler),
     ('/temp_testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', temp_testcomplete.Handler)
 ], debug=True)
