@@ -46,30 +46,29 @@
                   <li><a class="glyphicon glyphicon-user" style="color: rgb(124,175,46);" href="#">Profile</a></li>
                 </ul>
             </div>
-            <div class="row" id="headbar">
-              <h1 style="float:left">Account Profile</h1>
+        </div>
+        </nav>
+        <div class="row">
+          <div class="col-md-12">
+            <h1>Account Profile</h1>
+            <h2>Profile Information</h2>      
+            <div>
+              Name: {{profile.name}} <br>
+              Company: {{profile.company_nickname}} <br>
+              Bio: {{profile.bio}} <br>
+              Email: {{profile.email}} <br>
+              Groups: {% for group in profile.groups %}
+                {{group}},
+              {% endfor %}
+              <br>
+              Groups Cookie Check: {{groups}}
             </div>
-            <div class="row">
-              <div class="col-md-6">
-                <h2>Profile Information</h2>      
-                <div>
-                  Name: {{profile.name}} <br>
-                  Company: {{profile.company_nickname}} <br>
-                  Bio: {{profile.bio}} <br>
-                  Email: {{profile.email}} <br>
-                  Groups: {% for group in profile.groups %}
-                    {{group}},
-                  {% endfor %}
-                  <br>
-                  Groups Cookie Check: {{groups}}
-                </div>
-                {% if profile.admin %}
-                Admin Features: <br>
-                <a href="adduser">Add User</a> <br>
-                <a href="listusers">View/Edit Users</a>
-                {% endif %}
-              </div>
-            </div>
+            {% if profile.admin %}
+            Admin Features: <br>
+            <a href="adduser">Add User</a> <br>
+            <a href="listusers">View/Edit Users</a>
+            {% endif %}
+          </div>
         </div>
       </div>
   </div>

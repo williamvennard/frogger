@@ -36,10 +36,6 @@ from string import maketrans
 
 class Handler(InstrumentDataHandler):
     def get(self, company_nickname=""):
-        #session_user = users.get_current_user()
-        #q = UserDB.all().filter("email =", session_user.email())
-        #user = q.get()
-        #company_nickname = user.company_nickname
 
         if company_nickname:
             company_nickname_check = company_nickname.split('.')
@@ -48,7 +44,7 @@ class Handler(InstrumentDataHandler):
             rows = db.GqlQuery("SELECT * FROM TestResultsDB where company_nickname =:1 and saved_state =:2", company_nickname, True) #saved data only
             rows = list(rows) 
             rows = query_to_dict(rows)        
-            output = {}
+            output = {} 
             output['results'] = rows 
             rows = db.GqlQuery("SELECT * FROM TestDB where company_nickname =:1", company_nickname)
             rows = list(rows)     

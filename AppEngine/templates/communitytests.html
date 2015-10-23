@@ -43,7 +43,7 @@
                         <ul class="nav navbar-nav navbar-right">
                           <li><a class="glyphicon glyphicon-envelope" href="../navbar-static-top/"></a></li>
                           <li><a class="glyphicon glyphicon-bell" href="../navbar-static-top/"></a></li>
-                          <li><a class="glyphicon glyphicon-user" href="profile">Profile</a></li>
+                          <li><a class="glyphicon glyphicon-user" href="/profile">Profile</a></li>
                         </ul>
                     </div>
                 </div>
@@ -154,8 +154,9 @@
         <div class="row">
             <div class="col-md-6 col-md-offset-3">
                 <form action="/community" method="post">
-                    <div>title</div>
+                    <div>Post Name:</div>                    
                     <input type="text" name="title" value="{{title}}">
+                    <div>Sharing Audience:</div>
                     <select name="privacy">
                         <option value="public"> Public </option>
                         <option value="company"> Company </option>
@@ -164,6 +165,7 @@
                         <option value="{{group}}"> {{group}} </option>
                         {% endfor %}
                     </select>
+                    <div>Test Plan:</div>
                     <select name="testkey">
                     {% for test in tests %}
                         <option value="{{test.key()}}">Test: {{test.testplan_name}} Company: {{test.company_nickname}}</option>
