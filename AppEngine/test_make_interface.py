@@ -21,4 +21,13 @@ class Handler(InstrumentDataHandler):
     def get(self):
         self.render('test_make_interface.html')
 
+    def post():
+    	# get data from form
+    	company_nickname = self.request.get('company_nickname')
+    	....
+
+    	# create model
+    	config = ConfigDB(company_nickname,...)
+    	config.put()
+
 
