@@ -18,15 +18,12 @@ import numpy as np
 import decimate
 
 def measurement_config(i_settings, value):
-    if i_settings['pass_fail'] = 'True':
-        if i_settings['pass_fail_type'] = 'max_min':
-            measurement_result = max_min(i_settings['max_value'], i_settings['min_val'],value)
+    if i_settings['pass_fail'] == 'True':
+        if i_settings['pass_fail_type'] == 'max_min':
+            measurement_result = max_min(i_settings['max_value'], i_settings['min_value'], value)
     else:
         measurement_result = 'No Measurement Defined'
     return measurement_result
-
-
-    {'max_value': '25', 'min_value': '2', 'pass_fail_type': 'max_min', 'pass_fail': 'True', 'correction_frequency': '0.0'}
 
 def max_min(max_val, min_val, value):
     if min_val <= value <= max_val:
