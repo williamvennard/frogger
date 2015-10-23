@@ -66,6 +66,7 @@ import temp_testcomplete
 from gradientone import InstrumentDataHandler
 from onedb import ProfileDB
 from onedb import UserDB
+import measurements
 
 authorized_users = ['charlie@gradientone.com',
                     'nedwards@gradientone.com',
@@ -194,7 +195,7 @@ app = webapp2.WSGIApplication([
     ('/help', mainpage.Handler),
     ('/adduser', AdduserPage),
     ('/listusers', ListUsersPage),
-    ('/profile', profile.Handler),
+    #('/profile', profile.Handler),
     ('/configlookup', configlookup.Handler),
     ('/instruments', instruments.Handler),
     ('/instruments/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', instruments.Handler),
@@ -243,7 +244,7 @@ app = webapp2.WSGIApplication([
     ('/instlookup/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', instlookup.Handler),
     ('/traceresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', traceresultsdata.Handler),
     ('/u2000data/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000data.Handler),
-    ('temp_testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', temp_testcomplete.Handler)
+    ('/temp_testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', temp_testcomplete.Handler)
 ], debug=True)
 
 

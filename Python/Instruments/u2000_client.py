@@ -58,8 +58,13 @@ def check_config_vars(config, nested_config):
         offset= nested_config['offset']
         range_auto= nested_config['range_auto']
         units= nested_config['units']
+        pass_fail = nested_config['pass_fail']
+        pass_fail_type = nested_config['pass_fail_type']
+        max_value = nested_config['max_value']
+        min_value = nested_config['min_value']
 
-    return active_testplan_name, config_name, correction_frequency, offset, range_auto, units, test_plan
+
+    return active_testplan_name, config_name, correction_frequency, offset, range_auto, units, test_plan, pass_fail, pass_fail_type, max_value, min_value
 
 
 
@@ -119,17 +124,23 @@ def u2000_acq(config, nested_config, s):
     # read out channel 1 power data
     #post_status('Acquiring')
     power = u2000.measurement.fetch()
+    u2000.close()
     tse = dt2ms(datetime.datetime.now())
     config_dict = {}
     plot_dict = {}
     inst_dict ={}
     inst_dict = set_v_for_k(inst_dict, 'correction_frequency', config_vars[2])
+    inst_dict = set_v_for_k(inst_dict, 'pass_fail', config_vars[7])
+    inst_dict = set_v_for_k(inst_dict, 'pass_fail_type', config_vars[8])
+    inst_dict = set_v_for_k(inst_dict, 'max_value', config_vars[9])
+    inst_dict = set_v_for_k(inst_dict, 'min_value', config_vars[10])
     acq_dict = set_v_for_k(acq_dict, 'i_settings', inst_dict)    
     acq_dict = set_v_for_k(acq_dict, 'config_name', config_vars[1]) 
     acq_dict = set_v_for_k(acq_dict, 'active_testplan_name', config_vars[0])
     acq_dict = set_v_for_k(acq_dict, 'test_plan', config_vars[6])
     acq_dict = set_v_for_k(acq_dict, 'Start_TSE', tse) 
     acq_dict = set_v_for_k(acq_dict, 'data', power)  
+    print acq_dict
     bits = agilentu2000(acq_dict,s)
     bits.transmitraw()
     #bits.testcomplete()
