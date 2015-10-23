@@ -311,3 +311,15 @@ class agilentU2000(pwrmeter):
     max_value = db.StringProperty(default = '0.0')
     min_value = db.StringProperty(default = '0.0')
 
+def agilentU2000data_key(name = 'default'):
+    return db.Key.from_path('company_nickname', name)
+
+class agilentU2000data(DictModel):
+    company_nickname = db.StringProperty(required = True)
+    hardware_name = db.StringProperty(required = True)
+    config_name = db.StringProperty(required = True)
+    i_settings = db.StringProperty(required = True)
+    test_results_data = db.TextProperty(required = True)
+    start_tse = db.IntegerProperty(required = True)
+
+
