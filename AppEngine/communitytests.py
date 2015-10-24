@@ -7,8 +7,8 @@ from gradientone import unic_to_ascii
 from gradientone import author_creation
 from onedb import TestDB
 from onedb import TestResultsDB
-from onedb import UserDB
 from onedb import CommunityPostDB
+from onedb import ProfileDB
 import collections
 import csv
 import datetime
@@ -38,41 +38,51 @@ from datetime import datetime
 
 class Handler(InstrumentDataHandler):
 	def get(self):
-		session_user = users.get_current_user()
-		q = UserDB.all().filter("email =", session_user.email())
-		user = q.get()
+		user = users.get_current_user()
+		if not user:
+			self.redirect('/')
+			return
+		q = ProfileDB.all().filter("email =", user.email())
+		profile = q.get()
 		tests = TestDB.all()
 
-		if not user:
+		if not profile.company_nickname:
 			company_nickname = "No_Company"
 		else:
-			company_nickname = user.company_nickname
+			company_nickname = profile.company_nickname
 		tests.filter("company_nickname =", company_nickname)
 		
         # Get all posts
 		public_posts = CommunityPostDB.all().order('-date_created')
 
-	   	if user:
-			# Limit to posts of user's company and public posts
+	   	if profile:
+			# Limit to posts of user's company and group posts
+			filterlist = []
+			filterlist.append("company")
+			groups = self.request.cookies.get("groups")
+			filterlist.extend(groups.split("|"))
 			group_posts = CommunityPostDB.all().order('-date_created')
-			group_posts.filter("privacy =", "group")
-			group_posts.filter("company_nickname =", user.company_nickname)
+			group_posts.filter("privacy IN", filterlist)
+			group_posts.filter("company_nickname =", profile.company_nickname)
 
+			# Limit to public posts
 			public_posts.filter("privacy =", "public")
 			self.render('communitytests.html', group_posts=group_posts, 
 						public_posts=public_posts, tests=tests, p_count=0, 
-						g_count=0)
+						g_count=0, groups=profile.groups)
 		else:
 			# Limit to just public posts
 			public_posts = public_posts.filter("privacy =", "public")
 			public_posts.filter("privacy =", "public")
 			self.render('communitytests.html', public_posts=public_posts, 
-						tests=tests, p_count=0)
+						tests=tests, p_count=0, groups=profile.groups)
 
 	def post(self):
-		session_user = users.get_current_user()
-		q = UserDB.all().filter("email =", session_user.email())
-		user = q.get()
+		user = users.get_current_user()
+		if not user:
+			self.redirect("/")
+		q = ProfileDB.all().filter("email =", user.email())
+		profile = q.get()
 
 		# get user requested test to post 
 		testkey = self.request.get("testkey")
@@ -81,13 +91,13 @@ class Handler(InstrumentDataHandler):
 		title = self.request.get("title")
 		privacy = self.request.get("privacy")
 		
-		if not user:
+		if not profile:
 			company_nickname = "No_Company"
 		else:
-			company_nickname = user.company_nickname
+			company_nickname = profile.company_nickname
 		# Create CommunityPostDB object from test
 		newpost = CommunityPostDB(title=title,
-								  author=session_user.nickname(),
+								  author=user.nickname(),
 								  test_ref=test,
 								  privacy=privacy,
 								  company_nickname=company_nickname,
@@ -121,18 +131,17 @@ class SavePostToTest(InstrumentDataHandler):
 	def post(self):
 		"""Clones the selected testpost and saves the test to the library with
 		a new company_nickname for the user to view later"""
-
-		session_user = users.get_current_user()
-		q = UserDB.all().filter("email =", session_user.email())
-		user = q.get()
+		user = users.get_current_user()
+		q = ProfileDB.all().filter("email =", user.email())
+		profile = q.get()
 
 		postkey = self.request.get("postkey")
 		testpost = db.get(postkey)
 
-		if not user:
+		if not profile:
 			company_nickname = "No_Company"
 		else:
-			company_nickname = user.company_nickname
+			company_nickname = profile.company_nickname
 
 		# Check if test company is same as users. If so skip saving as it is already in library
 		if testpost.test_ref.company_nickname == company_nickname:
@@ -145,13 +154,13 @@ class SavePostToTest(InstrumentDataHandler):
 
 class PrivateHandler(InstrumentDataHandler):
 	def get (self):
-		session_user = users.get_current_user()
+		user = users.get_current_user()
 
         # Get all posts 
 		posts = CommunityPostDB.all().order('-date_created')
 		# Limit to just public posts
 		posts.filter("privacy =", "private")
-		posts.filter("author =", session_user.nickname())
+		posts.filter("author =", user.nickname())
 
 		tests = TestDB.all()
 

@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block import %}
+
+<html>
+  <head>
+    <title>Test Make Interface </title>
+    <style type="text/css">
+      .label {text-align: right}
+      .error {color: red}
+    </style>
+
+  </head>
+
+
+Inputs (some or all of these might be pre-populated based off the cookie info and the test plan configuration):
+Name
+Test run
+Date time
+Some batch name
+Comments section
+Control knob for starting/next/etc
+Outputs:
+Results of the test, including measurement, whether it passed or failed, and the pass/fail criteria
+Plot of the results, where appropriate
+  <body>
+    <h2>Test Make Interface</h2>
+    <form method="post">
+      <table>
+        <tr>
+          <td class="label">
+            Company Nickname
+          </td>
+          <td>
+            <input type="text" name="company_nickname" value="{{company_nickname}}">
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            Test Overview
+          </td>
+          <td>
+            <input type="text" name="test_overview" value="{{test_overview}}">
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            Inputs
+          </td>
+          <td>
+            <input type="text" name="instrument_type" value="{{instrument_type}}">
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            Config Name
+          </td>
+          <td>
+            <input type="text" name="config_name" value="{{config_name}}">
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            Trace Name
+          </td>
+          <td>
+            <input type="text" name="trace_name" value="{{trace_name}}">
+          </td>
+        </tr>
+
+
+        <tr>
+          <td class="label">
+            U2000 Setting:  Averaging Count Auto
+          </td>
+          <td>
+            <input type="text" name="averaging_count_auto" value="{{averaging_count_auto}}">
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            U2000 Setting:  Correction Frequency
+          </td>
+          <td>
+            <input type="text" name="correction_frequency" value="{{correction_frequency}}">
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            U2000 Setting:  Offset
+          </td>
+          <td>
+            <input type="text" name="offset" value="{{offset}}">
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            U2000 Setting:  Range Auto
+          </td>
+          <td>
+            <input type="text" name="range_auto" value="{{range_auto}}">
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            U2000 Setting:  Units
+          </td>
+          <td>
+            <input type="text" name="units" value="{{units}}">
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            Does This Test Have Pass/Fail Criteria? (True/False)
+          </td>
+          <td>
+            <input type="text" name="pass_fail" value="{{pass_fail}}">
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            Pass/Fail Type? (max_min or threshold)
+          </td>
+          <td>
+            <input type="text" name="pass_fail_type" value="{{pass_fail_type}}">
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            Max Value:  
+          </td>
+          <td>
+            <input type="text" name="max_value" value="{{max_value}}">
+          </td>
+        </tr>
+
+        <tr>
+          <td class="label">
+            Min Value:  
+          </td>
+          <td>
+            <input type="text" name="min_value" value="{{min_value}}">
+          </td>
+        </tr>
+      </table>
+
+      <input type="submit">
+    </form>
+  </body>
+
+</html>
+
+{% endblock %}

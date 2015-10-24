@@ -1,6 +1,53 @@
+import webapp2
+import jinja2
+import json
+import logging
+import os
+from onedb import BscopeDB
+from onedb import BscopeDB_key
+from onedb import OscopeDB
+from onedb import OscopeDB_key
+from onedb import CapabilitiesDB
+from onedb import ProfileDB
+from google.appengine.api import users
+from google.appengine.api import memcache
+from google.appengine.ext import db
+import hashlib
 import math
 import numpy as np
 import decimate
+
+def measurement_config(i_settings, value):
+    if i_settings['pass_fail'] == 'True':
+        if i_settings['pass_fail_type'] == 'max_min':
+            measurement_result = max_min(i_settings['max_value'], i_settings['min_value'], value)
+    else:
+        measurement_result = 'No Measurement Defined'
+    return measurement_result
+
+def max_min(max_val, min_val, value):
+    if min_val <= value <= max_val:
+        max_min_result = 'Pass'
+    else:
+        max_min_result = 'Fail'
+    return max_min_result
+
+def threshold(threshold, value):
+    if value >= threshold:
+        threshold_result = 'Pass'
+    else:
+        threshold_result = 'Fail'
+    return threshold_result
+
+
+
+
+
+
+
+
+
+
 
 def root_mean_squared_ta(test_data, RMS_time_start, RMS_time_stop, sample_interval):
     "RMS measurement function (for ideal sine wave) that relies upon user input for start/stop time and sample interval from the config"

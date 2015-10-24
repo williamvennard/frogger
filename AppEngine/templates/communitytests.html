@@ -25,7 +25,7 @@
 
 <body id="mainBackground">
     <div class="container">       
-        <nav class="navbar navbar-inverse navbar-collapse collapse">
+        <nav id="topNavBar" class="navbar navbar-inverse navbar-collapse collapse">
                 <div class="container-fluid">
                     <div class="navbar-header">
                         <img class="logo" src="../static/images/Glogo.png" style="width:110px;" alt="Gradient One Logo">
@@ -43,7 +43,7 @@
                         <ul class="nav navbar-nav navbar-right">
                           <li><a class="glyphicon glyphicon-envelope" href="../navbar-static-top/"></a></li>
                           <li><a class="glyphicon glyphicon-bell" href="../navbar-static-top/"></a></li>
-                          <li><a class="glyphicon glyphicon-user" href="../navbar-fixed-top/">Profile</a></li>
+                          <li><a class="glyphicon glyphicon-user" href="/profile">Profile</a></li>
                         </ul>
                     </div>
                 </div>
@@ -75,6 +75,7 @@
             <div class="col-md-6 well well-sm" style="width: 300px; margin-left: 15%; background-color: lightgray;">
                 <h4>{{post.title}}</h4> 
                 <p>Posted by: {{post.author}}</p>
+                <p>Shared to: "{{post.privacy}}"</p>
                 <a href="#">Likes<span class="badge">2</span></a>
                 <a href="#">Comments<span class="badge">4</span></a>
                 <a href="#">Shares<span class="badge">2</span></a>
@@ -116,6 +117,7 @@
             <div class="col-md-6 well well-sm" style="width: 300px; margin-left: 15%; background-color: lightgray;">
                 <h4>{{post.title}}</h4> 
                 <p>Posted by: {{post.author}}</p>
+                <p>Shared to: "{{post.privacy}}"</p>
                 <a href="#">Likes<span class="badge">2</span></a>
                 <a href="#">Comments<span class="badge">4</span></a>
                 <a href="#">Shares<span class="badge">2</span></a>
@@ -152,13 +154,18 @@
         <div class="row">
             <div class="col-md-6 col-md-offset-3">
                 <form action="/community" method="post">
-                    <div>title</div>
+                    <div>Post Name:</div>                    
                     <input type="text" name="title" value="{{title}}">
+                    <div>Sharing Audience:</div>
                     <select name="privacy">
                         <option value="public"> Public </option>
-                        <option value="group"> Group </option>
+                        <option value="company"> Company </option>
                         <option value="private"> Private </option>
+                        {% for group in groups %}
+                        <option value="{{group}}"> {{group}} </option>
+                        {% endfor %}
                     </select>
+                    <div>Test Plan:</div>
                     <select name="testkey">
                     {% for test in tests %}
                         <option value="{{test.key()}}">Test: {{test.testplan_name}} Company: {{test.company_nickname}}</option>
