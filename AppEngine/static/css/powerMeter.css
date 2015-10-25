@@ -1,0 +1,35 @@
+#powerMeterBox {
+    border-color: black;
+    background-color: rgb(33,33,33);
+    display: inline-block;
+    vertical-align: right;
+    min-width: 80%;
+    min-height: 200px;
+    border-style: solid;
+    border-color: rgb(197,44,72);
+    border-radius: 5px;
+    border-width: 1px;
+    margin:0 0 0 10px;
+}
+
+#valueBox {
+	left: 0px;
+	margin: 5px 5px 5px 5px;
+	height: 80px;
+	background-color:black;
+	border-style: solid;
+	border-radius: 5px;
+    border: 2px inset #f4f4f4;
+    -webkit-box-shadow: inset 6px 5px 55px 1px rgba(0,0,0,0.8);
+    -moz-box-shadow: inset 6px 5px 55px 1px rgba(0,0,0,0.8);
+    box-shadow: inset 6px 5px 55px 1px rgba(0,0,0,0.8);
+}
+
+#rightDisplay {
+	background-color:rgb(33,33,33);
+	border-style: solid;
+	border-color: rgb(33,33,33);
+	border-radius: 5px;
+	margin-left: 20px;
+	padding: 5px 5px 5px 5px;
+}

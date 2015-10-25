@@ -15,6 +15,7 @@
     <link rel="stylesheet" type="text/css" href="../static/css/custom.css">
     <link rel="stylesheet" type="text/css" href="../static/css/oscope.css">
     <link rel="stylesheet" type="text/css" href="../static/css/specanal.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/powerMeter.css">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.13/angular.min.js"></script>
     <script type="text/javascript" src="../static/js/addons/clickadd.js"></script>
     <script type="text/javascript" src="../static/js/addons/jquery.knob.min.js"></script>
@@ -329,26 +330,27 @@
               </div> 
 <!--End Oscope-->
 <!--Power Meter-->    
-              <div id="instBox" class="PowerMeterInstBox">
-                  <h2 class="row" id="instrumentName" class="instname" style="margin:5px 0 0 20px">Power Meter</h2>
+              <div id="powerMeterBox" class="PowerMeterInstBox">
+                  <h2 class="row" id="instrumentName" class="instname" style="margin:5px 0 0 20px; color: white;">Power Meter</h2>
                   <h4 class="row" id="hardwareName" class="hardwareName" style="margin:0 0 0 20px"></h4>
                   <span onclick="" class="closePM glyphicon glyphicon-remove-circle" style="left:95%"></span>
-                  <div class="row">
-                    <div class="col-md-6" id="oChart"></div>
-                    <div class="col-md-2" id="optionsBox" style="background-color: black; height: 415px;">
-                        <div id="optionsBoxTitle" class="boxTitle">
-                            <h2 style="margin-bottom: 0px; font-family:'nexa_lightregular';">Options</h2>
-                        </div>                  
-                    </div>
+                  <div class="col-md-7" id="rightDisplay">
                     <div class="row">
-                      <div class="col-md-3 statusInfoBox" style="margin-left:50px;">
-                        <h5 style="margin-bottom: 0px; text-align:center;">Status <span id="currentStatus" class="status"></span> </h5>   
+                      <div class="col-md-12" id="valueBox">
                       </div>
-                      <div id="settingsDisplay" class="col-md-3 configInfoBox">
+                    </div>
+                    <div class="row">  
+                      <div id="settingsDisplay" class="col-md-3 configInfoBox" style="margin-left: 5px;">
                         <h6 style="margin-bottom: 0px;"><span style="margin-right:3px;">Config:</span><span class="configSettings"></span><span style="position:absolute; left:150px; margin-right:3px;">Trace:</span><span style="position:absolute; left:190px;"></span></h6>
                         <h6 style="margin-bottom: 0px;"><span style="margin-right:3px;">Buffer Size:</span><span class="configSettings"></span><span style="position:absolute; left:150px; margin-right:3px;">Sample Rate:</span><span style="position:absolute; left:228px;"></span></h6>
                       </div>
-                    </div>
+                      <div class="col-md-2 statusInfoBox" style="margin-left:10px;">
+                        <h5 style="margin-bottom: 0px; text-align:center;">Status <span id="currentStatus" class="status"></span> </h5>   
+                      </div>
+                    </div> 
+                  </div>
+                  <div class="col-md-5" id="leftDisplay">
+
                   </div>                 
               </div>
               <!--End Power Meter-->  
@@ -364,7 +366,7 @@
     <script type="text/javascript">$('#collapseConfig').collapse("hide");</script>
     <script type="text/javascript">
     $(".OscopeInstBox").hide();
-    $(".PowerMeterInstBox").hide();
+    //$(".PowerMeterInstBox").hide();
     
 
     $(".OScope").click(function () {
