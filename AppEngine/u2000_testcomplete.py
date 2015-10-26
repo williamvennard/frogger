@@ -95,7 +95,7 @@ class Handler(InstrumentDataHandler):
                     test_complete = int(stop_tse),
                     trace = trace, 
                     start_tse=(test_complete_content['start_tse']),
-                    u2000_result = test_complete_content['cha'],
+                    u2000_result = str(test_complete_content['cha']),
                     )
             to_save.append(r) 
             db.put(to_save)
