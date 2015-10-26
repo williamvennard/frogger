@@ -99,4 +99,3 @@ class Handler(InstrumentDataHandler):
             to_save.append(r) 
             db.put(to_save)
             #memcache.set(key, to_save)
-]
