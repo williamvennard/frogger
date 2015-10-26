@@ -36,7 +36,7 @@ class agilentu2000:
         window_u2000 = {'i_settings':i_settings, 'cha':stuffing, 'start_tse':start_tse, 'test_plan':test_plan, 'testplan_name':active_testplan_name}
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
         #url_u = "http://localhost:18080/u2000data/" + COMPANYNAME + '/' + HARDWARENAME +'/' + config_name + "/%s" % start_tse
-        url_u = "https://gradientone-dev.appspot.com/u2000data/" + COMPANYNAME + '/' + HARDWARENAME +'/' + config_name + "/%s" % start_tse
+        url_u = "https://gradientone-test.appspot.com/u2000data/" + COMPANYNAME + '/' + HARDWARENAME +'/' + config_name + "/%s" % start_tse
         out_u2000 = json.dumps(window_u2000, ensure_ascii=True)
         r = s.post(url_u, data=out_u2000, headers=headers)
         #print "dir(r)=",dir(r)

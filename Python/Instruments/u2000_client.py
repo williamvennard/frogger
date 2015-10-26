@@ -32,7 +32,7 @@ def post_complete(config_name, s):
     window_complete = {'commence_test':False}
     out_complete = json.dumps(window_complete, ensure_ascii=True)
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-    url_c = "https://gradientone-dev.appspot.com/temp_testcomplete/" + COMPANYNAME + '/' + config_name 
+    url_c = "https://gradientone-test.appspot.com/temp_testcomplete/" + COMPANYNAME + '/' + config_name 
     c = s.post(url_c, data=out_complete, headers=headers)
     print "c.reason=",c.reason
     print "c.status_code=",c.status_code
@@ -84,13 +84,14 @@ def make_json(payload):
 def check_config_url():
     """polls the configuration URL for a start signal @ 1sec intervals"""
     #config_url = "http://localhost:18080/testplansummary/Acme/MSP"
-    config_url = "https://gradientone-dev.appspot.com/testplansummary/" + COMPANYNAME + '/' + HARDWARENAME
+    config_url = "https://gradientone-test.appspot.com/testplansummary/" + COMPANYNAME + '/' + HARDWARENAME
     #config_url = "https://gradientone-dev.appspot.com/testplansummary/Acme/MSP"
     s = requests.session()
     r = s.get(config_url)
     if r:
         print 'checking'
         config = r.json()
+        print config
         if config['configs_tps_traces']:
             nested_config = config['nested_config'][0]
             config = config['configs_tps_traces'][0]
