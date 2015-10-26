@@ -99,8 +99,4 @@ class Handler(InstrumentDataHandler):
             to_save.append(r) 
             db.put(to_save)
             #memcache.set(key, to_save)
-            key = config_name+testplan_name
-            key = db.Key.from_path('ConfigDB', key, parent = company_key())
-            config = db.get(key)
-            config.commence_test = False
-            config.put()
+]
