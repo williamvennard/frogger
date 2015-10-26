@@ -147,6 +147,7 @@ class TestResultsDB(DictModel):
     trace = db.BooleanProperty(required = False)
     test_plan = db.BooleanProperty(required = False)
     saved_state = db.BooleanProperty(required = False)
+    u2000_result = db.StringProperty(required = False)
 
 
 class CapabilitiesDB(DictModel):
