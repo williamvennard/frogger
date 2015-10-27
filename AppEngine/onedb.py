@@ -98,6 +98,9 @@ class TestDB(DictModel):
     test_scheduled = db.BooleanProperty(required = False)
     scheduled_start_time = db.DateTimeProperty(required = False)
 
+class TestInterface(db.Expando):
+    name = db.StringProperty(required = False)
+    company_nickname = db.StringProperty(required = False)
 
 class StateDB(DictModel):
     testplan_name = db.StringProperty(required = False)

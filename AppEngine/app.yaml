@@ -18,7 +18,6 @@ handlers:
 
 - url: /.*
   script: main.app
-  login: admin
 
 libraries:
 - name: webapp2
