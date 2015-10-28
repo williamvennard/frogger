@@ -9,6 +9,7 @@ from onedb import ConfigDB_key
 from onedb import agilentU2000
 from onedb import agilentU2000_key
 from onedb import TestInterface
+from onedb import BscopeDB
 from onedb import BscopeDB_key
 from onedb import CommentsDB
 import itertools
@@ -39,14 +40,24 @@ class Handler(InstrumentDataHandler):
             test = '{"instrument_type": "sample inputs", "config_name": "config1", "company_nickname": "GradientOne", "trace_name": "trace1", "title": "T1"}'
         key = instrument + company_nickname + hardware_name + config_name + slicename
         cached_copy = memcache.get(key)
-        # if cached_copy is None:
         templatedata = {
                 'test': test,
                 'company_nickname' : company_nickname,
                 'hardware_name' : hardware_name,
                 'config_name' : config_name,
-                }  
+                }
+        # resultKey = BscopeDB_key(company_nickname, config_name)
+        # result = BscopeDB.get(resultKey)
+
+        query = BscopeDB.all().filter("company_nickname =", company_nickname)
+        query = query.filter("config_name =", config_name)
+        result = query.get()
+        comment_thread = []
+        for comment in result.comments:
+            comment_thread.append(comment)
+        templatedata['comment_thread'] = comment_thread
         if True:
+        # if cached_copy is None:
             logging.error("BscopeData:get: query")
             rows = db.GqlQuery("""SELECT * FROM BscopeDB""")
             # rows = db.GqlQuery("""SELECT * FROM BscopeDB WHERE config_name =:1
@@ -77,8 +88,14 @@ class Handler(InstrumentDataHandler):
         else:
             author = user.nickname()
         content = self.request.get('content')
-        resultKey = BscopeDB_key(company_nickname, config_name)
-        Bscope = db.get(resultKey)
+
+        # ToDo - Fix key query that returns None.        
+        # resultKey = BscopeDB_key(company_nickname, config_name)
+        # Bscope = db.get(resultKey)
+
+        query = BscopeDB.all().filter("company_nickname =", company_nickname)
+        query = query.filter("config_name =", config_name)
+        Bscope = query.get()
         comment = CommentsDB(author=author, content=content, results=Bscope)
         comment.put()
         self.redirect('/operator/%s/%s/%s' % (company_nickname, hardware_name, config_name))

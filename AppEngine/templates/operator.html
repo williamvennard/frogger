@@ -21,7 +21,6 @@
 		<p>(test results should go here)</p>
 		<p>{{data.results}}</p>
 		<hr>
-		<p>Testing company name: {{data.results[0]['company_nickname']}}</p>
 	</div>
 	<div>
 		<p><button>SAVE</button>(Save test results to library)</p>
@@ -29,6 +28,11 @@
 	</div>
 	<div>
 		<h4>Comments</h4>
+		{% for comment in data.comment_thread %}
+		<p>{{comment.content}}</p>
+		<p>by {{comment.author}}</p>
+		{% endfor %}
+
 		<textarea name="content" id="content" form="usrform" rows="5" cols="50" value="{{content}}">Enter comment here...</textarea>
 		<form action="/operator/{{data.company_nickname}}/{{data.hardware_name}}/{{data.config_name}}" method="post" id="usrform">
             <input type="submit">
