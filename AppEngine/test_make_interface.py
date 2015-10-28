@@ -25,22 +25,23 @@ class Handler(InstrumentDataHandler):
         self.render('test_make_interface.html')
 
     def post(self):
-    	# get data from form and create object
-        data = {}
-        attributes = ['title', 
-                      'company_nickname', 
-                      'instrument_type', 
-                      'config_name',
-                      'trace_name',
-                      ]
-        for attribute in attributes:
-            data[attribute] = self.request.get(attribute)
+      # get data from form and create object
+      data = {}
+      attributes = ['title', 
+                    'company_nickname', 
+                    'instrument_type', 
+                    'config_name',
+                    'trace_name',
+                    ]
+      for attribute in attributes:
+          data[attribute] = self.request.get(attribute)
+      test_interface = TestInterface(**data)
+      # test_interface.put()
+      key = data['title']+data['company_nickname']
+      memcache.set(key, json.dumps(data))
 
-    	test_interface = TestInterface(**data)
-    	test_interface.put()
+      # for debugging
+      render_json_cached(self, json.dumps(data))
 
-        # for debugging
-        render_json_cached(self, json.dumps(data))
-
-        # ToDo - when operator is complete, page should redirect there
-        # self.redirect('/operator')
+      # ToDo - when operator is complete, page should redirect there
+      # self.redirect('/operator')

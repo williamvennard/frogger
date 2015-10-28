@@ -2,88 +2,26 @@
 
 {% block import %}
 
-<html>
-  <head>
+<head>
     <title>Operator Page</title>
     <style type="text/css">
       .label {text-align: right}
       .error {color: red}
     </style>
-    <link rel="stylesheet" type="text/css" href="../static/css/jquery-comments.css">
-	<link rel="stylesheet" type="text/css" href="../static/css/font-awesome.min.css"> <!-- Optional -->
-
-	<script type="text/javascript" src="../static/js/lib/jquery-1.9.0.min.js"></script>
-	<script type="text/javascript" src="../static/js/jquery-comments.js"></script>
-
-    <!-- Init jquery-comments -->
-    <script type="text/javascript">
-        $(function() {
-            $('#comments-container').comments({
-                profilePictureURL: 'https://app.viima.com/static/media/user_profiles/user-icon.png',
-                roundProfilePictures: true,
-                textareaRows: 1,
-                getComments: function(success, error) {
-                    setTimeout(function() {
-                        success(commentsArray);
-                    }, 500);
-                },
-                putComment: function(data, success, error) {
-                  setTimeout(function() {
-                    success(data);
-                  }, 200)
-                },
-                deleteComment: function(data, success, error) {
-                  setTimeout(function() {
-                    success();
-                  }, 200)
-                },
-                upvoteComment: function(data, success, error) {
-                  setTimeout(function() {
-                    success(data);
-                  }, 200)
-                }
-            });
-            var commentsArray = [{
-		            id: 1,
-		            created: '2015-10-01',
-		            content: 'Lorem ipsum dolort sit amet',
-		            fullname: 'Simon Powell',
-		            profile_picture_url: 'https://app.viima.com/static/media/user_profiles/user-icon.png',
-		            upvote_count: 2,
-		            user_has_upvoted: false
-		    }];
-        });
-    </script>
-    
-    <script type="text/javascript">
-		$('#comments-container2').comments({
-		    profilePictureURL: 'https://app.viima.com/static/media/user_profiles/user-icon.png',
-		    getComments: function(success, error) {
-		        var commentsArray = [{
-		            id: 1,
-		            created: '2015-10-01',
-		            content: 'Lorem ipsum dolort sit amet',
-		            fullname: 'Simon Powell',
-		            profile_picture_url: 'https://app.viima.com/static/media/user_profiles/user-icon.png',
-		            upvote_count: 2,
-		            user_has_upvoted: false
-		        }];
-		        success(commentsArray);
-			}
-		});
-	</script>
-  </head>
-
+</head>
 <body>
 	<h1>Operator Page</h1>
 	<div>
 		<h3>Test Overview</h3>
 		<p>(overview and test info goes here)</p>
+		<p>{{data.test}}</p>
 	</div>
 	<div>
 		<h3>Results</h3>
-		<p>(test results would go here)</p>
+		<p>(test results should go here)</p>
+		<p>{{data.results}}</p>
 		<hr>
+		<p>Testing company name: {{data.results[0]['company_nickname']}}</p>
 	</div>
 	<div>
 		<p><button>SAVE</button>(Save test results to library)</p>
@@ -91,12 +29,12 @@
 	</div>
 	<div>
 		<h4>Comments</h4>
-		<!-- <textarea>(comments on results would go here)</textarea> -->
+		<textarea name="content" id="content" form="usrform" rows="5" cols="50" value="{{content}}">Enter comment here...</textarea>
+		<form action="/operator/{{data.company_nickname}}/{{data.hardware_name}}/{{data.config_name}}" method="post" id="usrform">
+            <input type="submit">
+
+		</form>
 	</div>
-	<br>
-
-	<div id="comments-container"></div>
-
 </body>
-</html>
- {% endblock %}
+
+{% endblock %}

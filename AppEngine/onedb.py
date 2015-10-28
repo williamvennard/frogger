@@ -4,6 +4,9 @@ class DictModel(db.Model):
     def to_dict(self):
        return dict([(p, unicode(getattr(self, p))) for p in self.properties()])
 
+class FlexModel(db.Expando):
+    def to_dict(self):
+       return dict([(p, unicode(getattr(self, p))) for p in self.properties()])
 
 def company_key(name = 'default'):
     return db.Key.from_path('companies', name)
@@ -98,7 +101,7 @@ class TestDB(DictModel):
     test_scheduled = db.BooleanProperty(required = False)
     scheduled_start_time = db.DateTimeProperty(required = False)
 
-class TestInterface(db.Expando):
+class TestInterface(FlexModel):
     name = db.StringProperty(required = False)
     company_nickname = db.StringProperty(required = False)
 
@@ -114,8 +117,8 @@ class StateDB(DictModel):
     order = db.IntegerProperty(required = False)
 
 
-def BscopeDB_key(name = 'default'):
-    return db.Key.from_path('bscope', name)
+def BscopeDB_key(company_nickname="", config_name=""):
+    return db.Key.from_path('BscopeDB', company_nickname+config_name)
 
 class BscopeDB(DictModel):
     company_nickname = db.StringProperty(required = True)
@@ -207,6 +210,11 @@ class CommunityPostDB(DictModel):
     # comment_key
     # rating_counter
     # share_counter
+
+class CommentsDB(DictModel):
+    author = db.StringProperty(required= True)
+    content = db.StringProperty(required= True)
+    results = db.ReferenceProperty(BscopeDB, collection_name = 'comments')
 
 class Scope(DictModel):
     acquisition_start_time = db.StringProperty(required = False)
