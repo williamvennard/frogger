@@ -39,16 +39,6 @@ def threshold(threshold, value):
         threshold_result = 'Fail'
     return threshold_result
 
-
-
-
-
-
-
-
-
-
-
 def root_mean_squared_ta(test_data, RMS_time_start, RMS_time_stop, sample_interval):
     "RMS measurement function (for ideal sine wave) that relies upon user input for start/stop time and sample interval from the config"
     RMS_time_start = float(RMS_time_start)

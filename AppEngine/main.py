@@ -69,6 +69,8 @@ from onedb import UserDB
 import measurements
 import u2000_configinput
 import u2000_testcomplete
+import report_summary
+import report_detail
 
 authorized_users = ['charlie@gradientone.com',
                     'nedwards@gradientone.com',
@@ -208,7 +210,7 @@ app = webapp2.WSGIApplication([
     ('/configoutput/([a-zA-Z0-9-]+)', configoutput.Handler),
     ('/configoutput/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', configoutput.Handler),
     ('/datamgmt/bscopedata/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', datamgmt.Handler),
-    ('/testconfiginput', exp_testconfiginput.Handler),
+    ('/testconfiginput', testconfiginput.Handler),
     ('/testconfigoutput/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', testconfigoutput.Handler),
     ('/testplansummary/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', testplansummary.Handler),
     ('/testplansummary/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', testplansummary.Handler),
@@ -249,6 +251,8 @@ app = webapp2.WSGIApplication([
     ('/temp_testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', temp_testcomplete.Handler),
     ('/u2000_configinput', u2000_configinput.Handler),
     ('/u2000_testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000_testcomplete.Handler),
+    ('/report_summary/([a-zA-Z0-9.-]+)',  report_summary.Handler),
+    ('/report_summary/report_detail/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)',  report_detail.Handler)
 ], debug=True)
 
 

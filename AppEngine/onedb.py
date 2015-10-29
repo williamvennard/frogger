@@ -157,6 +157,12 @@ class CapabilitiesDB(DictModel):
     analog_sample_rate = db.IntegerProperty(required = False)
     resolution = db.IntegerProperty(required = False)
     capture_buffer_size = db.IntegerProperty(required = False)
+    channel_count = db.IntegerProperty(required = False)
+    frequency_low = db.StringProperty(required = False)
+    frequency_high = db.StringProperty(required = False)
+    power_low = db.StringProperty(required = False)
+    power_high = db.StringProperty(required = False)
+        
 
 class InstrumentsDB(DictModel):
     capabilities = db.ReferenceProperty(CapabilitiesDB, collection_name = 'instruments')
