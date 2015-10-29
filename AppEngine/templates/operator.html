@@ -29,8 +29,9 @@
 	<div>
 		<h4>Comments</h4>
 		{% for comment in data.comment_thread %}
+		<hr>
 		<p>{{comment.content}}</p>
-		<p>by {{comment.author}}</p>
+		<p>by {{comment.author}} at {{comment.timestamp}}</p>
 		{% endfor %}
 
 		<textarea name="content" id="content" form="usrform" rows="5" cols="50" value="{{content}}">Enter comment here...</textarea>

@@ -53,11 +53,15 @@ class Handler(InstrumentDataHandler):
         query = query.filter("config_name =", config_name)
         result = query.get()
         comment_thread = []
-        for comment in result.comments:
-            comment_thread.append(comment)
+        if hasattr(result, 'comments'):
+            for comment in result.comments:
+                comment_thread.append(comment)
+        else:
+            self.error(404)
+            self.response.out.write("404 Error: File not found")
         templatedata['comment_thread'] = comment_thread
-        if True:
-        # if cached_copy is None:
+        # if True:
+        if cached_copy is None:
             logging.error("BscopeData:get: query")
             rows = db.GqlQuery("""SELECT * FROM BscopeDB""")
             # rows = db.GqlQuery("""SELECT * FROM BscopeDB WHERE config_name =:1

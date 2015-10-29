@@ -191,6 +191,12 @@ class AdduserPage(InstrumentDataHandler):
         s.put()
         self.redirect('/profile')
 
+class FileNotFound(InstrumentDataHandler):
+    """Handler for FileNotFound"""
+    def get(self):
+        self.error(404)
+        self.response.out.write("404 Error: File not found")
+
 
 app = webapp2.WSGIApplication([
     ('/', mainpage.Handler),
@@ -249,6 +255,7 @@ app = webapp2.WSGIApplication([
     ('/temp_testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', temp_testcomplete.Handler),
     ('/test_make_interface', test_make_interface.Handler),
     ('/operator/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', operatordata.Handler),
+    ('/404', FileNotFound),
 ], debug=True)
 
 
