@@ -67,6 +67,8 @@ from gradientone import InstrumentDataHandler
 from onedb import ProfileDB
 from onedb import UserDB
 import measurements
+import test_make_interface
+import operatordata
 import u2000_configinput
 import u2000_testcomplete
 import report_summary
@@ -193,6 +195,12 @@ class AdduserPage(InstrumentDataHandler):
         s.put()
         self.redirect('/profile')
 
+class FileNotFound(InstrumentDataHandler):
+    """Handler for FileNotFound"""
+    def get(self):
+        self.error(404)
+        self.response.out.write("404 Error: File not found")
+
 
 app = webapp2.WSGIApplication([
     ('/', mainpage.Handler),
@@ -249,6 +257,9 @@ app = webapp2.WSGIApplication([
     ('/traceresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', traceresultsdata.Handler),
     ('/u2000data/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000data.Handler),
     ('/temp_testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', temp_testcomplete.Handler),
+    ('/test_make_interface', test_make_interface.Handler),
+    ('/operator/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', operatordata.Handler),
+    ('/404', FileNotFound),
     ('/u2000_configinput', u2000_configinput.Handler),
     ('/u2000_testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000_testcomplete.Handler),
     ('/report_summary/([a-zA-Z0-9.-]+)',  report_summary.Handler),

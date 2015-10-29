@@ -265,6 +265,19 @@ class InstrumentDataHandler(webapp2.RequestHandler):
             return True
         else:
             return False
+    def handle_exception(self, exception, debug):
+        # Log the error.
+        logging.exception(exception)
+
+        # Set a custom message.
+        response.write('An error occurred.')
+
+        # If the exception is a HTTPException, use its error code.
+        # Otherwise use a generic 500 error code.
+        if isinstance(exception, webapp2.HTTPException):
+            response.set_status(exception.code)
+        else:
+            response.set_status(500)
 
 def instruments_and_explanations(analog_bandwidth, analog_sample_rate, capture_buffer_size, capture_channels, resolution):
     inst_list =[]
