@@ -69,6 +69,8 @@ from onedb import UserDB
 import measurements
 import test_make_interface
 import operatordata
+import u2000_configinput
+import u2000_testcomplete
 
 authorized_users = ['charlie@gradientone.com',
                     'nedwards@gradientone.com',
@@ -256,6 +258,8 @@ app = webapp2.WSGIApplication([
     ('/test_make_interface', test_make_interface.Handler),
     ('/operator/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', operatordata.Handler),
     ('/404', FileNotFound),
+    ('/u2000_configinput', u2000_configinput.Handler),
+    ('/u2000_testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000_testcomplete.Handler),
 ], debug=True)
 
 

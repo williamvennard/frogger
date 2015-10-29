@@ -288,6 +288,78 @@
         }else if(type === 'sconfig') {
             console.log('addWidget: savedSettings sconfig= ',savedSettings);
 
+            var sconfigName = savedSettings.config_name;
+            var sconfigBand = savedSettings.analog_bandwidth;
+            var sconfigSampleRate = savedSettings.analog_sample_rate;
+            var sconfigSampleSize = savedSettings.capture_buffer_size;
+            var sconfigResolution = savedSettings.resolution;
+            var sconfigNumChannels = savedSettings.capture_channels;
+
+            testPlanHTML+= "<div type='config' class='configBox' id='" + String(index) + "'>";
+            testPlanHTML+= "<div id='configSearch' class='col-md-4'>";
+            testPlanHTML+= "<h4 class='appTitle'>Config - <span onclick='removeWidget(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle' style='left:777px;'></span></h4>";
+            testPlanHTML+= "<form method='post'>";
+            testPlanHTML+= "<input class='nameWidget' type='text' name='config_name' value='" + sconfigName;
+            testPlanHTML+= "' placeholder='name goes here'>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Bandwidth(Hz):</p>"; 
+            testPlanHTML+= "<input autocomplete='off' class='appInput' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' placeholder='20,000,000' name='analog_bandwidth' value='" + sconfigBand;
+            testPlanHTML+= "'></td></tr></div>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Sample Rate(sps):</p>"; 
+            testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' placeholder='20,000,000' name='analog_sample_rate' value='" + sconfigSampleRate;
+            testPlanHTML+= "'></td></tr></div>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'> Buffer Size: </p>"; 
+            testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' placeholder='12,000' name='capture_buffer_size' value='" + sconfigSampleSize;
+            testPlanHTML+= "'></td></tr></div>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Resolution: </p>"; 
+            testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' placeholder='12' name='resolution' value='" + sconfigResolution;
+            testPlanHTML+= "'></td></tr></div>";
+
+            testPlanHTML+= "<div style='margin-bottom:10px;' class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'># of Channels: </p>"; 
+            testPlanHTML+= "<input class='appInput' style='margin-bottom:0px; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='text' placeholder='2' name='capture_channels' autocomplete='off' value='" + sconfigNumChannels;
+            testPlanHTML+= "'></td></tr></div>";
+                            
+            testPlanHTML+= "</form>";
+            testPlanHTML+= "</div>";
+
+            testPlanHTML+= "<div id='configSearchResults' class='col-md-4'>";
+            testPlanHTML+= "<form method='post'>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Results:</p>"; 
+            testPlanHTML+= "<p class='configResults' style='width: 180px;' id='results" + index;
+            testPlanHTML+= "'></p></td></tr></div>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Instrument Type:</p>"; 
+            testPlanHTML+= "<p class='configResults' style='' type='text' name='selected_inst_type' value='' id='instType" + index;
+            testPlanHTML+= "'></p></td></tr></div>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Hardware:</p>"; 
+            testPlanHTML+= "<p class='configResults' style='' type='text' name='selected_hardware' value='' id='hardware" + index;
+            testPlanHTML+= "'></p></td></tr></div>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Available Instruments:</p>"; 
+            testPlanHTML+= "<p class='configResults' id='avail" + index;
+            testPlanHTML+= "''></p></td></tr></div>";
+
+            testPlanHTML+= "</form>";
+            testPlanHTML+= "</div>";
+            testPlanHTML+= "<button id='configSearchBtn' onclick='configSearch(" + index + ")'>SEARCH</button>"; 
+            testPlanHTML+= "</div>";
+
+            document.getElementById("testPlan").innerHTML = testPlanHTML;
+
         };
         $(document).ready(function () { 
               $(".collapseCommitTest").fadeIn("fast");           

@@ -27,6 +27,9 @@ class agilentu2000:
     COMPANYNAME = 'Acme'
     HARDWARENAME = 'MSP'
 
+    def dt2ms(self, t):
+        return int(t.strftime('%s'))*1000 + int(t.microsecond/1000)
+
     def __init__(self, u2000_test_results, s):
         self.u2000_test_results = u2000_test_results
         self.s = s
@@ -36,12 +39,23 @@ class agilentu2000:
         window_u2000 = {'i_settings':i_settings, 'cha':stuffing, 'start_tse':start_tse, 'test_plan':test_plan, 'testplan_name':active_testplan_name}
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
         #url_u = "http://localhost:18080/u2000data/" + COMPANYNAME + '/' + HARDWARENAME +'/' + config_name + "/%s" % start_tse
-        url_u = "https://gradientone-dev.appspot.com/u2000data/" + COMPANYNAME + '/' + HARDWARENAME +'/' + config_name + "/%s" % start_tse
+        url_u = "https://gradientone-test.appspot.com/u2000data/" + COMPANYNAME + '/' + HARDWARENAME +'/' + config_name + "/%s" % start_tse
         out_u2000 = json.dumps(window_u2000, ensure_ascii=True)
         r = s.post(url_u, data=out_u2000, headers=headers)
         #print "dir(r)=",dir(r)
         print "r.reason=",r.reason
         print "r.status_code=",r.status_code
+
+    def post_complete(self, active_testplan_name, config_name, test_plan, stop_tse, i_settings, start_tse, test_results):
+        s = self.s
+        window_complete = {'active_testplan_name':active_testplan_name, 'cha':test_results, 'config_name':config_name,'test_plan':test_plan, 'stop_tse':stop_tse, 'i_settings':i_settings, 'start_tse':start_tse, 'hardware_name':HARDWARENAME}
+        out_complete = json.dumps(window_complete, ensure_ascii=True)
+        headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+        url_c = "https://gradientone-test.appspot.com/u2000_testcomplete/" + COMPANYNAME + '/' + active_testplan_name + '/' +config_name + "/%s" % str(stop_tse)
+        c = s.post(url_c, data=out_complete, headers=headers)
+        print "c.reason=",c.reason
+        print "c.status_code=",c.status_code
+        #print "dir(c)=",dir(c)
 
     def transmitraw(self):
         parent = 'raw'
@@ -52,6 +66,17 @@ class agilentu2000:
         active_testplan_name = self.u2000_test_results['active_testplan_name']
         start_tse = int(self.u2000_test_results['Start_TSE'])
         self.post_creation_data(i_settings, test_results, start_tse, parent, config_name, active_testplan_name, test_plan)
+
+    def testcomplete(self):
+        
+        stop_tse = self.dt2ms(datetime.datetime.now())
+        active_testplan_name = self.u2000_test_results['active_testplan_name']
+        config_name = self.u2000_test_results['config_name']
+        test_plan = self.u2000_test_results['test_plan']
+        i_settings = self.u2000_test_results['i_settings']
+        start_tse = int(self.u2000_test_results['Start_TSE'])
+        test_results = self.u2000_test_results['data']
+        self.post_complete(active_testplan_name, config_name, test_plan, stop_tse, i_settings, start_tse, test_results)
 
 if __name__ == "__main__":
     import doctest

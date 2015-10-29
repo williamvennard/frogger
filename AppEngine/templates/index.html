@@ -261,8 +261,9 @@
     <script type="text/javascript">
     var savedResults;
     function createDut(index) {
-        var savedSettings = savedResults.duts[index]
+        var savedSettings = savedResults.duts[index];
         addWidget('sdut',savedSettings);
+        console.log('savedSettings = ',savedSettings);
         //console.log('createDut: index = ',index);
     }; 
     function createConfig(index) {
@@ -272,10 +273,86 @@
 
     function savedTestView(index) {
         console.log('View button clicked!') 
+        //clear old test space to load fresh test
+        var d = document.getElementById('testPlan');
+        var children = d.childNodes;
+        d.innerHTML = '';
+        var testSetUp = document.getElementById('testSetup');
+        var testSetUpInfo = testSetUp.childNodes;
+        testSetUpInfo[1].children[0].children[1].children[0].value = '';
+        testSetUpInfo[1].children[1].children[1].children[0].value = '';
+        
+
         var testPlanName = document.getElementById("tesPlanName")
 
         var savedTestsJson = savedResults.tests[index];
         console.log('readOnlyViewer: savedTests = ', savedTestsJson);
+        var savedOrder = savedTestsJson.order;
+        console.log('savedTestView: savedOrder = ',savedOrder);
+
+        var savedOrderSplit = savedOrder.split("'");
+        savedOrderSplit = savedOrderSplit.splice(1,savedOrderSplit.length-2);
+        for (var i=0;i<savedOrderSplit.length;i++) {
+            if(savedOrderSplit[i] == ', u')
+            savedOrderSplit.splice(i,1); 
+        };
+        
+        console.log('savedTestView:Final savedOrderSplit = ',savedOrderSplit);
+        console.log('savedTestView:Final savedOrderSplit.length = ',savedOrderSplit.length); 
+
+        //Search for saved widgets loop... broken stops after i=0
+        for (var i=0;i<savedOrderSplit.length;i++){
+            console.log('i =', i);
+            var widgetId = savedOrderSplit[i].split(":");
+            console.log('for loop run!');
+
+            console.log('savedTestView: widgetId =',widgetId);
+            var widgetNames = widgetId[1];
+            console.log('widgetNames',widgetNames);
+            //IS IT A DUT?
+            if(widgetId[0] === 'dut') {
+                for (var i=0;i<savedDuts.length;i++) {
+                    console.log('search for dut widget!');
+                    //console.log('widgetId[1] =', widgetId[1]);
+                    console.log('i =', i);
+                    //console.log('savedDuts[i].dut_name =', savedDuts[i].dut_name);
+                    var dutName = savedDuts[i].dut_name;
+                    //console.log('dutName = ',dutName);
+                    if(widgetId[1] === savedDuts[i].dut_name) {
+                        createDut(i)
+                        console.log('widget found!') 
+                    }else if (widgetId[1] === '') {
+                        addWidget('dut');
+                        console.log('widget UNNAMED!')
+                        break     
+                    };
+                };
+                
+            
+            }else if(widgetId[0] === 'config'){
+                console.log('search for config widget!');
+                for (var i=0;i<savedConfigs.length;i++) {
+                    console.log('search for config widget!')
+                    if(widgetId[1] === savedConfigs[i].config_name) {
+                        createConfig(i)
+                    }else if (widgetId[1] === '') {
+                    addWidget('config');
+                    };
+                };               
+            }else if(widgetId[0] === 'measurement'){
+                console.log('search for meas widget!');
+                for (var i=0;i<savedConfigs.length;i++) {
+                    console.log('search for config widget!')
+                    if(widgetId[1] === savedConfigs[i].config_name) {
+                        createConfig(i)
+                    }else if (widgetId[1] === '') {
+                    addWidget('measurement');
+                    };
+                };
+            };
+            console.log('IS THIS RUNNING?');
+        };
+
         $(".savedTestsBox").hide(); 
         $(".collapseNewTest").fadeIn("fast"); 
         $(".droppable").fadeIn("fast");
@@ -309,6 +386,7 @@ $(document).ready(function () {
             //console.log('Saved Widgets: results', results);
             console.log('Saved Widgets: savedConfigs', savedConfigs);
             console.log('Saved Widgets: savedDuts', savedDuts);
+            console.log('Saved Widgets: savedMeas', savedMeas);
             console.log('Saved Widgets: savedSeq', savedSeq);
             console.log('Saved Widgets: savedTests', savedTests);
 //SAVED TESTS
