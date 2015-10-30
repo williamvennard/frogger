@@ -116,11 +116,13 @@ class StateDB(DictModel):
     company_nickname = db.StringProperty(required = False)
     order = db.IntegerProperty(required = False)
 
-
+class ResultsData(DictModel):
+    comment_list = db.ListProperty(db.Key)
+        
 def BscopeDB_key(company_nickname="", config_name=""):
     return db.Key.from_path('BscopeDB', company_nickname+config_name)
 
-class BscopeDB(DictModel):
+class BscopeDB(ResultsData):
     company_nickname = db.StringProperty(required = True)
     hardware_name = db.StringProperty(required = True)
     config_name = db.StringProperty(required = True)
@@ -171,6 +173,7 @@ class InstrumentsDB(DictModel):
     company_nickname = db.StringProperty(required = False)
     serial_number = db.StringProperty(required = False)
 
+
 def UserDB_key(name = 'default'):
     return db.Key.from_path('emails', name)
 
@@ -196,9 +199,6 @@ class CompanyDB(DictModel):
     users = db.ListProperty(db.Key)
     groups = db.StringListProperty()
 
-# def CommunityPostDB_key(name = 'default'):
-#     return db.Key.from_path('emails', name)
-
 class CommunityPostDB(DictModel):
     title           = db.StringProperty(required = True)
     author          = db.StringProperty(required = True)
@@ -207,16 +207,12 @@ class CommunityPostDB(DictModel):
     privacy         = db.StringProperty(required = False)
     company_nickname = db.StringProperty(required = False) # company of user posting
 
-    # TODO
-    # comment_key
-    # rating_counter
-    # share_counter
-
 class CommentsDB(DictModel):
     author = db.StringProperty(required = True)
     content = db.StringProperty(required = True)
-    results = db.ReferenceProperty(BscopeDB, collection_name = 'comments')
+    results = db.ReferenceProperty(ResultsData, collection_name = 'comments')
     timestamp = db.DateTimeProperty(auto_now_add = True)
+
 
 class Scope(DictModel):
     acquisition_start_time = db.StringProperty(required = False)
@@ -327,7 +323,7 @@ class agilentU2000(pwrmeter):
 def agilentU2000data_key(name = 'default'):
     return db.Key.from_path('company_nickname', name)
 
-class agilentU2000data(DictModel):
+class agilentU2000data(ResultsData):
     company_nickname = db.StringProperty(required = True)
     hardware_name = db.StringProperty(required = True)
     config_name = db.StringProperty(required = True)
