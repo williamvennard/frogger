@@ -14,7 +14,7 @@
 	<div>
 		<h3>Test Overview</h3>
 		<p>(overview and test info goes here)</p>
-		<p>{{data.test}}</p>
+		<p>{{data.config}}</p>
 	</div>
 	<div>
 		<h3>Results</h3>
@@ -35,7 +35,8 @@
 		{% endfor %}
 
 		<textarea name="content" id="content" form="usrform" rows="5" cols="50" value="{{content}}">Enter comment here...</textarea>
-		<form action="/operator/{{data.company_nickname}}/{{data.hardware_name}}/{{data.config_name}}" method="post" id="usrform">
+		<form action="/operator/{{data.company_nickname}}/{{data.hardware_name}}/{{data.config_name}}/
+		{{data.slicename}}/{{data.instrument}}" method="post" id="usrform">
             <input type="submit">
 
 		</form>

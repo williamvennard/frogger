@@ -31,21 +31,29 @@ class Handler(InstrumentDataHandler):
     def get(self,company_nickname="", hardware_name="",config_name="",
         slicename="",instrument=""):
         "retrieve instrument data by instrument name and time slice name"
-        #if not self.authcheck():
-        #    return
-        testkey = 'T1'+'GradientOne'
-        test = memcache.get(testkey)
-        if test is None:
-            logging.error("TestData:get: query")
-            test = '{"instrument_type": "sample inputs", "config_name": "config1", "company_nickname": "GradientOne", "trace_name": "trace1", "title": "T1"}'
-        key = instrument + company_nickname + hardware_name + config_name + slicename
-        cached_copy = memcache.get(key)
+        # if not self.authcheck():
+        #     return
+        query = ConfigDB.all().filter("company_nickname =", company_nickname)
+        query.filter("hardware_name =", hardware_name)
+        query.filter("config_name =", config_name)
+        config = query.get()
+        # configkey = 'company_nickname'+'hardware_name'+'config_name'
+        # config = memcache.get(configkey)
+
+        if config is None:
+            logging.error("ConfigData:get: query")
+            config = '{"instrument_type": "sample inputs", "config_name": "config1", "company_nickname": "GradientOne", "trace_name": "trace1", "title": "T1"}'
+        else:
+            config = config.to_dict()
         templatedata = {
-                'test': test,
+                'config': config,
                 'company_nickname' : company_nickname,
                 'hardware_name' : hardware_name,
                 'config_name' : config_name,
+                'slicename' : slicename,
+                'instrument' : instrument,
                 }
+
         # resultKey = BscopeDB_key(company_nickname, config_name)
         # result = BscopeDB.get(resultKey)
 
@@ -56,11 +64,11 @@ class Handler(InstrumentDataHandler):
         if hasattr(result, 'comments'):
             for comment in result.comments:
                 comment_thread.append(comment)
-        else:
-            self.error(404)
-            self.response.out.write("404 Error: File not found")
+
         templatedata['comment_thread'] = comment_thread
-        # if True:
+        
+        key = instrument + company_nickname + hardware_name + config_name + slicename
+        cached_copy = memcache.get(key)
         if cached_copy is None:
             logging.error("BscopeData:get: query")
             rows = db.GqlQuery("""SELECT * FROM BscopeDB""")
@@ -85,24 +93,21 @@ class Handler(InstrumentDataHandler):
             self.render('operator.html', data=templatedata)
             #render_json_cached(self, cached_copy)
 
-    def post(self, company_nickname="", hardware_name="",config_name=""):
+    def post(self, company_nickname="", hardware_name="",config_name="",
+        slicename="",instrument=""):
         user = users.get_current_user()
         if not user.nickname():
             author = "anonymous"
         else:
             author = user.nickname()
         content = self.request.get('content')
-
-        # ToDo - Fix key query that returns None.        
-        # resultKey = BscopeDB_key(company_nickname, config_name)
-        # Bscope = db.get(resultKey)
-
         query = BscopeDB.all().filter("company_nickname =", company_nickname)
         query = query.filter("config_name =", config_name)
         Bscope = query.get()
         comment = CommentsDB(author=author, content=content, results=Bscope)
         comment.put()
-        self.redirect('/operator/%s/%s/%s' % (company_nickname, hardware_name, config_name))
+        self.redirect('/operator/{0}/{1}/{2}/{3}/{4}'.format(
+            company_nickname, hardware_name, config_name, slicename, instrument))
 
 class Special(InstrumentDataHandler):
     def post(self,company_nickname="", hardware_name="", config_name="",

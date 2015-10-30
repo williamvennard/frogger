@@ -69,7 +69,7 @@ from onedb import UserDB
 import measurements
 import test_make_interface
 import operatordata
-import u2000_configinput
+# Teimport u2000_configinput
 import u2000_testcomplete
 
 authorized_users = ['charlie@gradientone.com',
@@ -256,10 +256,10 @@ app = webapp2.WSGIApplication([
     ('/u2000data/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000data.Handler),
     ('/temp_testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', temp_testcomplete.Handler),
     ('/test_make_interface', test_make_interface.Handler),
-    ('/operator/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', operatordata.Handler),
+    ('/operator/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', operatordata.Handler),
     ('/404', FileNotFound),
-    ('/u2000_configinput', u2000_configinput.Handler),
-    ('/u2000_testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000_testcomplete.Handler),
+    # ('/u2000_configinput', u2000_configinput.Handler),
+    # ('/u2000_testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000_testcomplete.Handler),
 ], debug=True)
 
 
