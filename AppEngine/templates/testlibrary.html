@@ -84,6 +84,8 @@
   google.setOnLoadCallback(fetchTestLib);
     //LOADING URL
     test_lib_url = window.location.pathname + '.json';
+
+    currentPathname = window.location.pathname;
     //console.log(test_lib_url);
   var index = 0;
   function fetchTestLib(){
@@ -109,8 +111,8 @@
             configTable+="<br>"
             configTable+="<span class='startTime'> Date Created: </span>" + "<span>" + testArray[i].date_created + "</span>";
             configTable+="<br>"
-            configTable+="<a class='resultsLink' href='https://gradientone-test.appspot.com/testlibrary/testresults/" + "'>Results</a>";
-            configTable+="</div>"
+            configTable+="<a class='resultsLink' href='" + window.location.pathname + "/testlibrary/testresults/" + "'>Results</a>";
+            configTable+="</div>" 
         };
         configTable+="</div>"
         console.log('configTable = ', configTable);
@@ -150,7 +152,7 @@
                 testTable+="<br>";
                 testTable+="<span class='endTime'>" + "End Time: " + "</span>" + "<span class='libTime'>" + formatEndDate + "</span>";
                 testTable+="<br>";
-                testTable+="<a class='resultsLink' href='https://gradientone-test.appspot.com/testlibrary/testresults/" + resultsArray[i].company_nickname + "/" + resultsArray[i].config_name + "/" + resultsArray[i].start_tse + "'>Results</a>";
+                testTable+="<a class='resultsLink' href='" + window.location.pathname + "/testlibrary/testresults/" + resultsArray[i].company_nickname + "/" + resultsArray[i].config_name + "/" + resultsArray[i].start_tse + "'>Results</a>";
                 testTable+="<div class='decChart hoverzoom showHidden' id='decChart" + index + "'></div>";
                 testTable+="<div class='hiddenInfo' style='color:white;'></div>"
                 testTable+="</div>"; 
@@ -164,7 +166,7 @@
                 traceTable+="<br>";
                 traceTable+="<span class='endTime'>" + "End Time: " + "</span>" + "<span class='libTime'>" + formatEndDate + "</span>";
                 traceTable+="<br>";
-                traceTable+="<a class='resultsLink' href='https://gradientone-test.appspot.com/testlibrary/traceresults/" + resultsArray[i].company_nickname + "/" + resultsArray[i].config_name + "/" + resultsArray[i].start_tse + "'>Results</a>";
+                traceTable+="<a class='resultsLink' href='"+ window.location.pathname + "/testlibrary/traceresults/" + resultsArray[i].company_nickname + "/" + resultsArray[i].config_name + "/" + resultsArray[i].start_tse + "'>Results</a>";
                 traceTable+="<div class='decChart hoverzoom showHidden' id='decChart" + index + "'></div>";
                 traceTable+="<div class='hiddenInfo' style='color:white;'></div>"
                 traceTable+="</div>"; 

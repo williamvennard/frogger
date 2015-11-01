@@ -431,8 +431,8 @@
         var companyName = 'Acme';
         var testPlanName = testSetUpInfo[1].children[0].children[1].children[0].value;
         
-        var config_search_url = 'https://gradientone-test.appspot.com';
-        //var config_search_url = window.location.origin;
+        //var config_search_url = 'https://gradientone-test.appspot.com';
+        var config_search_url = window.location.origin;
         config_search_url += "/instlookup/";
         config_search_url += companyName + "/" + testPlanName + "/";
         config_search_url += configName;
@@ -457,8 +457,8 @@
         function getSearchResults() {
             console.log('getSearchResults called!!!');
             //widget_url = 'https://gradientone-test.appspot.com/testresults/widgets/Acme.json'
-              //var search_results_url = window.location.origin;
-              var search_results_url = 'https://gradientone-test.appspot.com';
+              var search_results_url = window.location.origin;
+              //var search_results_url = 'https://gradientone-test.appspot.com';
               search_results_url += "/instlookup/" + companyName + "/";
               search_results_url += testPlanName + "/";
               search_results_url += configName;
