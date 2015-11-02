@@ -197,6 +197,5 @@ class RunTest(InstrumentDataHandler):
 
 class SaveResultsToTest():
     def post(self, results):
-        
-class SaveTestToLibrary():
+        pass
 
