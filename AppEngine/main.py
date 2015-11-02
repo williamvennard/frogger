@@ -71,6 +71,7 @@ import test_make_interface
 import operatordata
 # Teimport u2000_configinput
 import u2000_testcomplete
+import testops
 
 authorized_users = ['charlie@gradientone.com',
                     'nedwards@gradientone.com',
@@ -257,7 +258,9 @@ app = webapp2.WSGIApplication([
     ('/temp_testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', temp_testcomplete.Handler),
     ('/test_make_interface', test_make_interface.Handler),
     ('/operator/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', operatordata.Handler),
+    ('/operator/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/run', operatordata.RunTest),
     ('/404', FileNotFound),
+    ('/testops', testops.Handler),
     # ('/u2000_configinput', u2000_configinput.Handler),
     # ('/u2000_testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000_testcomplete.Handler),
 ], debug=True)

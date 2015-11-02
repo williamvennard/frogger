@@ -78,11 +78,11 @@ def TestDB_key(name = 'default'):
 class TestDB(DictModel):
     testplan_name = db.StringProperty(required = False)
     company_nickname = db.StringProperty(required = False)
-    #config_name = db.StringProperty(required = False)
+    config_name = db.StringProperty(required = False)
     author = db.StringProperty(required = False)
     date_created = db.DateTimeProperty(auto_now_add = True)
     #instrument_type = db.StringProperty(required = False)
-    #hardware_name = db.StringProperty(required = False)
+    hardware_name = db.StringProperty(required = False)
     measurement_name = db.StringProperty(required = False)
     sequence_name = db.StringProperty(required = False)
     device_under_test = db.StringProperty(required = False)

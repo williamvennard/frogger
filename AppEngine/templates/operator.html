@@ -15,6 +15,12 @@
 		<h3>Test Overview</h3>
 		<p>(overview and test info goes here)</p>
 		<p>{{data.config}}</p>
+		<hr>
+		<form name="runTest" enctype="application/json" action="{{data.instrument}}/run" method="post">
+			<p><button type="submit">RUN</button>(Execute config)</p>
+			<input type="hidden" name="info[0]" value="{{data.company_nickname}}">
+			<input type="hidden" name="info[1]" value="{{.testplan_name}}">
+		</form>
 	</div>
 	<div>
 		<h3>Results</h3>
@@ -24,7 +30,6 @@
 	</div>
 	<div>
 		<p><button>SAVE</button>(Save test results to library)</p>
-		<p><button>NEXT</button>(Start next test)</p>
 	</div>
 	<div>
 		<h4>Comments</h4>
@@ -38,7 +43,6 @@
 		<form action="/operator/{{data.company_nickname}}/{{data.hardware_name}}/{{data.config_name}}/
 		{{data.start_tse}}/{{data.instrument}}" method="post" id="usrform">
             <input type="submit">
-
 		</form>
 	</div>
 </body>

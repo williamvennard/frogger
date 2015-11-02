@@ -42,7 +42,7 @@ class Handler(InstrumentDataHandler):
 		if not user:
 			self.redirect('/')
 			return
-		q = ProfileDB.all().filter("email =", user.email())
+		q = ProfileDB.all().filter("userid =", user.user_id())
 		profile = q.get()
 		tests = TestDB.all()
 
@@ -81,7 +81,7 @@ class Handler(InstrumentDataHandler):
 		user = users.get_current_user()
 		if not user:
 			self.redirect("/")
-		q = ProfileDB.all().filter("email =", user.email())
+		q = ProfileDB.all().filter("userid =", user.user_id())
 		profile = q.get()
 
 		# get user requested test to post 
@@ -132,7 +132,7 @@ class SavePostToTest(InstrumentDataHandler):
 		"""Clones the selected testpost and saves the test to the library with
 		a new company_nickname for the user to view later"""
 		user = users.get_current_user()
-		q = ProfileDB.all().filter("email =", user.email())
+		q = ProfileDB.all().filter("userid =", user.user_id())
 		profile = q.get()
 
 		postkey = self.request.get("postkey")
