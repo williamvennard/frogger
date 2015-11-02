@@ -25,6 +25,9 @@ import datetime
 from string import maketrans
 
 class Handler(InstrumentDataHandler):
+    def get():
+        print 'in the right place'
+        
     def post(self, company_nickname="", config_name=""):
         key = config_name
         print key, "is the key name"

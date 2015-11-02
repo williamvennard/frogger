@@ -91,7 +91,6 @@ def check_config_url():
     if r:
         print 'checking'
         config = r.json()
-        print config
         if config['configs_tps_traces']:
             nested_config = config['nested_config'][0]
             config = config['configs_tps_traces'][0]
@@ -115,7 +114,6 @@ def u2000_acq(config, nested_config, s):
     config_vars = check_config_vars(config, nested_config)
     u2000 = ivi.agilent.agilentU2001A(("USB::0x0957::0x2b18::INSTR"))
     u2000.channels['channel1']
-    print 'instantiated simulated device and now configuring channel'
     u2000.channels['channel1'].correction_frequency = config_vars[2]
     #u2000.channels['channel1'].offset = config_vars[3]
     #u2000.channels['channel1'].range_auto = config_vars[4]

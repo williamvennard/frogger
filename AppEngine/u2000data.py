@@ -66,30 +66,6 @@ class Handler(InstrumentDataHandler):
             render_json_cached(self, output)
         else:
             render_json_cached(self, cached_copy)
-    def post(self,company_nickname="", hardware_name="", config_name="",start_tse=""):
-        "store data by intstrument name and time slice name"
-        #key = 'bscopedata' + company_nickname + hardware_name + config_name + start_tse
-        #memcache.set(key, self.request.body)
-        test_results = json.loads(self.request.body)
-        test_results_data = test_results['cha']
-        test_plan = test_results['test_plan']
-        testplan_name = test_results['testplan_name']
-        i_settings = test_results['i_settings']
-        measurement_results = measurement_config(i_settings, test_results_data)
-        key = 'u2000data' + company_nickname + hardware_name + config_name + start_tse
-        window_u2000 = {'i_settings':test_results['i_settings'], 'measurement_results': measurement_results, 'cha':test_results_data, 'testplan_name':testplan_name,
-        'start_tse':start_tse, 'company_nickname':company_nickname, 'hardware_name':hardware_name, 'config_name':config_name, 'test_plan':test_plan}
-        out_u2000 = json.dumps(window_u2000, ensure_ascii=True)
-        memcache.set(key, out_u2000)
-        a = agilentU2000data(parent = company_key(), key_name = start_tse,
-                             config_name=config_name,
-                             company_nickname = company_nickname,
-                             hardware_name=hardware_name,
-                             i_settings=str(i_settings),
-                             test_results_data=str(test_results_data),
-                             start_tse=int(start_tse)
-                             )
-                             
-        a.put()
+
 
 

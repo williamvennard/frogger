@@ -36,12 +36,13 @@ class agilentu2000:
 
     def post_creation_data(self, i_settings, stuffing, start_tse, parent, config_name, active_testplan_name, test_plan) :
         s = self.s
-        window_u2000 = {'i_settings':i_settings, 'cha':stuffing, 'start_tse':start_tse, 'test_plan':test_plan, 'testplan_name':active_testplan_name}
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-        #url_u = "http://localhost:18080/u2000data/" + COMPANYNAME + '/' + HARDWARENAME +'/' + config_name + "/%s" % start_tse
-        url_u = "https://gradientone-test.appspot.com/u2000data/" + COMPANYNAME + '/' + HARDWARENAME +'/' + config_name + "/%s" % start_tse
+        #raw_data_ur; = "http://localhost:18080/u2000data/" + COMPANYNAME + '/' + HARDWARENAME +'/' + config_name + "/%s" % start_tse
+        raw_data_url = "https://gradientone-test.appspot.com/u2000data/" + COMPANYNAME + '/' + HARDWARENAME +'/' + config_name + "/%s" % start_tse
+        url_t = "https://gradientone-test.appspot.com/u2000_testresults/" + COMPANYNAME + '/' + active_testplan_name + '/' + config_name
+        window_u2000 = {'i_settings':i_settings, 'cha':stuffing, 'raw_data_url':raw_data_url, 'start_tse':start_tse, 'test_plan':test_plan, 'config_name':config_name, 'testplan_name':active_testplan_name, 'hardware_name':HARDWARENAME}
         out_u2000 = json.dumps(window_u2000, ensure_ascii=True)
-        r = s.post(url_u, data=out_u2000, headers=headers)
+        r = s.post(url_t, data=out_u2000, headers=headers)
         #print "dir(r)=",dir(r)
         print "r.reason=",r.reason
         print "r.status_code=",r.status_code

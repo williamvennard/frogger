@@ -8,12 +8,10 @@ from onedb import BscopeDB_key
 from onedb import OscopeDB
 from onedb import OscopeDB_key
 from onedb import CapabilitiesDB
-from onedb import ProfileDB
 from google.appengine.api import users
 from google.appengine.api import memcache
 from google.appengine.ext import db
 import hashlib
-import Cookie
 
 
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
@@ -238,46 +236,7 @@ class InstrumentDataHandler(webapp2.RequestHandler):
         if not authorized:
             self.redirect('/static/autherror.html')
         return authorized
-    def admincheck(self):
-        user = users.get_current_user()
-        q = ProfileDB.all().filter("email =", user.email())
-        profile = q.get()
-        if profile.admin:
-            return True
-        else:
-            self.redirect('/static/autherror.html')    
-    def set_groups_cookie(self):
-        user = users.get_current_user()
-        if user:
-            q = ProfileDB.all().filter("userid =", user.user_id())
-            profile = q.get()
 
-            # c1=Cookie.SimpleCookie()
-            
-            groups_string = "|".join(profile.groups)
-            # c1['groups']=groups_string
-
-            # utf8userid = user.user_id().encode("utf-8")
-            # cookie_hash = hashlib.sha1(groups_string.hexdigest())
-            # print cookie_hash
-            
-            self.response.set_cookie('groups', groups_string)
-            return True
-        else:
-            return False
-    # def handle_exception(self, exception, debug):
-    #     # Log the error.
-    #     logging.exception(exception)
-
-    #     # Set a custom message.
-    #     self.response.write('An error occurred.')
-
-    #     # If the exception is a HTTPException, use its error code.
-    #     # Otherwise use a generic 500 error code.
-    #     if isinstance(exception, webapp2.HTTPException):
-    #         self.response.set_status(exception.code)
-    #     else:
-    #         self.response.set_status(500)
 
 def instruments_and_explanations(analog_bandwidth, analog_sample_rate, capture_buffer_size, capture_channels, resolution):
     inst_list =[]

@@ -334,24 +334,75 @@
                   <h2 class="row" id="instrumentName" class="instname" style="margin:5px 0 0 20px; color: white;">Power Meter</h2>
                   <h4 class="row" id="hardwareName" class="hardwareName" style="margin:0 0 0 20px"></h4>
                   <span onclick="" class="closePM glyphicon glyphicon-remove-circle" style="left:95%"></span>
-                  <div class="col-md-7" id="rightDisplay">
-                    <div class="row">
-                      <div class="col-md-12" id="valueBox">
+                  <div class="row">
+                    <div class="col-md-5" id="leftDisplay">
+                      <div class="row">
+                        <div class="" id="valueBox">
+                        </div>
                       </div>
+                      <div class="row">  
+                        <div id="settingsDisplay" class="col-md-3 configInfoBox" style="margin-left: 5px;">
+                          <h6 style="margin-bottom: 0px;"><span style="margin-right:3px;">Config:</span><span class="configSettings"></span><span style="position:absolute; left:150px; margin-right:3px;">Trace:</span><span style="position:absolute; left:190px;"></span></h6>
+                          <h6 style="margin-bottom: 0px;"><span style="margin-right:3px;">Buffer Size:</span><span class="configSettings"></span><span style="position:absolute; left:150px; margin-right:3px;">Sample Rate:</span><span style="position:absolute; left:228px;"></span></h6>
+                        </div>
+                        <div class="col-md-2 statusInfoBox" style="margin-left:10px;">
+                          <h5 style="margin-bottom: 0px; text-align:center;">Status <span id="currentStatus" class="status"></span> </h5>   
+                        </div>
+                      </div> 
                     </div>
-                    <div class="row">  
-                      <div id="settingsDisplay" class="col-md-3 configInfoBox" style="margin-left: 5px;">
-                        <h6 style="margin-bottom: 0px;"><span style="margin-right:3px;">Config:</span><span class="configSettings"></span><span style="position:absolute; left:150px; margin-right:3px;">Trace:</span><span style="position:absolute; left:190px;"></span></h6>
-                        <h6 style="margin-bottom: 0px;"><span style="margin-right:3px;">Buffer Size:</span><span class="configSettings"></span><span style="position:absolute; left:150px; margin-right:3px;">Sample Rate:</span><span style="position:absolute; left:228px;"></span></h6>
-                      </div>
-                      <div class="col-md-2 statusInfoBox" style="margin-left:10px;">
-                        <h5 style="margin-bottom: 0px; text-align:center;">Status <span id="currentStatus" class="status"></span> </h5>   
-                      </div>
-                    </div> 
+                    <div class="col-md-4" id="rightDisplay">
+                        <div class="" id="optionBox">
+                          <h4>Options</h4>
+<!--Option Form-->  
+                          <div id="collapseConfig" class="collapse in configBox" style="margin-bottom:100px;">
+                            <div id="configSettings">          
+                              <div class="row configRow">
+                                  <tr>
+                                    <td class="label">
+                                      <p class="configLabel">Averaging Count Auto:</p>
+                                      <input class="configInput" style="border-top-right-radius: 5px; border-top-left-radius: 5px;" type="text" placeholder='' value="">
+                                    </td>
+                                  </tr>
+                                </div>
+                                <div class="row configRow">
+                                   <tr>
+                                    <td class="label">
+                                      <p class="configLabel">Correction Frequency:</p>  
+                                      <input class="configInput" type="text" placeholder='' value="">
+                                    </td>
+                                  </tr>
+                                </div>
+                                <div class="row configRow">
+                                  <tr>
+                                    <td class="label">
+                                      <p class="configLabel">Offset:</p>  
+                                      <input class="configInput" type="text" placeholder='' value="">
+                                    </td>
+                                  </tr>
+                                </div>
+                                <div class="row configRow">
+                                  <tr>
+                                    <td class="label">
+                                      <p class="configLabel">Range Auto:</p>  
+                                      <input class="configInput" style="border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;" type="text" placeholder='' value="">
+                                    </td>
+                                  </tr>
+                                </div>
+                                <div class="row configRow">
+                                  <tr>
+                                    <td class="label">
+                                      <p class="configLabel">Units:</p>  
+                                      <input class="configInput" style="border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;" type="text" placeholder='' value="">
+                                    </td>
+                                  </tr>
+                                </div>
+                                <button id="submitBtn" type="button" onclick="instConfig()">Submit</button>
+                            </div> 
+                          </div>
+                        </div>
+                    </div>
                   </div>
-                  <div class="col-md-5" id="leftDisplay">
-
-                  </div>                 
+                                   
               </div>
               <!--End Power Meter-->  
           </div>  

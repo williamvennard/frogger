@@ -16,6 +16,7 @@
 	left: 0px;
 	margin: 5px 5px 5px 5px;
 	height: 80px;
+    width: 400px;
 	background-color:black;
 	border-style: solid;
 	border-radius: 5px;
@@ -25,11 +26,18 @@
     box-shadow: inset 6px 5px 55px 1px rgba(0,0,0,0.8);
 }
 
-#rightDisplay {
+#leftDisplay {
 	background-color:rgb(33,33,33);
 	border-style: solid;
 	border-color: rgb(33,33,33);
 	border-radius: 5px;
 	margin-left: 20px;
 	padding: 5px 5px 5px 5px;
+}
+
+#optionBox {
+    float: right;
+    height: 150px;
+    width: 100%;
+    background-color:black;
 }
