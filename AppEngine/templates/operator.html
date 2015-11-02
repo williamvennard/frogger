@@ -14,7 +14,13 @@
 	<div>
 		<h3>Test Overview</h3>
 		<p>(overview and test info goes here)</p>
-		<p>{{data.test}}</p>
+		<p>{{data.config}}</p>
+		<hr>
+		<form name="runTest" enctype="application/json" action="{{data.start_tse}}/run" method="post">
+			<p><button type="submit">RUN</button>(Execute config)</p>
+			<input type="hidden" name="info[0]" value="{{data.company_nickname}}">
+			<input type="hidden" name="info[1]" value="{{data.testplan_name}}">
+		</form>
 	</div>
 	<div>
 		<h3>Results</h3>
@@ -24,7 +30,6 @@
 	</div>
 	<div>
 		<p><button>SAVE</button>(Save test results to library)</p>
-		<p><button>NEXT</button>(Start next test)</p>
 	</div>
 	<div>
 		<h4>Comments</h4>
@@ -34,10 +39,10 @@
 		<p>by {{comment.author}} at {{comment.timestamp}}</p>
 		{% endfor %}
 
-		<textarea name="content" id="content" form="usrform" rows="5" cols="50" value="{{content}}">Enter comment here...</textarea>
-		<form action="/operator/{{data.company_nickname}}/{{data.hardware_name}}/{{data.config_name}}" method="post" id="usrform">
+		<textarea name="content" id="content" form="usrform" rows="5" cols="50">Enter comment here...</textarea>
+		<form action="/operator/{{data.company_nickname}}/{{data.hardware_name}}/{{data.config_name}}/{{data.start_tse}}" method="post" id="usrform">
+			<input type="hidden" name="testplan" value="{{data.testplan_name}}">
             <input type="submit">
-
 		</form>
 	</div>
 </body>

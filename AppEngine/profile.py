@@ -34,14 +34,25 @@ from google.appengine.ext.webapp import blobstore_handlers
 from string import maketrans
 from datetime import datetime
 
+def getProfile():
+	user = users.get_current_user()
+	if user:
+		q = ProfileDB.all().filter("userid =", user.user_id())
+		profile = q.get()
+		return profile
+	else:
+		return False	
+
 class Handler(InstrumentDataHandler):
 	def get(self):
 		user = users.get_current_user()
 		if user:
 			q = ProfileDB.all().filter("email =", user.email())
 			profile = q.get()
-			profile.userid = user.user_id()
-			profile.put()
+			# complete the profile by syncing the userid
+			if profile.userid != user.user_id():
+				profile.userid = user.user_id()
+				profile.put()
 			self.set_groups_cookie()
 			groups = self.request.cookies.get("groups")
 			self.render('profile.html', profile=profile, groups=groups)
