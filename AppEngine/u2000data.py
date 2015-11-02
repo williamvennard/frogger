@@ -42,7 +42,7 @@ from string import maketrans
 
 
 class Handler(InstrumentDataHandler):
-    def get(self,company_nickname="", hardware_name="",config_name="",start_tse=""):
+    def post(self,company_nickname= "", testplan_name="", config_name =""):
         "retrieve BitScope data by intstrument name and time slice name"
         #if not self.authcheck():
         #    return
@@ -66,7 +66,7 @@ class Handler(InstrumentDataHandler):
             render_json_cached(self, output)
         else:
             render_json_cached(self, cached_copy)
-    def post(self,company_nickname="", hardware_name="", config_name="",start_tse=""):
+    def post(self,company_nickname= "", testplan_name="", config_name =""):
         "store data by intstrument name and time slice name"
         #key = 'bscopedata' + company_nickname + hardware_name + config_name + start_tse
         #memcache.set(key, self.request.body)
@@ -75,6 +75,9 @@ class Handler(InstrumentDataHandler):
         test_plan = test_results['test_plan']
         testplan_name = test_results['testplan_name']
         i_settings = test_results['i_settings']
+        start_tse = test_results['start_tse']
+        config_name = test_results['config_name']
+        hardware_name = test_results['hardware_name']
         measurement_results = measurement_config(i_settings, test_results_data)
         key = 'u2000data' + company_nickname + hardware_name + config_name + start_tse
         window_u2000 = {'i_settings':test_results['i_settings'], 'measurement_results': measurement_results, 'cha':test_results_data, 'testplan_name':testplan_name,

@@ -36,7 +36,7 @@ class agilentu2000:
 
     def post_creation_data(self, i_settings, stuffing, start_tse, parent, config_name, active_testplan_name, test_plan) :
         s = self.s
-        window_u2000 = {'i_settings':i_settings, 'cha':stuffing, 'start_tse':start_tse, 'test_plan':test_plan, 'testplan_name':active_testplan_name}
+        window_u2000 = {'i_settings':i_settings, 'cha':stuffing, 'start_tse':start_tse, 'test_plan':test_plan, 'config_name':config_name, 'testplan_name':active_testplan_name, 'hardware_name':hardware_name}
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
         #url_u = "http://localhost:18080/u2000data/" + COMPANYNAME + '/' + HARDWARENAME +'/' + config_name + "/%s" % start_tse
         #url_u = "https://gradientone-test.appspot.com/u2000data/" + COMPANYNAME + '/' + HARDWARENAME +'/' + config_name + "/%s" % start_tse
