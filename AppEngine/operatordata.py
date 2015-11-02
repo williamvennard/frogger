@@ -15,6 +15,7 @@ from onedb import TestInterface
 from onedb import BscopeDB
 from onedb import BscopeDB_key
 from onedb import CommentsDB
+from onedb import TestDB
 import itertools
 import jinja2
 import webapp2
@@ -30,15 +31,15 @@ from time import gmtime, strftime
 import appengine_config
 import json
 
-result_types = {
-    'bscope' : BscopeDB,
-    'aU2000' : agilentU2000data
-}
+# result_types = {
+#     'bscope' : BscopeDB,
+#     'aU2000' : agilentU2000data
+# }
 
 class Handler(InstrumentDataHandler):
 
     def get(self,company_nickname="", hardware_name="",config_name="",
-        start_tse="",instrument=""):
+        start_tse=""):
         "retrieve instrument data by instrument name and time start_tse"
 
         testplan_name = self.request.get('testplan')
@@ -61,19 +62,18 @@ class Handler(InstrumentDataHandler):
                 'hardware_name' : hardware_name,
                 'config_name' : config_name,
                 'start_tse' : start_tse,
-                'instrument' : instrument,
                 'testplan_name' : testplan_name,
                 }
 
         # resultKey = BscopeDB_key(company_nickname, config_name)
         # result = BscopeDB.get(resultKey)
 
-        query = result_types[instrument].all().filter("company_nickname =", company_nickname)
-        query = query.filter("config_name =", config_name)
-        result = query.get()
+        query = TestDB.all().filter("company_nickname =", company_nickname)
+        query = query.filter("testplan_name =", testplan_name)
+        test = query.get()
         comment_thread = []
-        if hasattr(result, 'comments'):
-            for comment in result.comments:
+        if hasattr(test, 'comments'):
+            for comment in test.comments:
                 comment_thread.append(comment)
 
         templatedata['comment_thread'] = comment_thread
@@ -81,17 +81,19 @@ class Handler(InstrumentDataHandler):
         # ToDo - check for results. If True, then show below.
         results = False
         if results:
-            key = instrument + company_nickname + hardware_name + config_name + start_tse
+            key = testplan_name + company_nickname + hardware_name + config_name + start_tse
             cached_copy = memcache.get(key)
             if cached_copy is None:
 
-                result_data = result_types[instrument].all().get()
+                result_data = TestResultsDB.all().get()
                 data = result_data.to_dict()
                 if not data:
                     logging.error("ResultData:get: query")
                     templatedata['results'] = "Error: No result data"
-                    self.render('operator.html', data=templatedata)
-                if instrument == 'bscope':
+                    self.render('operator.html', data=templatedata)               
+                # ToDo: Add handler to check data for bscope 
+                bscope = False
+                if bscope:
                     print data
                     cha_list = convert_str_to_cha_list(data['cha'])
                     data['cha'] = cha_list
@@ -115,25 +117,27 @@ class Handler(InstrumentDataHandler):
             self.render('operator.html', data=templatedata)
 
     def post(self, company_nickname="", hardware_name="",config_name="",
-        start_tse="",instrument=""):
+        start_tse=""):
+        """posts a comment on the test results"""
         user = users.get_current_user()
         if not user.nickname():
             author = "anonymous"
         else:
             author = user.nickname()
+        testplan_name = self.request.get('testplan')
         content = self.request.get('content')
-        query = result_types[instrument].all().filter("company_nickname =", company_nickname)
-        query = query.filter("config_name =", config_name)
-        result_data = query.get()
-        comment = CommentsDB(author=author, content=content, results=result_data)
+        query = TestDB.all().filter("company_nickname =", company_nickname)
+        query = query.filter("testplan_name =", testplan_name)
+        test = query.get()
+        comment = CommentsDB(author=author, content=content, test=test)
         comment.put()
-        self.redirect('/operator/{0}/{1}/{2}/{3}/{4}'.format(
-            company_nickname, hardware_name, config_name, start_tse, instrument))
+        self.redirect('/operator/{0}/{1}/{2}/{3}?testplan={4}'.format(
+            company_nickname, hardware_name, config_name, start_tse, testplan_name))
 
 
 class RunTest(InstrumentDataHandler):
     def post(self, company_nickname="", hardware_name="",config_name="",
-        start_tse="",instrument=""):
+        start_tse=""):
         # company_nickname = self.request.get('company_nickname')
         # testplan_name = self.request.get('testplan')
         # names = (company_nickname,testplan_name)
@@ -188,36 +192,11 @@ class RunTest(InstrumentDataHandler):
         except IndexError:
             logging.error("IndexError: State Event")
 
-        self.redirect('/operator/{0}/{1}/{2}/{3}/{4}'.format(
-            company_nickname, hardware_name, config_name, start_tse, instrument))
+        self.redirect('/operator/{0}/{1}/{2}/{3}?testplan={4}'.format(
+            company_nickname, hardware_name, config_name, start_tse, names[-1]))
 
-class Special(InstrumentDataHandler):
-    def post(self,company_nickname="", hardware_name="", config_name="",
-    		 start_tse="", instrument=""):
-        "store data by instrument name and time slice name"
-        #key = instrument + company_nickname + hardware_name + config_name + start_tse
-        #memcache.set(key, self.request.body)
-        test_results = json.loads(self.request.body)
-        test_results_data = test_results['cha']
-        data_length = len(test_results_data)
-        slice_size = int(test_results['p_settings']['Slice_Size_msec'])
-        sample_rate = int(test_results['i_settings']['Sample_Rate_Hz'])
-        test_plan = test_results['test_plan']
-        testplan_name = test_results['testplan_name']
-        print testplan_name
-        sample_per_slice = int((float(sample_rate)/1000)*float(slice_size))
-        print slice_size, sample_rate, sample_per_slice
-        print data_length
-        start_tse = int(start_tse)
-        stuffing = []
-        for i in range(0, data_length, sample_per_slice):
-            chunk = str(test_results_data[i:i + sample_per_slice])
-            stuffing = chunk
-            key = instrument + company_nickname + hardware_name + config_name + str(start_tse)
-            print key
-            stuffing = convert_str_to_cha_list(stuffing)
-            window_instrument = {'i_settings':test_results['i_settings'], 'p_settings':test_results['p_settings'], 'cha':stuffing, 'testplan_name':testplan_name,
-            'start_tse':start_tse, 'company_nickname':company_nickname, 'start_tse':start_tse, 'hardware_name':hardware_name, 'config_name':config_name, 'test_plan':test_plan}
-            out_instrument = json.dumps(window_instrument, ensure_ascii=True)
-            memcache.set(key, out_instrument)
-            start_tse += slice_size
+class SaveResultsToTest():
+    def post(self, results):
+        
+class SaveTestToLibrary():
+

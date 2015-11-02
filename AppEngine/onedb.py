@@ -210,7 +210,7 @@ class CommunityPostDB(DictModel):
 class CommentsDB(DictModel):
     author = db.StringProperty(required = True)
     content = db.StringProperty(required = True)
-    results = db.ReferenceProperty(ResultsData, collection_name = 'comments')
+    test = db.ReferenceProperty(TestDB, collection_name = 'comments')
     timestamp = db.DateTimeProperty(auto_now_add = True)
 
 

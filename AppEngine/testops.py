@@ -42,8 +42,7 @@ class Handler(InstrumentDataHandler):
 			'hardware_name' : test.hardware_name,
 			'config_name' : config.config_name,
 			'start_tse' : "0",
-			'instrument' : "default",
 		}
-		self.redirect('/operator/{0}/{1}/{2}/{3}/{4}?testplan={5}'.format(
+		self.redirect('/operator/{0}/{1}/{2}/{3}?testplan={4}'.format(
             test.company_nickname, test.hardware_name, config.config_name, 
-            '0', 'bscope',test.testplan_name))
+            '0',test.testplan_name))
