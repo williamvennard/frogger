@@ -40,7 +40,7 @@ class agilentu2000:
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
         #url_u = "http://localhost:18080/u2000data/" + COMPANYNAME + '/' + HARDWARENAME +'/' + config_name + "/%s" % start_tse
         #url_u = "https://gradientone-test.appspot.com/u2000data/" + COMPANYNAME + '/' + HARDWARENAME +'/' + config_name + "/%s" % start_tse
-        url_t = "https://gradientone-test.appspot.com/testresults/" + COMPANYNAME + '/' + active_testplan_name + '/' + config_name
+        url_t = "https://gradientone-test.appspot.com/u2000data/" + COMPANYNAME + '/' + active_testplan_name + '/' + config_name
         out_u2000 = json.dumps(window_u2000, ensure_ascii=True)
         r = s.post(url_t, data=out_u2000, headers=headers)
         #print "dir(r)=",dir(r)
