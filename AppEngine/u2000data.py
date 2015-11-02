@@ -46,7 +46,7 @@ class Handler(InstrumentDataHandler):
         "retrieve BitScope data by intstrument name and time slice name"
         #if not self.authcheck():
         #    return
-        key = 'u2000data' + company_nickname + testplan_name + config_name 
+        key = 'u2000data' + company_nickname + hardware_name + config_name + start_tse
         cached_copy = memcache.get(key)
         if cached_copy is None:
             logging.error("BscopeData:get: query")

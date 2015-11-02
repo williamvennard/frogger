@@ -265,7 +265,7 @@ app = webapp2.WSGIApplication([
     ('/u2000_testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000_testcomplete.Handler),
     ('/report_summary/([a-zA-Z0-9.-]+)',  report_summary.Handler),
     ('/report_summary/report_detail/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)',  report_detail.Handler),
-    ('/u2000testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000_testresultsdata.Handler),
+    ('/u2000_testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000_testresultsdata.Handler),
 ], debug=True)
 
 
