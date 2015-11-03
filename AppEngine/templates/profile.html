@@ -36,7 +36,7 @@
                     <li class="dots glyphicon glyphicon-option-vertical"></li>
                     <li><a href="testresults">CANVAS</a></li>
                     <li class="dots glyphicon glyphicon-option-vertical"></li>
-                    <li><a href="testlibrary/acme">TEST LIBRARY</a></li>
+                    <li><a href="testlibrary/{{profile.company_nickname}}">TEST LIBRARY</a></li>
                     <li class="dots glyphicon glyphicon-option-vertical"></li>
                     <li><a href="community">COMMUNITY</a></li>           
                 </ul>
@@ -51,7 +51,10 @@
         <div class="row">
           <div class="col-md-12">
             <h1>Account Profile</h1>
-            <h2>Profile Information</h2>      
+            <h2>Profile Information</h2>
+            {% if error %}
+            <h4>{{error}}</h4>
+            {% endif %}      
             <div>
               Name: {{profile.name}} <br>
               Company: {{profile.company_nickname}} <br>

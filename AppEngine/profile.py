@@ -36,38 +36,43 @@ from datetime import datetime
 
 
 def getProfile():
-	user = users.get_current_user()
-	if user:
-		q = ProfileDB.all().filter("userid =", user.user_id())
-		profile = q.get()
-		return profile
-	else:
-		return False	
+    user = users.get_current_user()
+    if user:
+        q = ProfileDB.all().filter("userid =", user.user_id())
+        profile = q.get()
+        return profile
+    else:
+        return False	
 
 class Handler(InstrumentDataHandler):
-	def get(self):
-		user = users.get_current_user()
-		if user:
-			q = ProfileDB.all().filter("email =", user.email())
-			profile = q.get()
-			# complete the profile by syncing the userid
-			if profile.userid != user.user_id():
-				profile.userid = user.user_id()
-				profile.put()
-			self.set_groups_cookie()
-			groups = self.request.cookies.get("groups")
-			self.render('profile.html', profile=profile, groups=groups)
-		else:
-			self.redirect('/')
+    def get(self):
+        user = users.get_current_user()
+        if user:
+            q = ProfileDB.all().filter("email =", user.email())
+            profile = q.get()
+            if profile:
+                # update user id if needed
+                if profile.userid != user.user_id():
+                    profile.userid = user.user_id()
+                    profile.put()
+                self.set_groups_cookie()
+                groups = self.request.cookies.get("groups")
+                self.render('profile.html', profile=profile, groups=groups)
+            else:
+                self.render('profile.html', profile="", groups="", 
+                    error="No profile for this account. Contact your \
+                    administrator for help")
+        else:
+            self.redirect('/')
 
-	def set_groups_cookie(self):
-		profile = getProfile()
-		if hasattr(profile, 'groups'):         
-			groups_string = "|".join(profile.groups)            
-			self.response.set_cookie('groups', groups_string)
-			return True
-		else:
-			return False
+    def set_groups_cookie(self):
+        profile = getProfile()
+        if hasattr(profile, 'groups'):         
+            groups_string = "|".join(profile.groups)            
+            self.response.set_cookie('groups', groups_string)
+            return True
+        else:
+            return False
 
 
 class AdduserPage(InstrumentDataHandler):
