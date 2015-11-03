@@ -61,10 +61,10 @@ class Handler(InstrumentDataHandler):
 			self.redirect('/')
 
 	def set_groups_cookie(self):
-		profile = getProfile
-		if profile:           
-            groups_string = "|".join(profile.groups)            
-            self.response.set_cookie('groups', groups_string)
-            return True
-        else:
-            return False
+		profile = getProfile()
+		if hasattr(profile, 'groups'):         
+			groups_string = "|".join(profile.groups)            
+			self.response.set_cookie('groups', groups_string)
+			return True
+		else:
+			return False
