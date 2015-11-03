@@ -34,6 +34,7 @@ from google.appengine.ext.webapp import blobstore_handlers
 from string import maketrans
 from datetime import datetime
 
+
 def getProfile():
 	user = users.get_current_user()
 	if user:
@@ -58,3 +59,12 @@ class Handler(InstrumentDataHandler):
 			self.render('profile.html', profile=profile, groups=groups)
 		else:
 			self.redirect('/')
+
+	def set_groups_cookie(self):
+		profile = getProfile
+		if profile:           
+            groups_string = "|".join(profile.groups)            
+            self.response.set_cookie('groups', groups_string)
+            return True
+        else:
+            return False
