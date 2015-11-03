@@ -16,6 +16,7 @@ from onedb import BscopeDB
 from onedb import BscopeDB_key
 from onedb import CommentsDB
 from onedb import TestDB
+from onedb import StateDB
 import itertools
 import jinja2
 import webapp2
@@ -157,7 +158,11 @@ class RunTest(InstrumentDataHandler):
         test_dict = [c.to_dict() for c in results]
         try:
             order = str(test_dict[0]['order'])
+            print "order:"
+            print order
             order_list = get_ordered_list(order)
+            print "order_list:"
+            print order_list
         except (IndexError, KeyError) as e:
             logging.error("Index-Key_Error: Order List")
             order_list = ""

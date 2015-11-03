@@ -160,7 +160,10 @@ def get_ordered_list(order):
     ldict['name'] = l[1]
     ldict['order'] = l[-1]
     order_list = []
-    order_list = [mdict, ldict, fdict]
+    if mdict:
+        order_list = [mdict, ldict, fdict]
+    else:
+        order_list = [ldict, fdict]
     order_list = sorted(order_list, key=getOrderKey)
     return order_list    
 
