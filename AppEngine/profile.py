@@ -68,3 +68,63 @@ class Handler(InstrumentDataHandler):
 			return True
 		else:
 			return False
+
+
+class AdduserPage(InstrumentDataHandler):
+    def get(self):
+        profile = getProfile()
+        if profile.admin:
+            admin_email = profile.email
+            self.render('adduser.html')            
+        else:
+            self.redirect('/')
+
+    def post(self):
+        email = self.request.get('email')
+        companyname = self.request.get('companyname')
+        name = self.request.get('name')
+        # TODO - handle spaces in companyname
+        profile = ProfileDB(email = email, 
+                      company_nickname = companyname, 
+                      name = name)
+        profile.put()
+        checked_box = self.request.get("admin")
+        if checked_box:
+            profile.admin = True
+        else:
+            profile.admin = False
+        if not profile.bio:
+            profile.bio = "No bio entered yet."
+        profile.put()
+        self.redirect('/profile')
+
+
+class ListUsersPage(InstrumentDataHandler):
+    def get(self):
+        profile = getProfile()
+        if not profile.admin:
+            redirect('/')
+        users = db.GqlQuery("SELECT * FROM ProfileDB WHERE company_nickname = 'GradientOne'").fetch(None)
+        print "ListUsersPage:get: users =",users
+        if len(users) > 0:
+            self.render('listusers.html',company=users[0].company_nickname,
+                        users=users)
+        else:
+            self.render('listusers.html',company="new company?",
+                        users=users)
+    def post(self):
+        email = self.request.get('user_email')
+        q = ProfileDB.all().filter("email =", email)
+        profile = q.get()
+
+        group = self.request.get('group')
+        profile.groups.append(group)
+        profile.put()
+
+        group_to_delete = self.request.get('group_to_delete')
+        profile.groups.remove(group_to_delete)
+        profile.put()
+        profile.groups = filter(None, profile.groups)
+        profile.put()
+
+        self.redirect('/listusers')
