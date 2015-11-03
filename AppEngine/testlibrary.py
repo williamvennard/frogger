@@ -37,8 +37,6 @@ from profile import getProfile
 
 class Handler(InstrumentDataHandler):
     def get(self, company_nickname=""):
-<<<<<<< HEAD
-
         if company_nickname:
             company_nickname_check = company_nickname.split('.')
             company_nickname = company_nickname_check[0]
@@ -58,11 +56,9 @@ class Handler(InstrumentDataHandler):
             rows = query_to_dict(rows)   
             output['config_configs'] = rows
             render_json(self, output)
-=======
         profile = getProfile()
         if hasattr(profile, 'company_nickname'):
             self.render('testlibrary.html', company_nickname=profile.company_nickname)
->>>>>>> refs/remotes/origin/master
         else:
             self.render('testlibrary.html', company_nickname=company_nickname)
 
