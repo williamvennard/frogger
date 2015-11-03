@@ -134,69 +134,6 @@ class FileUploadFailure(InstrumentDataHandler):
         self.response.out.write("File Upload Failed")
 
 
-class ListUsersPage(InstrumentDataHandler):
-    def get(self):
-        self.admincheck()
-        users = db.GqlQuery("SELECT * FROM ProfileDB WHERE company_nickname = 'GradientOne'").fetch(None)
-        print "ListUsersPage:get: users =",users
-        if len(users) > 0:
-            self.render('listusers.html',company=users[0].company_nickname,
-                        users=users)
-        else:
-            self.render('listusers.html',company="new company?",
-                        users=users)
-    def post(self):
-        email = self.request.get('user_email')
-        q = ProfileDB.all().filter("email =", email)
-        profile = q.get()
-
-        group = self.request.get('group')
-        profile.groups.append(group)
-        profile.put()
-
-        group_to_delete = self.request.get('group_to_delete')
-        profile.groups.remove(group_to_delete)
-        profile.put()
-        profile.groups = filter(None, profile.groups)
-        profile.put()
-
-        self.redirect('/listusers')
-
-
-class AdduserPage(InstrumentDataHandler):
-    def get(self):
-        u = users.get_current_user()
-        if not u:
-            self.redirect('/')
-            return
-
-        # check for admin, if fails then redirects to auth error
-        self.admincheck()
-        
-        admin_email = u.email()
-        self.render('adduser.html')
-
-    def post(self):
-        email = self.request.get('email')
-        companyname = self.request.get('companyname')
-        name = self.request.get('name')
-        # TODO - handle spaces in companyname
-        s = ProfileDB(email = email, 
-                      company_nickname = companyname, 
-                      name = name)
-        s.put()
-        checked_box = self.request.get("admin")
-        if checked_box:
-            s.admin = True
-            print s.admin
-        else:
-            s.admin = False
-            print s.admin
-        if not s.bio:
-            s.bio = "No bio entered yet."
-        s.put()
-        self.redirect('/profile')
-
 class FileNotFound(InstrumentDataHandler):
     """Handler for FileNotFound"""
     def get(self):
@@ -207,8 +144,8 @@ class FileNotFound(InstrumentDataHandler):
 app = webapp2.WSGIApplication([
     ('/', mainpage.Handler),
     ('/help', mainpage.Handler),
-    ('/adduser', AdduserPage),
-    ('/listusers', ListUsersPage),
+    ('/adduser', profile.AdduserPage),
+    ('/listusers', profile.ListUsersPage),
     ('/profile', profile.Handler),
     ('/configlookup', configlookup.Handler),
     ('/instruments', instruments.Handler),
@@ -236,8 +173,9 @@ app = webapp2.WSGIApplication([
     ('/testresults/([a-zA-Z0-9-]+.json)', canvaspage.Handler),
     ('/testresults/widgets/([a-zA-Z0-9-]+.json)', canvaspage.Handler),
     ('/testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', testresultsdata.Handler),
+    ('/testlibrary', testlibrary.Handler),
     ('/testlibrary/([a-zA-Z0-9-]+)', testlibrary.Handler),
-    ('/testlibrary/([a-zA-Z0-9-]+.json)', testlibrary.Handler),
+    ('/testlibrary/([a-zA-Z0-9-]+.json)', testlibrary.JSON_Handler),
     ('/testlibrary/testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', testlibrarytest.Handler),
     ('/testlibrary/testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+.json)', testlibrarytest.Handler),
     ('/testlibrary/traceresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', testlibrarytrace.Handler),
@@ -260,8 +198,8 @@ app = webapp2.WSGIApplication([
     ('/u2000data/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000data.Handler),
     ('/temp_testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', temp_testcomplete.Handler),
     ('/test_make_interface', test_make_interface.Handler),
-    ('/operator/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', operatordata.Handler),
-    ('/operator/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/run', operatordata.RunTest),
+    ('/operator/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', operatordata.Handler),
+    ('/operator/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/run', operatordata.RunTest),
     ('/404', FileNotFound),
     ('/testops', testops.Handler),
     ('/u2000_configinput', u2000_configinput.Handler),
