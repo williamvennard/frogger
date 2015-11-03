@@ -51,6 +51,7 @@ class Handler(InstrumentDataHandler):
             rows = query_to_dict(rows)   
             output['test_configs'] = rows
             rows = db.GqlQuery("SELECT * FROM ConfigDB where company_nickname =:1", company_nickname)
+            print rows
             rows = list(rows)     
             rows = query_to_dict(rows)   
             output['config_configs'] = rows
