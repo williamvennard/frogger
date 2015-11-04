@@ -36,9 +36,10 @@ class Handler(InstrumentDataHandler):
             config_dict['config_name'] = config.config_name
             config_dict['hardware_name'] = config.hardware_name
             config_dict['instrument_type'] = config.instrument_type
-            config_dict['number_of_samples'] = config.number_of_samples
+            config_dict['capture_buffer_size'] = config.capture_buffer_size
         results = db.GqlQuery("SELECT * FROM TestDB WHERE company_nickname =:1 and testplan_name =:2", names[0], names[-1])
         test_dict = [c.to_dict() for c in results]
+        print test_dict
         order = str(test_dict[0]['order'])
         order_list = get_ordered_list(order)
         for o in order_list:
@@ -51,6 +52,8 @@ class Handler(InstrumentDataHandler):
                     )
             op.put()
         first_event = ConfigDB.gql("Where config_name =:1", order_list[0]['name']).get()
+        print order_list[0]
+        print first_event
         first_event.commence_test = True
         first_event.active_testplan_name = names[-1]
         first_event.put()
