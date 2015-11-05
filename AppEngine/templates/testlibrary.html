@@ -102,6 +102,7 @@
         console.log(testArray.length);
         //TEST PLANS TAB
         //test_configs == configTable
+        var ops_url = window.location.origin + '/operator/';
         var configTable = "<div>";
         for (var i=0;i<testArray.length;i++) {
           console.log(testArray[i].testplan_name);
@@ -111,6 +112,8 @@
             configTable+="<span class='startTime'> Date Created: </span>" + "<span>" + testArray[i].date_created + "</span>";
             configTable+="<br>"
             configTable+="<a class='resultsLink' href='" + window.location.origin + "/testlibrary/testresults/" + "'>Results</a>";
+            configTable+="<a class='resultsLink' href='" + ops_url + testArray[i].company_nickname + "/" + configArray[i].config_name +"/" + testArray[i].testplan_name +  "'>Operator</a>";
+            configTable+="<br>"
             configTable+="</div>" 
         };
         configTable+="</div>"
