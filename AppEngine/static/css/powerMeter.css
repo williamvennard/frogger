@@ -4,7 +4,7 @@
     display: inline-block;
     vertical-align: right;
     min-width: 80%;
-    min-height: 200px;
+    min-height: 180px;
     border-style: solid;
     border-color: rgb(197,44,72);
     border-radius: 5px;
@@ -36,8 +36,15 @@
 }
 
 #optionBox {
-    float: right;
-    height: 150px;
+    position: absolute;
+    top: -50px;
+    height: 250px;
     width: 100%;
     background-color:black;
+    border-radius: 10px;
+}
+
+.optionsTitle {
+    color: white;
+    text-align: center;
 }
