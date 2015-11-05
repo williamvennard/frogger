@@ -7,20 +7,15 @@
 {% endblock %}
 {% block content %}
 <h1>Test Ops</h1>
-<form action="/testops" method="post">            
-<h3>Available Configs:</h3>
-<div>
-	{% for config in configs %}
-		<input type="radio" name="configKey" value="{{config.key()}}">{{config.config_name}}<br>
-	{% endfor %}
 <h3>Available Test Plans:</h3>
 <div>
-	{% for test in tests %}
-		<input type="radio" name="test" value="{{test.testplan_name}}">{{test.testplan_name}}<br>
+	{% for config in configs %}
+		{% for test in tests %}
+		<li>
+		<a href="/operator/{{test.company_nickname}}/{{config.config_name}}/{{test.testplan_name}}">
+			{{test.company_nickname}} >> {{config.config_name}} >> {{test.testplan_name}}</a><br>
+		</li>
+		{% endfor %}
 	{% endfor %}
-	<h5>Device ID:</h5>
-		<input type="text" name="device_id" placeholder="Enter or scan device ID">
-		<input type="submit" value="START">
 </div>
-</form>
 {% endblock %}

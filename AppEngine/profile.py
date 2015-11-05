@@ -55,9 +55,12 @@ class Handler(InstrumentDataHandler):
                 if profile.userid != user.user_id():
                     profile.userid = user.user_id()
                     profile.put()
-                self.set_groups_cookie()
+                self.set_profile_cookies()
                 groups = self.request.cookies.get("groups")
-                self.render('profile.html', profile=profile, groups=groups)
+                comp_cookie = self.request.cookies.get("company_nickname")
+                prof_cookie = self.request.cookies.get("profile")
+                self.render('profile.html', profile=profile, groups=groups, 
+                    comp_cookie=comp_cookie, prof_cookie=prof_cookie)
             else:
                 self.render('profile.html', profile="", groups="", 
                     error="No profile for this account. Contact your \
@@ -65,14 +68,20 @@ class Handler(InstrumentDataHandler):
         else:
             self.redirect('/')
 
-    def set_groups_cookie(self):
+    def set_groups_cookie(self, profile):        
+        groups_string = "|".join(profile.groups)            
+        self.response.set_cookie('groups', groups_string)
+
+    def set_profile_cookies(self):
         profile = getProfile()
-        if hasattr(profile, 'groups'):         
-            groups_string = "|".join(profile.groups)            
-            self.response.set_cookie('groups', groups_string)
+        if hasattr(profile, 'company_nickname'):
+            self.response.set_cookie('company_nickname', 
+                profile.company_nickname)
+            self.set_groups_cookie(profile)
             return True
         else:
             return False
+
 
 
 class AdduserPage(InstrumentDataHandler):

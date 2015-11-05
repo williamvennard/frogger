@@ -36,13 +36,5 @@ class Handler(InstrumentDataHandler):
 		config = db.get(configKey)
 		testplan = self.request.get('test')
 		test = TestDB.all().filter("testplan_name =", testplan).get()
-		data = {
-			'config': "default",
-			'company_nickname' : test.company_nickname,
-			'hardware_name' : test.hardware_name,
-			'config_name' : config.config_name,
-			'start_tse' : "0",
-		}
-		self.redirect('/operator/{0}/{1}/{2}/{3}?testplan={4}'.format(
-            test.company_nickname, test.hardware_name, config.config_name, 
-            '0',test.testplan_name))
+		self.redirect('/operator/{0}/{1}/{2}'.format(
+            test.company_nickname, config.config_name, test.testplan_name))
