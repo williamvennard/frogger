@@ -1,13 +1,20 @@
-function powerMeter() {
-  console.log('PowerMeter');
-      test_info_url = 'https://gradientone-test.appspot.com/traceresults/Acme/Tahoe/Primetime';
+function powerMeterStart() {
+  console.log('PowerMeter START!');
+      //test_info_url = 'https://gradientone-test.appspot.com/u2000_testresults/Acme/batch1/Production';
+      test_info_url = window.location.origin + '/u2000_testresults/Acme/batch1/Production';
       $.ajax({
           async: true,
           url: test_info_url,
           dataType: 'json',
        }).done(function (results) { 
-        console.log('Power Meter results = ', results);      
-        testInfo = results;  
+        console.log('powerMeterStart: Power Meter results = ', results);      
+        var testInfo = results;  
+
+        var measurement = testInfo.cha;
+        console.log('powerMeterStart: cha', measurement);
+
+        //def get(self,company_nickname="", hardware_name="",config_name="",start_tse=""):
+        //u2000data
         
         //DECIMATED DATA
         //var decData = testInfo.window_bscope.cha;
@@ -22,7 +29,15 @@ function powerMeter() {
         //instrumentName = 'Instrument: ' + testInfo.config_name;
         //hardwareName = 'Hardware: ' + testInfo.hardware_name;
         //document.getElementById("instrumentName").innerHTML = instrumentName;
-        //document.getElementById("hardwareName").innerHTML = hardwareName;
+        document.getElementById("measurementValue").innerHTML = measurement;
        });
     //exploreTimerID = setTimeout(exploreMode,50);
 };
+
+$("#powerMeterStartStop").click(function() {
+      $(this).text(function(i, v){
+      return v === 'STOP' ? 'START' : 'STOP'
+      })
+      var el = this;
+      return (el.t = !el.t) ? powerMeterStart(el) : powerMeterStop(el);
+    });
