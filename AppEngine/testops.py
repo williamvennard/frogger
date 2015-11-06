@@ -26,11 +26,14 @@ import json
 class Handler(InstrumentDataHandler):
 	def get(self):
 		profile = getProfile()
-		query = TestDB.all().filter("company_nickname =", profile.company_nickname)
-		tests = query.run()
-		query = ConfigDB.all().filter("company_nickname =", profile.company_nickname)
-		configs = query.run()
-		self.render('ops.html', tests=tests, configs=configs)
+		if not hasattr(profile, 'company_nickname'):
+			query = TestDB.all().filter("company_nickname =", profile.company_nickname)
+			tests = query.run()
+			query = ConfigDB.all().filter("company_nickname =", profile.company_nickname)
+			configs = query.run()
+			self.render('ops.html', tests=tests, configs=configs)
+		else:
+			self.render('ops.html')
 	def post(self):
 		configKey = self.request.get('configKey')
 		config = db.get(configKey)
