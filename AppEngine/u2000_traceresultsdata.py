@@ -36,7 +36,7 @@ from string import maketrans
 
 
 class Handler(InstrumentDataHandler):
-    def get(self,company_nickname="", testplan_name="", config_name=""):
+    def get(self,company_nickname="", hardware_name="", config_name=""):
         "HTTP GETs from the Instrument Page in the UI provide data to faciliate plotting"
         #if not self.authcheck():
         #    return
@@ -47,7 +47,7 @@ class Handler(InstrumentDataHandler):
             author = active_user[0]
         else:
             self.redirect(users.create_login_url(self.request.uri))
-        key = 'u2000testresults' + testplan_name + config_name
+        key = 'u2000_traceresultsdata' + company_nickname + hardware_name + config_name
         memcache.get(key)
         output = memcache.get(key)
         render_json_cached(self, output)
