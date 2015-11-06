@@ -75,6 +75,7 @@ import testops
 import report_summary
 import report_detail
 import u2000_traceresultsdata
+import u2000_testresultsdata
 
 authorized_users = ['charlie@gradientone.com',
                     'nedwards@gradientone.com',
@@ -207,6 +208,7 @@ app = webapp2.WSGIApplication([
     ('/report_summary/([a-zA-Z0-9.-]+)',  report_summary.Handler),
     ('/report_summary/report_detail/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)',  report_detail.Handler),
     ('/u2000_traceresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000_traceresultsdata.Handler),
+    ('/u2000_testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000_testresultsdata.Handler),
 ], debug=True)
 
 

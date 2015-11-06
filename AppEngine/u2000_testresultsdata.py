@@ -62,7 +62,6 @@ class Handler(InstrumentDataHandler):
     def post(self,company_nickname= "", testplan_name="", config_name =""):
         "store data by intstrument name and time slice name"
         testresults_content = json.loads(self.request.body)
-        print testresults_content
         hardware_name = testresults_content['hardware_name']
         test_plan = testresults_content['test_plan']
         if test_plan == 'True':
@@ -74,16 +73,16 @@ class Handler(InstrumentDataHandler):
         testresults_content['test_complete_bool'] = False
         testresults_content = unic_to_ascii(testresults_content)
         key = 'u2000testresults' + testplan_name + config_name
-        testresults_output = json.dumps(testresults_content)
-        memcache.set(key, testresults_output)
+        testresults_content = json.dumps(testresults_content)
+        memcache.set(key, testresults_content)
         i_settings = testresults_content['i_settings']
         start_tse = testresults_content['start_tse']
         cha = testresults_content['cha']
-        testplan_name = testresults_content['testplan_name']
-        config_name = testresults_content['config_name']
-        hardware_name = testresults_content['hardware_name']
         window_u2000 = {'i_settings':i_settings, 'cha':cha, 'testplan_name':testplan_name,
         'start_tse':start_tse, 'company_nickname':company_nickname, 'hardware_name':hardware_name, 'config_name':config_name, 'test_plan':test_plan}
         out_u2000 = json.dumps(window_u2000, ensure_ascii=True)
         key = 'u2000data' + company_nickname + hardware_name + config_name + str(start_tse)
         memcache.set(key, out_u2000)
+
+
+
