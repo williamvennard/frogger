@@ -21,37 +21,40 @@ function powerMeterStart() {
     //exploreTimerID = setTimeout(exploreMode,50);
 };
 
-//CONFIG FORM SUBMIT
+//PM CONFIG FORM SUBMIT
     function PMConfig() {
       $('#collapseConfig').collapse("hide");
-      var d = document.getElementById('configSettings');
-        var children = d.childNodes;
-/*
+      var d = document.getElementById('PMConfigSettings');
+
+      var children = d.childNodes;
+      console.log('PMConfig: children = ', children);
       var configName = children[1].children[1].value;
       var traceName = children[3].children[1].value;
-      //var configBand = children[5].children[1].value;
-      var configSampleRate =  children[5].children[1].value;
-      var configSampleSize = children[7].children[1].value; 
-      //var configResolution = children[11].children[1].value; 
-      //var configChNum = children[11].children[1].value; 
+
+      var frequencyCorrection =  children[5].children[1].value;
+      var offset = children[7].children[1].value; 
+      var units = children[9].children[1].value; 
+      var avgCountAuto = children[11].children[1].checked; 
+      var rangeAuto = children[13].children[1].checked;
 
       var configSettings = document.getElementById('settingsDisplay');
-        var setChildren = configSettings.childNodes;
+      var setChildren = configSettings.childNodes;
 
 
 
-      setChildren[1].children[1].innerHTML = configName;
-      setChildren[3].children[1].innerHTML = configSampleSize;
-      setChildren[1].children[3].innerHTML = traceName;
-      setChildren[3].children[3].innerHTML = configSampleRate;
-*/
-      var config_url = 'https://gradientone-test.appspot.com/bscopeconfiginput';
+      //setChildren[1].children[1].innerHTML = configName;
+      //setChildren[3].children[1].innerHTML = configSampleSize;
+      //setChildren[1].children[3].innerHTML = traceName;
+      //setChildren[3].children[3].innerHTML = configSampleRate;
+
+      var config_url = window.location.origin + '/u2000_configinput';
       console.log('saveStatus: config_url = ',config_url);
 
-      var configSettings = JSON.stringify({"config_name":configName,"analog_sample_rate":configSampleRate,
-       "capture_buffer_size":configSampleSize,"trace_name":traceName, "hardware_name":"Tahoe",
+      var configSettings = JSON.stringify({"config_name":configName,"trace_name":traceName, "correction_frequency":frequencyCorrection,
+       "offset":offset, "units":units, "avg_count_auto":avgCountAuto, "range_auto":rangeAuto, "hardware_name":"Tahoe",
        "inst_name":"BitScope","company_nickname":"Acme"});
       console.log('instConfig: configSettings = ',configSettings);
+
      $.ajax({
         type: "POST",
         url: config_url,
@@ -62,10 +65,11 @@ function powerMeterStart() {
             console.log('saveStatus: Ajax post was a success!');
         },
       }); 
-
-
+     
     };
 
+
+//POWER METER START and STOP
 $("#powerMeterStartStop").click(function() {
       $(this).text(function(i, v){
       return v === 'STOP' ? 'START' : 'STOP'
