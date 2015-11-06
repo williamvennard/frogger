@@ -26,7 +26,7 @@ import json
 class Handler(InstrumentDataHandler):
 	def get(self):
 		profile = getProfile()
-		if not hasattr(profile, 'company_nickname'):
+		if hasattr(profile, 'company_nickname'):
 			query = TestDB.all().filter("company_nickname =", profile.company_nickname)
 			tests = query.run()
 			query = ConfigDB.all().filter("company_nickname =", profile.company_nickname)
