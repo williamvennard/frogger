@@ -48,15 +48,16 @@ class Handler(InstrumentDataHandler):
         start_now = testplan_object['start_now']
         start_time = testplan_object['start_time']
         checkbox_names = ["start_measurement_now"]
-        # averaging_count_auto= testplan_object['averaging_count_auto']
-        # correction_frequency = testplan_object['correction_frequency']
-        # offset = testplan_object['offset']
-        # range_auto = testplan_object['range_auto']
-        # units = testplan_object['units']
-        # max_value = testplan_object['max_value']
-        # min_value = testplan_object['min_value']
-        # pass_fail = testplan_object['pass_fail']
-        # pass_fail_type = testplan_object['pass_fail_type']
+        averaging_count_auto= 'True'
+        correction_frequency = '1e9'
+        offset = '0.0'
+        range_auto = 'True'
+        units = 'dBm'
+        max_value = '0.0'
+        min_value = '0.0'
+        pass_fail = 'False'
+        pass_fail_type = 'False'
+        config_name = 'blah'
         if start_now == True:
             date_object = datetime.datetime.now()
         else:
@@ -116,6 +117,8 @@ class Handler(InstrumentDataHandler):
         for item in configs:
             config = ConfigDB.gql("Where config_name =:1", item['config_name']).get()
             if config == None:  #if there is not an instrument with the inputted name, then create it in the DB
+                config_inst_type = 'U2001A'
+                print config_inst_type, config_name
                 if config_inst_type == 'U2001A':
                     c = ConfigDB(key_name = (item['config_name']+testplan_name), parent = company_key(),
                     company_nickname = company_nickname, 
@@ -126,6 +129,7 @@ class Handler(InstrumentDataHandler):
                     active_testplan_name = testplan_name,
                     commence_test = False,
                     trace = False,
+                    config_name = config_name,
                     )
                     c.put()
                     s = agilentU2000(key_name = (config_name+instrument_type), parent = company_key(),
