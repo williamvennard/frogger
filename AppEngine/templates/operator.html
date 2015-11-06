@@ -1,22 +1,17 @@
-{% extends "base.html" %}
-
-{% block import %}
-
-<head>
-    <title>Operator Page</title>
-    <style type="text/css">
-      .label {text-align: right}
-      .error {color: red}
-    </style>
-</head>
-<body>
+{% extends "one.html" %}
+{% block title %} Test Ops {% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+<div class="col-md-8 col-md-offset-2">
 	<h1>Operator Page</h1>
 	<div>
 		<h3>Test Overview</h3>
 		<p>(overview and test info goes here)</p>
 		<p>{{data.config}}</p>
 		<hr>
-		<form name="runTest" enctype="application/json" action="{{data.start_tse}}/run" method="post">
+		<form name="runTest" enctype="application/json" action="{{data.testplan_name}}/run" method="post">
 			<p><button type="submit">RUN</button>(Execute config)</p>
 			<input type="hidden" name="info[0]" value="{{data.company_nickname}}">
 			<input type="hidden" name="info[1]" value="{{data.testplan_name}}">
@@ -24,12 +19,13 @@
 	</div>
 	<div>
 		<h3>Results</h3>
-		<p>(test results should go here)</p>
+		<p>[test results should go here]</p>
 		<p>{{data.results}}</p>
 		<hr>
 	</div>
 	<div>
-		<p><button>SAVE</button>(Save test results to library)</p>
+		<a href="/testlibrary/{{data.company_nickname}}"><button>Done</button></a>
+		<p>(return to test library)</p>
 	</div>
 	<div>
 		<h4>Comments</h4>
@@ -45,6 +41,5 @@
             <input type="submit">
 		</form>
 	</div>
-</body>
-
+</div>
 {% endblock %}

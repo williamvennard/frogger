@@ -338,6 +338,7 @@
                     <div class="col-md-5" id="leftDisplay">
                       <div class="row">
                         <div class="" id="valueBox">
+                          <h3 id="measurementValue"></h3>
                         </div>
                       </div>
                       <div class="row">  
@@ -350,25 +351,18 @@
                         </div>
                       </div> 
                     </div>
-                    <div class="col-md-4" id="rightDisplay">
+                    <div class="col-md-6" id="rightDisplay">
                         <div class="" id="optionBox">
-                          <h4>Options</h4>
-<!--Option Form-->  
+                          <h4 class="optionsTitle">Options</h4>
+                          <button style="margin-left:15px" class="text-capitalize optionsBtn" type="button" id="powerMeterStartStop">Start</button>
+<!--Config Form-->  
                           <div id="collapseConfig" class="collapse in configBox" style="margin-bottom:100px;">
                             <div id="configSettings">          
-                              <div class="row configRow">
-                                  <tr>
-                                    <td class="label">
-                                      <p class="configLabel">Averaging Count Auto:</p>
-                                      <input class="configInput" style="border-top-right-radius: 5px; border-top-left-radius: 5px;" type="text" placeholder='' value="">
-                                    </td>
-                                  </tr>
-                                </div>
                                 <div class="row configRow">
                                    <tr>
                                     <td class="label">
                                       <p class="configLabel">Correction Frequency:</p>  
-                                      <input class="configInput" type="text" placeholder='' value="">
+                                      <input class="configInput" type="text" tyle="border-top-right-radius: 5px; border-top-left-radius: 5px;" placeholder='' value="">
                                     </td>
                                   </tr>
                                 </div>
@@ -383,7 +377,7 @@
                                 <div class="row configRow">
                                   <tr>
                                     <td class="label">
-                                      <p class="configLabel">Range Auto:</p>  
+                                      <p class="configLabel">Units:</p>  
                                       <input class="configInput" style="border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;" type="text" placeholder='' value="">
                                     </td>
                                   </tr>
@@ -391,11 +385,20 @@
                                 <div class="row configRow">
                                   <tr>
                                     <td class="label">
-                                      <p class="configLabel">Units:</p>  
-                                      <input class="configInput" style="border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;" type="text" placeholder='' value="">
+                                      <p class="configLabel">Averaging Count Auto</p>
+                                      <input type="checkbox">
                                     </td>
                                   </tr>
                                 </div>
+                                <div class="row configRow">
+                                  <tr>
+                                    <td class="label">
+                                      <p class="configLabel">Range Auto:</p>  
+                                      <input type="checkbox">
+                                    </td>
+                                  </tr>
+                                </div>
+                      
                                 <button id="submitBtn" type="button" onclick="instConfig()">Submit</button>
                             </div> 
                           </div>
@@ -409,6 +412,7 @@
         <hr> 
     </div> 
     <script type="text/javascript" src="../static/js/ochart.js"></script>
+    <script type="text/javascript" src="../static/js/powerMeter.js"></script>
     <script type="text/javascript">$('#collapseOne').collapse("hide");</script><!--stops accordion from loading open -->
     <script type="text/javascript">$('#collapseTwo').collapse("hide");</script>
     <script type="text/javascript">$('#collapseThree').collapse("hide");</script>
