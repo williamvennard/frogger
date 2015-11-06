@@ -1,15 +1,10 @@
-{% extends "base.html" %}
-
-{% block import %}
-
-<head>
-    <title>Operator Page</title>
-    <style type="text/css">
-      .label {text-align: right}
-      .error {color: red}
-    </style>
-</head>
-<body>
+{% extends "one.html" %}
+{% block title %} Test Ops {% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+<div class="col-md-8 col-md-offset-2">
 	<h1>Operator Page</h1>
 	<div>
 		<h3>Test Overview</h3>
@@ -46,6 +41,5 @@
             <input type="submit">
 		</form>
 	</div>
-</body>
-
+</div>
 {% endblock %}

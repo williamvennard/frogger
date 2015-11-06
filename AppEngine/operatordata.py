@@ -104,7 +104,7 @@ class Handler(InstrumentDataHandler):
                     templatedata['results'] = output
                     self.render('operator.html', data=templatedata)
                 else:
-                    logging.error("ResultData:get: query")
+                    logging.error("ResultData:get: query returned no data")
                     templatedata['results'] = "Error: No result data"
                     self.render('operator.html', data=templatedata)               
             else:
