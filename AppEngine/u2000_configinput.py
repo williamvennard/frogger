@@ -54,10 +54,10 @@ class Handler(InstrumentDataHandler):
             offset = offset, 
             range_auto = range_auto, 
             units = units,
-            max_value = max_value,
-            min_value = min_value,
-            pass_fail = pass_fail,
-            pass_fail_type = pass_fail_type,
+            # max_value = max_value,
+            # min_value = min_value,
+            # pass_fail = pass_fail,
+            # pass_fail_type = pass_fail_type,
             )
         c.put() 
         s = ConfigDB(key_name = config_name, parent = company_key(),
