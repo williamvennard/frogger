@@ -333,7 +333,7 @@ function exploreMode() {
     //https://gradientone-test.appspot.com/datamgmt/bscopedata/Acme/Tahoe/wildwood/1436937598030
 
     //CONFIG FORM SUBMIT
-    function instConfig() {
+    function OscopeConfig() {
       $('#collapseConfig').collapse("hide");
       var d = document.getElementById('configSettings');
         var children = d.childNodes;
