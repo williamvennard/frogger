@@ -5,6 +5,7 @@
     vertical-align: right;
     min-width: 80%;
     min-height: 180px;
+
     border-style: solid;
     border-color: rgb(197,44,72);
     border-radius: 5px;
@@ -38,7 +39,7 @@
 #optionBox {
     position: absolute;
     top: -50px;
-    height: 250px;
+    height: 200px;
     width: 100%;
     background-color:black;
     border-radius: 10px;
@@ -47,4 +48,38 @@
 .optionsTitle {
     color: white;
     text-align: center;
+}
+
+.PMConfigBox {
+    width: 335px;
+    height: 190px;
+    background-color: rgb(33,33,33);
+    border-style: solid;
+    border-color: rgb(197,44,72);
+    border-radius: 5px;
+    border-width: 1px;
+}
+
+.PMConfigInput {
+    position: absolute;
+    margin-left: 160px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+}
+
+#PMSubmitBtn {
+    color: black;
+    font-family: 'nexa_lightregular';
+    letter-spacing: 2px;
+    width: 80px;
+    position: relative;
+    margin: 0px 20px 5px 165px;
+    padding: 4px 0 0 0;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 5px;
+    border-color: rgb(38,38,39);
+    background-color: rgb(124,175,46);
+    /*background-image: radial-gradient(#32CD32, #5cb85c);*/
 }
