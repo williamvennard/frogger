@@ -25,6 +25,20 @@
     -moz-box-shadow: inset 6px 5px 55px 1px rgba(0,0,0,0.8);
     box-shadow: inset 6px 5px 55px 1px rgba(0,0,0,0.8);
 }
+.valueDisplay {
+    color:white;
+    font-size:150%;
+    font-family: 'nexa_lightregular';
+    margin: 0 0 0 20px;
+}
+
+.unitsDisplay {
+    float:right;
+    font-family: 'nexa_lightregular';
+    margin: 0 10px 0px 0; 
+    color: rgb(197,44,72); 
+    font-size:200%;
+}
 
 #leftDisplay {
 	background-color:rgb(33,33,33);
