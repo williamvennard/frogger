@@ -37,6 +37,12 @@ from profile import getProfile
 
 class Handler(InstrumentDataHandler):
     def get(self, company_nickname=""):
+        comp_cookie = self.request.cookies.get("company_nickname")
+        if comp_cookie:
+            profile = {}
+            profile['company_nickname'] = comp_cookie
+        else:
+            profile = getProfile()
         if company_nickname:
             company_nickname_check = company_nickname.split('.')
             company_nickname = company_nickname_check[0]
@@ -58,9 +64,9 @@ class Handler(InstrumentDataHandler):
             render_json(self, output)
         profile = getProfile()
         if hasattr(profile, 'company_nickname'):
-            self.render('testlibrary.html', company_nickname=profile.company_nickname)
+            self.render('testlibrary.html', company_nickname=profile.company_nickname, profile=profile)
         else:
-            self.render('testlibrary.html', company_nickname=company_nickname)
+            self.render('testlibrary.html', company_nickname=company_nickname, profile=profile)
 
 class JSON_Handler(InstrumentDataHandler):
     def get(self, company_nickname=""):

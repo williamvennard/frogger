@@ -40,7 +40,12 @@ import json
 
 class Handler(InstrumentDataHandler):
     def get(self, company_nickname="", config_name="", testplan_name=""):
-
+        comp_cookie = self.request.cookies.get("company_nickname")
+        if comp_cookie:
+            profile = {}
+            profile['company_nickname'] = comp_cookie
+        else:
+            profile = getProfile()
         query = TestDB.all().filter("company_nickname =", company_nickname)
         query = query.filter("testplan_name =", testplan_name)
         test = query.get()
@@ -80,7 +85,7 @@ class Handler(InstrumentDataHandler):
         cached_copy = memcache.get(key)
         if cached_copy:
             templatedata['results'] = cached_copy
-            self.render('operator.html', data=templatedata)
+            self.render('operator.html', data=templatedata, profile=profile)
         
         else:
             key = testplan_name + company_nickname + hardware_name + config_name
@@ -102,14 +107,14 @@ class Handler(InstrumentDataHandler):
                     output = json.dumps(e)
                     memcache.set(key, output)
                     templatedata['results'] = output
-                    self.render('operator.html', data=templatedata)
+                    self.render('operator.html', data=templatedata, profile=profile)
                 else:
                     logging.error("ResultData:get: query returned no data")
                     templatedata['results'] = "Error: No result data"
-                    self.render('operator.html', data=templatedata)               
+                    self.render('operator.html', data=templatedata, profile=profile)               
             else:
                 templatedata['results'] = cached_copy
-                self.render('operator.html', data=templatedata)
+                self.render('operator.html', data=templatedata, profile=profile)
 
 
     def post(self, company_nickname="", config_name="", testplan_name=""):

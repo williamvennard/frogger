@@ -35,21 +35,26 @@ from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
 from string import maketrans
 from datetime import datetime
+from profile import getProfile
 
 class Handler(InstrumentDataHandler):
 	def get(self):
-		user = users.get_current_user()
-		if not user:
-			self.redirect('/')
-			return
-		q = ProfileDB.all().filter("userid =", user.user_id())
-		profile = q.get()
+
 		tests = TestDB.all()
 
-		if not profile.company_nickname:
+		comp_cookie = self.request.cookies.get("company_nickname")
+		company_nickname = comp_cookie
+		if comp_cookie:
+			profile = {}
+			profile['company_nickname'] = comp_cookie
+		else:
+			profile = getProfile().to_dict()
+
+		if profile.has_key('company_nickname'):
 			company_nickname = "No_Company"
 		else:
 			company_nickname = profile.company_nickname
+
 		tests.filter("company_nickname =", company_nickname)
 		
         # Get all posts
@@ -58,25 +63,26 @@ class Handler(InstrumentDataHandler):
 	   	if profile:
 			# Limit to posts of user's company and group posts
 			filterlist = []
-			filterlist.append("company")
-			groups = self.request.cookies.get("groups")
-			if groups:
-				filterlist.extend(groups.split("|"))
+			if profile.has_key('company_nickname'):
+				filterlist.append(profile['company_nickname'])
+				filterlist.append('company')
+				profile['groups'] = self.request.cookies.get("groups")
+				if profile.has_key('groups'):
+					filterlist.extend(profile['groups'].split("|"))
 			group_posts = CommunityPostDB.all().order('-date_created')
 			group_posts.filter("privacy IN", filterlist)
-			group_posts.filter("company_nickname =", profile.company_nickname)
 
 			# Limit to public posts
 			public_posts.filter("privacy =", "public")
 			self.render('communitytests.html', group_posts=group_posts, 
 						public_posts=public_posts, tests=tests, p_count=0, 
-						g_count=0, groups=profile.groups)
+						g_count=0, profile=profile)
 		else:
 			# Limit to just public posts
 			public_posts = public_posts.filter("privacy =", "public")
 			public_posts.filter("privacy =", "public")
 			self.render('communitytests.html', public_posts=public_posts, 
-						tests=tests, p_count=0, groups=profile.groups)
+						tests=tests, p_count=0)
 
 	def post(self):
 		user = users.get_current_user()

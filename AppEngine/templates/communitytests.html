@@ -161,7 +161,7 @@
                         <option value="public"> Public </option>
                         <option value="company"> Company </option>
                         <option value="private"> Private </option>
-                        {% for group in groups %}
+                        {% for group in profile.groups %}
                         <option value="{{group}}"> {{group}} </option>
                         {% endfor %}
                     </select>

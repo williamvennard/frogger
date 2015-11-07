@@ -44,6 +44,18 @@ def getProfile():
     else:
         return False	
 
+
+def getProfileCookie():
+    """get cookie data or get ProfileDB data"""
+    comp_cookie = self.request.cookies.get("company_nickname")
+    if comp_cookie:
+        profile = {}
+        profile.company_nickname = comp_cookie
+    else:
+        profile = getProfile()
+    return profile
+
+
 class Handler(InstrumentDataHandler):
     def get(self):
         user = users.get_current_user()
@@ -55,7 +67,7 @@ class Handler(InstrumentDataHandler):
                 if profile.userid != user.user_id():
                     profile.userid = user.user_id()
                     profile.put()
-                self.set_profile_cookies()
+                self.set_profile_cookies(profile)
                 groups = self.request.cookies.get("groups")
                 comp_cookie = self.request.cookies.get("company_nickname")
                 prof_cookie = self.request.cookies.get("profile")
@@ -66,14 +78,14 @@ class Handler(InstrumentDataHandler):
                     error="No profile for this account. Contact your \
                     administrator for help")
         else:
-            self.redirect('/')
+            self.redirect(users.create_login_url(self.request.uri))
+
 
     def set_groups_cookie(self, profile):        
         groups_string = "|".join(profile.groups)            
         self.response.set_cookie('groups', groups_string)
 
-    def set_profile_cookies(self):
-        profile = getProfile()
+    def set_profile_cookies(self, profile):
         if hasattr(profile, 'company_nickname'):
             self.response.set_cookie('company_nickname', 
                 profile.company_nickname)

@@ -25,13 +25,18 @@ import json
 
 class Handler(InstrumentDataHandler):
 	def get(self):
-		profile = getProfile()
+		comp_cookie = self.request.cookies.get("company_nickname")
+		if comp_cookie:
+			profile = {}
+			profile.company_nickname = comp_cookie
+		else:
+			profile = getProfile()
 		if hasattr(profile, 'company_nickname'):
 			query = TestDB.all().filter("company_nickname =", profile.company_nickname)
 			tests = query.run()
 			query = ConfigDB.all().filter("company_nickname =", profile.company_nickname)
 			configs = query.run()
-			self.render('ops.html', tests=tests, configs=configs)
+			self.render('ops.html', tests=tests, configs=configs, profile=profile)
 		else:
 			self.render('ops.html')
 	def post(self):
