@@ -1,6 +1,61 @@
-function powerMeterStart() {
+function PMtraceStart(el){
+      console.log('traceStart !!!!!')
+      //formatStartUrl = raw_urlPath.split('/');
+      //https://gradientone-test.appspot.com/panelcontrol/Acme/Tahoe/Primetime
+      var startValue = 'Start_Trace';
+      var start_url = window.location.origin + '/panelcontrol/Acme/Tahoe/Primetime';// + formatStartUrl[formatStartUrl.length-2];
+      console.log('exploreStart: start_url =',start_url);
+      var startData = JSON.stringify({"command":startValue});
+      console.log('exploreStart: startData =', startData);
+     $.ajax({
+        type: "POST",
+        url: start_url,
+        data: startData,
+        dataType: 'json',
+        success: function(data, textStatus, jqXHR)
+        {
+          console.log('saveStatus: Ajax post was a success!');
+        },
+      });
+      powerMeterData();
+    };
+    function PMtraceStop(el){
+      console.log('traceStop !!!!!')
+      
+      var startValue = 'Stop_Trace';
+      var start_url = window.location.origin + '/panelcontrol/Acme/Tahoe/Primetime';// + formatStartUrl[formatStartUrl.length-2];
+      console.log('exploreStart: start_url =',start_url);
+
+      var startData = JSON.stringify({"command":startValue});
+      console.log('exploreStart: startData =', startData);
+     $.ajax({
+        type: "POST",
+        url: start_url,
+        data: startData,
+        dataType: 'json',
+        success: function(data, textStatus, jqXHR)
+        {
+          console.log('saveStatus: Ajax post was a success!');
+        },
+      });
+      clearTimeout(traceTimerID);
+    };
+
+
+//POWER METER START and STOP
+$("#powerMeterStartStop").click(function() {
+      $(this).text(function(i, v){
+      return v === 'STOP' ? 'START' : 'STOP'
+      })
+      var el = this;
+      return (el.t = !el.t) ? PMtraceStart(el) : PMtraceStop(el);
+    });
+
+
+
+function powerMeterData() {
   console.log('PowerMeter START!');
-      //test_info_url = 'https://gradientone-test.appspot.com/u2000_traceresults/Acme/MSP/Production';
+      //test_info_url = 'https://gradientone-test.appspot.com/u2000_traceresults/Acme/MSP/Tahoe';
       test_info_url = window.location.origin + '/u2000_traceresults/Acme/MSP/Production';
       $.ajax({
           async: true,
@@ -18,8 +73,15 @@ function powerMeterStart() {
         
         document.getElementById("measurementValue").innerHTML = measurement;
        });
-    //exploreTimerID = setTimeout(exploreMode,50);
+    traceTimerID = setTimeout(traceMode,1000);
 };
+
+
+
+
+
+
+
 
 //PM CONFIG FORM SUBMIT
     function PMConfig() {
@@ -55,10 +117,10 @@ function powerMeterStart() {
 
       var configSettings = JSON.stringify({"config_name":configName,"trace_name":traceName, "correction_frequency":frequencyCorrection,
        "offset":offset, "units":units, "avg_count_auto":avgCountAuto, "range_auto":rangeAuto, "hardware_name":"Tahoe",
-       "inst_name":"BitScope","company_nickname":"Acme"});
+       "inst_name":"U2001A","company_nickname":"Acme"});
 
       console.log('instConfig: configSettings = ',configSettings);
-/*
+
      $.ajax({
         type: "POST",
         url: config_url,
@@ -69,15 +131,6 @@ function powerMeterStart() {
             console.log('saveStatus: Ajax post was a success!');
         },
       }); 
-     */
     };
 
 
-//POWER METER START and STOP
-$("#powerMeterStartStop").click(function() {
-      $(this).text(function(i, v){
-      return v === 'STOP' ? 'START' : 'STOP'
-      })
-      var el = this;
-      return (el.t = !el.t) ? powerMeterStart(el) : powerMeterStop(el);
-    });
