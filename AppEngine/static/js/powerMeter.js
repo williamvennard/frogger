@@ -56,7 +56,7 @@ $("#powerMeterStartStop").click(function() {
 function powerMeterData() {
   console.log('PowerMeter START!');
       //test_info_url = 'https://gradientone-test.appspot.com/u2000_traceresults/Acme/MSP/Tahoe';
-      test_info_url = window.location.origin + '/u2000_traceresults/Acme/MSP/Production';
+      test_info_url = window.location.origin + '/u2000_traceresults/Acme/Tahoe/Production';
       $.ajax({
           async: true,
           url: test_info_url,
