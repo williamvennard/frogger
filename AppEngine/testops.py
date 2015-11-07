@@ -18,20 +18,14 @@ from google.appengine.api import oauth
 from google.appengine.api import users
 from google.appengine.ext import db
 from time import gmtime, strftime
-from profile import getProfile
+from profile import get_profile_cookie
 import appengine_config
 import json
 
 
 class Handler(InstrumentDataHandler):
 	def get(self):
-		comp_cookie = self.request.cookies.get("company_nickname")
-		if comp_cookie:
-			profile = {}
-			profile['company_nickname'] = comp_cookie
-		else:
-			profile = getProfile().to_dict()
-
+		profile = get_profile_cookie(self)
 		if profile.has_key('company_nickname'):
 			query = TestDB.all().filter("company_nickname =", profile['company_nickname'])
 			tests = query.run()

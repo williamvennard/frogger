@@ -24,7 +24,9 @@ from google.appengine.api import oauth
 from google.appengine.api import users
 from google.appengine.ext import db
 import appengine_config
-from profile import getProfile
+from profile import get_profile
+from profile import set_profile_cookie
+from profile import get_profile_cookie
 #from send_script_post import Script
 
 
@@ -44,13 +46,9 @@ class Handler(InstrumentDataHandler):
             author = active_user[0]
         else:
             self.redirect(users.create_login_url(self.request.uri))
-        comp_cookie = self.request.cookies.get("company_nickname")
-        if comp_cookie:
-            profile = {}
-            profile['company_nickname'] = comp_cookie
-        else:
-            profile = getProfile()
-            self.set_profile_cookies(profile)
+
+        profile = get_profile_cookie(self)
+
         instrument_name = instrument_name.split('.')
         if instrument_name[-1] == 'json':
             rows = db.GqlQuery("""SELECT * FROM ConfigDB WHERE author =:1 
@@ -74,15 +72,15 @@ class Handler(InstrumentDataHandler):
             rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE author =:1", author)
             self.render('instruments.html', rows = rows, profile=profile)
 
-    def set_groups_cookie(self, profile):        
-        groups_string = "|".join(profile.groups)            
-        self.response.set_cookie('groups', groups_string)
+    # def set_groups_cookie(self, profile):        
+    #     groups_string = "|".join(profile.groups)            
+    #     self.response.set_cookie('groups', groups_string)
 
-    def set_profile_cookies(self, profile):
-        if hasattr(profile, 'company_nickname'):
-            self.response.set_cookie('company_nickname', 
-                profile.company_nickname)
-            self.set_groups_cookie(profile)
-            return True
-        else:
-            return False
+    # def set_profile_cookies(self, profile):
+    #     if hasattr(profile, 'company_nickname'):
+    #         self.response.set_cookie('company_nickname', 
+    #             profile.company_nickname)
+    #         self.set_groups_cookie(profile)
+    #         return True
+    #     else:
+    #         return False

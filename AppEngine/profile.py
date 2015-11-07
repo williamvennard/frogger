@@ -35,7 +35,7 @@ from string import maketrans
 from datetime import datetime
 
 
-def getProfile():
+def get_profile():
     user = users.get_current_user()
     if user:
         q = ProfileDB.all().filter("userid =", user.user_id())
@@ -44,16 +44,37 @@ def getProfile():
     else:
         return False	
 
+        comp_cookie = self.request.cookies.get("company_nickname")
+        if comp_cookie:
+            profile = {}
+            profile['company_nickname'] = comp_cookie
+        else:
+            profile = get_profile()
+            set_profile_cookies(self, profile)
 
-def getProfileCookie():
+def get_profile_cookie(self):
     """get cookie data or get ProfileDB data"""
     comp_cookie = self.request.cookies.get("company_nickname")
     if comp_cookie:
         profile = {}
-        profile.company_nickname = comp_cookie
+        profile['company_nickname'] = comp_cookie
     else:
-        profile = getProfile()
+        profile = get_profile().to_dict()
     return profile
+
+def set_groups_cookie(self, profile):        
+    groups_string = "|".join(profile['groups'])            
+    self.response.set_cookie('groups', groups_string)
+
+def set_profile_cookie(self, profile):
+    if profile.has_key('company_nickname'):
+        self.response.set_cookie('company_nickname', 
+            profile['company_nickname'])
+        self.set_groups_cookie(profile)
+        return True
+    else:
+        return False
+
 
 
 class Handler(InstrumentDataHandler):
@@ -67,7 +88,7 @@ class Handler(InstrumentDataHandler):
                 if profile.userid != user.user_id():
                     profile.userid = user.user_id()
                     profile.put()
-                self.set_profile_cookies(profile)
+                self.set_profile_cookie(profile)
                 groups = self.request.cookies.get("groups")
                 comp_cookie = self.request.cookies.get("company_nickname")
                 prof_cookie = self.request.cookies.get("profile")
@@ -85,7 +106,7 @@ class Handler(InstrumentDataHandler):
         groups_string = "|".join(profile.groups)            
         self.response.set_cookie('groups', groups_string)
 
-    def set_profile_cookies(self, profile):
+    def set_profile_cookie(self, profile):
         if hasattr(profile, 'company_nickname'):
             self.response.set_cookie('company_nickname', 
                 profile.company_nickname)
@@ -98,7 +119,7 @@ class Handler(InstrumentDataHandler):
 
 class AdduserPage(InstrumentDataHandler):
     def get(self):
-        profile = getProfile()
+        profile = get_profile()
         if profile.admin:
             admin_email = profile.email
             self.render('adduser.html')            
@@ -127,7 +148,7 @@ class AdduserPage(InstrumentDataHandler):
 
 class ListUsersPage(InstrumentDataHandler):
     def get(self):
-        profile = getProfile()
+        profile = get_profile()
         if not profile.admin:
             redirect('/')
         users = db.GqlQuery("SELECT * FROM ProfileDB WHERE company_nickname = 'GradientOne'").fetch(None)

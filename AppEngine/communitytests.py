@@ -35,20 +35,14 @@ from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
 from string import maketrans
 from datetime import datetime
-from profile import getProfile
+from profile import get_profile_cookie
 
 class Handler(InstrumentDataHandler):
 	def get(self):
 
 		tests = TestDB.all()
 
-		comp_cookie = self.request.cookies.get("company_nickname")
-		company_nickname = comp_cookie
-		if comp_cookie:
-			profile = {}
-			profile['company_nickname'] = comp_cookie
-		else:
-			profile = getProfile().to_dict()
+		profile = get_profile_cookie(self)
 
 		if profile.has_key('company_nickname'):
 			company_nickname = "No_Company"
