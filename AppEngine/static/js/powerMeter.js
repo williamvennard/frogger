@@ -37,15 +37,18 @@ function powerMeterStart() {
       var avgCountAuto = children[11].children[1].checked; 
       var rangeAuto = children[13].children[1].checked;
 
-      var configSettings = document.getElementById('settingsDisplay');
+      var configSettings = document.getElementById('PMSettingsDisplay');
       var setChildren = configSettings.childNodes;
 
 
 
-      //setChildren[1].children[1].innerHTML = configName;
-      //setChildren[3].children[1].innerHTML = configSampleSize;
-      //setChildren[1].children[3].innerHTML = traceName;
-      //setChildren[3].children[3].innerHTML = configSampleRate;
+      setChildren[1].children[1].innerHTML = configName;
+      setChildren[3].children[1].innerHTML = frequencyCorrection;
+      setChildren[1].children[3].innerHTML = traceName;
+      setChildren[3].children[3].innerHTML = offset;
+
+      document.getElementById("PMUnits").innerHTML = units;
+    
 
       var config_url = window.location.origin + '/u2000_configinput';
       console.log('saveStatus: config_url = ',config_url);
@@ -53,8 +56,9 @@ function powerMeterStart() {
       var configSettings = JSON.stringify({"config_name":configName,"trace_name":traceName, "correction_frequency":frequencyCorrection,
        "offset":offset, "units":units, "avg_count_auto":avgCountAuto, "range_auto":rangeAuto, "hardware_name":"Tahoe",
        "inst_name":"BitScope","company_nickname":"Acme"});
-      console.log('instConfig: configSettings = ',configSettings);
 
+      console.log('instConfig: configSettings = ',configSettings);
+/*
      $.ajax({
         type: "POST",
         url: config_url,
@@ -65,7 +69,7 @@ function powerMeterStart() {
             console.log('saveStatus: Ajax post was a success!');
         },
       }); 
-     
+     */
     };
 
 
