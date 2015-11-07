@@ -525,7 +525,7 @@ $(document).ready(function(){
       console.log('exploreStart !!!!!')
       //formatStartUrl = raw_urlPath.split('/');
       var startValue = 'Start_Explore';
-      var start_url = window.location.origin + 'panelcontrol/Acme/Tahoe/Primetime';// + formatStartUrl[formatStartUrl.length-2];
+      var start_url = window.location.origin + '/panelcontrol/Acme/Tahoe/Primetime';// + formatStartUrl[formatStartUrl.length-2];
       console.log('exploreStart: start_url =',start_url);
 
       var startData = JSON.stringify({"command":startValue});
@@ -547,7 +547,7 @@ $(document).ready(function(){
       //formatStartUrl = raw_urlPath.split('/');
       
       var startValue = 'Stop_Explore';
-      var start_url = window.location.origin + 'panelcontrol/Acme/Tahoe/Primetime';// + formatStartUrl[formatStartUrl.length-2];
+      var start_url = window.location.origin + '/panelcontrol/Acme/Tahoe/Primetime';// + formatStartUrl[formatStartUrl.length-2];
       console.log('exploreStart: start_url =',start_url);
 
       var startData = JSON.stringify({"command":startValue});
@@ -611,7 +611,7 @@ $(document).ready(function(){
       //formatStartUrl = raw_urlPath.split('/');
       //https://gradientone-test.appspot.com/panelcontrol/Acme/Tahoe/Primetime
       var startValue = 'Start_Trace';
-      var start_url = window.location.origin + 'panelcontrol/Acme/Tahoe/Primetime';// + formatStartUrl[formatStartUrl.length-2];
+      var start_url = window.location.origin + '/panelcontrol/Acme/Tahoe/Primetime';// + formatStartUrl[formatStartUrl.length-2];
       console.log('exploreStart: start_url =',start_url);
 
       var startData = JSON.stringify({"command":startValue});
@@ -633,7 +633,7 @@ $(document).ready(function(){
       //formatStartUrl = raw_urlPath.split('/');
       
       var startValue = 'Stop_Trace';
-      var start_url = window.location.origin + 'panelcontrol/Acme/Tahoe/Primetime';// + formatStartUrl[formatStartUrl.length-2];
+      var start_url = window.location.origin + '/panelcontrol/Acme/Tahoe/Primetime';// + formatStartUrl[formatStartUrl.length-2];
       console.log('exploreStart: start_url =',start_url);
 
       var startData = JSON.stringify({"command":startValue});
