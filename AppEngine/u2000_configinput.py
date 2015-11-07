@@ -5,6 +5,7 @@ from onedb import company_key
 from onedb import ConfigDB_key
 from onedb import agilentU2000
 from onedb import agilentU2000_key
+import json
 import itertools
 import jinja2
 import webapp2
@@ -29,21 +30,24 @@ class Handler(InstrumentDataHandler):
     def post(self):
         author = 'nedwards'
         #author = author_creation()
-        company_nickname = self.request.get('company_nickname')
-        hardware_name = self.request.get('hardware_name')
-        instrument_type = self.request.get('instrument_type')
-        config_name = self.request.get('config_name')
-        trace_name = self.request.get('trace_name')
-        averaging_count_auto= self.request.get('averaging_count_auto')
-        correction_frequency = self.request.get('correction_frequency')
-        offset = self.request.get('offset')
-        range_auto = self.request.get('range_auto')
-        units = self.request.get('units')
-        testplan_name = self.request.get('trace_name')
-        max_value = self.request.get('max_value')
-        min_value = self.request.get('min_value')
-        pass_fail = self.request.get('pass_fail')
-        pass_fail_type = self.request.get('pass_fail_type')
+        config_data = json.loads(self.request.body)
+        company_nickname = config_data['company_nickname']
+        hardware_name = config_data['hardware_name']
+        instrument_type = config_data['inst_name']
+        config_name = config_data['config_name']
+        trace_name = config_data['trace_name']
+        averaging_count_auto= config_data['avg_count_auto']
+        correction_frequency = config_data['correction_frequency']
+        offset = config_data['offset']
+        range_auto = config_data['range_auto']
+        units = config_data['units']
+        testplan_name = config_data['trace_name']
+        # max_value = config_data['max_value']
+        # min_value = config_data['min_value']
+        # pass_fail = config_data['pass_fail']
+        # pass_fail_type = config_data['pass_fail_type']
+        print range_auto, "range auto"
+        print averaging_count_auto, "averaging count auto"
         c = agilentU2000(key_name = (config_name+instrument_type), parent = company_key(),
             config_name = config_name,
             company_nickname = company_nickname, 
