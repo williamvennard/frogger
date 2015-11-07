@@ -38,7 +38,7 @@ function PMtraceStart(el){
           console.log('saveStatus: Ajax post was a success!');
         },
       });
-      clearTimeout(traceTimerID);
+      clearTimeout(PMtraceTimerID);
     };
 
 
@@ -73,7 +73,7 @@ function powerMeterData() {
         
         document.getElementById("measurementValue").innerHTML = measurement;
        });
-    traceTimerID = setTimeout(traceMode,1000);
+    PMtraceTimerID = setTimeout(powerMeterData,1000);
 };
 
 
