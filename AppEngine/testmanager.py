@@ -43,6 +43,7 @@ class Handler(InstrumentDataHandler):
         order = str(test_dict[0]['order'])
         order_list = get_ordered_list(order)
         for o in order_list:
+            print o['order']
             op = StateDB(key_name = (names[-1]+o['type']+o['name']), parent = company_key(),
                     testplan_name = names[-1],
                     company_nickname = names[0],
@@ -52,7 +53,7 @@ class Handler(InstrumentDataHandler):
                     )
             op.put()
         first_event = ConfigDB.gql("Where config_name =:1", order_list[0]['name']).get()
-        print order_list[0]
+        print order_list[0]['name']
         print first_event
         first_event.commence_test = True
         first_event.active_testplan_name = names[-1]

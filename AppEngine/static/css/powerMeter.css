@@ -25,6 +25,20 @@
     -moz-box-shadow: inset 6px 5px 55px 1px rgba(0,0,0,0.8);
     box-shadow: inset 6px 5px 55px 1px rgba(0,0,0,0.8);
 }
+.valueDisplay {
+    color:white;
+    font-size:150%;
+    font-family: 'nexa_lightregular';
+    margin: 0 0 0 20px;
+}
+
+.unitsDisplay {
+    float:right;
+    font-family: 'nexa_lightregular';
+    margin: 0 10px 0px 0; 
+    color: rgb(197,44,72); 
+    font-size:200%;
+}
 
 #leftDisplay {
 	background-color:rgb(33,33,33);
@@ -38,7 +52,7 @@
 #optionBox {
     position: absolute;
     top: -50px;
-    height: 250px;
+    height: 200px;
     width: 100%;
     background-color:black;
     border-radius: 10px;
@@ -47,4 +61,39 @@
 .optionsTitle {
     color: white;
     text-align: center;
+}
+
+.PMConfigBox {
+    width: 335px;
+    height: 240px;
+    background-color: rgb(33,33,33);
+    border-style: solid;
+    border-color: rgb(197,44,72);
+    border-radius: 5px;
+    border-width: 1px;
+}
+
+.PMConfigInput {
+    position: absolute;
+    margin-left: 160px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+
+}
+
+#PMSubmitBtn {
+    color: black;
+    font-family: 'nexa_lightregular';
+    letter-spacing: 2px;
+    width: 80px;
+    position: relative;
+    margin: 0px 20px 5px 165px;
+    padding: 4px 0 0 0;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 5px;
+    border-color: rgb(38,38,39);
+    background-color: rgb(124,175,46);
+    /*background-image: radial-gradient(#32CD32, #5cb85c);*/
 }

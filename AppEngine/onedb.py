@@ -296,7 +296,7 @@ class pwrmeter(DictModel):
     config_name = db.StringProperty(default = 'channel1')  
     channel_range_lower = db.StringProperty(default = '0.0')
     channel_range_upper = db.StringProperty(default = '0.0')
-    range_auto = db.StringProperty(default = 'True')
+    range_auto = db.BooleanProperty(default = True)
     trigger_source = db.StringProperty(default = 'IMM')  #possible values: BUS, INTernal[1], EXTernal, HOLD, IMMediate
     trigger_internal_event_source = db.StringProperty(default = '')
     trigger_internal_level = db.StringProperty(default = '0.0')
@@ -317,14 +317,14 @@ def agilentU2000_key(name = 'default'):
     
 class agilentU2000(pwrmeter):
     channel_count = db.StringProperty(default = '1')
-    averaging_count_auto = db.StringProperty(default = 'True')
+    averaging_count_auto = db.BooleanProperty(default = True)
     correction_frequency = db.StringProperty(default = '50e6')
     offset = db.StringProperty(default = '0.0')
     units = db.StringProperty(default = 'dBm')
-    pass_fail = db.StringProperty(default = False)
-    pass_fail_type = db.StringProperty(default = "")
-    max_value = db.StringProperty(default = '0.0')
-    min_value = db.StringProperty(default = '0.0')
+    # pass_fail = db.StringProperty(default = False)
+    # pass_fail_type = db.StringProperty(default = "")
+    # max_value = db.StringProperty(default = '0.0')
+    # min_value = db.StringProperty(default = '0.0')
 
 def agilentU2000data_key(name = 'default'):
     return db.Key.from_path('company_nickname', name)
