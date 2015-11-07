@@ -28,13 +28,14 @@ class Handler(InstrumentDataHandler):
 		comp_cookie = self.request.cookies.get("company_nickname")
 		if comp_cookie:
 			profile = {}
-			profile.company_nickname = comp_cookie
+			profile['company_nickname'] = comp_cookie
 		else:
-			profile = getProfile()
-		if hasattr(profile, 'company_nickname'):
-			query = TestDB.all().filter("company_nickname =", profile.company_nickname)
+			profile = getProfile().to_dict()
+
+		if profile.has_key('company_nickname'):
+			query = TestDB.all().filter("company_nickname =", profile['company_nickname'])
 			tests = query.run()
-			query = ConfigDB.all().filter("company_nickname =", profile.company_nickname)
+			query = ConfigDB.all().filter("company_nickname =", profile['company_nickname'])
 			configs = query.run()
 			self.render('ops.html', tests=tests, configs=configs, profile=profile)
 		else:
