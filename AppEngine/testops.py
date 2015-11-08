@@ -18,19 +18,22 @@ from google.appengine.api import oauth
 from google.appengine.api import users
 from google.appengine.ext import db
 from time import gmtime, strftime
-from profile import getProfile
+from profile import get_profile_cookie
 import appengine_config
 import json
 
 
 class Handler(InstrumentDataHandler):
 	def get(self):
-		profile = getProfile()
-		query = TestDB.all().filter("company_nickname =", profile.company_nickname)
-		tests = query.run()
-		query = ConfigDB.all().filter("company_nickname =", profile.company_nickname)
-		configs = query.run()
-		self.render('ops.html', tests=tests, configs=configs)
+		profile = get_profile_cookie(self)
+		if profile.has_key('company_nickname'):
+			query = TestDB.all().filter("company_nickname =", profile['company_nickname'])
+			tests = query.run()
+			query = ConfigDB.all().filter("company_nickname =", profile['company_nickname'])
+			configs = query.run()
+			self.render('ops.html', tests=tests, configs=configs, profile=profile)
+		else:
+			self.render('ops.html')
 	def post(self):
 		configKey = self.request.get('configKey')
 		config = db.get(configKey)

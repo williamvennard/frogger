@@ -33,10 +33,11 @@ import decimate
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
 from string import maketrans
-from profile import getProfile
+from profile import get_profile_cookie
 
 class Handler(InstrumentDataHandler):
     def get(self, company_nickname=""):
+        profile = get_profile_cookie(self)
         if company_nickname:
             company_nickname_check = company_nickname.split('.')
             company_nickname = company_nickname_check[0]
@@ -56,11 +57,10 @@ class Handler(InstrumentDataHandler):
             rows = query_to_dict(rows)   
             output['config_configs'] = rows
             render_json(self, output)
-        profile = getProfile()
-        if hasattr(profile, 'company_nickname'):
-            self.render('testlibrary.html', company_nickname=profile.company_nickname)
+        if profile.has_key('company_nickname'):
+            self.render('testlibrary.html', company_nickname=profile['company_nickname'], profile=profile)
         else:
-            self.render('testlibrary.html', company_nickname=company_nickname)
+            self.render('testlibrary.html', company_nickname=company_nickname, profile=profile)
 
 class JSON_Handler(InstrumentDataHandler):
     def get(self, company_nickname=""):

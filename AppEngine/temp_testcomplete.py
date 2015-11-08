@@ -28,8 +28,8 @@ class Handler(InstrumentDataHandler):
     def get():
         print 'in the right place'
         
-    def post(self, company_nickname="", config_name=""):
-        key = config_name
+    def post(self, company_nickname="", config_name="", active_testplan_name=""):
+        key = (config_name+active_testplan_name)
         print key, "is the key name"
         key = db.Key.from_path('ConfigDB', key, parent = company_key())
         config = db.get(key)

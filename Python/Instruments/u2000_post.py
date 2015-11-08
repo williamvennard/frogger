@@ -25,7 +25,7 @@ class agilentu2000:
     global COMPANYNAME
     global HARDWARENAME
     COMPANYNAME = 'Acme'
-    HARDWARENAME = 'MSP'
+    HARDWARENAME = 'Tahoe'
 
     def dt2ms(self, t):
         return int(t.strftime('%s'))*1000 + int(t.microsecond/1000)

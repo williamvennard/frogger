@@ -23,6 +23,7 @@ from google.appengine.api import users
 from google.appengine.ext import db
 import appengine_config
 import hashlib
+from profile import get_profile_cookie
 
 
 class Handler(InstrumentDataHandler):
@@ -36,6 +37,7 @@ class Handler(InstrumentDataHandler):
             print author
         else:
             self.redirect(users.create_login_url(self.request.uri))
+        profile = get_profile_cookie(self)
         company_nickname_check = company_nickname.split('.')
         company_nickname = company_nickname_check[0]
         if company_nickname_check[-1] == 'json':

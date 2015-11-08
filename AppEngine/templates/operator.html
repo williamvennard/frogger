@@ -2,32 +2,36 @@
 {% block title %} Test Ops {% endblock %}
 {% block head %}
     {{ super() }}
+    <style type="text/css">
+      #run {color: black;}
+      .ops_button {color: black;}
+    </style>
 {% endblock %}
 {% block content %}
 <div class="col-md-8 col-md-offset-2">
-	<h1>Operator Page</h1>
-	<div>
+	<div class="row">
+		<h1>Operator Page</h1>
 		<h3>Test Overview</h3>
-		<p>(overview and test info goes here)</p>
+		<p>[overview and test info goes here]</p>
 		<p>{{data.config}}</p>
-		<hr>
+		<br>
 		<form name="runTest" enctype="application/json" action="{{data.testplan_name}}/run" method="post">
-			<p><button type="submit">RUN</button>(Execute config)</p>
+			<p>Execute config: <button type="submit" id="run">Run</button></p>
 			<input type="hidden" name="info[0]" value="{{data.company_nickname}}">
 			<input type="hidden" name="info[1]" value="{{data.testplan_name}}">
 		</form>
+		<hr>
 	</div>
-	<div>
+	<div class= "row">
 		<h3>Results</h3>
 		<p>[test results should go here]</p>
 		<p>{{data.results}}</p>
+		<p>Return to test library:
+		<a href="/testlibrary/{{data.company_nickname}}"><button>Done</button></a>
+		</p>
 		<hr>
 	</div>
-	<div>
-		<a href="/testlibrary/{{data.company_nickname}}"><button>Done</button></a>
-		<p>(return to test library)</p>
-	</div>
-	<div>
+	<div class= "row">
 		<h4>Comments</h4>
 		{% for comment in data.comment_thread %}
 		<hr>
@@ -38,7 +42,7 @@
 		<textarea name="content" id="content" form="usrform" rows="5" cols="50">Enter comment here...</textarea>
 		<form action="/operator/{{data.company_nickname}}/{{data.hardware_name}}/{{data.config_name}}/{{data.start_tse}}" method="post" id="usrform">
 			<input type="hidden" name="testplan" value="{{data.testplan_name}}">
-            <input type="submit">
+            <input class="ops_button" type="submit">
 		</form>
 	</div>
 </div>
