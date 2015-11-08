@@ -50,11 +50,6 @@ function PMConfig() {
     };
 
 
-
-
-
-
-
 function PMtraceStart(el){
       console.log('traceStart !!!!!')
       //formatStartUrl = raw_urlPath.split('/');
@@ -80,7 +75,7 @@ function PMtraceStart(el){
       console.log('traceStop !!!!!')
       
       var startValue = 'Stop_Trace';
-      var start_url = window.location.origin + '/panelcontrol/Acme/Tahoe/' + configName;// + formatStartUrl[formatStartUrl.length-2];
+      var start_url = window.location.origin + '/panelcontrol/Acme/Tahoe/' + configName; 
       console.log('exploreStart: start_url =',start_url);
 
       var startData = JSON.stringify({"command":startValue});
@@ -109,7 +104,7 @@ $("#powerMeterStartStop").click(function() {
     });
 
 
-
+var resultsTrigger;
 function powerMeterData() {
   console.log('PowerMeter START!');
       //test_info_url = 'https://gradientone-test.appspot.com/u2000_traceresults/Acme/MSP/Tahoe';
@@ -121,6 +116,7 @@ function powerMeterData() {
        }).done(function (results) { 
         console.log('powerMeterStart: Power Meter results = ', results);      
         var testInfo = results;  
+        resultsTrigger = results;
 
         var measurement = testInfo.cha;
         console.log('powerMeterStart: cha', measurement);
@@ -131,8 +127,11 @@ function powerMeterData() {
         document.getElementById("measurementValue").innerHTML = measurement;
        });
     PMtraceTimerID = setTimeout(powerMeterData,1000);
+    //stop when there is data
+    if (!(resultsTrigger = 'none') {
+      clearTimeout(PMtraceTimerID);
+   };
 };
-
 
 
 
