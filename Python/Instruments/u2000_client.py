@@ -13,7 +13,7 @@ import ivi
 
 
 COMPANYNAME = 'Acme'
-HARDWARENAME = 'MSP'
+HARDWARENAME = 'Tahoe'
 def dt2ms(t):
     return int(t.strftime('%s'))*1000 + int(t.microsecond/1000)
 
