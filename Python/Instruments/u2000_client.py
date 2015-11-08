@@ -28,7 +28,7 @@ def post_status(status):
     print "s.status_code=",s.status_code
     #print "dir(s)=",dir(s)
 
-def post_complete(config_name, s):
+def post_complete(config_name, active_testplan_name, s):
     window_complete = {'commence_test':False}
     out_complete = json.dumps(window_complete, ensure_ascii=True)
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
@@ -100,7 +100,8 @@ def check_config_url():
                 u2000_acq(config, nested_config, s)
                 config_vars = check_config_vars(config, nested_config)
                 config_name = config_vars[1]
-                post_complete(config_name,s)
+                active_testplan_name = config_vars[0]
+                post_complete(config_name, active_testplan_name, s)
         else:
             print "No start order found"
     threading.Timer(1, check_config_url()).start()
