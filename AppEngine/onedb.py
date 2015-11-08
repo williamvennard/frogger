@@ -321,10 +321,10 @@ class agilentU2000(pwrmeter):
     correction_frequency = db.StringProperty(default = '50e6')
     offset = db.StringProperty(default = '0.0')
     units = db.StringProperty(default = 'dBm')
-    # pass_fail = db.StringProperty(default = False)
-    # pass_fail_type = db.StringProperty(default = "")
-    # max_value = db.StringProperty(default = '0.0')
-    # min_value = db.StringProperty(default = '0.0')
+    pass_fail = db.StringProperty(default = "False")
+    pass_fail_type = db.StringProperty(default = "")
+    max_value = db.StringProperty(default = '0.0')
+    min_value = db.StringProperty(default = '0.0')
 
 def agilentU2000data_key(name = 'default'):
     return db.Key.from_path('company_nickname', name)
