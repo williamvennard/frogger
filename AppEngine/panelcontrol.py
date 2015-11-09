@@ -34,15 +34,12 @@ from google.appengine.ext.webapp import blobstore_handlers
 from string import maketrans
 
 class Handler(InstrumentDataHandler):
-    def post(self, company_nickname="", hardware_name="",config_name=""):
-        testplan_name = 'Noob'
+    def post(self, company_nickname="", hardware_name="",config_name="", testplan_name=""):
+        control_object = json.loads(self.request.body)
+        order = control_object['command']
         key_name = config_name + testplan_name
         key = db.Key.from_path('ConfigDB', key_name, parent = company_key())
         config = db.get(key)
-        control_object = json.loads(self.request.body)
-        print control_object
-        order = control_object['command']
-        print order
         if order == 'Stop_Explore':
             config.commence_explore = False
         elif order == 'Start_Explore':

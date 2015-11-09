@@ -1,5 +1,6 @@
 //PM CONFIG FORM SUBMIT
 var configName;
+var traceName;
 function PMConfig() {
       $('#collapseConfig').collapse("hide");
       var d = document.getElementById('PMConfigSettings');
@@ -7,7 +8,7 @@ function PMConfig() {
       var children = d.childNodes;
       console.log('PMConfig: children = ', children);
       configName = children[1].children[1].value;
-      var traceName = children[3].children[1].value;
+      traceName = children[3].children[1].value;
 
       var frequencyCorrection =  children[5].children[1].value;
       var offset = children[7].children[1].value; 
@@ -55,7 +56,7 @@ function PMtraceStart(el){
       //formatStartUrl = raw_urlPath.split('/');
       //https://gradientone-test.appspot.com/panelcontrol/Acme/Tahoe/Primetime
       var startValue = 'Start_Trace';
-      var start_url = window.location.origin + '/panelcontrol/Acme/Tahoe/' + configName;// + formatStartUrl[formatStartUrl.length-2];
+      var start_url = window.location.origin + '/panelcontrol/Acme/Tahoe/' + configName + '/' + traceName;// + formatStartUrl[formatStartUrl.length-2];
       console.log('exploreStart: start_url =',start_url);
       var startData = JSON.stringify({"command":startValue});
       console.log('exploreStart: startData =', startData);
@@ -75,7 +76,7 @@ function PMtraceStart(el){
       console.log('traceStop !!!!!')
       
       var startValue = 'Stop_Trace';
-      var start_url = window.location.origin + '/panelcontrol/Acme/Tahoe/' + configName; 
+      var start_url = window.location.origin + '/panelcontrol/Acme/Tahoe/' + configName + '/' + traceName;
       console.log('exploreStart: start_url =',start_url);
 
       var startData = JSON.stringify({"command":startValue});
@@ -128,14 +129,9 @@ function powerMeterData() {
        });
     PMtraceTimerID = setTimeout(powerMeterData,1000);
     //stop when there is data
-    if (!(resultsTrigger = 'none') {
+    if (!(resultsTrigger = 'none')) {
       clearTimeout(PMtraceTimerID);
    };
 };
-
-
-
-
-
 
 
