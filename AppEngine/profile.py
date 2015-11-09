@@ -119,7 +119,8 @@ class AdduserPage(InstrumentDataHandler):
         profile = get_profile()
         if profile:
             if profile.admin:
-                self.render('adduser.html')
+                self.render('adduser.html', 
+                    company_nickname=profile.company_nickname)
             else:
                 self.redirect('/profile')
         else:
@@ -128,9 +129,11 @@ class AdduserPage(InstrumentDataHandler):
     def post(self):
         email = self.request.get('email')
         name = self.request.get('name')
+        company_nickname = self.request.get('company_nickname')
+
         # TODO - handle spaces in companyname
         profile = ProfileDB(email = email, 
-                      company_nickname = companyname, 
+                      company_nickname = company_nickname, 
                       name = name)
         profile.put()
         checked_box = self.request.get("admin")
