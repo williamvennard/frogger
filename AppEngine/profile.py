@@ -36,31 +36,28 @@ from datetime import datetime
 
 
 def get_profile():
+    """Get profile object"""
     user = users.get_current_user()
     if user:
         q = ProfileDB.all().filter("userid =", user.user_id())
         profile = q.get()
         return profile
     else:
-        return False	
-
-        comp_cookie = self.request.cookies.get("company_nickname")
-        if comp_cookie:
-            profile = {}
-            profile['company_nickname'] = comp_cookie
-        else:
-            profile = get_profile()
-            set_profile_cookies(self, profile)
+        return False
 
 def get_profile_cookie(self):
-    """get cookie data or get ProfileDB data"""
+    """Get cookie data else DB profile data. Returns Dictionary."""
     comp_cookie = self.request.cookies.get("company_nickname")
     if comp_cookie:
         profile = {}
         profile['company_nickname'] = comp_cookie
+        return profile
     else:
-        profile = get_profile().to_dict()
-    return profile
+        profile = get_profile()
+        if hasattr(profile, 'to_dict'):
+            return profile.to_dict()
+        else:
+            return {}
 
 def set_groups_cookie(self, profile):        
     groups_string = "|".join(profile['groups'])            
@@ -120,12 +117,35 @@ class Handler(InstrumentDataHandler):
 class AdduserPage(InstrumentDataHandler):
     def get(self):
         profile = get_profile()
-        if profile.admin:
-            admin_email = profile.email
-            self.render('adduser.html')            
+        if profile:
+            if profile.admin:
+                self.render('adduser.html')
+            else:
+                self.redirect('/profile')
         else:
             self.redirect('/')
 
+    def post(self):
+        email = self.request.get('email')
+        name = self.request.get('name')
+        # TODO - handle spaces in companyname
+        profile = ProfileDB(email = email, 
+                      company_nickname = companyname, 
+                      name = name)
+        profile.put()
+        checked_box = self.request.get("admin")
+        if checked_box:
+            profile.admin = True
+        else:
+            profile.admin = False
+        if not profile.bio:
+            profile.bio = "No bio entered yet."
+        profile.put()
+        self.redirect('/listusers')
+
+class AdminAddUser(InstrumentDataHandler):
+    def get(self):
+        self.render('admin_adduser.html')
     def post(self):
         email = self.request.get('email')
         companyname = self.request.get('companyname')
@@ -143,22 +163,27 @@ class AdduserPage(InstrumentDataHandler):
         if not profile.bio:
             profile.bio = "No bio entered yet."
         profile.put()
-        self.redirect('/profile')
-
+        self.redirect('/admin/editusers')
 
 class ListUsersPage(InstrumentDataHandler):
     def get(self):
         profile = get_profile()
-        if not profile.admin:
-            redirect('/')
-        users = db.GqlQuery("SELECT * FROM ProfileDB WHERE company_nickname = 'GradientOne'").fetch(None)
-        print "ListUsersPage:get: users =",users
-        if len(users) > 0:
-            self.render('listusers.html',company=users[0].company_nickname,
-                        users=users)
+        if hasattr(profile, 'admin'):
+            if profile.admin:
+                company_nickname = profile.company_nickname
+                profiles = ProfileDB.all().filter("company_nickname =", company_nickname)
+                if profiles:
+                    self.render('listusers.html',company=company_nickname,
+                                profiles=profiles)
+                else:
+                    self.render('listusers.html',company="new company?",
+                                profiles=profiles)
+            else:
+                self.redirect('profile')
         else:
-            self.render('listusers.html',company="new company?",
-                        users=users)
+            self.redirect('/')
+
+
     def post(self):
         email = self.request.get('user_email')
         q = ProfileDB.all().filter("email =", email)
@@ -175,3 +200,28 @@ class ListUsersPage(InstrumentDataHandler):
         profile.put()
 
         self.redirect('/listusers')
+
+
+class AdminEditUsers(InstrumentDataHandler):
+    """docstring for AdminEditUsers InstrumentDataHandler"""
+    def get(self):
+        profiles = ProfileDB.all()
+        self.render('admin_editusers.html', profiles=profiles)
+
+    def post(self):
+        email = self.request.get('user_email')
+        q = ProfileDB.all().filter("email =", email)
+        profile = q.get()
+
+        group = self.request.get('group')
+        profile.groups.append(group)
+        profile.put()
+
+        group_to_delete = self.request.get('group_to_delete')
+        profile.groups.remove(group_to_delete)
+        profile.put()
+        profile.groups = filter(None, profile.groups)
+        profile.put()
+
+        self.redirect('/admin/editusers')    
+        

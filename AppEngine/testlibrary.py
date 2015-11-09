@@ -57,10 +57,13 @@ class Handler(InstrumentDataHandler):
             rows = query_to_dict(rows)   
             output['config_configs'] = rows
             render_json(self, output)
-        if profile.has_key('company_nickname'):
-            self.render('testlibrary.html', company_nickname=profile['company_nickname'], profile=profile)
+        if profile:
+            if profile.has_key('company_nickname'):
+                self.render('testlibrary.html', company_nickname=profile['company_nickname'], profile=profile)
+            else:
+                self.render('testlibrary.html', company_nickname=company_nickname, profile=profile)
         else:
-            self.render('testlibrary.html', company_nickname=company_nickname, profile=profile)
+            self.redirect('/profile')
 
 class JSON_Handler(InstrumentDataHandler):
     def get(self, company_nickname=""):
