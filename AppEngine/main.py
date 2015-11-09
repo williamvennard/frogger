@@ -148,6 +148,8 @@ app = webapp2.WSGIApplication([
     ('/adduser', profile.AdduserPage),
     ('/listusers', profile.ListUsersPage),
     ('/profile', profile.Handler),
+    ('/admin/adduser', profile.AdminAddUser),
+    ('/admin/editusers', profile.AdminEditUsers),
     ('/configlookup', configlookup.Handler),
     ('/instruments', instruments.Handler),
     ('/instruments/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', instruments.Handler),

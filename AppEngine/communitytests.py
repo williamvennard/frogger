@@ -39,15 +39,13 @@ from profile import get_profile_cookie
 
 class Handler(InstrumentDataHandler):
 	def get(self):
-
 		tests = TestDB.all()
-
 		profile = get_profile_cookie(self)
 
 		if profile.has_key('company_nickname'):
-			company_nickname = "No_Company"
+			company_nickname = profile['company_nickname'] 
 		else:
-			company_nickname = profile.company_nickname
+			company_nickname = "No_Company"
 
 		tests.filter("company_nickname =", company_nickname)
 		
@@ -76,7 +74,7 @@ class Handler(InstrumentDataHandler):
 			public_posts = public_posts.filter("privacy =", "public")
 			public_posts.filter("privacy =", "public")
 			self.render('communitytests.html', public_posts=public_posts, 
-						tests=tests, p_count=0)
+						tests=tests, p_count=0, profile="")
 
 	def post(self):
 		user = users.get_current_user()
