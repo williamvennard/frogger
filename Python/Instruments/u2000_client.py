@@ -143,6 +143,7 @@ def u2000_acq(config, nested_config, s):
     print acq_dict
     bits = agilentu2000(acq_dict,s)
     bits.transmitraw()
+    bits.transmitblob()
     bits.testcomplete()
     #post_status('Idle')
 

@@ -15,9 +15,9 @@ import requests
 import os, sys, stat
 import csv
 import grequests
-#import urllib3 
-#from urllib3.poolmanager import PoolManager
-#from requests_toolbelt.multipart.encoder import MultipartEncoder
+import urllib3 
+from urllib3.poolmanager import PoolManager
+from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 class agilentu2000:
     """Send script config to server.
@@ -87,6 +87,23 @@ class agilentu2000:
         start_tse = int(self.u2000_test_results['Start_TSE'])
         test_results = self.u2000_test_results['data']
         self.post_complete(active_testplan_name, config_name, test_plan, stop_tse, i_settings, start_tse, test_results)
+
+    def transmitblob(self):
+        f = open('/home/nedwards/BitScope/Examples/tempfile.csv', 'w')
+        w = csv.writer(f)
+        w.writerow(self.bscope_test_results.keys())
+        w.writerow(self.bscope_test_results.values())
+        f.close()
+        m = MultipartEncoder(
+                  fields={'field0':('BitScope', open('/home/nedwards/BitScope/Examples/tempfile.csv', 'rb'), 'text/plain')}
+                  )
+        blob_url = requests.get("https://gradientone-test.appspot.com/upload/geturl")
+        #m = MultipartEncoder(
+        #        fields={'field0': ('tek0012ALL', open('../../DataFiles/tekcsv/tek0012ALL.csv', 'rb'), 'text/plain')}
+        #        )
+        b = requests.post(blob_url.text, data = m, headers={'Content-Type': m.content_type})
+        print "b.reason=",b.reason
+        print "b.status_code=",b.status_code
 
 if __name__ == "__main__":
     import doctest
