@@ -64,7 +64,7 @@ class Handler(InstrumentDataHandler):
             # pass_fail_type = pass_fail_type,
             )
         c.put() 
-        s = ConfigDB(key_name = config_name, parent = company_key(),
+        s = ConfigDB(key_name = (config_name+testplan_name), parent = company_key(),
             config_name = config_name,
             company_nickname = company_nickname,
             hardware_name = hardware_name, 
