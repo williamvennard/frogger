@@ -15,8 +15,8 @@ import requests
 import os, sys, stat
 import csv
 import grequests
-import urllib3 
-from urllib3.poolmanager import PoolManager
+# import urllib3 
+# from urllib3.poolmanager import PoolManager
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 class agilentu2000:
