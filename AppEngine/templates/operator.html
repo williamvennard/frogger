@@ -78,13 +78,11 @@
 			<input type="hidden" name="testplan" value="{{data.testplan_name}}">
             <input class="ops_button" type="submit">
 		</form>
-
-		<p id="debugger">DEBUG ON</p>
-		<p id="feedback"></p>
 	</div>
 </div>
 
 <script type="text/javascript">
+
   var instrument_config = {
   configName : '{{data.config_name}}',
   traceName : '{{data.testplan_name}}',
@@ -94,25 +92,11 @@
   avgCountAuto : '{{instrument_config.averaging_count_auto}}',
   rangeAuto : '{{instrument_config.range_auto}}',
   };
-
-// window.onload = function() {myFunction()};
 $( document ).ready(function(){OPConfig(instrument_config);});
 
-// document.getElementById("debugger").onload = function() {myFunction()};
-// function myFunction() {
-//     document.getElementById("feedback").innerHTML = "Debugger is loaded.";
-// }
 </script>
 
 <script type="text/javascript" src="/static/js/powerMeter.js"></script>
 <script typo="text/javascript" src="/static/js/testops.js"></script>
-<script type="text/javascript">
-
-  // window.onload = function() {OPConfig(instrument_config)};
-  // $( document ).ready(function() {
-  // OPConfig(instrument_config);
-  // });
-</script>
-
 
 {% endblock %}

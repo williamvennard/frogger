@@ -10,12 +10,7 @@
 <h3>Available Test Plans:</h3>
 <div>
 	{% for config in configs %}
-		<li>
-		<a href="/operator/{{config.company_nickname}}/{{config.config_name}}/{{config.active_testplan_name}}">{{config.company_nickname}} >> {{config.config_name}} >> {{config.active_testplan_name}}</a><br>
-		</li>
-		<li>
 		<a href="/operator/{{config.company_nickname}}/{{config.hardware_name}}/{{config.config_name}}/{{config.active_testplan_name}}">{{config.company_nickname}} >> {{config.hardware_name}} >> {{config.config_name}} >> {{config.active_testplan_name}} </a><br>
-		</li>
 	{% endfor %}
 </div>
 {% endblock %}

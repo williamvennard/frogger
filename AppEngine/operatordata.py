@@ -48,17 +48,6 @@ class Handler(InstrumentDataHandler):
         else:
             profile = get_profile()
 
-        # Temporarily ignored for debugging
-        # query = TestDB.all().filter("company_nickname =", company_nickname)
-        # query = query.filter("testplan_name =", testplan_name)
-        # test = query.get()
-        # if not test:
-        #     logging.error("TestData:get: query")
-        #     self.redirect('/')
-
-        # hardware_name = test.hardware_name
-        hardware_name = 'Tahoe'
-
         query = ConfigDB.all().filter("company_nickname =", company_nickname)
         query.filter("hardware_name =", hardware_name)
         query.filter("config_name =", config_name)
@@ -82,53 +71,59 @@ class Handler(InstrumentDataHandler):
         instrument_config = db.get(key)
         print instrument_config
 
-        self.render('operator.html', data=templatedata, config=config, 
-            instrument_config=instrument_config, profile=profile)
+        query = TestDB.all().filter("company_nickname =", company_nickname)
+        query = query.filter("testplan_name =", testplan_name)
+        test = query.get()
+        comment_thread = []
+        if test:
+            if hasattr(test, 'comments'):
+                for comment in test.comments:
+                    comment_thread.append(comment)
+            else:
+                logging.error("TestComments:get: query")
+        else:
+            logging.error("TestData:get: query")
 
-        # comment_thread = []
-        # # Tempoarily ignored for debugging        
-        # # if hasattr(test, 'comments'):
-        # #     for comment in test.comments:
-        # #         comment_thread.append(comment)
-
-        # templatedata['comment_thread'] = comment_thread
+        templatedata['comment_thread'] = comment_thread
     
-        # # check for results data. 
-        # key = 'u2000testresults' + testplan_name + config_name
-        # cached_copy = memcache.get(key)
-        # if cached_copy:
-        #     templatedata['results'] = cached_copy
-        #     self.render('operator.html', data=templatedata, config=config, profile=profile)
-        
-        # else:
-        #     key = testplan_name + company_nickname + hardware_name + config_name
-        #     cached_copy = memcache.get(key)
-        #     if cached_copy is None:
-        #         result_data = TestResultsDB.all().get()
-        #         if hasattr(result_data, 'data'):
-        #             data = result_data.to_dict()
-        #             # ToDo: Add handler to check data for bscope 
-        #             bscope = False # Temparory hardcoded to avoid 
-        #             if bscope:
-        #                 cha_list = convert_str_to_cha_list(data['cha'])
-        #                 data['cha'] = cha_list
-        #                 e = data
-        #                 output = {"data":data}
-        #             else:
-        #                 # pull data for aU2000
-        #                 e = data['test_results_data']
-        #             output = json.dumps(e)
-        #             memcache.set(key, output)
-        #             templatedata['results'] = output
-        #             self.render('operator.html', data=templatedata, config=config, profile=profile)
-        #         else:
-        #             logging.error("ResultData:get: query returned no data")
-        #             templatedata['results'] = "Error: No result data"
-        #             self.render('operator.html', data=templatedata, config=config, profile=profile)               
-        #     else:
-        #         templatedata['results'] = cached_copy
-        #         self.render('operator.html', data=templatedata, config=config, profile=profile)
-
+        # check for results data. 
+        key = 'u2000testresults' + testplan_name + config_name
+        cached_copy = memcache.get(key)
+        if cached_copy:
+            templatedata['results'] = cached_copy
+            self.render('operator.html', data=templatedata, config=config, 
+                    instrument_config=instrument_config, profile=profile)        
+        else:
+            key = testplan_name + company_nickname + hardware_name + config_name
+            cached_copy = memcache.get(key)
+            if cached_copy is None:
+                result_data = TestResultsDB.all().get()
+                if hasattr(result_data, 'data'):
+                    data = result_data.to_dict()
+                    # ToDo: Add handler to check data for bscope 
+                    bscope = False # Temparory hardcoded to avoid 
+                    if bscope:
+                        cha_list = convert_str_to_cha_list(data['cha'])
+                        data['cha'] = cha_list
+                        e = data
+                        output = {"data":data}
+                    else:
+                        # pull data for aU2000
+                        e = data['test_results_data']
+                    output = json.dumps(e)
+                    memcache.set(key, output)
+                    templatedata['results'] = output
+                    self.render('operator.html', data=templatedata, config=config, 
+                            instrument_config=instrument_config, profile=profile)
+                else:
+                    logging.error("ResultData:get: query returned no data")
+                    templatedata['results'] = "Error: No result data"
+                    self.render('operator.html', data=templatedata, config=config, 
+                            instrument_config=instrument_config, profile=profile)
+            else:
+                templatedata['results'] = cached_copy
+                self.render('operator.html', data=templatedata, config=config, 
+                        instrument_config=instrument_config, profile=profile)
 
     def post(self, company_nickname="", config_name="", testplan_name=""):
         """posts a comment on the test results"""
