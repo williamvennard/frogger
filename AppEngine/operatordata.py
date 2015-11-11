@@ -32,6 +32,7 @@ from google.appengine.ext import db
 from time import gmtime, strftime
 import appengine_config
 import json
+from profile import get_profile
 
 # result_types = {
 #     'bscope' : BscopeDB,
@@ -39,21 +40,13 @@ import json
 # }
 
 class Handler(InstrumentDataHandler):
-    def get(self, company_nickname="", config_name="", testplan_name=""):
+    def get(self, company_nickname="", hardware_name="", config_name="", testplan_name=""):
         comp_cookie = self.request.cookies.get("company_nickname")
         if comp_cookie:
             profile = {}
             profile['company_nickname'] = comp_cookie
         else:
-            profile = getProfile()
-        query = TestDB.all().filter("company_nickname =", company_nickname)
-        query = query.filter("testplan_name =", testplan_name)
-        test = query.get()
-        if not test:
-            logging.error("TestData:get: query")
-            self.redirect('/')
-
-        hardware_name = test.hardware_name
+            profile = get_profile()
 
         query = ConfigDB.all().filter("company_nickname =", company_nickname)
         query.filter("hardware_name =", hardware_name)
@@ -65,18 +58,31 @@ class Handler(InstrumentDataHandler):
             config = '{"instrument_type": "sample inputs", "config_name": "config1", "company_nickname": "GradientOne", "trace_name": "trace1", "title": "T1"}'
         else:
             config = config.to_dict()
+
         templatedata = {
-                'config': config,
                 'company_nickname' : company_nickname,
                 'hardware_name' : hardware_name,
                 'config_name' : config_name,
                 'testplan_name' : testplan_name,
                 }
 
+        key_name = config_name + config['instrument_type']
+        key = db.Key.from_path('agilentU2000', key_name, parent = company_key())
+        instrument_config = db.get(key)
+        print instrument_config
+
+        query = TestDB.all().filter("company_nickname =", company_nickname)
+        query = query.filter("testplan_name =", testplan_name)
+        test = query.get()
         comment_thread = []
-        if hasattr(test, 'comments'):
-            for comment in test.comments:
-                comment_thread.append(comment)
+        if test:
+            if hasattr(test, 'comments'):
+                for comment in test.comments:
+                    comment_thread.append(comment)
+            else:
+                logging.error("TestComments:get: query")
+        else:
+            logging.error("TestData:get: query")
 
         templatedata['comment_thread'] = comment_thread
     
@@ -85,8 +91,8 @@ class Handler(InstrumentDataHandler):
         cached_copy = memcache.get(key)
         if cached_copy:
             templatedata['results'] = cached_copy
-            self.render('operator.html', data=templatedata, profile=profile)
-        
+            self.render('operator.html', data=templatedata, config=config, 
+                    instrument_config=instrument_config, profile=profile)        
         else:
             key = testplan_name + company_nickname + hardware_name + config_name
             cached_copy = memcache.get(key)
@@ -107,15 +113,17 @@ class Handler(InstrumentDataHandler):
                     output = json.dumps(e)
                     memcache.set(key, output)
                     templatedata['results'] = output
-                    self.render('operator.html', data=templatedata, profile=profile)
+                    self.render('operator.html', data=templatedata, config=config, 
+                            instrument_config=instrument_config, profile=profile)
                 else:
                     logging.error("ResultData:get: query returned no data")
                     templatedata['results'] = "Error: No result data"
-                    self.render('operator.html', data=templatedata, profile=profile)               
+                    self.render('operator.html', data=templatedata, config=config, 
+                            instrument_config=instrument_config, profile=profile)
             else:
                 templatedata['results'] = cached_copy
-                self.render('operator.html', data=templatedata, profile=profile)
-
+                self.render('operator.html', data=templatedata, config=config, 
+                        instrument_config=instrument_config, profile=profile)
 
     def post(self, company_nickname="", config_name="", testplan_name=""):
         """posts a comment on the test results"""
@@ -279,7 +287,7 @@ class BscopeHandler(InstrumentDataHandler):
                 if hasattr(result_data, 'data'):
                     data = result_data.to_dict()
                     logging.error("ResultData:get: query")
-                    templatedata['results'] = "Error: No result data"
+                    templatedata['results'] = "No result data"
                     self.render('operator.html', data=templatedata)               
                 # ToDo: Add handler to check data for bscope 
                 bscope = False
