@@ -97,7 +97,8 @@ def check_config_url():
             if config['commence_test'] == 'True':  
                 print "Starting API"
                 post_status('Starting')
-                u2000_acq(config, nested_config, s)
+                u2000 = ivi.agilent.agilentU2001A(("USB::0x0957::0x2b18::INSTR"))
+                u2000_acq(config, nested_config, u2000, s)
                 config_vars = check_config_vars(config, nested_config)
                 config_name = config_vars[1]
                 active_testplan_name = config_vars[0]
@@ -107,13 +108,13 @@ def check_config_url():
     threading.Timer(1, check_config_url()).start()
 
 
-def u2000_acq(config, nested_config, s):    
+def u2000_acq(config, nested_config, u2000, s):    
     """sets the configuration for the u2000 API and calls the u2000 class"""
     time_start = time.time()
     acq_dict = {}
     print "Starting: Attempting to open one device..."
     config_vars = check_config_vars(config, nested_config)
-    u2000 = ivi.agilent.agilentU2001A(("USB::0x0957::0x2b18::INSTR"))
+    #u2000 = ivi.agilent.agilentU2001A(("USB::0x0957::0x2b18::INSTR"))
     u2000.channels['channel1']
     u2000.channels['channel1'].correction_frequency = config_vars[2]
     #u2000.channels['channel1'].offset = config_vars[3]
