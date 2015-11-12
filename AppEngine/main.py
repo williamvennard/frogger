@@ -66,6 +66,9 @@ import temp_testcomplete
 from gradientone import InstrumentDataHandler
 from onedb import ProfileDB
 from onedb import UserDB
+from onedb import TestBlobKey_key
+from onedb import TestBlobKey
+from onedb import company_key
 import measurements
 import test_make_interface
 import operatordata
@@ -76,6 +79,7 @@ import report_summary
 import report_detail
 import u2000_traceresultsdata
 import u2000_testresultsdata
+import testblobs
 
 authorized_users = ['charlie@gradientone.com',
                     'nedwards@gradientone.com',
@@ -99,9 +103,6 @@ class DictModel(db.Model):
     def to_dict(self):
        return dict([(p, unicode(getattr(self, p))) for p in self.properties()])
 
-
-
-
 class FileBlob(db.Model):
     blob_key = blobstore.BlobReferenceProperty(required=True)
 
@@ -118,9 +119,13 @@ class FileUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
     def post(self):
         try:
             upload = self.get_uploads()[0] 
-            print upload.key()
+            load = self.request.body
+            print load
+            print load['filename']
             dbfile = FileBlob(blob_key=upload.key())
             dbfile.put()
+            testblobkey = TestBlobKey(key_name = testplan_name, parent = company_key(), test_blob_key = upload.key())
+            testblobkey.put()
             self.redirect('/upload/success')
         except:
             self.redirect('/upload_failure.html')
@@ -129,7 +134,6 @@ class FileUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
 class FileUploadSuccess(InstrumentDataHandler):
     def get(self):
         self.response.out.write("File Upload Successful")
-
 
 class FileUploadFailure(InstrumentDataHandler):
     def get(self):
@@ -212,6 +216,7 @@ app = webapp2.WSGIApplication([
     ('/report_summary/report_detail/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)',  report_detail.Handler),
     ('/u2000_traceresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000_traceresultsdata.Handler),
     ('/u2000_testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000_testresultsdata.Handler),
+    ('/testblobs', testblobs)
 ], debug=True)
 
 

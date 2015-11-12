@@ -95,9 +95,9 @@ class agilentu2000:
         w.writerow(self.u2000_test_results.keys())
         w.writerow(self.u2000_test_results.values())
         f.close()
-        m = (MultipartEncoder(
-                  fields={'field0':('u2000blob', open('/home/nedwards/BitScope/Examples/tempfile.csv', 'rb'), 'text/plain')}
-                  ), 'testplan_name':active_testplan_name)
+        m = MultipartEncoder(
+                  fields={'field0':(active_testplan_name, open('/home/nedwards/BitScope/Examples/tempfile.csv', 'rb'), 'text/plain')}
+                  )
         blob_url = requests.get("https://gradientone-test.appspot.com/upload/geturl")
         #m = MultipartEncoder(
         #        fields={'field0': ('tek0012ALL', open('../../DataFiles/tekcsv/tek0012ALL.csv', 'rb'), 'text/plain')}
