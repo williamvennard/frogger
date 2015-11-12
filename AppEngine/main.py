@@ -118,7 +118,7 @@ class FileUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
     def post(self):
         try:
             upload = self.get_uploads()[0] 
-            print upload
+            print upload.key()
             dbfile = FileBlob(blob_key=upload.key())
             dbfile.put()
             self.redirect('/upload/success')
