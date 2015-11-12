@@ -46,7 +46,8 @@ class Handler(InstrumentDataHandler):
             key = 'TestResultsDB'+testplan_name+config_name
             test_plan = True
             trace = False
-            r = TestResultsDB(key_name = testplan_name, parent = company_key(), testplan_name=testplan_name,
+            r = TestResultsDB(key_name = testplan_name+str(test_complete_content['start_tse']), parent = company_key(), 
+                        testplan_name=testplan_name,
                         company_nickname = company_nickname, 
                         Total_Slices=int((test_complete_content['p_settings']['Total_Slices'])),
                         Dec_msec_btw_samples=(test_complete_content['p_settings']['Dec_msec_btw_samples']),
@@ -85,7 +86,7 @@ class Handler(InstrumentDataHandler):
             config_name = test_complete_content['config_name']
             hardware_name = test_complete_content['hardware_name']
             to_save = []
-            key = config_name + testplan_name
+            key = testplan_name + str(test_complete_content['start_tse'])
             r = TestResultsDB(parent = company_key(), testplan_name=testplan_name, key_name = key,
                     company_nickname = company_nickname, 
                     config_name=config_name,

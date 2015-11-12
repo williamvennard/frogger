@@ -1,3 +1,6 @@
+//PM CONFIG FORM SUBMIT
+var configName;
+var traceName;
 
 function OPConfig(instrument_config) {
 
@@ -40,3 +43,99 @@ function OPConfig(instrument_config) {
         },
       }); 
     };  
+
+function PMtraceStart(el){
+      console.log('traceStart !!!!!')
+      //formatStartUrl = raw_urlPath.split('/');
+      //https://gradientone-test.appspot.com/panelcontrol/Acme/Tahoe/Primetime
+      var startValue = 'Start_Trace';
+      var start_url = window.location.origin + '/panelcontrol/Acme/Tahoe/' + configName + '/' + traceName;// + formatStartUrl[formatStartUrl.length-2];
+      console.log('exploreStart: start_url =',start_url);
+      var startData = JSON.stringify({"command":startValue});
+      console.log('exploreStart: startData =', startData);
+     $.ajax({
+        type: "POST",
+        url: start_url,
+        data: startData,
+        dataType: 'json',
+        success: function(data, textStatus, jqXHR)
+        {
+          console.log('saveStatus: Ajax post was a success!');
+        },
+      });
+      powerMeterData();
+    };
+    function PMtraceStop(el){
+      console.log('traceStop !!!!!')
+      
+      var startValue = 'Stop_Trace';
+      var start_url = window.location.origin + '/panelcontrol/Acme/Tahoe/' + configName + '/' + traceName;
+      console.log('exploreStart: start_url =',start_url);
+
+      var startData = JSON.stringify({"command":startValue});
+      console.log('exploreStart: startData =', startData);
+     $.ajax({
+        type: "POST",
+        url: start_url,
+        data: startData,
+        dataType: 'json',
+        success: function(data, textStatus, jqXHR)
+        {
+          console.log('saveStatus: Ajax post was a success!');
+        },
+      });
+      clearTimeout(PMtraceTimerID);
+    };
+
+
+//POWER METER START and STOP
+$("#powerMeterStartStop").click(function() {
+      $(this).text(function(i, v){
+      return v === 'STOP' ? 'START' : 'STOP'
+      })
+      var el = this;
+      return (el.t = !el.t) ? PMtraceStart(el) : PMtraceStop(el);
+    });
+
+
+var resultsTrigger;
+function powerMeterData() {
+  console.log('PowerMeter START!');
+      //test_info_url = 'https://gradientone-test.appspot.com/u2000_traceresults/Acme/MSP/Tahoe';
+      test_info_url = window.location.origin + '/u2000_traceresults/Acme/Tahoe' + '/' + configName ;
+      $.ajax({
+          async: true,
+          url: test_info_url,
+          dataType: 'json',
+       }).done(function (results) { 
+        console.log('powerMeterStart: Power Meter results = ', results);      
+        var testInfo = results;  
+        resultsTrigger = results;
+
+        var measurement = testInfo.cha;
+        console.log('powerMeterStart: cha', measurement);
+
+        var start_tse = testInfo.start_tse
+        console.log('powerMeterStart: start_tse', start_tse);
+
+        document.getElementById('start_tse').value = start_tse;
+        document.getElementById("measurementValue").innerHTML = measurement;
+        
+        var max_pass_value = document.getElementById("max_pass_value").value;
+        var min_pass_value = document.getElementById("min_pass_value").value;
+
+        if (min_pass_value <= measurement && measurement <= max_pass_value){
+          document.getElementById('pass_feedback').innerHTML = "PASS"
+          document.getElementById('fail_feedback').innerHTML = ""
+        } else {
+          document.getElementById('fail_feedback').innerHTML = "FAIL";
+          document.getElementById('pass_feedback').innerHTML = "";
+        };
+
+       });
+    PMtraceTimerID = setTimeout(powerMeterData,1000);
+    //stop when there is data
+    if (!(resultsTrigger = 'none')) {
+      clearTimeout(PMtraceTimerID);
+   };
+};
