@@ -90,8 +90,8 @@ class agilentu2000:
 
     def transmitblob(self):
         active_testplan_name = self.u2000_test_results['active_testplan_name']
-        test_plan = self.u2000_test_results['test_plan']
-        filename = test_plan + ':' + active_testplan_name 
+        config_name = self.u2000_test_results['config_name']
+        filename = config_name + ':' + active_testplan_name 
         f = open('/home/nedwards/BitScope/Examples/tempfile.csv', 'w')
         w = csv.writer(f)
         w.writerow(self.u2000_test_results.keys())

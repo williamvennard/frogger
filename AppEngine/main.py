@@ -66,8 +66,6 @@ import temp_testcomplete
 from gradientone import InstrumentDataHandler
 from onedb import ProfileDB
 from onedb import UserDB
-from onedb import TestBlobKey_key
-from onedb import TestBlobKey
 from onedb import company_key
 import measurements
 import test_make_interface
@@ -103,6 +101,10 @@ class DictModel(db.Model):
     def to_dict(self):
        return dict([(p, unicode(getattr(self, p))) for p in self.properties()])
 
+
+def FileBlob_key(name = 'default'):
+    return db.Key.from_path('company_nickname', name)
+
 class FileBlob(db.Model):
     blob_key = blobstore.BlobReferenceProperty(required=True)
 
@@ -120,12 +122,20 @@ class FileUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
         try:
             upload = self.get_uploads()[0] 
             load = self.request.body
+            print type(load)
+            load = load.split()
             print load
-            print load['filename']
-            dbfile = FileBlob(blob_key=upload.key())
+            print load[21]
+            load = load[21].split('=')
+            print load
+            load = load.split(':')
+            print load 
+            active_testplan_name = load[1]
+            config_name = load[0]
+            print config_name, active_testplan_name
+            dbfile = FileBlob(key_name = active_testplan_name, blob_key=upload.key())
             dbfile.put()
-            testblobkey = TestBlobKey(key_name = testplan_name, parent = company_key(), test_blob_key = upload.key())
-            testblobkey.put()
+            print self.send_blob(upload.key())
             self.redirect('/upload/success')
         except:
             self.redirect('/upload_failure.html')
