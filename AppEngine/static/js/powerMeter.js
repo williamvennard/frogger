@@ -1,12 +1,15 @@
 //PM CONFIG FORM SUBMIT
 var configName;
 var traceName;
+
 function PMConfig() {
       $('#collapseConfig').collapse("hide");
+
       var d = document.getElementById('PMConfigSettings');
 
       var children = d.childNodes;
       console.log('PMConfig: children = ', children);
+
       configName = children[1].children[1].value;
       traceName = children[3].children[1].value;
 
@@ -18,8 +21,6 @@ function PMConfig() {
 
       var configSettings = document.getElementById('PMSettingsDisplay');
       var setChildren = configSettings.childNodes;
-
-
 
       setChildren[1].children[1].innerHTML = configName;
       setChildren[3].children[1].innerHTML = frequencyCorrection;
