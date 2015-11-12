@@ -90,13 +90,15 @@ class agilentu2000:
 
     def transmitblob(self):
         active_testplan_name = self.u2000_test_results['active_testplan_name']
+        test_plan = self.u2000_test_results['test_plan']
+        filename = test_plan + ':' + active_testplan_name 
         f = open('/home/nedwards/BitScope/Examples/tempfile.csv', 'w')
         w = csv.writer(f)
         w.writerow(self.u2000_test_results.keys())
         w.writerow(self.u2000_test_results.values())
         f.close()
         m = MultipartEncoder(
-                  fields={'field0':(active_testplan_name, open('/home/nedwards/BitScope/Examples/tempfile.csv', 'rb'), 'text/plain')}
+                  fields={'field0':(filename, open('/home/nedwards/BitScope/Examples/tempfile.csv', 'rb'), 'text/plain')}
                   )
         blob_url = requests.get("https://gradientone-test.appspot.com/upload/geturl")
         #m = MultipartEncoder(
