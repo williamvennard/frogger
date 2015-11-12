@@ -98,6 +98,7 @@ class agilentu2000:
                   fields={'field0':('u2000blob', open('/home/nedwards/BitScope/Examples/tempfile.csv', 'rb'), 'text/plain')}
                   )
         blob_url = requests.get("https://gradientone-test.appspot.com/upload/geturl")
+        print blob_url
         #m = MultipartEncoder(
         #        fields={'field0': ('tek0012ALL', open('../../DataFiles/tekcsv/tek0012ALL.csv', 'rb'), 'text/plain')}
         #        )
