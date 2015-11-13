@@ -83,5 +83,3 @@ class Handler(InstrumentDataHandler):
         out_u2000 = json.dumps(window_u2000, ensure_ascii=True)
         key = 'u2000data' + company_nickname + hardware_name + config_name + str(start_tse)
         memcache.set(key, out_u2000)
-
-

@@ -66,7 +66,7 @@ class Handler(InstrumentDataHandler):
                 'testplan_name' : testplan_name,
                 }
 
-        key_name = config_name + config['instrument_type']
+        key_name = str(config_name) + config['instrument_type']
         key = db.Key.from_path('agilentU2000', key_name, parent = company_key())
         instrument_config = db.get(key)
         print instrument_config

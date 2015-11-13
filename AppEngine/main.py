@@ -205,6 +205,7 @@ app = webapp2.WSGIApplication([
     ('/operator/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/run', operatordata.RunTest),
     ('/404', FileNotFound),
     ('/testops', testops.Handler),
+    ('/u2000_update_results', u2000_testcomplete.UpdateResults),
     ('/u2000_configinput', u2000_configinput.Handler),
     ('/u2000_testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000_testcomplete.Handler),
     ('/report_summary/([a-zA-Z0-9.-]+)',  report_summary.Handler),

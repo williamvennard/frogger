@@ -101,3 +101,31 @@ class Handler(InstrumentDataHandler):
             to_save.append(r) 
             db.put(to_save)
             #memcache.set(key, to_save)
+
+
+class UpdateResults(InstrumentDataHandler):
+    def post(self):
+        results_data = json.loads(self.request.body)
+        config_name = results_data['config_name']
+        trace_name = results_data['trace_name']
+        start_tse = results_data['start_tse']
+        pass_fail = results_data['pass_fail']
+        min_pass = results_data['min_pass_value']
+        max_pass = results_data['max_pass_value']
+        key = trace_name + str(start_tse) + pass_fail
+        cached_result = memcache.get(key)
+        key_name = trace_name + str(start_tse)
+        test_key = db.Key.from_path('TestResultsDB', key_name, parent=company_key())
+        print "cached_result", cached_result
+        print "test_key", test_key
+        if not cached_result:
+            test_results = TestResultsDB.get(test_key)
+            test_results.pass_fail = pass_fail
+            test_results.min_pass = float(min_pass)
+            test_results.max_pass = float(max_pass)
+            test_results.put()
+            print "wrote test_results update to DB"
+            memcache.set(key, test_results)
+
+
+

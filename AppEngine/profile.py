@@ -34,7 +34,6 @@ from google.appengine.ext.webapp import blobstore_handlers
 from string import maketrans
 from datetime import datetime
 
-
 def get_profile():
     """Get profile object"""
     user = users.get_current_user()
@@ -46,8 +45,9 @@ def get_profile():
         return False
 
 def get_profile_cookie(self):
-    """Get cookie data else DB profile data. Returns Dictionary."""
+    """Get cookie data else grabs DB profile and sets cookie. Returns Dictionary."""
     comp_cookie = self.request.cookies.get("company_nickname")
+    permissions = self.request.cookies.get("permissions")
     if comp_cookie:
         profile = {}
         profile['company_nickname'] = comp_cookie
@@ -55,6 +55,7 @@ def get_profile_cookie(self):
     else:
         profile = get_profile()
         if hasattr(profile, 'to_dict'):
+            set_profile_cookie(self, profile)
             return profile.to_dict()
         else:
             return {}
@@ -130,19 +131,18 @@ class AdduserPage(InstrumentDataHandler):
         email = self.request.get('email')
         name = self.request.get('name')
         company_nickname = self.request.get('company_nickname')
-
-        # TODO - handle spaces in companyname
+        company_nickname = company_nickname.strip()
+        company_nickname = company_nickname.replace(" ", "_")
+        permissions = self.request.get('permissions')
         profile = ProfileDB(email = email, 
                       company_nickname = company_nickname, 
-                      name = name)
-        profile.put()
-        checked_box = self.request.get("admin")
-        if checked_box:
+                      name = name,
+                      permissions = permissions,
+                      )
+        if permissions == 'admin':
             profile.admin = True
         else:
             profile.admin = False
-        if not profile.bio:
-            profile.bio = "No bio entered yet."
         profile.put()
         self.redirect('/listusers')
 

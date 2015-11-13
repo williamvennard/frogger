@@ -109,7 +109,7 @@ function powerMeterData() {
           dataType: 'json',
        }).done(function (results) { 
         console.log('powerMeterStart: Power Meter results = ', results);      
-        var testInfo = results;  
+        var testInfo = results;
         resultsTrigger = results;
 
         var measurement = testInfo.cha;
@@ -123,19 +123,48 @@ function powerMeterData() {
         
         var max_pass_value = document.getElementById("max_pass_value").value;
         var min_pass_value = document.getElementById("min_pass_value").value;
-
+        var pass_fail
         if (min_pass_value <= measurement && measurement <= max_pass_value){
-          document.getElementById('pass_feedback').innerHTML = "PASS"
+          pass_fail = "PASS"
+          document.getElementById('pass_feedback').innerHTML = pass_fail
           document.getElementById('fail_feedback').innerHTML = ""
         } else {
-          document.getElementById('fail_feedback').innerHTML = "FAIL";
+          pass_fail = "FAIL"
+          document.getElementById('fail_feedback').innerHTML = pass_fail;
           document.getElementById('pass_feedback').innerHTML = "";
         };
-
+        var results_data = JSON.stringify({"config_name":configName,
+          "trace_name":traceName, "start_tse":start_tse, "pass_fail":pass_fail,
+          "max_pass_value":max_pass_value, "min_pass_value":min_pass_value,});
+        ResultsUpdate(results_data)
        });
     PMtraceTimerID = setTimeout(powerMeterData,1000);
     //stop when there is data
     if (!(resultsTrigger = 'none')) {
       clearTimeout(PMtraceTimerID);
    };
+
 };
+
+function ResultsUpdate(results_data) {
+      var update_url = window.location.origin + '/u2000_update_results';
+      console.log('saveStatus: update_url = ',update_url);
+      console.log('instResults: results_data = ',results_data);
+
+     $.ajax({
+        type: "POST",
+        url: update_url,
+        data: results_data,
+        dataType: 'json',
+        success: function(data, textStatus, jqXHR)
+        {
+            console.log('saveStatus: Update results post was a success!');
+        },
+      }); 
+    };  
+// function updateTestResults() {
+//     var runner = new XMLHttpRequest();
+//     runner.open('POST', 'URL', true);
+//     runner.send();
+//     return runner;
+// }
