@@ -34,10 +34,6 @@ import appengine_config
 import json
 from profile import get_profile
 
-# result_types = {
-#     'bscope' : BscopeDB,
-#     'aU2000' : agilentU2000data
-# }
 
 class Handler(InstrumentDataHandler):
     def get(self, company_nickname="", hardware_name="", config_name="", testplan_name=""):

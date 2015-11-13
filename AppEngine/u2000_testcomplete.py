@@ -104,6 +104,7 @@ class Handler(InstrumentDataHandler):
 
 
 class UpdateResults(InstrumentDataHandler):
+    """Called from testops.js to update results with pass_fail data"""
     def post(self):
         results_data = json.loads(self.request.body)
         config_name = results_data['config_name']
@@ -116,15 +117,12 @@ class UpdateResults(InstrumentDataHandler):
         cached_result = memcache.get(key)
         key_name = trace_name + str(start_tse)
         test_key = db.Key.from_path('TestResultsDB', key_name, parent=company_key())
-        print "cached_result", cached_result
-        print "test_key", test_key
         if not cached_result:
             test_results = TestResultsDB.get(test_key)
             test_results.pass_fail = pass_fail
             test_results.min_pass = float(min_pass)
             test_results.max_pass = float(max_pass)
             test_results.put()
-            print "wrote test_results update to DB"
             memcache.set(key, test_results)
 
 

@@ -107,7 +107,7 @@
         for (var i=0;i<testArray.length;i++) {
           console.log(testArray[i].testplan_name);
             configTable+="<div style='margin-bottom:20px;'>";
-            configTable+="<span class='name'> Name: </span>" + "<span  class='testName text-capitalize'>" + testArray[i].testplan_name + "</span>";
+            configTable+="<span class='name'> Name: </span>" + "<a href='" + window.location.origin + "/view_testplan/" + testArray[i].company_nickname + "/" + testArray[i].hardware_name + "/" + testArray[i].testplan_name + "' " + "<span  class='testName text-capitalize'>" + testArray[i].testplan_name + "</span></a>";
             configTable+="<br>"
             configTable+="<span class='startTime'> Date Created: </span>" + "<span>" + testArray[i].date_created + "</span>";
             configTable+="<br>"
