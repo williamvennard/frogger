@@ -105,6 +105,7 @@ class agilentu2000:
         #        fields={'field0': ('tek0012ALL', open('../../DataFiles/tekcsv/tek0012ALL.csv', 'rb'), 'text/plain')}
         #        )
         b = requests.post(blob_url.text, data = m, headers={'Content-Type': m.content_type})
+        print bloburl.text
         print "b.reason=",b.reason
         print "b.status_code=",b.status_code
 
