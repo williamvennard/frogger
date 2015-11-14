@@ -52,6 +52,7 @@ class Handler(InstrumentDataHandler):
                                 company_nickname, True, hardware_name)
             rows = list(rows)
             configs_tps_traces = query_to_dict(rows)
+            print configs_tps_traces
             nested_config_name = configs_tps_traces[0]['config_name']
             nested_instrument_type = configs_tps_traces[0]['instrument_type']
             print nested_config_name

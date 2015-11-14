@@ -66,6 +66,7 @@ import temp_testcomplete
 from gradientone import InstrumentDataHandler
 from onedb import ProfileDB
 from onedb import UserDB
+from onedb import company_key
 import measurements
 import test_make_interface
 import operatordata
@@ -77,6 +78,7 @@ import report_detail
 import u2000_traceresultsdata
 import u2000_testresultsdata
 import view_testplan
+import testblobs
 
 authorized_users = ['charlie@gradientone.com',
                     'nedwards@gradientone.com',
@@ -101,7 +103,8 @@ class DictModel(db.Model):
        return dict([(p, unicode(getattr(self, p))) for p in self.properties()])
 
 
-
+def FileBlob_key(name = 'default'):
+    return db.Key.from_path('company_nickname', name)
 
 class FileBlob(db.Model):
     blob_key = blobstore.BlobReferenceProperty(required=True)
@@ -119,8 +122,21 @@ class FileUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
     def post(self):
         try:
             upload = self.get_uploads()[0] 
-            dbfile = FileBlob(blob_key=upload.key())
+            load = self.request.body
+            print type(load)
+            load = load.split()
+            print load
+            print load[21]
+            load = load[21].split('=')
+            print load
+            load = load.split(':')
+            print load 
+            active_testplan_name = load[1]
+            config_name = load[0]
+            print config_name, active_testplan_name
+            dbfile = FileBlob(key_name = active_testplan_name, blob_key=upload.key())
             dbfile.put()
+            print self.send_blob(upload.key())
             self.redirect('/upload/success')
         except:
             self.redirect('/upload_failure.html')
@@ -129,7 +145,6 @@ class FileUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
 class FileUploadSuccess(InstrumentDataHandler):
     def get(self):
         self.response.out.write("File Upload Successful")
-
 
 class FileUploadFailure(InstrumentDataHandler):
     def get(self):
@@ -214,6 +229,7 @@ app = webapp2.WSGIApplication([
     ('/report_summary/report_detail/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)',  report_detail.Handler),
     ('/u2000_traceresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000_traceresultsdata.Handler),
     ('/u2000_testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000_testresultsdata.Handler),
+    ('/testblobs', testblobs)
 ], debug=True)
 
 

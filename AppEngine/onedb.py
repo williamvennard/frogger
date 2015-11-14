@@ -338,7 +338,7 @@ class agilentU2000data(ResultsData):
     hardware_name = db.StringProperty(required = True)
     config_name = db.StringProperty(required = True)
     i_settings = db.StringProperty(required = True)
-    test_results_data = db.TextProperty(required = True)
+    test_results_data = db.StringProperty(required = True)
     start_tse = db.IntegerProperty(required = True)
 
 

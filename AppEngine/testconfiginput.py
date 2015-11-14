@@ -34,8 +34,12 @@ class Handler(InstrumentDataHandler):
         self.render('testconfig.html', dropdown = dropdown)
 
     def post(self):
+        print "HI IM HERE"
         configs = []
         testplan_name = self.request.get('testplan_name')
+        print self.request.body
+        testplan_object = json.loads(self.request.body)
+        print testplan_object
         company_nickname = self.request.get('company_nickname')
         author = self.request.get('author')
         print author
@@ -58,6 +62,7 @@ class Handler(InstrumentDataHandler):
         dutpost = (self.request.get('dutpost'))
         timepost = self.request.get('timepost')
         measpost = self.request.get('measpost')
+        print confpost, dutpost, measpost, timepost
         if testpost == 'True': #this controls the POST functionality if someone is configuring test plan details.
             t = TestDB(key_name = testplan_name, parent = company_key(),
             testplan_name = testplan_name, 
@@ -179,6 +184,7 @@ class Handler(InstrumentDataHandler):
                 date_object = datetime.now()
             else:
                 date_object = datetime.strptime(start_time, '%b %d %Y %I:%M%p')
+            print date_object
             test = TestDB.gql("Where testplan_name =:1", testplan_name).get()
             test.scheduled_start_time = date_object
             test.test_ready = True
