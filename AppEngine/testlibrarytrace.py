@@ -6,6 +6,7 @@ from gradientone import render_json
 from gradientone import author_creation
 from onedb import TestResultsDB
 from onedb import TestResultsDB_key
+from onedb import company_key
 import ast
 import collections
 import csv
@@ -65,5 +66,23 @@ class Handler(InstrumentDataHandler):
                 'start_tse' : start_tse,
             }
             self.render('testLibResults.html', comment_thread=comment_thread, data=data)
+
+    def post(self, company_nickname="", config_name="", start_tse=""):
+        """posts a comment on the test results"""
+        user = users.get_current_user()
+        if not user.nickname():
+            author = "anonymous"
+        else:
+            author = user.nickname()
+        content = self.request.get('content')
+        testplan_name = self.request.get('testplan_name')
+        key_name = testplan_name+str(start_tse)
+        print "key_name", key_name
+        key = db.Key.from_path('TestResultsDB', key_name, parent = company_key())
+        test_results = TestResultsDB.get(key)
+        comment = CommentsDB(author=author, content=content, parent=test_results)
+        comment.put()
+        self.redirect('/testlibrary/traceresults/' + company_nickname + '/' + config_name + '/'
+                        + start_tse)
             
 

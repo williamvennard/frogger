@@ -78,7 +78,6 @@ class Handler(InstrumentDataHandler):
         key = db.Key.from_path('TestDB', key_name, parent = company_key())
         test = TestDB.get(key)
         comment = CommentsDB(author=author, content=content, parent=test)
-        print "comment", comment
         comment.put()
         self.redirect('/view_testplan/' + company_nickname + '/' + hardware_name + '/'
                         + testplan_name)
