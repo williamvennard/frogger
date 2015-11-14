@@ -426,7 +426,21 @@
     });
   });
 </script>
+  <div class= "row">
+    <div class="col-md-12">
+    <h3>Comments</h3>
+      {% for comment in comment_thread %}
+      <hr>
+      <p>{{comment.content}}</p>
+      <p>by {{comment.author}} at {{comment.timestamp}}</p>
+      {% endfor %}
 
+      <textarea name="content" id="content" form="usrform" rows="5" cols="50">Enter comment here...</textarea>
+      <form action="/testlibrary/traceresults/{{data.company_nickname}}/{{data.config_name}}/{{data.start_tse}}" method="post" id="usrform">
+        <input class="text-capitalize optionsBtn" type="submit">
+      </form>
+    </div>
+  </div>
 </body>
 </html>
 <!--{% endblock %}-->

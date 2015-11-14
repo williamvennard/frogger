@@ -32,6 +32,7 @@ import decimate
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
 from string import maketrans
+from onedb import CommentsDB
 
 
 class Handler(InstrumentDataHandler):
@@ -46,4 +47,23 @@ class Handler(InstrumentDataHandler):
             test_results = query_to_dict(rows)
             render_json(self, test_results)
         elif company_nickname and config_name and start_tse:
-            self.render('testLibResults.html')
+            query = TestResultsDB.all().filter("company_nickname =", company_nickname)
+            query = query.filter("config_name =", config_name)
+            query = query.filter("start_tse =", start_tse)
+            test_results = query.get()
+            comment_thread = []
+            if test_results:
+                comments_query = CommentsDB.all()
+                comments_query.ancestor(test_results)
+                comments = comments_query.run(limit=10)
+                for comment in comments:
+                    comment_thread.append(comment)
+
+            data = {
+                'company_nickname' : company_nickname,
+                'config_name' : config_name,
+                'start_tse' : start_tse,
+            }
+            self.render('testLibResults.html', comment_thread=comment_thread, data=data)
+            
+
