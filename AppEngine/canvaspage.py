@@ -55,4 +55,4 @@ class Handler(InstrumentDataHandler):
             render_json(self, widgets) 
         else:
             print 'just rendering the page'
-            self.render('index.html')
+            self.render('index.html', profile=profile)
