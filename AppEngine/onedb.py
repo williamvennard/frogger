@@ -1,4 +1,6 @@
 from google.appengine.ext import db
+from google.appengine.ext import blobstore
+from google.appengine.ext.webapp import blobstore_handlers
 
 class DictModel(db.Model):
     def to_dict(self):
@@ -341,4 +343,10 @@ class agilentU2000data(ResultsData):
     test_results_data = db.StringProperty(required = True)
     start_tse = db.IntegerProperty(required = True)
 
+def FileBlob_key(name = 'default'):
+    return db.Key.from_path('company_nickname', name)
+
+class FileBlob(db.Model):
+    blob_key = blobstore.BlobReferenceProperty(required=True)
+    test_batch = db.StringProperty(required = False)
 
