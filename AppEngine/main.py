@@ -78,16 +78,13 @@ import report_summary
 import report_detail
 import u2000_traceresultsdata
 import u2000_testresultsdata
-<<<<<<< HEAD
 import urllib
 import sys
 from google.appengine.api import urlfetch
 from encode import multipart_encode, MultipartParam
-
-=======
 import view_testplan
 import testblobs
->>>>>>> refs/remotes/origin/master
+
 
 authorized_users = ['charlie@gradientone.com',
                     'nedwards@gradientone.com',
