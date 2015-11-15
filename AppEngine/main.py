@@ -15,6 +15,7 @@ import re
 import time
 import webapp2
 import math
+import StringIO
 from google.appengine.api import memcache
 from google.appengine.api import oauth
 from google.appengine.api import users
@@ -77,7 +78,11 @@ import report_summary
 import report_detail
 import u2000_traceresultsdata
 import u2000_testresultsdata
-import testblobs
+import urllib
+import sys
+from google.appengine.api import urlfetch
+from encode import multipart_encode, MultipartParam
+
 
 authorized_users = ['charlie@gradientone.com',
                     'nedwards@gradientone.com',
@@ -116,26 +121,173 @@ class UploadURLGenerator(InstrumentDataHandler):
     def post(self):
         UploadURLGenerator.get(self)
 
+class AggFileUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
+    def post(self):
+        try:
+            upload = self.get_uploads()[0] 
+            blob_key = upload.key()
+            load = self.request.body
+            load = load.split()
+            print load
+            load = load[4].split('=')
+            load = load[1].rstrip('"')
+            active_testplan_name = load.lstrip('"')
+            print active_testplan_name
+            dbfile = FileBlob(key_name = active_testplan_name, blob_key=blob_key)
+            dbfile.put()
+            str_form = str(blob_key)
+            b = BlobberDB(b_key = str_form, key_name = active_testplan_name, parent = company_key())
+            b.put()
+            self.redirect('/upload/success')
+        except:
+            self.redirect('/upload_failure.html')
+
+def Blobber_key(name = 'default'):
+    return db.Key.from_path('company_nickname', name)
+
+class BlobberDB(DictModel):
+    b_key = db.StringProperty(required = True)
+
+def incoming_blob_parser(value):
+    headers = value[0].split(',')
+    headers[-1] = headers[-1].rstrip()
+    entry = value[1].split('{')
+    a = entry[0].rstrip(',"')
+    new = a.split(',')
+    b = entry[1].split('}')
+    c = "".join(b[0])
+    new.append(c)
+    d = b[1].rstrip()
+    d = d.lstrip('",')
+    d = d.split(',')
+    new.append(d[0])
+    new.append(d[1])
+    new.append(d[2])
+    return headers, new
+
+def existing_blob_parser(headers, item):
+    new_rows = []
+    entry = item.split('"')
+    first = entry[0].split(',')
+    del first[-1]
+    last = entry[2].split(',')
+    del last[0]
+    new_rows.append(first[0])
+    new_rows.append(first[1])
+    new_rows.append(entry[1])
+    new_rows.append(last[0])
+    new_rows.append(last[1])
+    new_rows.append((last[2].rstrip()))
+    input_dictionary = dict(zip(headers, new_rows))
+    return input_dictionary
+
+def new_blob_parser(value):
+    headers = value[0].split(',')
+    headers[-1] = headers[-1].rstrip()
+    entry = value[1].split('{')
+    a = entry[0].rstrip(',"')
+    new = a.split(',')
+    b = entry[1].split('}')
+    c = "".join(b[0])
+    new.append(c)
+    d = b[1].rstrip()
+    d = d.lstrip('",')
+    d = d.split(',')
+    new.append(d[0])
+    new.append(d[1])
+    new.append(d[2])
+    input_dictionary = dict(zip(headers, new))
+    return input_dictionary
+
 
 class FileUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
     def post(self):
         try:
             upload = self.get_uploads()[0] 
+            blob_key = upload.key()
             load = self.request.body
-            print type(load)
             load = load.split()
-            print load
-            print load[21]
             load = load[21].split('=')
-            print load
-            load = load.split(':')
-            print load 
-            active_testplan_name = load[1]
-            config_name = load[0]
-            print config_name, active_testplan_name
-            dbfile = FileBlob(key_name = active_testplan_name, blob_key=upload.key())
+            first_key = load[1]
+            first_key = first_key.lstrip('"')
+            first_key = first_key.rstrip('"')
+            load = load[1].split(':')
+            active_testplan_name = load[1].rstrip('"')
+            config_name = load[0].lstrip('"')
+            dbfile = FileBlob(key_name = first_key, blob_key=blob_key, parent = company_key())
             dbfile.put()
-            print self.send_blob(upload.key())
+            key = db.Key.from_path('BlobberDB', active_testplan_name, parent = company_key())
+            new_blob_key = db.get(key)
+            if new_blob_key:
+                print 'something there'
+                newkey = new_blob_key.b_key
+                blob_reader = blobstore.BlobReader(blob_key)
+                value = blob_reader.readlines()
+                input_to_blob = incoming_blob_parser(value)
+                tmp = StringIO.StringIO()
+                writer = csv.writer(tmp)
+                writer.writerow(input_to_blob[0])
+                writer.writerow(input_to_blob[1])
+                print 'reading original'
+                new_blob_reader = blobstore.BlobReader(newkey)
+                new_lines = new_blob_reader.readlines()
+                headers = new_lines[0].split(',')
+                headers[-1] = headers[-1].rstrip()
+                for item in new_lines[1:]:
+                    input_dictionary = existing_blob_parser(headers, item)
+                    writer.writerow(input_dictionary.values())
+                contents = tmp.getvalue()
+                tmp.close()
+                blobstore.delete(newkey)
+                new_url =  blobstore.create_upload_url('/upload_agg/upload_file')
+                params = []
+                params.append(MultipartParam(
+                            "FileItem1",
+                            filename=active_testplan_name,
+                            filetype='text/plain',
+                            value=contents))
+                payloadgen, headers = multipart_encode(params)
+                payload = str().join(payloadgen)
+                result = urlfetch.fetch(
+                            url=new_url,
+                            payload=payload,
+                            method=urlfetch.POST,
+                            headers=headers,
+                            deadline=10)
+            else:
+                print 'nothing found'
+                blob_reader = blobstore.BlobReader(blob_key)
+                value = blob_reader.readlines()
+                input_dictionary = new_blob_parser(value)
+                tmp = StringIO.StringIO()
+                writer = csv.writer(tmp)
+                writer.writerow(input_dictionary.keys())
+                writer.writerow(input_dictionary.values())
+                contents = tmp.getvalue()
+                tmp.close()
+                str_form = str(blob_key)
+                b = BlobberDB(b_key = str_form, key_name = active_testplan_name, parent = company_key())
+                b.put()
+                key = db.Key.from_path('BlobberDB', active_testplan_name, parent = company_key())
+                new_blob_key = db.get(key)
+                newkey = new_blob_key.b_key
+                blob_reader = blobstore.BlobReader(newkey)
+                value = blob_reader.readlines()
+                new_url =  blobstore.create_upload_url('/upload_agg/upload_file')
+                params = []
+                params.append(MultipartParam(
+                            "FileItem1",
+                            filename=active_testplan_name,
+                            filetype='text/plain',
+                            value=contents))
+                payloadgen, headers = multipart_encode(params)
+                payload = str().join(payloadgen)
+                result = urlfetch.fetch(
+                            url=new_url,
+                            payload=payload,
+                            method=urlfetch.POST,
+                            headers=headers,
+                            deadline=10)
             self.redirect('/upload/success')
         except:
             self.redirect('/upload_failure.html')
@@ -207,6 +359,7 @@ app = webapp2.WSGIApplication([
     ('/testsave', testsave.Handler),
     ('/upload/geturl', UploadURLGenerator),
     ('/upload/upload_file', FileUploadHandler),
+    ('/upload_agg/upload_file', AggFileUploadHandler),
     ('/upload/success',FileUploadSuccess),
     ('/upload/failure',FileUploadFailure),
     ('/testmanager', testmanager.Handler),
@@ -226,7 +379,6 @@ app = webapp2.WSGIApplication([
     ('/report_summary/report_detail/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)',  report_detail.Handler),
     ('/u2000_traceresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000_traceresultsdata.Handler),
     ('/u2000_testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000_testresultsdata.Handler),
-    ('/testblobs', testblobs)
 ], debug=True)
 
 
