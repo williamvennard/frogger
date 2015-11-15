@@ -19,7 +19,9 @@
     <script type="text/javascript" src="../static/js/addons/clickadd.js"></script>
     <link rel="stylesheet" type="text/css" href="../static/css/testConfig.css">
     <link rel="stylesheet" type="text/css" href="../static/css/testResultsList.css">
-    <style type="text/css"></style>
+    <style type="text/css">
+        label {color: white;}
+    </style>
 
 </head>
 
@@ -150,13 +152,20 @@
             {% endfor %}
         </div>
         <hr>
-        
         <div class="row">
-            <div class="col-md-6 col-md-offset-3">
+            <div class="col-md-10 col-md-offset-2">
                 <form action="/community" method="post">
-                    <div>Post Name:</div>                    
+                    <label for="title">Post Title:</label>                    
                     <input type="text" name="title" value="{{title}}">
-                    <div>Sharing Audience:</div>
+                    <br>
+                    <label for="testkey">Test Plan:</label>
+                    <select name="testkey">
+                    {% for test in tests %}
+                    <option value="{{test.key()}}">{{test.testplan_name}}</option>
+                    {% endfor %}
+                    </select>
+                    <br>
+                    <label for="privacy">Sharing:</label>
                     <select name="privacy">
                         <option value="public"> Public </option>
                         <option value="company"> Company </option>
@@ -165,13 +174,9 @@
                         <option value="{{group}}"> {{group}} </option>
                         {% endfor %}
                     </select>
-                    <div>Test Plan:</div>
-                    <select name="testkey">
-                    {% for test in tests %}
-                        <option value="{{test.key()}}">Test: {{test.testplan_name}} Company: {{test.company_nickname}}</option>
-                    {% endfor %}
-                    </select>
+                    <br>
                     <input type="submit">
+                    <br>
                 </form>
             </div>
         </div>

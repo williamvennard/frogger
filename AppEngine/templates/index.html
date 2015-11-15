@@ -68,7 +68,7 @@
         </nav>
         <div class="row">
             <div class="col-md-12 canv" style="">
-                <h1 id="headr">GradientOne Canvas</h1>
+                <h1 id="headr">{{profile.company_nickname}} Canvas</h1>
                 <p></p>  
             </div>
         </div>
@@ -105,13 +105,28 @@
                         <div id="collapseOne" class="panel-collapse collapse in">
                             <div class="panel-body">
                                 <table class="table" style="margin-bottom:0px;">
+                                    <!--BitScope-->
                                     <tr>
-                                        <td>
-                                            <a id="newConfig">NEW</a>
-                                        </td>
+                                        <p>
+                                            <span id="bitScopeBack" class="glyphicon glyphicon-chevron-left"></span><span id="bitScope">BitScope</span>
+                                        </p>
                                     </tr>
+                                    <td id="bitScopeMenu">
+                                        <a id="newConfig">NEW</a>
+                                        <table id="savedConfigs" class="table"></table>
+                                    </td>
+                                    <!--U2001A-->
+
+                                    <tr>
+                                        <p>
+                                            <span id="U2001ABack" class="glyphicon glyphicon-chevron-left"></span><span id="U2001A">U2001A</span>
+                                        </p>
+                                    </tr>
+                                    <td id="U2001AMenu">
+                                        <a id="newU2001A">NEW</a>
+                                        <table id="savedConfigs" class="table"></table>
+                                    </td>
                                 </table>
-                                <table id="savedConfigs" class="table"></table>
                             </div>
                         </div>
                     </div>
@@ -230,8 +245,42 @@
     <!--stops accordion from loading open -->
     <script type="text/javascript">
 
-    //NEW TEST BUTTON
+    
     $(document).ready(function () {
+    //CONFIG SELECTION MENU
+
+      $("#bitScopeMenu").hide();
+      $("#U2001AMenu").hide();
+      $("#bitScopeBack").hide();
+      $("#U2001ABack").hide();
+      
+      //BIT SCOPE
+      $("#bitScope").click(function () {
+          $("#bitScopeMenu").fadeIn("fast");
+          $("#bitScopeBack").fadeIn("fast");
+          $("#U2001A").hide(); 
+      });
+      $("#bitScopeBack").click(function () {
+          $("#U2001A").fadeIn("fast");
+          $("#bitScope").fadeIn("fast");
+          $("#bitScopeBack").hide();
+          $("#bitScopeMenu").hide();   
+      });
+      //U2001A POWER METER
+      $("#U2001A").click(function () {
+          $("#U2001AMenu").fadeIn("fast");
+          $("#U2001ABack").fadeIn("fast"); 
+          $("#bitScope").hide(); 
+      });
+      $("#U2001ABack").click(function () {
+          $("#U2001A").fadeIn("fast");
+          $("#bitScope").fadeIn("fast");
+          $("#U2001ABack").hide();
+          $("#U2001AMenu").hide();   
+      });
+      
+
+    //NEW TEST BUTTON
       $(".collapseNewTest").hide();
       $(".collapseCommitTest").hide();
       $(".tog").click(function () {

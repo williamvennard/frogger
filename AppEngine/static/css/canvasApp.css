@@ -13,6 +13,14 @@
     height: 210px;
 }
 
+.U2001ABox {
+    background-color: rgb(33,33,33);
+    border-radius: 5px;
+    border: 1px solid black;
+    margin: 5px 0 5px 0;
+    height: 250px;
+}
+
 .testSetupBox {
     background-color: rgb(33,33,33);
     border-radius: 5px;

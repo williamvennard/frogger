@@ -9,18 +9,18 @@
     <script src="/static/bootstrap/js/bootstrap.min.js"></script>    
     <script src="/static/js/addons/lodash.js"></script>  
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <script type="text/javascript" src="/static/js/chart1.js"></script>
-    <script type="text/javascript" src="/static/js/chart2.js"></script>
-    <script type="text/javascript" src="/static/js/chart3.js"></script>  
-    <link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" type="text/css" href="/static/css/custom.css">
-    <link rel="stylesheet" type="text/css" href="/static/css/hoverzoom.css">
+    <script type="text/javascript" src="/static/js/sachart.js"></script>
+    <script type="text/javascript" src="/static/js/chart3.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/css/fonts/stylesheet.css" charset="utf-8" /> 
-    <script src="../static/js/addons/angular.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/custom.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/oscope.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/specanal.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/powerMeter.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.13/angular.min.js"></script>
     <script type="text/javascript" src="/static/js/addons/clickadd.js"></script>
-    <link rel="stylesheet" type="text/css" href="/static/css/testConfig.css">
-    <link rel="stylesheet" type="text/css" href="/static/css/testResultsList.css">
-    <style type="text/{css"></style>
+    <script type="text/javascript" src="/static/js/addons/jquery.knob.min.js"></script>
+    <style type="text/css"></style>
     {% endblock %}
 </head>
 
@@ -50,10 +50,8 @@
         </div>
         </nav>
         <div class="row">
-          <div class="col-md-12">
             {% block content %}
             {% endblock %}
-          </div>
         </div>
   </div>
 </body>

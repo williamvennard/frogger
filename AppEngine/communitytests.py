@@ -58,9 +58,10 @@ class Handler(InstrumentDataHandler):
 			if profile.has_key('company_nickname'):
 				filterlist.append(profile['company_nickname'])
 				filterlist.append('company')
-				profile['groups'] = self.request.cookies.get("groups")
+				groups = self.request.cookies.get("groups")
+				profile['groups'] = groups.split("|")
 				if profile.has_key('groups'):
-					filterlist.extend(profile['groups'].split("|"))
+					filterlist.extend(profile['groups'])
 			group_posts = CommunityPostDB.all().order('-date_created')
 			group_posts.filter("privacy IN", filterlist)
 

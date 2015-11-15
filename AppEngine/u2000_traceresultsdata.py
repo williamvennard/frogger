@@ -95,5 +95,3 @@ class Handler(InstrumentDataHandler):
                              start_tse=int(start_tse),
                              )            
         a.put()
-
-

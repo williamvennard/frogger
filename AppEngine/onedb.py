@@ -156,6 +156,9 @@ class TestResultsDB(DictModel):
     test_plan = db.BooleanProperty(required = False)
     saved_state = db.BooleanProperty(required = False)
     u2000_result = db.StringProperty(required = False)
+    pass_fail = db.StringProperty(required = False)
+    max_pass = db.FloatProperty(required = False)
+    min_pass = db.FloatProperty(required = False)
 
 
 class CapabilitiesDB(DictModel):
@@ -192,13 +195,14 @@ def CompanyDB_key(name = 'default'):
     return db.Key.from_path('emails', name)
 
 class ProfileDB(DictModel):
-    bio = db.StringProperty(required = False)
     company_nickname = db.StringProperty(required = False)
     email = db.StringProperty(required = False)
     admin = db.BooleanProperty(required = False)
     name = db.StringProperty(required = False)
     groups = db.StringListProperty()
     userid = db.StringProperty(required = False)
+    bio = db.StringProperty(required = False)
+    permissions = db.StringProperty(required = False)
 
 class CompanyDB(DictModel):
     company_nickname = db.StringProperty(required = True)
