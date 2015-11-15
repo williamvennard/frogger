@@ -68,6 +68,7 @@ from gradientone import InstrumentDataHandler
 from onedb import ProfileDB
 from onedb import UserDB
 from onedb import company_key
+from onedb import FileBlob
 import measurements
 import test_make_interface
 import operatordata
@@ -83,7 +84,7 @@ import sys
 from google.appengine.api import urlfetch
 from encode import multipart_encode, MultipartParam
 import view_testplan
-import testblobs
+import blob_selection
 
 
 authorized_users = ['charlie@gradientone.com',
@@ -109,11 +110,11 @@ class DictModel(db.Model):
        return dict([(p, unicode(getattr(self, p))) for p in self.properties()])
 
 
-def FileBlob_key(name = 'default'):
-    return db.Key.from_path('company_nickname', name)
+# def FileBlob_key(name = 'default'):
+#     return db.Key.from_path('company_nickname', name)
 
-class FileBlob(db.Model):
-    blob_key = blobstore.BlobReferenceProperty(required=True)
+# class FileBlob(db.Model):
+#     blob_key = blobstore.BlobReferenceProperty(required=True)
 
 
 class UploadURLGenerator(InstrumentDataHandler):
@@ -214,9 +215,10 @@ class FileUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
             first_key = first_key.lstrip('"')
             first_key = first_key.rstrip('"')
             load = load[1].split(':')
+            print 'key to db', first_key
             active_testplan_name = load[1].rstrip('"')
             config_name = load[0].lstrip('"')
-            dbfile = FileBlob(key_name = first_key, blob_key=blob_key, parent = company_key())
+            dbfile = FileBlob(key_name = first_key, test_batch = first_key, blob_key=blob_key, parent = company_key())
             dbfile.put()
             key = db.Key.from_path('BlobberDB', active_testplan_name, parent = company_key())
             new_blob_key = db.get(key)
@@ -383,6 +385,7 @@ app = webapp2.WSGIApplication([
     ('/report_summary/report_detail/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)',  report_detail.Handler),
     ('/u2000_traceresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000_traceresultsdata.Handler),
     ('/u2000_testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000_testresultsdata.Handler),
+    ('/blob_selection', blob_selection.Handler),
 ], debug=True)
 
 
