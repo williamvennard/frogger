@@ -42,13 +42,13 @@ class Handler(InstrumentDataHandler):
         author = testplan_object['author']
         company_nickname = testplan_object['company_nickname']
         order = testplan_object['order']
-        #order = [item.encode("ascii") for item in order]  temporarily comment out to support dummy u2000 config data
+        order = [item.encode("ascii") for item in order]  #temporarily comment out to support dummy u2000 config data
         #order = ['config:mmm1:0', 'config:mmm2:1']
         duts = testplan_object['duts']
         measurements = testplan_object['meas']
         print testplan_object['configs']
-        #configs = testplan_object['configs']  temporarily comment out to support dummy u2000 config data
-        configs = [{u'instrument_type': u'U2001A', u'config_name': u'dummy',  u'hardware': u'MSP',u'range_auto': u'True',  u'units': u'dBm', u'offset': u'0.0',u'averaging_count_auto': u'True', u'correction_frequency': u'1e9'}]
+        configs = testplan_object['configs']  #temporarily comment out to support dummy u2000 config data
+        #configs = [{u'instrument_type': u'U2001A', u'config_name': u'dummy',  u'hardware': u'MSP',u'range_auto': u'True',  u'units': u'dBm', u'offset': u'0.0',u'averaging_count_auto': u'True', u'correction_frequency': u'1e9'}]
         start_now = testplan_object['start_now']
         start_time = testplan_object['start_time']
         checkbox_names = ["start_measurement_now"]
