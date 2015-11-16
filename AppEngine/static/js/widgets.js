@@ -799,16 +799,28 @@
                 configArray.push(configJsonObj);
             }else if(planItemType === 'U2001A') {
                 var U2001AName = children[index].children[0].children[1].children[0].value
-                var offset = children[index].children[0].children[1].children[1].children[1].value
-                var units = children[index].children[0].children[1].children[2].children[1].value
+                var freqCorrection = children[index].children[0].children[1].children[1].children[1].value
+                var offset = children[index].children[0].children[1].children[2].children[1].value
+                var units = children[index].children[0].children[1].children[3].children[1].value
+                var avgCountAuto = new Boolean(children[index].children[0].children[1].children[4].children[1].checked)
+                var rangeAuto = new Boolean(children[index].children[0].children[1].children[5].children[1].checked)
+                var passFail = new Boolean(children[index].children[0].children[1].children[6].children[1].checked)
+                var passFailMin = 0
+                var passFailMax = 0
+                if (passFail){
+                    passFailMin = children[index].children[0].children[1].children[7].children[1].value
+                    passFailMax = children[index].children[0].children[1].children[8].children[1].value
+                }
 
-                var U2001AJsonObj = {"U2001A_name":U2001AName, "offset":offset, "units":units,}
-                U2001Array.push(U2001AJsonObj);
+                var U2001AJsonObj = {"config_name":U2001AName, "correction_frequency": freqCorrection, "offset":offset, "units":units, 
+                "instrument_type": "U2001A", "hardware": "Tahoe", "averaging_count_auto": avgCountAuto, "range_auto": rangeAuto, 
+                "pass_fail":passFail, "min_value": passFailMin, "max_value": passFailMax}
+                configArray.push(U2001AJsonObj);
 
             }else if(planItemType === 'measurement') {
                 var measName = children[index].children[1].children[0].value;
                 var measType = children[index].children[1].children[1].children[1].value     
-                var measStart = children[index].children[1].children[2].children[1].value;
+                var measStart = children[index].children[1].children[2].children[1].value
                 var measStop = children[index].children[1].children[3].children[1].value  
 
                 var measJsonObj = {"meas_name":measName,"meas_type":measType,"meas_start_time":measStart,"meas_stop_time":measStop};
@@ -823,7 +835,7 @@
         //var commit_url = 'https://gradientone-test.appspot.com/testconfiginput';
         var commit_url = window.location.origin + "/testconfiginput";
         console.log('commitBtn: indexArray = ', indexArray);
-        var commitData = JSON.stringify({"testplan_name":testPlanName,"author":testPlanAuthor,"company_nickname":companyName,"start_time":startMS,"start_now":startNowLogic,"configs":configArray,"U2001":U2001Array,"meas":measArray,"duts":dutArray,"order":indexArray});
+        var commitData = JSON.stringify({"testplan_name":testPlanName,"author":testPlanAuthor,"company_nickname":companyName,"start_time":startMS,"start_now":startNowLogic,"configs":configArray,"meas":measArray,"duts":dutArray,"order":indexArray});
         console.log('commitBtn: commitData = ', commitData);
         $.ajax({
         type: "POST",
@@ -855,7 +867,7 @@
             for(var i = 0;i<children.length;i++) {
                 
                 var planItemType = children[i].getAttribute('type');
-                if (planItemType == 'config') {
+                if (planItemType == 'config' ||  'U2001A') {
                     var planItemName = children[i].children[0].children[1].children[0].value;
                 }else {
                     var planItemName = children[i].children[1].children[0].value;

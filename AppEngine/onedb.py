@@ -158,7 +158,7 @@ class TestResultsDB(DictModel):
     test_plan = db.BooleanProperty(required = False)
     saved_state = db.BooleanProperty(required = False)
     u2000_result = db.StringProperty(required = False)
-    pass_fail = db.StringProperty(required = False)
+    pass_fail = db.BooleanProperty(required = False)
     max_pass = db.FloatProperty(required = False)
     min_pass = db.FloatProperty(required = False)
 
@@ -327,7 +327,7 @@ class agilentU2000(pwrmeter):
     correction_frequency = db.StringProperty(default = '50e6')
     offset = db.StringProperty(default = '0.0')
     units = db.StringProperty(default = 'dBm')
-    pass_fail = db.StringProperty(default = "False")
+    pass_fail = db.BooleanProperty(default = False)
     pass_fail_type = db.StringProperty(default = "")
     max_value = db.StringProperty(default = '0.0')
     min_value = db.StringProperty(default = '0.0')
