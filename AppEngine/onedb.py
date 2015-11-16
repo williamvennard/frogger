@@ -297,7 +297,7 @@ class agilentMSO7014A(agilent7000A):
     vertical_divisions = db.StringProperty(default = '8')
 
 
-class pwrmeter(DictModel):
+class pwrmeter(FlexModel):
     company_nickname = db.StringProperty(required = False) 
     config_name = db.StringProperty(default = 'channel1')  
     channel_range_lower = db.StringProperty(default = '0.0')
@@ -329,8 +329,8 @@ class agilentU2000(pwrmeter):
     units = db.StringProperty(default = 'dBm')
     pass_fail = db.BooleanProperty(default = False)
     pass_fail_type = db.StringProperty(default = "")
-    max_value = db.StringProperty(default = '0.0')
-    min_value = db.StringProperty(default = '0.0')
+    max_value = db.FloatProperty(default = 0.0)
+    min_value = db.FloatProperty(default = 0.0)
 
 def agilentU2000data_key(name = 'default'):
     return db.Key.from_path('company_nickname', name)

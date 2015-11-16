@@ -705,7 +705,7 @@
         $(".droppable").sortable({
           update: function( event, ui ) {
             Dropped();
-            console.log('indexArray = ', indexArray);
+            console.log(' = ', indexArray);
             //indexArray=[];
             console.log("New position: ", ui.item.index());
             index ='dev 1  Position:' + ui.item.index();
@@ -719,11 +719,7 @@
     var startTime;
     var testPlanAuthor;
     var companyName;
-    var configArray = [];
-    var U2001Array = [];
-    var measArray = [];
-    var dutArray = [];
-    var indexArray = [];
+    var indexArray = []; 
 
     function postInitInfo() {
         console.log('postInitInfo called!!!!');
@@ -756,7 +752,11 @@
     };
 
     function commitBtn() {
-        Dropped(); //get order 
+        Dropped(); //get order
+        var configArray = [];
+        var U2001Array = [];
+        var measArray = [];
+        var dutArray = [];
         var testSetUp = document.getElementById('testSetup');
         var testSetUpInfo = testSetUp.childNodes;
         testPlanName = testSetUpInfo[1].children[0].children[1].children[0].value;
@@ -805,8 +805,8 @@
                 var avgCountAuto = new Boolean(children[index].children[0].children[1].children[4].children[1].checked)
                 var rangeAuto = new Boolean(children[index].children[0].children[1].children[5].children[1].checked)
                 var passFail = new Boolean(children[index].children[0].children[1].children[6].children[1].checked)
-                var passFailMin = 0
-                var passFailMax = 0
+                var passFailMin = 0.0
+                var passFailMax = 0.0
                 if (passFail){
                     passFailMin = children[index].children[0].children[1].children[7].children[1].value
                     passFailMax = children[index].children[0].children[1].children[8].children[1].value
