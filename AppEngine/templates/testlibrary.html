@@ -104,15 +104,22 @@
         //test_configs == configTable
         var ops_url = window.location.origin + '/operator/';
         var configTable = "<div>";
+        var orderstring = "";
+        var orderstringArray = [];
+        var config_name = "";
         for (var i=0;i<testArray.length;i++) {
-          console.log(testArray[i].testplan_name);
+          console.log("testplan_name: "+testArray[i].testplan_name);
             configTable+="<div style='margin-bottom:20px;'>";
             configTable+="<span class='name'> Name: </span>" + "<a href='" + window.location.origin + "/view_testplan/" + testArray[i].company_nickname + "/" + testArray[i].hardware_name + "/" + testArray[i].testplan_name + "' " + "<span  class='testName text-capitalize'>" + testArray[i].testplan_name + "</span></a>";
             configTable+="<br>"
             configTable+="<span class='startTime'> Date Created: </span>" + "<span>" + testArray[i].date_created + "</span>";
             configTable+="<br>"
             configTable+="<a class='resultsLink' href='" + window.location.origin + "/testlibrary/testresults/" + "'>Results</a>";
-            configTable+="<a class='resultsLink' href='" + ops_url + testArray[i].company_nickname + "/" + testArray[i].hardware_name + "/" + configArray[i].config_name +"/" + testArray[i].testplan_name +  "'>Operator</a>";
+            orderstring = testArray[i].order;
+            // console.log("orderstring: "+orderstring)
+            orderstringArray = orderstring.split(":");
+            config_name = orderstringArray[1];
+            configTable+="<a class='resultsLink' href='" + ops_url + testArray[i].company_nickname + "/" + testArray[i].hardware_name + "/" + config_name + "/" + testArray[i].testplan_name +  "'>Operator</a>";
             configTable+="<br>"
             configTable+="</div>" 
         };
