@@ -41,6 +41,7 @@ class Handler(InstrumentDataHandler):
         testplan_name = testplan_object['testplan_name']
         author = testplan_object['author']
         company_nickname = testplan_object['company_nickname']
+        hardware_name = testplan_object['hardware_name']
         order = testplan_object['order']
         order = [item.encode("ascii") for item in order]  # temporarily comment out to support dummy u2000 config data
         #order = ['config:mmm1:0', 'config:mmm2:1']
@@ -58,7 +59,8 @@ class Handler(InstrumentDataHandler):
             date_object = datetime.datetime.fromtimestamp(int(start_time)/1000)
         t = TestDB(key_name = testplan_name, parent = company_key(),
             testplan_name = testplan_name, 
-            company_nickname = company_nickname, 
+            company_nickname = company_nickname,
+            hardware_name = hardware_name, 
             author = author,
             order = order,
             test_plan = True,

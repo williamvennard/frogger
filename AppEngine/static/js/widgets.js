@@ -727,6 +727,7 @@
         var testSetUpInfo = testSetUp.childNodes;
         testPlanName = testSetUpInfo[3].children[0].children[1].children[0].value;
         companyName = 'Acme';
+        hardwareName = 'Tahoe';
         testPlanAuthor = 'nedwards';
         startTime = testSetUpInfo[3].children[1].children[1].children[0].value;
         d = new Date(startTime);
@@ -737,7 +738,7 @@
         //var initInfo_url = 'https://gradientone-test.appspot.com/testconfiginput';
         var initInfo_url = window.location.origin;
         initInfo_url += "/testconfiginput";
-        var initData = JSON.stringify({"testplan_name":testPlanName,"author":testPlanAuthor,"company_nickname":companyName,"start_time":startMS,"start_now":startNowLogic});
+        var initData = JSON.stringify({"testplan_name":testPlanName,"author":testPlanAuthor,"company_nickname":companyName,"hardware_name":hardwareName,"start_time":startMS,"start_now":startNowLogic});
         console.log('postInitInfo: initData = ', initData);
         $.ajax({
         type: "POST",
@@ -762,6 +763,7 @@
         testPlanName = testSetUpInfo[1].children[0].children[1].children[0].value;
         companyName = 'Acme';
         testPlanAuthor = 'nedwards';
+        hardwareName = 'Tahoe';
         startTime = testSetUpInfo[1].children[1].children[1].children[0].value;
         d = new Date(startTime);
         var startMS = d.getTime();
@@ -835,7 +837,7 @@
         //var commit_url = 'https://gradientone-test.appspot.com/testconfiginput';
         var commit_url = window.location.origin + "/testconfiginput";
         console.log('commitBtn: indexArray = ', indexArray);
-        var commitData = JSON.stringify({"testplan_name":testPlanName,"author":testPlanAuthor,"company_nickname":companyName,"start_time":startMS,"start_now":startNowLogic,"configs":configArray,"meas":measArray,"duts":dutArray,"order":indexArray});
+        var commitData = JSON.stringify({"testplan_name":testPlanName,"author":testPlanAuthor,"company_nickname":companyName,"hardware_name":hardwareName,"start_time":startMS,"start_now":startNowLogic,"configs":configArray,"meas":measArray,"duts":dutArray,"order":indexArray});
         console.log('commitBtn: commitData = ', commitData);
         $.ajax({
         type: "POST",
