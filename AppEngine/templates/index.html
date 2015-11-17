@@ -320,7 +320,7 @@
         addWidget('sconfig',savedSettings);
     }; 
     function createU2001A(index) {
-        var savedSettings = savedResults.U2001As[index]
+        var savedSettings = savedResults.u2000configs[index]
         addWidget('sU2001A',savedSettings);
     };        
 
@@ -445,7 +445,7 @@ $(document).ready(function () {
             savedSeq = results.sequences;
             savedMeas = results.measurements;
             savedTests = results.tests;
-            savedU2001As = results.U2001As;
+            savedU2001As = results.u2000configs;
 
             savedResults = results;
             //console.log('Saved Widgets: results', results);
