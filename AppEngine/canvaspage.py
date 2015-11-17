@@ -10,6 +10,7 @@ from onedb import TestDB
 from onedb import TestDB_key
 from onedb import OscopeDB
 from onedb import OscopeDB_key
+from onedb import agilentU2000
 import itertools
 import jinja2
 import json
@@ -49,9 +50,9 @@ class Handler(InstrumentDataHandler):
             measurements = query_to_dict(rows)
             rows = db.GqlQuery("""SELECT * FROM TestDB WHERE company_nickname =:1""", company_nickname)
             tests = query_to_dict(rows)
-            #rows = db.GqlQuery("""SELECT * FROM SequenceDB WHERE company_nickname =:1""", company_nickname)
-            #sequences = query_to_dict(rows)
-            widgets = {'tests':tests, 'measurements':measurements, 'configs':configs, 'duts':duts}
+            rows = db.GqlQuery("""SELECT * FROM agilentU2000 WHERE company_nickname =:1""", company_nickname)
+            u2000configs = query_to_dict(rows)
+            widgets = {'tests':tests, 'measurements':measurements, 'configs':configs, 'duts':duts, 'u2000configs':u2000configs}
             render_json(self, widgets) 
         else:
             print 'just rendering the page'
