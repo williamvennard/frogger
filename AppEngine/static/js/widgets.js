@@ -553,7 +553,93 @@
             testPlanHTML+= "</div>";
 
             document.getElementById("testPlan").innerHTML = testPlanHTML;
+       }else if(type === 'sU2001A') {           //Saved Power Meter
 
+            console.log('addWidget: savedSettings sU2001A= ',savedSettings);
+
+            var sconfigName = savedSettings.config_name;
+            var scorrectionFreq = savedSettings.correction_frequency;
+            var soffset = savedSettings.offset;
+            var sunits = savedSettings.units;
+            var savgCountAuto = savedSettings.averaging_count_auto;
+            var srangeAuto = savedSettings.range_auto;
+            var spassFail = savedSettings.pass_fail;
+            var sminPass = savedSettings.min_value;
+            var smaxPass = savedSettings.max_value;
+
+            testPlanHTML+= "<div type='U2001A' class='U2001ABox' id='" + String(index) + "'>";
+            testPlanHTML+= "<div id='configSearch' class='col-md-4'>";
+            testPlanHTML+= "<h4 class='appTitle'>U2001A - <span onclick='removeWidget(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle' style='left:777px;'></span></h4>";
+            testPlanHTML+= "<form method='post'>";
+            testPlanHTML+= "<input class='nameWidget' type='text' name='config_name' placeholder='name goes here' value='" + sconfigName + "'>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Freq Correction:</p>"; 
+            testPlanHTML+= "<input autocomplete='off' class='appInput' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' placeholder='' name='analog_bandwidth' value='" + scorrectionFreq;
+            testPlanHTML+= "'></td></tr></div>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Offset:</p>";
+            testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' placeholder='' name='analog_sample_rate' value='" + soffset + "'></td></tr></div>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'> Units: </p>"; 
+            testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' placeholder='' name='capture_buffer_size' value='" + sunits + "'></td></tr></div>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Avg Count Auto: </p>"; 
+            testPlanHTML+= "<input autocomplete='off' class='appInput' type='checkbox'  name='resolution' value='" + savgCountAuto + "'></td></tr></div>";
+
+            testPlanHTML+= "<div style='' class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Range Auto: </p>"; 
+            testPlanHTML+= "<input class='appInput' style='margin-bottom:0px; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='checkbox' name='' autocomplete='off' value='" + srangeAuto;
+            testPlanHTML+= "'></td></tr></div>";
+                            
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Pass/Fail: </p>";
+            testPlanHTML+= "<input class='appInput' type='checkbox' name='' autocomplete='off' value='" + spassFail + "'></td></tr></div>"; 
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'> Max: </p>"; 
+            testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' placeholder='12,000' name='capture_buffer_size' value='" + smaxPass + "'></td></tr></div>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'> Min: </p>"; 
+            testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' placeholder='12,000' name='capture_buffer_size' value='" + sminPass + "'></td></tr></div>";
+
+            testPlanHTML+= "</form>";
+            testPlanHTML+= "</div>";
+
+            testPlanHTML+= "<div id='configSearchResults' class='col-md-4' style='left:100px;'>";
+            testPlanHTML+= "<form method='post'>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Results:</p>"; 
+            testPlanHTML+= "<p class='configResults' style='width: 180px;' id='results" + index;
+            testPlanHTML+= "'></p></td></tr></div>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Instrument Type:</p>"; 
+            testPlanHTML+= "<p class='configResults' style='' type='text' name='selected_inst_type' value='' id='instType" + index;
+            testPlanHTML+= "'></p></td></tr></div>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Hardware:</p>"; 
+            testPlanHTML+= "<p class='configResults' style='' type='text' name='selected_hardware' value='' id='hardware" + index;
+            testPlanHTML+= "'></p></td></tr></div>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Available Instruments:</p>"; 
+            testPlanHTML+= "<p class='configResults' id='avail" + index;
+            testPlanHTML+= "''></p></td></tr></div>";
+
+            testPlanHTML+= "</form>";
+            testPlanHTML+= "</div>";
+            testPlanHTML+= "<button id='configSearchBtn' onclick='configSearch(" + index + ")'>SEARCH</button>"; 
+            testPlanHTML+= "</div>";
+
+            document.getElementById("testPlan").innerHTML = testPlanHTML; 
+            console.log('addU2001A: testPlanHTML = ', testPlanHTML); 
         };
         $(document).ready(function () { 
               $(".collapseCommitTest").fadeIn("fast");           

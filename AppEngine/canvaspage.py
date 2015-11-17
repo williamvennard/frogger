@@ -49,9 +49,11 @@ class Handler(InstrumentDataHandler):
             measurements = query_to_dict(rows)
             rows = db.GqlQuery("""SELECT * FROM TestDB WHERE company_nickname =:1""", company_nickname)
             tests = query_to_dict(rows)
+            rows = db.GqlQuery("""SELECT * FROM agilentU2000 WHERE company_nickname =:1""", company_nickname)
+            U2001As = query_to_dict(rows)
             #rows = db.GqlQuery("""SELECT * FROM SequenceDB WHERE company_nickname =:1""", company_nickname)
             #sequences = query_to_dict(rows)
-            widgets = {'tests':tests, 'measurements':measurements, 'configs':configs, 'duts':duts}
+            widgets = {'tests':tests, 'measurements':measurements, 'configs':configs, 'duts':duts, 'U2001As': U2001As}
             render_json(self, widgets) 
         else:
             print 'just rendering the page'

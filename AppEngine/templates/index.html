@@ -54,7 +54,7 @@
                             <li class="dots glyphicon glyphicon-option-vertical"></li>
                             <li><a href="testresults" style="color: rgb(124,175,46);">CANVAS</a></li>
                             <li class="dots glyphicon glyphicon-option-vertical"></li>
-                            <li><a href="testlibrary/acme">TEST LIBRARY</a></li>
+                            <li><a href="testlibrary/Acme">TEST LIBRARY</a></li>
                             <li class="dots glyphicon glyphicon-option-vertical"></li>
                             <li><a href="community">COMMUNITY</a></li>            
                         </ul>
@@ -124,7 +124,7 @@
                                     </tr>
                                     <td id="U2001AMenu">
                                         <a id="newU2001A">NEW</a>
-                                        <table id="savedConfigs" class="table"></table>
+                                        <table id="savedU2001As" class="table"></table>
                                     </td>
                                 </table>
                             </div>
@@ -318,7 +318,12 @@
     function createConfig(index) {
         var savedSettings = savedResults.configs[index]
         addWidget('sconfig',savedSettings);
-    };    
+    }; 
+    function createU2001A(index) {
+        var savedSettings = savedResults.U2001As[index]
+        addWidget('sU2001A',savedSettings);
+    };        
+
 
     function savedTestView(index) {
         console.log('View button clicked!') 
@@ -398,6 +403,16 @@
                     addWidget('measurement');
                     };
                 };
+            }else if(widgetId[0] === 'U2001A'){
+                console.log('search for U2001A widget!');
+                for (var i=0;i<savedU2001As.length;i++) {
+                    console.log('search for U2001A widget!')
+                    if(widgetId[1] === savedU2001As[i].config_name) {
+                        createU2001A(i)
+                    }else if (widgetId[1] === '') {
+                    addWidget('U2001A');
+                    };
+                };  
             };
             console.log('IS THIS RUNNING?');
         };
@@ -430,6 +445,7 @@ $(document).ready(function () {
             savedSeq = results.sequences;
             savedMeas = results.measurements;
             savedTests = results.tests;
+            savedU2001As = results.U2001As;
 
             savedResults = results;
             //console.log('Saved Widgets: results', results);
@@ -438,6 +454,7 @@ $(document).ready(function () {
             console.log('Saved Widgets: savedMeas', savedMeas);
             console.log('Saved Widgets: savedSeq', savedSeq);
             console.log('Saved Widgets: savedTests', savedTests);
+            console.log('Saved Widgets: savedU2001As', savedU2001As);
 //SAVED TESTS
             var savedPlansHTML = "";
             for (var i=0;i<savedTests.length;i++) {
@@ -465,6 +482,14 @@ $(document).ready(function () {
             };
             console.log('savedConfigsHTML = ',savedConfigsHTML);
             document.getElementById("savedConfigs").innerHTML = savedConfigsHTML;
+// SAVED U2001AS
+            var savedU2001AsHTML = "";
+            savedU2001AsHTML += "<tr><td><p class='savedTitle'>Saved:</p></td></tr>";
+            for (var i=0;i<savedU2001As.length;i++){
+                savedU2001AsHTML+= "<tr><td><a onclick='createConfig(" + i + ")'>" + savedU2001As[i].config_name + "</a></td></tr>";                                                
+            };
+            console.log('savedU2001AsHTML = ',savedU2001AsHTML);
+            document.getElementById("savedU2001As").innerHTML = savedU2001AsHTML;
         }); //end of ajax
         
 
