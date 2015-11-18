@@ -117,7 +117,7 @@
                 testPlanHTML+= "<div class='row appRow'>";
                 testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Available Instruments:</p>"; 
                 testPlanHTML+= "<p class='configResults' id='avail" + index;
-                testPlanHTML+= "''>" + configAvail;
+                testPlanHTML+= "'>" + configAvail;
                 testPlanHTML+= "</p></td></tr></div>";
 
                 testPlanHTML+= "</form>";
@@ -232,7 +232,7 @@
                 testPlanHTML+= "<div class='row appRow'>";
                 testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Available Instruments:</p>"; 
                 testPlanHTML+= "<p class='configResults' id='avail" + index;
-                testPlanHTML+= "''>" + configAvail;
+                testPlanHTML+= "'>" + configAvail;
                 testPlanHTML+= "</p></td></tr></div>";
 
                 testPlanHTML+= "</form>";
