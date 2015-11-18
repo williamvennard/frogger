@@ -3,10 +3,11 @@
 {% block head %}
     {{ super() }}
     <style type="text/css">
+        #testops-navlink {color: rgb(124,175,46);}
     </style>
 {% endblock %}
 {% block content %}
-<h1>Test Ops</h1>
+<h1>{{ self.title() }}</h1>
 <h3>Available Test Plans:</h3>
 <div>
 	{% for config in configs %}
