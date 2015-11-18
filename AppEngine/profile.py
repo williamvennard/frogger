@@ -51,12 +51,15 @@ def get_profile_cookie(self):
     if comp_cookie:
         profile = {}
         profile['company_nickname'] = comp_cookie
+        profile['permissions'] = permissions
         return profile
     else:
         profile = get_profile()
         if hasattr(profile, 'to_dict'):
+            profile = profile.to_dict()
             set_profile_cookie(self, profile)
-            return profile.to_dict()
+            profile['permissions'] = permissions
+            return profile
         else:
             return {}
 
@@ -65,10 +68,10 @@ def set_groups_cookie(self, profile):
     self.response.set_cookie('groups', groups_string)
 
 def set_profile_cookie(self, profile):
-    if profile.has_key('company_nickname'):
+    if 'company_nickname' in profile:
         self.response.set_cookie('company_nickname', 
             profile['company_nickname'])
-        self.set_groups_cookie(profile)
+        set_groups_cookie(self, profile)
         return True
     else:
         return False
