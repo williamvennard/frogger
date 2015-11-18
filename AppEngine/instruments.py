@@ -47,7 +47,7 @@ class Handler(InstrumentDataHandler):
         else:
             self.redirect(users.create_login_url(self.request.uri))
 
-        #profile = get_profile_cookie(self)
+        profile = get_profile_cookie(self)
 
         instrument_name = instrument_name.split('.')
         if instrument_name[-1] == 'json':
@@ -71,7 +71,7 @@ class Handler(InstrumentDataHandler):
         else:
             rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE author =:1", author)
             #self.render('instruments.html', rows = rows, profile=profile)
-            self.render('instruments.html', rows = rows)
+            self.render('instruments.html', rows = rows, profile=profile)
 
 
     # def set_groups_cookie(self, profile):        
