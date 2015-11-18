@@ -76,7 +76,6 @@ class Handler(InstrumentDataHandler):
             templatedata = {}
             templatedata['results'] = "No results data yet"
             #self.render('instruments.html', rows = rows, profile=profile)
-<<<<<<< HEAD
             self.render('instruments.html', data = templatedata, rows = rows)
 
 
@@ -104,9 +103,8 @@ class Handler(InstrumentDataHandler):
         templatedata['comment_thread'] = comment_thread
         print templatedata
         self.render('instruments.html', data = templatedata)
-=======
-            self.render('instruments.html', rows = rows, profile=profile)
->>>>>>> refs/remotes/origin/master
+
+        #self.render('instruments.html', rows = rows, profile=profile)
 
 
     # def set_groups_cookie(self, profile):        
