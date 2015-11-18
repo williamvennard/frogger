@@ -32,17 +32,12 @@ from google.appengine.ext import db
 from time import gmtime, strftime
 import appengine_config
 import json
-from profile import get_profile
+from profile import get_profile_cookie
 
 
 class Handler(InstrumentDataHandler):
     def get(self, company_nickname="", hardware_name="", config_name="", testplan_name=""):
-        comp_cookie = self.request.cookies.get("company_nickname")
-        if comp_cookie:
-            profile = {}
-            profile['company_nickname'] = comp_cookie
-        else:
-            profile = get_profile()
+        profile = get_profile_cookie(self)
 
         query = ConfigDB.all().filter("company_nickname =", company_nickname)
         query.filter("hardware_name =", hardware_name)

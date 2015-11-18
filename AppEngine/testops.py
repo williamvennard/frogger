@@ -26,16 +26,17 @@ import json
 class Handler(InstrumentDataHandler):
 	def get(self):
 		profile = get_profile_cookie(self)
+		configs = []
 		if profile.has_key('company_nickname'):
-			query = TestDB.all()
-			# query = TestDB.all().filter("company_nickname =", profile['company_nickname'])
+			query = TestDB.all().filter("company_nickname =", profile['company_nickname'])
+			query = query.filter("ops_start =", True)
 			tests = query.run()
-			query = ConfigDB.all()
-			# query = ConfigDB.all().filter("company_nickname =", profile['company_nickname'])
-			configs = query.run()
-			self.render('ops.html', tests=tests, configs=configs, profile=profile)
+			for test in tests:
+				for config in test.configs:
+					configs.append(db.get(config))
+			self.render('ops.html', configs=configs, profile=profile)
 		else:
-			self.render('ops.html')
+			self.render('ops.html', configs=configs, profile=profile)
 	def post(self):
 		configKey = self.request.get('configKey')
 		config = db.get(configKey)

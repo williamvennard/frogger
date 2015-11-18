@@ -44,8 +44,16 @@ def get_profile():
     else:
         return False
 
+def login_check(self):
+    user = users.get_current_user()
+    if user:
+        return True
+    else:
+        self.redirect(users.create_login_url(self.request.uri))
+
 def get_profile_cookie(self):
     """Get cookie data else grabs DB profile and sets cookie. Returns Dictionary."""
+    login_check(self)
     comp_cookie = self.request.cookies.get("company_nickname")
     permissions = self.request.cookies.get("permissions")
     if comp_cookie:
