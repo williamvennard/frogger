@@ -32,8 +32,10 @@ class Handler(InstrumentDataHandler):
 			query = query.filter("ops_start =", True)
 			tests = query.run()
 			for test in tests:
-				for config in test.configs:
-					configs.append(db.get(config))
+				for config_key in test.configs:
+					config = db.get(config_key)
+					config.active_testplan_name = test.testplan_name #temp fix to correct displayname TODO- align tests and configs names
+					configs.append(config)
 			self.render('ops.html', configs=configs, profile=profile)
 		else:
 			self.render('ops.html', configs=configs, profile=profile)
