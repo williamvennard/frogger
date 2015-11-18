@@ -847,6 +847,7 @@
         var testSetUp = document.getElementById('testSetup');
         var testSetUpInfo = testSetUp.childNodes;
         testPlanName = testSetUpInfo[1].children[0].children[1].children[0].value;
+        var opsStart = new Boolean(document.getElementById('opsStartCheck').checked);
         companyName = 'Acme';
         testPlanAuthor = 'nedwards';
         hardwareName = 'Tahoe';
@@ -923,7 +924,7 @@
         //var commit_url = 'https://gradientone-test.appspot.com/testconfiginput';
         var commit_url = window.location.origin + "/testconfiginput";
         console.log('commitBtn: indexArray = ', indexArray);
-        var commitData = JSON.stringify({"testplan_name":testPlanName,"author":testPlanAuthor,"company_nickname":companyName,"hardware_name":hardwareName,"start_time":startMS,"start_now":startNowLogic,"configs":configArray,"meas":measArray,"duts":dutArray,"order":indexArray});
+        var commitData = JSON.stringify({"testplan_name":testPlanName,"author":testPlanAuthor,"company_nickname":companyName,"hardware_name":hardwareName,"start_time":startMS,"start_now":startNowLogic,"configs":configArray,"meas":measArray,"duts":dutArray,"order":indexArray,"ops_start": opsStart});
         console.log('commitBtn: commitData = ', commitData);
         $.ajax({
         type: "POST",

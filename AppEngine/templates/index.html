@@ -177,12 +177,19 @@
                             <div class="col-md-4">
                                 <h3 class="testSetupLabel">Test Plan Name :</h3>
                             </div>
-                            <div class="col-md-5">
+                            <div class="col-md-5" style="height: 35px;">
                                 <tr>
                                     <td class="label">  
                                       <input id="tesPlanName" class="nameTestInput" type="text" onblur="checkTextField();" value="" placeholder="name goes here">
                                     </td>
                                 </tr>
+                                <div class="opsStartBox">
+                                    <p class="opsStartLabel">Operator Start</p> 
+                                    <td>                                          
+                                      <input id="opsStartCheck" class="opsStart" type="checkbox" name="ops_start">
+                                      <input type="hidden" name="ops_start" value=True>
+                                    </td>  
+                                </div>
                             </div>
                         </div>
                         <div class="row">

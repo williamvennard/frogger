@@ -208,6 +208,26 @@ margin: 65px 0 0 0;
     margin: 25px 0 5px 0;
 }
 
+.opsStartBox {
+    position: relative;
+    left: 305px;
+    top:-25px;
+}
+
+.opsStart {
+    position: relative;
+    top: -23px;
+    left: 135px;
+}
+
+.opsStartLabel {
+    margin-bottom: 0px;
+    width: 135px;
+    color: white;
+    font-size: 125%;
+    font-family: 'nexa_lightregular';   
+}
+
 .startNowBox {
     position: relative;
     left: 305px;
