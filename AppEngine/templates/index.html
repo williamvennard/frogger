@@ -1,26 +1,10 @@
-<!DOCTYPE html>
-
-<html lang="en">
-<head>
-    <title>iCanvas Page</title>
-         
-    <script src="../static/js/addons/jquery-1.11.3.js"></script>    
-    <script src="../static/js/jquery-ui-1.11.4/jquery-ui.js"></script>
-    <script src="../static/bootstrap/js/bootstrap.min.js"></script>    
-    <script src="../static/js/addons/lodash.js"></script>  
-    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <script type="text/javascript" src="../static/js/chart1.js"></script>
-    <script type="text/javascript" src="../static/js/chart2.js"></script>
-    <script type="text/javascript" src="../static/js/chart3.js"></script>
-    <script type="text/javascript" src="../static/js/addons/appDrag.js"></script> 
-    <link rel="stylesheet" type="text/css" href="../static/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="../static/css/custom.css">
-    <link rel="stylesheet" type="text/css" href="../static/css/savedTestPlans.css">
-    <link rel="stylesheet" type="text/css" href="../static/css/hoverzoom.css">
-    <link rel="stylesheet" type="text/css" href="../static/css/fonts/stylesheet.css" charset="utf-8" /> 
-    <script src="../static/js/addons/angular.min.js"></script>
-    <script type="text/javascript" src="../static/js/addons/clickadd.js"></script>
-    
+{% extends "one.html" %}
+{% block title %} Canvas {% endblock %}
+{% block head %}
+    {{ super() }}
+    <script type="text/javascript" src="/static/js/addons/appDrag.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/savedTestPlans.css"> 
+    <script type="text/javascript" src="/static/js/addons/clickadd.js"></script>
     <script type="text/javascript">
         function checkTextField() {
             var testPlanName = document.getElementById("tesPlanName")
@@ -36,36 +20,12 @@
             }  
         };
     </script>
-
-    <link rel="stylesheet" type="text/css" href="../static/css/canvasApp.css">
-    <style type="text/css"></style>
-</head>
-
-<body id="mainBackground">
-    <div class="container">       
-        <nav id="topNavBar" class="navbar navbar-inverse navbar-collapse collapse">
-                <div class="container-fluid">
-                    <div class="navbar-header">
-                        <img class="logo" src="../static/images/Glogo.png" style="width:110px;" alt="Gradient One logo">
-                    </div>
-                    <div id="navbar">
-                        <ul class="topmenu nav navbar-nav">
-                            <li><a href="instruments">INSTRUMENTS</a></li>
-                            <li class="dots glyphicon glyphicon-option-vertical"></li>
-                            <li><a href="testresults" style="color: rgb(124,175,46);">CANVAS</a></li>
-                            <li class="dots glyphicon glyphicon-option-vertical"></li>
-                            <li><a href="testlibrary/acme">TEST LIBRARY</a></li>
-                            <li class="dots glyphicon glyphicon-option-vertical"></li>
-                            <li><a href="community">COMMUNITY</a></li>            
-                        </ul>
-                        <ul class="nav navbar-nav navbar-right">
-                          <li><a class="glyphicon glyphicon-envelope" href="../navbar-static-top/"></a></li>
-                          <li><a class="glyphicon glyphicon-bell" href="../navbar-static-top/"></a></li>
-                          <li><a class="glyphicon glyphicon-user" href="profile">Profile</a></li>
-                        </ul>
-                    </div>
-                </div>
-        </nav>
+    <link rel="stylesheet" type="text/css" href="/static/css/canvasApp.css">
+    <style type="text/css">
+        #canvas-navlink {color: rgb(124,175,46);}
+    </style>
+{% endblock %}
+{% block content %}        
         <div class="row">
             <div class="col-md-12 canv" style="">
                 <h1 id="headr">{{profile.company_nickname}} Canvas</h1>
@@ -124,7 +84,7 @@
                                     </tr>
                                     <td id="U2001AMenu">
                                         <a id="newU2001A">NEW</a>
-                                        <table id="savedConfigs" class="table"></table>
+                                        <table id="savedU2001As" class="table"></table>
                                     </td>
                                 </table>
                             </div>
@@ -177,12 +137,19 @@
                             <div class="col-md-4">
                                 <h3 class="testSetupLabel">Test Plan Name :</h3>
                             </div>
-                            <div class="col-md-5">
+                            <div class="col-md-5" style="height: 35px;">
                                 <tr>
                                     <td class="label">  
                                       <input id="tesPlanName" class="nameTestInput" type="text" onblur="checkTextField();" value="" placeholder="name goes here">
                                     </td>
                                 </tr>
+                                <div class="opsStartBox">
+                                    <p class="opsStartLabel">Operator Start</p> 
+                                    <td>                                          
+                                      <input id="opsStartCheck" class="opsStart" type="checkbox" name="ops_start">
+                                      <input type="hidden" name="ops_start" value=True>
+                                    </td>  
+                                </div>
                             </div>
                         </div>
                         <div class="row">
@@ -228,7 +195,7 @@
             <div id="chart3" class="col-md-4 hoverzoom"></div>             
         </div> 
         <hr>
-    </div> 
+    <!-- </div>  -->
 
     <script type="text/javascript" src="../static/js/widgets.js"></script>
 
@@ -318,7 +285,12 @@
     function createConfig(index) {
         var savedSettings = savedResults.configs[index]
         addWidget('sconfig',savedSettings);
-    };    
+    }; 
+    function createU2001A(index) {
+        var savedSettings = savedResults.u2000configs[index]
+        addWidget('sU2001A',savedSettings);
+    };        
+
 
     function savedTestView(index) {
         console.log('View button clicked!') 
@@ -398,6 +370,16 @@
                     addWidget('measurement');
                     };
                 };
+            }else if(widgetId[0] === 'U2001A'){
+                console.log('search for U2001A widget!');
+                for (var i=0;i<savedU2001As.length;i++) {
+                    console.log('search for U2001A widget!')
+                    if(widgetId[1] === savedU2001As[i].config_name) {
+                        createU2001A(i)
+                    }else if (widgetId[1] === '') {
+                    addWidget('U2001A');
+                    };
+                };  
             };
             console.log('IS THIS RUNNING?');
         };
@@ -430,6 +412,7 @@ $(document).ready(function () {
             savedSeq = results.sequences;
             savedMeas = results.measurements;
             savedTests = results.tests;
+            savedU2001As = results.u2000configs;
 
             savedResults = results;
             //console.log('Saved Widgets: results', results);
@@ -438,6 +421,7 @@ $(document).ready(function () {
             console.log('Saved Widgets: savedMeas', savedMeas);
             console.log('Saved Widgets: savedSeq', savedSeq);
             console.log('Saved Widgets: savedTests', savedTests);
+            console.log('Saved Widgets: savedU2001As', savedU2001As);
 //SAVED TESTS
             var savedPlansHTML = "";
             for (var i=0;i<savedTests.length;i++) {
@@ -465,10 +449,17 @@ $(document).ready(function () {
             };
             console.log('savedConfigsHTML = ',savedConfigsHTML);
             document.getElementById("savedConfigs").innerHTML = savedConfigsHTML;
+// SAVED U2001AS
+            var savedU2001AsHTML = "";
+            savedU2001AsHTML += "<tr><td><p class='savedTitle'>Saved:</p></td></tr>";
+            for (var i=0;i<savedU2001As.length;i++){
+                savedU2001AsHTML+= "<tr><td><a onclick='createU2001A(" + i + ")'>" + savedU2001As[i].config_name + "</a></td></tr>";                                                
+            };
+            console.log('savedU2001AsHTML = ',savedU2001AsHTML);
+            document.getElementById("savedU2001As").innerHTML = savedU2001AsHTML;
         }); //end of ajax
         
 
     }); //end doc ready 
     </script>
-</body>
-</html>
+{% endblock %}

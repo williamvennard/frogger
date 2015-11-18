@@ -1,26 +1,27 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <title>Community Page</title>
          
-    <script src="../static/js/addons/jquery-1.11.3.js"></script>    
-    <script src="../static/js/jquery-ui-1.11.4/jquery-ui.js"></script>
-    <script src="../static/bootstrap/js/bootstrap.min.js"></script>    
-    <script src="../static/js/addons/lodash.js"></script>  
+    <script src="/static/js/addons/jquery-1.11.3.js"></script>    
+    <script src="/static/js/jquery-ui-1.11.4/jquery-ui.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.min.js"></script>    
+    <script src="/static/js/addons/lodash.js"></script>  
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <script type="text/javascript" src="../static/js/chart1.js"></script>
-    <script type="text/javascript" src="../static/js/chart2.js"></script>
-    <script type="text/javascript" src="../static/js/chart3.js"></script>  
-    <link rel="stylesheet" type="text/css" href="../static/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="../static/css/custom.css">
-    <link rel="stylesheet" type="text/css" href="../static/css/hoverzoom.css">
-    <link rel="stylesheet" type="text/css" href="../static/css/fonts/stylesheet.css" charset="utf-8" /> 
-    <script src="../static/js/addons/angular.min.js"></script>
-    <script type="text/javascript" src="../static/js/addons/clickadd.js"></script>
-    <link rel="stylesheet" type="text/css" href="../static/css/testConfig.css">
-    <link rel="stylesheet" type="text/css" href="../static/css/testResultsList.css">
+    <script type="text/javascript" src="/static/js/chart1.js"></script>
+    <script type="text/javascript" src="/static/js/chart2.js"></script>
+    <script type="text/javascript" src="/static/js/chart3.js"></script>  
+    <link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/custom.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/hoverzoom.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/fonts/stylesheet.css" charset="utf-8" /> 
+    <script src="/static/js/addons/angular.min.js"></script>
+    <script type="text/javascript" src="/static/js/addons/clickadd.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/testConfig.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/testResultsList.css">
     <style type="text/css">
         label {color: white;}
+        #community-navlink {color: rgb(123,175,46);}
     </style>
 
 </head>
@@ -34,13 +35,15 @@
                     </div>
                     <div id="navbar">
                         <ul class="topmenu nav navbar-nav">
-                            <li><a href="instruments">INSTRUMENTS</a></li>
+                            <li><a id="instruments-navlink" href="instruments">INSTRUMENTS</a></li>
                             <li class="dots glyphicon glyphicon-option-vertical"></li>
-                            <li><a href="testresults">CANVAS</a></li>
+                            <li><a id="canvas-navlink" href="testresults">CANVAS</a></li>
                             <li class="dots glyphicon glyphicon-option-vertical"></li>
-                            <li><a href="testlibrary/{{profile.company_nickname}}">TEST LIBRARY</a></li>
+                            <li><a id="testlibrary-navlink" href="testlibrary/{{profile.company_nickname}}">TEST LIBRARY</a></li>
                             <li class="dots glyphicon glyphicon-option-vertical"></li>
-                            <li><a style="color: rgb(124,175,46);" href="community">COMMUNITY</a></li>           
+                            <li><a id="testops-navlink" href="testops">TEST OPS</a></li>           
+                            <li class="dots glyphicon glyphicon-option-vertical"></li>
+                            <li><a id="community-navlink" href="community">COMMUNITY</a></li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
                           <li><a class="glyphicon glyphicon-envelope" href="../navbar-static-top/"></a></li>
@@ -49,138 +52,146 @@
                         </ul>
                     </div>
                 </div>
-        </nav>
-        <div class="well com">
-            <h2>GradientOne Community</h2>
-            <p></p>            
-            <div>
-                <ul class="nav nav-pills">
-                  <li role="presentation"><a href="#">Popular</a></li>
-                  <li role="presentation"><a href="#">New</a></li>
-                  <li role="presentation"><a href="#">Following</a></li>
-                  <li role="testing"><a href="communityprivate">Private</a></li>
-                </ul>
-            </div> 
-            <div class="row">
-                <form class="navbar-form navbar-center" role="search">
-                  <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Search" style="width: 100px;">
-                  </div>
-                  <button type="submit" class="btn btn-inverse glyphicon glyphicon-search"></button>
-                </form>
-            </div>
-        </div>
-        <h3>Company Posts</h3>
-        <div class="row">
-        
-            {% for post in group_posts: %}
-            <div class="col-md-6 well well-sm" style="width: 300px; margin-left: 15%; background-color: lightgray;">
-                <h4>{{post.title}}</h4> 
-                <p>Posted by: {{post.author}}</p>
-                <p>Shared to: "{{post.privacy}}"</p>
-                <a href="#">Likes<span class="badge">2</span></a>
-                <a href="#">Comments<span class="badge">4</span></a>
-                <a href="#">Shares<span class="badge">2</span></a>
-                <a class="btn btn-default glyphicon glyphicon-menu-down" data-toggle="collapse" href="#{{post.key().id()}}" aria-expanded="false" aria-controls="{{post.key().id()}}" style=""></a>
-                
-                <div class="collapse" id="{{post.key().id()}}">
-                    <form action="/saveposttotest" method="post">
-                        <div class="well well-sm" style="margin-top: 10px;">
-                          Company: {{post.company_nickname}}
-                          <br>
-                          Test Plan: {{post.test_ref.testplan_name}}
-                          <br>
-                          Created: {{post.test_ref.date_created}}
-                          <br>
-                            <ul>
-                              <li>Using PTEQ Firmware set the DUT in the transmitter mode</li>
-                            </ul>
-                            <ul>
-                              <li>Set the DUT in continuous unmodulated wave</li>
-                            </ul>
-                            <ul>
-                              <li>Set Nominal Power</li>
-                            </ul>
-                        </div>
-                        <button class="btn sel" type="submit" name="postkey" value="{{post.key()}}">Save to Library</button>
-                    </form>
-                </div>
-            </div>
-            {% set g_count = g_count + 1 %}
-            {% endfor %}
-        </div>
+        </nav> -->
 
-        
-        <hr>
-        
-        <h3> Public Posts </h3>
-        <div class= "row">
-            {% for post in public_posts: %}
-            <div class="col-md-6 well well-sm" style="width: 300px; margin-left: 15%; background-color: lightgray;">
-                <h4>{{post.title}}</h4> 
-                <p>Posted by: {{post.author}}</p>
-                <p>Shared to: "{{post.privacy}}"</p>
-                <a href="#">Likes<span class="badge">2</span></a>
-                <a href="#">Comments<span class="badge">4</span></a>
-                <a href="#">Shares<span class="badge">2</span></a>
-                <a class="btn btn-default glyphicon glyphicon-menu-down" data-toggle="collapse" href="#{{post.key().id()}}" aria-expanded="false" aria-controls="{{post.key().id()}}" style=""></a>
-                
-                <div class="collapse" id="{{post.key().id()}}">
-                    <form action="/saveposttotest" method="post">
-                        <div class="well well-sm" style="margin-top: 10px;">
-                          Company: {{post.company_nickname}}
-                          <br>  
-                          Test Flow for {{post.test_ref.testplan_name}}
-                          <br>
-                          Created: {{post.test_ref.date_created}}
-                          <br>
-                            <ul>
-                              <li>Using PTEQ Firmware set the DUT in the transmitter mode</li>
-                            </ul>
-                            <ul>
-                              <li>Set the DUT in continuous unmodulated wave</li>
-                            </ul>
-                            <ul>
-                              <li>Set Nominal Power</li>
-                            </ul>
-                        </div>
-                        <button class="btn sel" type="submit" name="postkey" value="{{post.key()}}">Save to Library</button>
-                    </form>
-                </div>
-            </div>
-            {% set p_count = p_count + 1 %}
-            {% endfor %}
-        </div>
-        <hr>
-        <div class="row">
-            <div class="col-md-10 col-md-offset-2">
-                <form action="/community" method="post">
-                    <label for="title">Post Title:</label>                    
-                    <input type="text" name="title" value="{{title}}">
-                    <br>
-                    <label for="testkey">Test Plan:</label>
-                    <select name="testkey">
-                    {% for test in tests %}
-                    <option value="{{test.key()}}">{{test.testplan_name}}</option>
-                    {% endfor %}
-                    </select>
-                    <br>
-                    <label for="privacy">Sharing:</label>
-                    <select name="privacy">
-                        <option value="public"> Public </option>
-                        <option value="company"> Company </option>
-                        <option value="private"> Private </option>
-                        {% for group in profile.groups %}
-                        <option value="{{group}}"> {{group}} </option>
-                        {% endfor %}
-                    </select>
-                    <br>
-                    <input type="submit">
-                    <br>
-                </form>
-            </div>
-        </div>
+{% extends "one.html" %}
+{% block title %} Test Ops {% endblock %}
+{% block head %}
+    {{ super() }}
+    <style type="text/css">
+        label {color: white;}
+        #community-navlink {color: rgb(123,175,46);}
+    </style>
+{% endblock %}
+{% block content %}
+<div class="well com">
+    <h2>GradientOne Community</h2>
+    <p></p>            
+    <div>
+        <ul class="nav nav-pills">
+          <li role="presentation"><a href="#">Popular</a></li>
+          <li role="presentation"><a href="#">New</a></li>
+          <li role="presentation"><a href="#">Following</a></li>
+        </ul>
     </div> 
-    <script type="text/javascript">$('#collapseOne').collapse("hide");</script><!--stops accordion from loading open -->
-</body>
-</html>
+    <div class="row">
+        <form class="navbar-form navbar-center" role="search">
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="Search" style="width: 100px;">
+          </div>
+          <button type="submit" class="btn btn-inverse glyphicon glyphicon-search"></button>
+        </form>
+    </div>
+</div>
+<h3>Company Posts</h3>
+<div class="row">
+
+    {% for post in group_posts: %}
+    <div class="col-md-6 well well-sm" style="width: 300px; margin-left: 15%; background-color: lightgray;">
+        <h4>{{post.title}}</h4> 
+        <p>Posted by: {{post.author}}</p>
+        <p>Shared to: "{{post.privacy}}"</p>
+        <a href="#">Likes<span class="badge">2</span></a>
+        <a href="#">Comments<span class="badge">4</span></a>
+        <a href="#">Shares<span class="badge">2</span></a>
+        <a class="btn btn-default glyphicon glyphicon-menu-down" data-toggle="collapse" href="#{{post.key().id()}}" aria-expanded="false" aria-controls="{{post.key().id()}}" style=""></a>
+        
+        <div class="collapse" id="{{post.key().id()}}">
+            <form action="/saveposttotest" method="post">
+                <div class="well well-sm" style="margin-top: 10px;">
+                  Company: {{post.company_nickname}}
+                  <br>
+                  Test Plan: {{post.test_ref.testplan_name}}
+                  <br>
+                  Created: {{post.test_ref.date_created}}
+                  <br>
+                    <ul>
+                      <li>Using PTEQ Firmware set the DUT in the transmitter mode</li>
+                    </ul>
+                    <ul>
+                      <li>Set the DUT in continuous unmodulated wave</li>
+                    </ul>
+                    <ul>
+                      <li>Set Nominal Power</li>
+                    </ul>
+                </div>
+                <button class="btn sel" type="submit" name="postkey" value="{{post.key()}}">Save to Library</button>
+            </form>
+        </div>
+    </div>
+    {% set g_count = g_count + 1 %}
+    {% endfor %}
+</div>
+
+
+<hr>
+
+<h3> Public Posts </h3>
+<div class= "row">
+    {% for post in public_posts: %}
+    <div class="col-md-6 well well-sm" style="width: 300px; margin-left: 15%; background-color: lightgray;">
+        <h4>{{post.title}}</h4> 
+        <p>Posted by: {{post.author}}</p>
+        <p>Shared to: "{{post.privacy}}"</p>
+        <a href="#">Likes<span class="badge">2</span></a>
+        <a href="#">Comments<span class="badge">4</span></a>
+        <a href="#">Shares<span class="badge">2</span></a>
+        <a class="btn btn-default glyphicon glyphicon-menu-down" data-toggle="collapse" href="#{{post.key().id()}}" aria-expanded="false" aria-controls="{{post.key().id()}}" style=""></a>
+        
+        <div class="collapse" id="{{post.key().id()}}">
+            <form action="/saveposttotest" method="post">
+                <div class="well well-sm" style="margin-top: 10px;">
+                  Company: {{post.company_nickname}}
+                  <br>  
+                  Test Flow for {{post.test_ref.testplan_name}}
+                  <br>
+                  Created: {{post.test_ref.date_created}}
+                  <br>
+                    <ul>
+                      <li>Using PTEQ Firmware set the DUT in the transmitter mode</li>
+                    </ul>
+                    <ul>
+                      <li>Set the DUT in continuous unmodulated wave</li>
+                    </ul>
+                    <ul>
+                      <li>Set Nominal Power</li>
+                    </ul>
+                </div>
+                <button class="btn sel" type="submit" name="postkey" value="{{post.key()}}">Save to Library</button>
+            </form>
+        </div>
+    </div>
+    {% set p_count = p_count + 1 %}
+    {% endfor %}
+</div>
+<hr>
+<div class="row">
+    <div class="col-md-10 col-md-offset-2">
+        <form action="/community" method="post">
+            <label for="title">Post Title:</label>                    
+            <input type="text" name="title" value="{{title}}">
+            <br>
+            <label for="testkey">Test Plan:</label>
+            <select name="testkey">
+            {% for test in tests %}
+            <option value="{{test.key()}}">{{test.testplan_name}}</option>
+            {% endfor %}
+            </select>
+            <br>
+            <label for="privacy">Sharing:</label>
+            <select name="privacy">
+                <option value="public"> Public </option>
+                <option value="company"> Company </option>
+                <option value="private"> Private </option>
+                {% for group in profile.groups %}
+                <option value="{{group}}"> {{group}} </option>
+                {% endfor %}
+            </select>
+            <br>
+            <input type="submit">
+            <br>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">$('#collapseOne').collapse("hide");</script><!--stops accordion from loading open -->
+{% endblock %}

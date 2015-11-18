@@ -44,19 +44,30 @@ def get_profile():
     else:
         return False
 
+def login_check(self):
+    user = users.get_current_user()
+    if user:
+        return True
+    else:
+        self.redirect(users.create_login_url(self.request.uri))
+
 def get_profile_cookie(self):
     """Get cookie data else grabs DB profile and sets cookie. Returns Dictionary."""
+    login_check(self)
     comp_cookie = self.request.cookies.get("company_nickname")
     permissions = self.request.cookies.get("permissions")
     if comp_cookie:
         profile = {}
         profile['company_nickname'] = comp_cookie
+        profile['permissions'] = permissions
         return profile
     else:
         profile = get_profile()
         if hasattr(profile, 'to_dict'):
+            profile = profile.to_dict()
             set_profile_cookie(self, profile)
-            return profile.to_dict()
+            profile['permissions'] = permissions
+            return profile
         else:
             return {}
 
@@ -65,10 +76,10 @@ def set_groups_cookie(self, profile):
     self.response.set_cookie('groups', groups_string)
 
 def set_profile_cookie(self, profile):
-    if profile.has_key('company_nickname'):
+    if 'company_nickname' in profile:
         self.response.set_cookie('company_nickname', 
             profile['company_nickname'])
-        self.set_groups_cookie(profile)
+        set_groups_cookie(self, profile)
         return True
     else:
         return False
