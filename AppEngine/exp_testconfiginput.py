@@ -53,7 +53,10 @@ class Handler(InstrumentDataHandler):
         start_now = testplan_object['start_now']
         start_time = testplan_object['start_time']
         checkbox_names = ["start_measurement_now"]
-        if start_now == True:
+        ops_start = testplan_object['ops_start']
+        if ops_start:
+            date_object = None
+        elif start_now:
             date_object = datetime.datetime.now()
         else:
             date_object = datetime.datetime.fromtimestamp(int(start_time)/1000)
@@ -68,6 +71,7 @@ class Handler(InstrumentDataHandler):
             scheduled_start_time = date_object,
             test_ready = True,
             test_scheduled = True,
+            ops_start = ops_start,
             )
         t.put() 
         key = db.Key.from_path('TestDB', testplan_name, parent = company_key())
@@ -128,7 +132,7 @@ class Handler(InstrumentDataHandler):
                 # config_name = item['config_name'],
                 # )
                 # c.put()
-                c = ConfigDB(key_name = (item['config_name']+testplan_name), parent = company_key(),
+                config = ConfigDB(key_name = (item['config_name']+testplan_name), parent = company_key(),
                 company_nickname = company_nickname, 
                 author = author,
                 instrument_type = item['instrument_type'],
@@ -138,8 +142,10 @@ class Handler(InstrumentDataHandler):
                 commence_test = False,
                 trace = False,
                 config_name = item['config_name'],
+                ops_start = item['ops_start'],
                 )
-                c.put()
+                config.put()
+
                 if item['instrument_type'] == "U2001A":
                     max_value = 0.0
                     min_value = 0.0
@@ -163,15 +169,15 @@ class Handler(InstrumentDataHandler):
                     pass_fail_type = '',
                     )
                     s.put() 
-            key = db.Key.from_path('ConfigDB', (item['config_name']+testplan_name), parent = company_key())
-            configuration = db.get(key)
-            if test.key() not in configuration.tests:  #add the test plan to the list property of the dut
-                configuration.tests.append(test.key())
-                configuration.put()
-            if configuration.key() not in test.configs:  #add the  dut name to the list property ot the test plan
-                test.configs.append(configuration.key())
-                test.put()    
-        taskqueue.add(url = '/testmanager', method = 'POST', params={'info':(company_nickname,testplan_name)}, eta = date_object)
+
+            if test.key() not in config.tests:  #add the test plan to the list property of the dut
+                config.tests.append(test.key())
+                config.put()
+            if config.key() not in test.configs:  #add the  dut name to the list property ot the test plan
+                test.configs.append(config.key())
+                test.put()
+        if date_object:    
+            taskqueue.add(url = '/testmanager', method = 'POST', params={'info':(company_nickname,testplan_name)}, eta = date_object)
                        
         #self.redirect('/testplansummary/' + company_nickname + '/' + hardware_name)
 
