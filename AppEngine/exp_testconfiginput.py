@@ -169,9 +169,10 @@ class Handler(InstrumentDataHandler):
                     )
                     s.put()
 
-            if test.key() not in config.tests:  #add the test plan to the list property of the dut
-                config.tests.append(test.key())
-                config.put()
+                print config
+                if test.key() not in config.tests:  #add the test plan to the list property of the dut
+                    config.tests.append(test.key())
+                    config.put()
             if config.key() not in test.configs:  #add the  dut name to the list property ot the test plan
                 test.configs.append(config.key())
                 test.put()
