@@ -36,7 +36,7 @@ class Handler(InstrumentDataHandler):
 
     def post(self):
         testplan_object = json.loads(self.request.body)
-        print testplan_object
+        print "TESTPLAN OBJECT: ", testplan_object
         configs = []
         testplan_name = testplan_object['testplan_name']
         author = testplan_object['author']
@@ -47,7 +47,7 @@ class Handler(InstrumentDataHandler):
         #order = ['config:mmm1:0', 'config:mmm2:1']
         duts = testplan_object['duts']
         measurements = testplan_object['meas']
-        print testplan_object['configs']
+        print "CONFIG FROM TESTPLAN OBJECT:", testplan_object['configs']
         configs = testplan_object['configs']  # previously temporarily comment out to support dummy u2000 config data below
         #configs = [{u'instrument_type': u'U2001A', u'config_name': u'dummy',  u'hardware': u'MSP',u'range_auto': u'True',  u'units': u'dBm', u'offset': u'0.0',u'averaging_count_auto': u'True', u'correction_frequency': u'1e9'}]
         start_now = testplan_object['start_now']
@@ -116,6 +116,7 @@ class Handler(InstrumentDataHandler):
                 test.put()    
         for item in configs:
             config = ConfigDB.gql("Where config_name =:1", item['config_name']).get()
+            print "CONFIG FROM NAME: ", config
             if config == None:  #if there is not an instrument with the inputted name, then create it in the DB
                 # c = ConfigDB(key_name = (item['config_name']+testplan_name), parent = company_key(),
                 # company_nickname = company_nickname, author = author,
@@ -142,9 +143,9 @@ class Handler(InstrumentDataHandler):
                 commence_test = False,
                 trace = False,
                 config_name = item['config_name'],
-                ops_start = item['ops_start'],
                 )
                 config.put()
+                print "NO CONFIG FROM NAME. WRITING: ", config
 
                 if item['instrument_type'] == "U2001A":
                     max_value = 0.0
@@ -168,12 +169,15 @@ class Handler(InstrumentDataHandler):
                     pass_fail = pass_fail,
                     pass_fail_type = '',
                     )
-                    s.put() 
+                    s.put()
+                    print "WRITING U2001A: ", s 
 
             if test.key() not in config.tests:  #add the test plan to the list property of the dut
+                print "WRITING TESTKEY: ", test.key()
                 config.tests.append(test.key())
                 config.put()
             if config.key() not in test.configs:  #add the  dut name to the list property ot the test plan
+                print "WRITING CONFIGKEY: ", config.key()
                 test.configs.append(config.key())
                 test.put()
         if date_object:    

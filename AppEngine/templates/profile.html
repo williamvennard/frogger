@@ -5,6 +5,7 @@
     <style type="text/css">
         #profile-navlink {color: rgb(124,175,46);}
         h1,h2,p {color: white;}
+        #ErrorMessage {color: red;}
     </style>
 {% endblock %}
 {% block content %}      
@@ -13,22 +14,32 @@
             <h1>Account Profile</h1>
             <h2>Profile Information</h2>
             {% if error %}
-            <h4>{{error}}</h4>
-            {% endif %}      
-            <div>
-              <p>Name: {{profile.name}} </p>
-              <p>Company: {{profile.company_nickname}} </p>
-              <p>Bio: {{profile.bio}} </p>
-              <p>Email: {{profile.email}} </p>
-              <p>Groups: {% for group in profile.groups %}
-                {{group}}
-              {% endfor %}
-              </p>
-              <p>Groups Cookie Check: {{groups}}</p>
-              <p>Company Cookie Check: {{comp_cookie}}</p>
-              <p>Profile Permissions: {{profile.permissions}}</p>
-            </div>
-            
+              <h4 id="ErrorMessage">{{error}}</h4>
+            {% endif %}
+          </div>      
+          <div class="col-md-2">
+            <p>Name: <br>
+            Company: <br>
+            Bio: <br>
+            Email: <br> 
+            Groups: <br>
+            Groups Cookie: <br>
+            Company Cookie: <br>
+            Profile Permissions: <br></p>
+          </div>
+          <div class="col-md-3">
+            <p> {{profile.name}} <br>
+            {{profile.company_nickname}} <br>
+            {{profile.bio}} <br>
+            {{profile.email}} <br>
+            {% for group in profile.groups %}
+              {{group}}
+            {% endfor %}<br>
+            {{groups}}<br>
+            {{comp_cookie}}<br>
+            {{profile.permissions}}<br></p>
+          </div>
+          <div class="col-md-3">
             {% if profile.admin %}
             <p>Admin Features: </p>
             <p><a href="adduser">Add User</a> </p>

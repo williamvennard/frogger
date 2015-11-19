@@ -78,7 +78,7 @@ class Handler(InstrumentDataHandler):
             templatedata = {}
             templatedata['results'] = "No results data yet"
             #self.render('instruments.html', rows = rows, profile=profile)
-            self.render('instruments.html', data = templatedata, rows = rows)
+            self.render('instruments.html', data = templatedata, rows = rows, profile=profile)
 
 
     def post(self):
@@ -89,6 +89,9 @@ class Handler(InstrumentDataHandler):
         else:
             author = user.nickname()
         print self.request.body
+        profile = get_profile_cookie(self)
+        if (not profile) or (profile['permissions'] == 'viewer'):
+            self.redirect('/profile')
         start_tse = self.request.get('start_tse')
         content = self.request.get('content')
         company_nickname = self.request.get('company_nickname')
@@ -104,7 +107,7 @@ class Handler(InstrumentDataHandler):
         comment_thread['author'] = author
         templatedata['comment_thread'] = comment_thread
         print templatedata
-        self.render('instruments.html', data = templatedata)
+        self.render('instruments.html', data = templatedata, profile=profile)
 
         #self.render('instruments.html', rows = rows, profile=profile)
 
