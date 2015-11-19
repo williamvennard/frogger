@@ -1,0 +1,36 @@
+{% extends "one.html" %}
+{% block title %} Test Ops {% endblock %}
+{% block head %}
+    {{ super() }}
+    <style type="text/css">
+      h1,h2,h3,p {color: white;}
+    </style>
+{% endblock %}
+{% block content %}
+<div class="col-md-8 col-md-offset-2">
+	<div class="row">
+    <div class="col-md-12">
+		  <h1>View Test Plan</h1>
+		  <h3>Test Overview</h3>
+      <p>{{data.testplan}}</p>
+    </div>
+	</div>
+	<br>
+	<div class= "row">
+    <div class="col-md-12">
+		<h3>Comments</h3>
+  		{% for comment in data.comment_thread %}
+  		<hr>
+  		<p>{{comment.content}}</p>
+  		<p>by {{comment.author}} at {{comment.timestamp}}</p>
+  		{% endfor %}
+
+  		<textarea name="content" id="content" form="usrform" rows="5" cols="50">Enter comment here...</textarea>
+  		<form action="/view_testplan/{{data.company_nickname}}/{{data.hardware_name}}/{{data.testplan_name}}" method="post" id="usrform">
+        <input class="text-capitalize optionsBtn" type="submit">
+  		</form>
+    </div>
+	</div>
+</div>
+
+{% endblock %}

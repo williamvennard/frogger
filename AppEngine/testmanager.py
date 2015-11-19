@@ -26,7 +26,6 @@ import appengine_config
 
 class Handler(InstrumentDataHandler):
     def post(self):
-        print self.request.body
         names = co_and_tp_names(self.request.body)
         results = db.GqlQuery("SELECT configs FROM TestDB WHERE company_nickname =:1 and testplan_name =:2", names[0], names[-1])
         for r in results:
@@ -43,7 +42,6 @@ class Handler(InstrumentDataHandler):
         order = str(test_dict[0]['order'])
         order_list = get_ordered_list(order)
         for o in order_list:
-            print o['order']
             op = StateDB(key_name = (names[-1]+o['type']+o['name']), parent = company_key(),
                     testplan_name = names[-1],
                     company_nickname = names[0],

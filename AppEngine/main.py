@@ -15,6 +15,7 @@ import re
 import time
 import webapp2
 import math
+import StringIO
 from google.appengine.api import memcache
 from google.appengine.api import oauth
 from google.appengine.api import users
@@ -66,6 +67,8 @@ import temp_testcomplete
 from gradientone import InstrumentDataHandler
 from onedb import ProfileDB
 from onedb import UserDB
+from onedb import company_key
+from onedb import FileBlob
 import measurements
 import test_make_interface
 import operatordata
@@ -76,6 +79,12 @@ import report_summary
 import report_detail
 import u2000_traceresultsdata
 import u2000_testresultsdata
+import urllib
+import sys
+from google.appengine.api import urlfetch
+from encode import multipart_encode, MultipartParam
+import view_testplan
+import blob_selection
 
 authorized_users = ['charlie@gradientone.com',
                     'nedwards@gradientone.com',
@@ -100,10 +109,11 @@ class DictModel(db.Model):
        return dict([(p, unicode(getattr(self, p))) for p in self.properties()])
 
 
+# def FileBlob_key(name = 'default'):
+#     return db.Key.from_path('company_nickname', name)
 
-
-class FileBlob(db.Model):
-    blob_key = blobstore.BlobReferenceProperty(required=True)
+# class FileBlob(db.Model):
+#     blob_key = blobstore.BlobReferenceProperty(required=True)
 
 
 class UploadURLGenerator(InstrumentDataHandler):
@@ -113,13 +123,174 @@ class UploadURLGenerator(InstrumentDataHandler):
     def post(self):
         UploadURLGenerator.get(self)
 
+class AggFileUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
+    def post(self):
+        try:
+            upload = self.get_uploads()[0] 
+            blob_key = upload.key()
+            load = self.request.body
+            load = load.split()
+            print load
+            load = load[4].split('=')
+            load = load[1].rstrip('"')
+            active_testplan_name = load.lstrip('"')
+            print active_testplan_name
+            dbfile = FileBlob(key_name = active_testplan_name, blob_key=blob_key)
+            dbfile.put()
+            str_form = str(blob_key)
+            b = BlobberDB(b_key = str_form, key_name = active_testplan_name, parent = company_key())
+            b.put()
+            self.redirect('/upload/success')
+        except:
+            self.redirect('/upload_failure.html')
+
+def Blobber_key(name = 'default'):
+    return db.Key.from_path('company_nickname', name)
+
+class BlobberDB(DictModel):
+    b_key = db.StringProperty(required = True)
+
+def incoming_blob_parser(value):
+    headers = value[0].split(',')
+    headers[-1] = headers[-1].rstrip()
+    entry = value[1].split('{')
+    a = entry[0].rstrip(',"')
+    new = a.split(',')
+    b = entry[1].split('}')
+    c = "".join(b[0])
+    new.append(c)
+    d = b[1].rstrip()
+    d = d.lstrip('",')
+    d = d.split(',')
+    new.append(d[0])
+    new.append(d[1])
+    new.append(d[2])
+    return headers, new
+
+def existing_blob_parser(headers, item):
+    new_rows = []
+    entry = item.split('"')
+    first = entry[0].split(',')
+    del first[-1]
+    last = entry[2].split(',')
+    del last[0]
+    new_rows.append(first[0])
+    new_rows.append(first[1])
+    new_rows.append(entry[1])
+    new_rows.append(last[0])
+    new_rows.append(last[1])
+    new_rows.append((last[2].rstrip()))
+    input_dictionary = dict(zip(headers, new_rows))
+    return input_dictionary
+
+def new_blob_parser(value):
+    headers = value[0].split(',')
+    headers[-1] = headers[-1].rstrip()
+    entry = value[1].split('{')
+    a = entry[0].rstrip(',"')
+    new = a.split(',')
+    b = entry[1].split('}')
+    c = "".join(b[0])
+    new.append(c)
+    d = b[1].rstrip()
+    d = d.lstrip('",')
+    d = d.split(',')
+    new.append(d[0])
+    new.append(d[1])
+    new.append(d[2])
+    input_dictionary = dict(zip(headers, new))
+    return input_dictionary
+
 
 class FileUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
     def post(self):
         try:
             upload = self.get_uploads()[0] 
-            dbfile = FileBlob(blob_key=upload.key())
+            blob_key = upload.key()
+            load = self.request.body
+            load = load.split()
+            load = load[21].split('=')
+            first_key = load[1]
+            first_key = first_key.lstrip('"')
+            first_key = first_key.rstrip('"')
+            load = load[1].split(':')
+            print 'key to db', first_key
+            active_testplan_name = load[1].rstrip('"')
+            config_name = load[0].lstrip('"')
+            dbfile = FileBlob(key_name = first_key, test_batch = first_key, blob_key=blob_key, parent = company_key())
             dbfile.put()
+            key = db.Key.from_path('BlobberDB', active_testplan_name, parent = company_key())
+            new_blob_key = db.get(key)
+            if new_blob_key:
+                print 'something there'
+                newkey = new_blob_key.b_key
+                blob_reader = blobstore.BlobReader(blob_key)
+                value = blob_reader.readlines()
+                input_to_blob = incoming_blob_parser(value)
+                tmp = StringIO.StringIO()
+                writer = csv.writer(tmp)
+                writer.writerow(input_to_blob[0])
+                writer.writerow(input_to_blob[1])
+                print 'reading original'
+                new_blob_reader = blobstore.BlobReader(newkey)
+                new_lines = new_blob_reader.readlines()
+                headers = new_lines[0].split(',')
+                headers[-1] = headers[-1].rstrip()
+                for item in new_lines[1:]:
+                    input_dictionary = existing_blob_parser(headers, item)
+                    writer.writerow(input_dictionary.values())
+                contents = tmp.getvalue()
+                tmp.close()
+                blobstore.delete(newkey)
+                new_url =  blobstore.create_upload_url('/upload_agg/upload_file')
+                params = []
+                params.append(MultipartParam(
+                            "FileItem1",
+                            filename=active_testplan_name,
+                            filetype='text/plain',
+                            value=contents))
+                payloadgen, headers = multipart_encode(params)
+                payload = str().join(payloadgen)
+                result = urlfetch.fetch(
+                            url=new_url,
+                            payload=payload,
+                            method=urlfetch.POST,
+                            headers=headers,
+                            deadline=10)
+            else:
+                print 'nothing found'
+                blob_reader = blobstore.BlobReader(blob_key)
+                value = blob_reader.readlines()
+                input_dictionary = new_blob_parser(value)
+                tmp = StringIO.StringIO()
+                writer = csv.writer(tmp)
+                writer.writerow(input_dictionary.keys())
+                writer.writerow(input_dictionary.values())
+                contents = tmp.getvalue()
+                tmp.close()
+                str_form = str(blob_key)
+                b = BlobberDB(b_key = str_form, key_name = active_testplan_name, parent = company_key())
+                b.put()
+                key = db.Key.from_path('BlobberDB', active_testplan_name, parent = company_key())
+                new_blob_key = db.get(key)
+                newkey = new_blob_key.b_key
+                blob_reader = blobstore.BlobReader(newkey)
+                value = blob_reader.readlines()
+                new_url =  blobstore.create_upload_url('/upload_agg/upload_file')
+                params = []
+                params.append(MultipartParam(
+                            "FileItem1",
+                            filename=active_testplan_name,
+                            filetype='text/plain',
+                            value=contents))
+                payloadgen, headers = multipart_encode(params)
+                payload = str().join(payloadgen)
+                result = urlfetch.fetch(
+                            url=new_url,
+                            payload=payload,
+                            method=urlfetch.POST,
+                            headers=headers,
+                            deadline=10)
             self.redirect('/upload/success')
         except:
             self.redirect('/upload_failure.html')
@@ -128,7 +299,6 @@ class FileUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
 class FileUploadSuccess(InstrumentDataHandler):
     def get(self):
         self.response.out.write("File Upload Successful")
-
 
 class FileUploadFailure(InstrumentDataHandler):
     def get(self):
@@ -192,6 +362,7 @@ app = webapp2.WSGIApplication([
     ('/testsave', testsave.Handler),
     ('/upload/geturl', UploadURLGenerator),
     ('/upload/upload_file', FileUploadHandler),
+    ('/upload_agg/upload_file', AggFileUploadHandler),
     ('/upload/success',FileUploadSuccess),
     ('/upload/failure',FileUploadFailure),
     ('/testmanager', testmanager.Handler),
@@ -201,16 +372,19 @@ app = webapp2.WSGIApplication([
     ('/u2000data/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000data.Handler),
     ('/temp_testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', temp_testcomplete.Handler),
     ('/test_make_interface', test_make_interface.Handler),    
-    ('/operator/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', operatordata.Handler),
+    ('/operator/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', operatordata.Handler),
     ('/operator/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/run', operatordata.RunTest),
     ('/404', FileNotFound),
     ('/testops', testops.Handler),
+    ('/view_testplan/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', view_testplan.Handler),
+    ('/u2000_update_results', u2000_testcomplete.UpdateResults),
     ('/u2000_configinput', u2000_configinput.Handler),
     ('/u2000_testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000_testcomplete.Handler),
     ('/report_summary/([a-zA-Z0-9.-]+)',  report_summary.Handler),
     ('/report_summary/report_detail/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)',  report_detail.Handler),
     ('/u2000_traceresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000_traceresultsdata.Handler),
     ('/u2000_testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000_testresultsdata.Handler),
+    ('/blob_selection', blob_selection.Handler),
 ], debug=True)
 
 

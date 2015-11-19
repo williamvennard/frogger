@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     {% block head %}
-    <title>{{page_title}}</title>
+    <title>{% block title %}{% endblock %}</title>
          
     <script src="/static/js/addons/jquery-1.11.3.js"></script>    
     <script src="/static/js/jquery-ui-1.11.4/jquery-ui.js"></script>
@@ -12,49 +12,49 @@
     <script type="text/javascript" src="/static/js/chart1.js"></script>
     <script type="text/javascript" src="/static/js/chart2.js"></script>
     <script type="text/javascript" src="/static/js/chart3.js"></script>  
-    <link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/static/css/custom.css">
     <link rel="stylesheet" type="text/css" href="/static/css/hoverzoom.css">
     <link rel="stylesheet" type="text/css" href="/static/css/fonts/stylesheet.css" charset="utf-8" /> 
-    <script src="../static/js/addons/angular.min.js"></script>
+    <script src="/static/js/addons/angular.min.js"></script>
     <script type="text/javascript" src="/static/js/addons/clickadd.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/css/testConfig.css">
     <link rel="stylesheet" type="text/css" href="/static/css/testResultsList.css">
-    <style type="text/{css"></style>
+    
     {% endblock %}
 </head>
 
 <body id="mainBackground">
     <div class="container">       
         <nav id="topNavBar" class="navbar navbar-inverse navbar-collapse collapse">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <img class="logo" src="/static/images/Glogo.png" style="width:110px;" alt="Gradient One Logo">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <img class="logo" src="/static/images/Glogo.png" style="width:110px;" alt="Gradient One Logo">
+                </div>
+                <div id="navbar">
+                    <ul class="topmenu nav navbar-nav">
+                        <li><a id="instruments-navlink" href="/instruments">INSTRUMENTS</a></li>
+                        <li class="dots glyphicon glyphicon-option-vertical"></li>
+                        <li><a id="canvas-navlink" href="/testresults">CANVAS</a></li>
+                        <li class="dots glyphicon glyphicon-option-vertical"></li>
+                        <li><a id="testlibrary-navlink" href="/testlibrary/{{profile.company_nickname}}">TEST LIBRARY</a></li>
+                        <li class="dots glyphicon glyphicon-option-vertical"></li>
+                        <li><a id="testops-navlink" href="/testops">TEST OPS</a></li>           
+                        <li class="dots glyphicon glyphicon-option-vertical"></li>
+                        <li><a id="community-navlink" href="/community">COMMUNITY</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                      <li><a class="glyphicon glyphicon-envelope" href="/navbar-static-top/"></a></li>
+                      <li><a class="glyphicon glyphicon-bell" href="/navbar-static-top/"></a></li>
+                      <li><a profile-navlink class="glyphicon glyphicon-user" href="/profile">Profile</a></li>
+                    </ul>
+                </div>
             </div>
-            <div id="navbar">
-                <ul class="topmenu nav navbar-nav">
-                    <li><a href="/instruments">INSTRUMENTS</a></li>
-                    <li class="dots glyphicon glyphicon-option-vertical"></li>
-                    <li><a href="/testresults">CANVAS</a></li>
-                    <li class="dots glyphicon glyphicon-option-vertical"></li>
-                    <li><a href="/testlibrary/acme">TEST LIBRARY</a></li>
-                    <li class="dots glyphicon glyphicon-option-vertical"></li>
-                    <li><a href="/community">COMMUNITY</a></li>           
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                  <li><a class="glyphicon glyphicon-envelope" href="#"></a></li>
-                  <li><a class="glyphicon glyphicon-bell" href="#"></a></li>
-                  <li><a class="glyphicon glyphicon-user" href="/profile">Profile</a></li>
-                </ul>
-            </div>
-        </div>
         </nav>
-        <div class="row">
-          <div class="col-md-12">
-            {% block content %}
-            {% endblock %}
-          </div>
-        </div>
-  </div>
+        {% block content %}
+        {% endblock %}
+    </div>
+    {% block noncontainer %}
+    {% endblock %}
 </body>
 </html>

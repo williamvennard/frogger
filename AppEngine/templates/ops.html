@@ -3,19 +3,16 @@
 {% block head %}
     {{ super() }}
     <style type="text/css">
+        #testops-navlink {color: rgb(124,175,46);}
+        h1,p {color: white;}
     </style>
 {% endblock %}
 {% block content %}
-<h1>Test Ops</h1>
+<h1>{{ self.title() }}</h1>
 <h3>Available Test Plans:</h3>
 <div>
 	{% for config in configs %}
-		{% for test in tests %}
-		<li>
-		<a href="/operator/{{test.company_nickname}}/{{config.config_name}}/{{test.testplan_name}}">
-			{{test.company_nickname}} >> {{config.config_name}} >> {{test.testplan_name}}</a><br>
-		</li>
-		{% endfor %}
+		<a href="/operator/{{config.company_nickname}}/{{config.hardware_name}}/{{config.config_name}}/{{config.active_testplan_name}}">{{config.company_nickname}} >> {{config.hardware_name}} >> {{config.config_name}} >> {{config.active_testplan_name}} </a><br>
 	{% endfor %}
 </div>
 {% endblock %}

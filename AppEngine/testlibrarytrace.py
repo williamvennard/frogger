@@ -6,6 +6,7 @@ from gradientone import render_json
 from gradientone import author_creation
 from onedb import TestResultsDB
 from onedb import TestResultsDB_key
+from onedb import company_key
 import ast
 import collections
 import csv
@@ -32,6 +33,7 @@ import decimate
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
 from string import maketrans
+from onedb import CommentsDB
 
 
 class Handler(InstrumentDataHandler):
@@ -46,4 +48,41 @@ class Handler(InstrumentDataHandler):
             test_results = query_to_dict(rows)
             render_json(self, test_results)
         elif company_nickname and config_name and start_tse:
-            self.render('testLibResults.html')
+            query = TestResultsDB.all().filter("company_nickname =", company_nickname)
+            query = query.filter("config_name =", config_name)
+            query = query.filter("start_tse =", start_tse)
+            test_results = query.get()
+            comment_thread = []
+            if test_results:
+                comments_query = CommentsDB.all()
+                comments_query.ancestor(test_results)
+                comments = comments_query.run(limit=10)
+                for comment in comments:
+                    comment_thread.append(comment)
+
+            data = {
+                'company_nickname' : company_nickname,
+                'config_name' : config_name,
+                'start_tse' : start_tse,
+            }
+            self.render('testLibResults.html', comment_thread=comment_thread, data=data)
+
+    def post(self, company_nickname="", config_name="", start_tse=""):
+        """posts a comment on the test results"""
+        user = users.get_current_user()
+        if not user.nickname():
+            author = "anonymous"
+        else:
+            author = user.nickname()
+        content = self.request.get('content')
+        testplan_name = self.request.get('testplan_name')
+        key_name = testplan_name+str(start_tse)
+        print "key_name", key_name
+        key = db.Key.from_path('TestResultsDB', key_name, parent = company_key())
+        test_results = TestResultsDB.get(key)
+        comment = CommentsDB(author=author, content=content, parent=test_results)
+        comment.put()
+        self.redirect('/testlibrary/traceresults/' + company_nickname + '/' + config_name + '/'
+                        + start_tse)
+            
+

@@ -32,29 +32,14 @@ from google.appengine.ext import db
 from time import gmtime, strftime
 import appengine_config
 import json
+from profile import get_profile_cookie
 
-# result_types = {
-#     'bscope' : BscopeDB,
-#     'aU2000' : agilentU2000data
-# }
 
 class Handler(InstrumentDataHandler):
-    def get(self, company_nickname="", config_name="", testplan_name=""):
-        comp_cookie = self.request.cookies.get("company_nickname")
-        if comp_cookie:
-            profile = {}
-            profile['company_nickname'] = comp_cookie
-        else:
-            profile = getProfile()
-        query = TestDB.all().filter("company_nickname =", company_nickname)
-        query = query.filter("testplan_name =", testplan_name)
-        test = query.get()
-        if not test:
-            logging.error("TestData:get: query")
-            self.redirect('/')
-
-        hardware_name = test.hardware_name
-
+    def get(self, company_nickname="", hardware_name="", config_name="", testplan_name=""):
+        profile = get_profile_cookie(self)
+        if (not profile) or (profile['permissions'] == "viewer"):
+            self.redirect('/profile')
         query = ConfigDB.all().filter("company_nickname =", company_nickname)
         query.filter("hardware_name =", hardware_name)
         query.filter("config_name =", config_name)
@@ -65,74 +50,65 @@ class Handler(InstrumentDataHandler):
             config = '{"instrument_type": "sample inputs", "config_name": "config1", "company_nickname": "GradientOne", "trace_name": "trace1", "title": "T1"}'
         else:
             config = config.to_dict()
+
         templatedata = {
-                'config': config,
                 'company_nickname' : company_nickname,
                 'hardware_name' : hardware_name,
                 'config_name' : config_name,
                 'testplan_name' : testplan_name,
                 }
+        
+        key_name = str(config_name) + config['instrument_type']
+        key = db.Key.from_path('agilentU2000', key_name, parent = company_key())
+        instrument_config = db.get(key)
+        print instrument_config
 
+        query = TestResultsDB.all().filter("company_nickname =", company_nickname)
+        query = query.filter("testplan_name =", testplan_name).order('-start_tse')
+        test_results = query.get()
+        
         comment_thread = []
-        if hasattr(test, 'comments'):
-            for comment in test.comments:
+        if test_results:
+            comments_query = CommentsDB.all()
+            comments_query.ancestor(test_results)
+            comments = comments_query.run(limit=10)
+            for comment in comments:
                 comment_thread.append(comment)
 
         templatedata['comment_thread'] = comment_thread
     
-        # check for results data. 
-        key = 'u2000testresults' + testplan_name + config_name
-        cached_copy = memcache.get(key)
-        if cached_copy:
-            templatedata['results'] = cached_copy
-            self.render('operator.html', data=templatedata, profile=profile)
-        
+        if test_results:
+            data = test_results.to_dict()
+            output = json.dumps(data['u2000_result'])
+            key = testplan_name + data['start_tse']
+            memcache.set(key, output)
+            templatedata['results'] = output
+            templatedata['last_start_tse'] = data['start_tse']
+            self.render('operator.html', data=templatedata, config=config, 
+                        instrument_config=instrument_config, profile=profile)
         else:
-            key = testplan_name + company_nickname + hardware_name + config_name
-            cached_copy = memcache.get(key)
-            if cached_copy is None:
-                result_data = TestResultsDB.all().get()
-                if hasattr(result_data, 'data'):
-                    data = result_data.to_dict()
-                    # ToDo: Add handler to check data for bscope 
-                    bscope = False # Temparory hardcoded to avoid 
-                    if bscope:
-                        cha_list = convert_str_to_cha_list(data['cha'])
-                        data['cha'] = cha_list
-                        e = data
-                        output = {"data":data}
-                    else:
-                        # pull data for aU2000
-                        e = data['test_results_data']
-                    output = json.dumps(e)
-                    memcache.set(key, output)
-                    templatedata['results'] = output
-                    self.render('operator.html', data=templatedata, profile=profile)
-                else:
-                    logging.error("ResultData:get: query returned no data")
-                    templatedata['results'] = "Error: No result data"
-                    self.render('operator.html', data=templatedata, profile=profile)               
-            else:
-                templatedata['results'] = cached_copy
-                self.render('operator.html', data=templatedata, profile=profile)
+            logging.error("ResultData:get: query returned no data")
+            templatedata['results'] = "No results data yet"
+            self.render('operator.html', data=templatedata, config=config, 
+                            instrument_config=instrument_config, profile=profile)
 
 
-    def post(self, company_nickname="", config_name="", testplan_name=""):
+    def post(self, company_nickname="", hardware_name="", config_name="", testplan_name=""):
         """posts a comment on the test results"""
         user = users.get_current_user()
         if not user.nickname():
             author = "anonymous"
         else:
             author = user.nickname()
-        testplan_name = self.request.get('testplan')
+        start_tse = self.request.get('start_tse')
         content = self.request.get('content')
-        query = TestDB.all().filter("company_nickname =", company_nickname)
-        query = query.filter("testplan_name =", testplan_name)
-        test = query.get()
-        comment = CommentsDB(author=author, content=content, test=test)
+        key_name = testplan_name+str(start_tse)
+        key = db.Key.from_path('TestResultsDB', key_name, parent = company_key())
+        test_results = TestResultsDB.get(key)
+        comment = CommentsDB(author=author, content=content, parent=test_results)
         comment.put()
-        self.redirect('/operator/{0}/{1}'.format(
-            company_nickname, testplan_name))
+        self.redirect('/operator/' + company_nickname + '/' + hardware_name + '/'
+                         + config_name + '/' + testplan_name)
 
 
 
@@ -279,7 +255,7 @@ class BscopeHandler(InstrumentDataHandler):
                 if hasattr(result_data, 'data'):
                     data = result_data.to_dict()
                     logging.error("ResultData:get: query")
-                    templatedata['results'] = "Error: No result data"
+                    templatedata['results'] = "No result data"
                     self.render('operator.html', data=templatedata)               
                 # ToDo: Add handler to check data for bscope 
                 bscope = False

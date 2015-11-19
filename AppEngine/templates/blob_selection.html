@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+
+<html>
+  <head>
+    <title>Blob Selection </title>
+    <style type="text/css">
+      .label {text-align: right}
+      .error {color: red}
+    </style>
+
+  </head>
+
+
+<!--   <body>
+    <h2>Blob Selection</h2>
+        <form method="post">
+
+ 
+                  {% block import %}
+
+                  {% for r in rows %}
+                    <a class="testName" href ="blob_selection/{{r.test_batch}}">{{ r.test_batch }}</a><span class="testAuthor">  <input type="checkbox" name="r.test_batch">
+                    <br><br>   
+                  {% endfor %}
+                  {% endblock %}  
+      <input type="submit">
+    </form>
+ -->
+  <body>
+
+      
+    <form method="post">
+      <table>
+         <tr>
+          <td class="label">
+            Test Object:  
+          </td>
+          <td>
+            <input type="text" name="testplan_object" value="{{testplan_object}}">
+          </td>
+        </tr>
+
+
+      <input type="submit">
+    </form>
+  </body>
+
+
+</html>

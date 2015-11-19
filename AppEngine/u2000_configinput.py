@@ -53,10 +53,10 @@ class Handler(InstrumentDataHandler):
             company_nickname = company_nickname, 
             hardware_name = hardware_name, 
             instrument_type = instrument_type,
-            averaging_count_auto = averaging_count_auto, 
+            averaging_count_auto = bool(averaging_count_auto), 
             correction_frequency = correction_frequency, 
             offset = offset, 
-            range_auto = range_auto, 
+            range_auto = bool(range_auto), 
             units = units,
             # max_value = max_value,
             # min_value = min_value,
@@ -64,7 +64,7 @@ class Handler(InstrumentDataHandler):
             # pass_fail_type = pass_fail_type,
             )
         c.put() 
-        s = ConfigDB(key_name = config_name, parent = company_key(),
+        s = ConfigDB(key_name = (config_name+testplan_name), parent = company_key(),
             config_name = config_name,
             company_nickname = company_nickname,
             hardware_name = hardware_name, 

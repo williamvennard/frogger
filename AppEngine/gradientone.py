@@ -128,42 +128,56 @@ def co_and_tp_names(incoming):
     testplan_name = testplan_name_list[1]
     return company_nickname, testplan_name
     
+
 def get_ordered_list(order):
     order = order.split(',')
     middle_section = order[1:-1]
-    mdict = {}
-    for m in middle_section:
-        m = m.strip()
-        m = m.lstrip('u')
-        m = m.strip('\'')
-        m = m.split(':')
-        mdict['type'] = m[0]
-        mdict['name'] = m[1]
-        mdict['order'] = m[-1]
-    f = order[0]
-    f = f.lstrip('[')
-    f = f.lstrip('u')
-    f = f.strip('\'')
-    f = f.split(':')
-    fdict = {}
-    fdict['type'] = f[0]
-    fdict['name'] = f[1]
-    fdict['order'] = f[-1]
-    l = order[-1]
-    l = l.strip()
-    l = l.rstrip(']')
-    l = l.lstrip('u')
-    l = l.strip('\'')
-    l = l.split(':')
-    ldict = {}
-    ldict['type'] = l[0]
-    ldict['name'] = l[1]
-    ldict['order'] = l[-1]
-    order_list = []
-    if mdict:
-        order_list = [mdict, ldict, fdict]
+    if len(order) == 1:
+        f = order[0]
+        f = f.lstrip('[')
+        f = f.lstrip('u')
+        f = f.rstrip(']')
+        f = f.strip('\'')
+        f = f.split(':')
+        fdict = {}
+        fdict['type'] = f[0]
+        fdict['name'] = f[1]
+        fdict['order'] = f[-1]
+        order_list = [fdict]
     else:
-        order_list = [ldict, fdict]
+        mdict = {}
+        for m in middle_section:
+            m = m.strip()
+            m = m.lstrip('u')
+            m = m.strip('\'')
+            m = m.split(':')
+            mdict['type'] = m[0]
+            mdict['name'] = m[1]
+            mdict['order'] = m[-1]
+        f = order[0]
+        f = f.lstrip('[')
+        f = f.lstrip('u')
+        f = f.strip('\'')
+        f = f.split(':')
+        fdict = {}
+        fdict['type'] = f[0]
+        fdict['name'] = f[1]
+        fdict['order'] = f[-1]
+        l = order[-1]
+        l = l.strip()
+        l = l.rstrip(']')
+        l = l.lstrip('u')
+        l = l.strip('\'')
+        l = l.split(':')
+        ldict = {}
+        ldict['type'] = l[0]
+        ldict['name'] = l[1]
+        ldict['order'] = l[-1]
+        order_list = []
+        if mdict:
+            order_list = [mdict, ldict, fdict]
+        else:
+            order_list = [ldict, fdict]
     order_list = sorted(order_list, key=getOrderKey)
     return order_list    
 

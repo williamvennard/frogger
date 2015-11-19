@@ -1,4 +1,6 @@
 from google.appengine.ext import db
+from google.appengine.ext import blobstore
+from google.appengine.ext.webapp import blobstore_handlers
 
 class DictModel(db.Model):
     def to_dict(self):
@@ -100,6 +102,7 @@ class TestDB(DictModel):
     test_ready = db.BooleanProperty(required = False)
     test_scheduled = db.BooleanProperty(required = False)
     scheduled_start_time = db.DateTimeProperty(required = False)
+    ops_start = db.BooleanProperty(default = False)
 
 class TestInterface(FlexModel):
     name = db.StringProperty(required = False)
@@ -156,6 +159,9 @@ class TestResultsDB(DictModel):
     test_plan = db.BooleanProperty(required = False)
     saved_state = db.BooleanProperty(required = False)
     u2000_result = db.StringProperty(required = False)
+    pass_fail = db.StringProperty(required = False)  #PASS or FAIL
+    max_pass = db.FloatProperty(required = False)
+    min_pass = db.FloatProperty(required = False)
 
 
 class CapabilitiesDB(DictModel):
@@ -189,16 +195,17 @@ class UserDB(DictModel):
     admin = db.BooleanProperty(required = False)
 
 def CompanyDB_key(name = 'default'):
-    return db.Key.from_path('emails', name)
+    return db.Key.from_path('CompanyDB', name)
 
 class ProfileDB(DictModel):
-    bio = db.StringProperty(required = False)
     company_nickname = db.StringProperty(required = False)
     email = db.StringProperty(required = False)
     admin = db.BooleanProperty(required = False)
     name = db.StringProperty(required = False)
     groups = db.StringListProperty()
     userid = db.StringProperty(required = False)
+    bio = db.StringProperty(required = False)
+    permissions = db.StringProperty(required = False)
 
 class CompanyDB(DictModel):
     company_nickname = db.StringProperty(required = True)
@@ -219,6 +226,13 @@ class CommentsDB(DictModel):
     test = db.ReferenceProperty(TestDB, collection_name = 'comments')
     timestamp = db.DateTimeProperty(auto_now_add = True)
 
+def TraceCommentsDB_key(name = 'default'):
+    return db.Key.from_path('tracecomments', name)
+
+class TraceCommentsDB(DictModel):
+    author = db.StringProperty(required = True)
+    content = db.StringProperty(required = True)
+    timestamp = db.DateTimeProperty(auto_now_add = True)
 
 class Scope(DictModel):
     acquisition_start_time = db.StringProperty(required = False)
@@ -321,10 +335,11 @@ class agilentU2000(pwrmeter):
     correction_frequency = db.StringProperty(default = '50e6')
     offset = db.StringProperty(default = '0.0')
     units = db.StringProperty(default = 'dBm')
-    pass_fail = db.StringProperty(default = "False")
+    pass_fail = db.BooleanProperty(default = False)
     pass_fail_type = db.StringProperty(default = "")
-    max_value = db.StringProperty(default = '0.0')
-    min_value = db.StringProperty(default = '0.0')
+    max_value = db.FloatProperty(default = 0.0)
+    min_value = db.FloatProperty(default = 0.0)
+
 
 def agilentU2000data_key(name = 'default'):
     return db.Key.from_path('company_nickname', name)
@@ -334,7 +349,13 @@ class agilentU2000data(ResultsData):
     hardware_name = db.StringProperty(required = True)
     config_name = db.StringProperty(required = True)
     i_settings = db.StringProperty(required = True)
-    test_results_data = db.TextProperty(required = True)
+    test_results_data = db.StringProperty(required = True)
     start_tse = db.IntegerProperty(required = True)
 
+def FileBlob_key(name = 'default'):
+    return db.Key.from_path('company_nickname', name)
+
+class FileBlob(db.Model):
+    blob_key = blobstore.BlobReferenceProperty(required=True)
+    test_batch = db.StringProperty(required = False)
 

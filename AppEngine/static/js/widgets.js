@@ -59,7 +59,7 @@
 
                 testPlanHTML+= "<div type='config' class='configBox' id='" + String(index) + "'>";
                 testPlanHTML+= "<div id='configSearch' class='col-md-4'>";
-                testPlanHTML+= "<h4 class='appTitle'>Config - <span onclick='removeWidget(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle' style='left:777px;'></span></h4>";
+                testPlanHTML+= "<h4 class='appTitle'>BitScope - <span onclick='removeWidget(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle' style='left:777px;'></span></h4>";
                 testPlanHTML+= "<form method='post'>";
                 testPlanHTML+= "<input class='nameWidget' type='text' name='config_name' value='" + configName;
                 testPlanHTML+= "' placeholder='name goes here'>";
@@ -117,13 +117,130 @@
                 testPlanHTML+= "<div class='row appRow'>";
                 testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Available Instruments:</p>"; 
                 testPlanHTML+= "<p class='configResults' id='avail" + index;
-                testPlanHTML+= "''>" + configAvail;
+                testPlanHTML+= "'>" + configAvail;
                 testPlanHTML+= "</p></td></tr></div>";
 
                 testPlanHTML+= "</form>";
                 testPlanHTML+= "</div>";
                 testPlanHTML+= "<button id='configSearchBtn' onclick='configSearch(" + index + ")'>SEARCH</button>";   
                 testPlanHTML+= "</div>";
+
+            }else if(planItemType === 'U2001A') {
+                console.log('U2001A!!')
+
+                var U2001AName = children[index].children[0].children[1].children[0].value
+                var freqCorrection = children[index].children[0].children[1].children[1].children[1].value
+                var offset = children[index].children[0].children[1].children[2].children[1].value
+                var units = children[index].children[0].children[1].children[3].children[1].value
+
+                if (children[index].children[0].children[1].children[4].children[1].checked==true) {
+                    var avgCountAuto = 'checked'
+                }else{
+                    var avgCountAuto = ''
+                };
+
+                if (children[index].children[0].children[1].children[5].children[1].checked==true) {
+                    var rangeAuto = 'checked'
+                }else{
+                    var rangeAuto = ''
+                };
+
+                if (children[index].children[0].children[1].children[6].children[1].checked==true) {
+                    var passFail = 'checked'
+                }else{
+                    var passFail = ''
+                }; 
+
+                var passFailMax = children[index].children[0].children[1].children[7].children[1].value
+                var passFailMin = children[index].children[0].children[1].children[8].children[1].value
+
+                //Search results
+                var configResults = children[index].children[1].children[0].children[0].children[1].innerHTML;
+                var configInstType = children[index].children[1].children[0].children[1].children[1].innerHTML;
+                var configHardware = children[index].children[1].children[0].children[2].children[1].innerHTML;
+                var configAvail = children[index].children[1].children[0].children[3].children[1].innerHTML;
+
+
+                testPlanHTML+= "<div type='U2001A' class='U2001ABox' id='" + String(index) + "'>";
+                testPlanHTML+= "<div id='configSearch' class='col-md-4'>";
+                testPlanHTML+= "<h4 class='appTitle'>U2001A - <span onclick='removeWidget(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle' style='left:777px;'></span></h4>";
+                testPlanHTML+= "<form method='post'>";
+                testPlanHTML+= "<input class='nameWidget' type='text' name='config_name' value='" + U2001AName;
+                testPlanHTML+= "' placeholder='name goes here'>";
+
+                testPlanHTML+= "<div class='row appRow'>";
+                testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Freq Correction:</p>"; 
+                testPlanHTML+= "<input autocomplete='off' class='appInput' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' placeholder='' name='analog_bandwidth' value='" + freqCorrection;
+                testPlanHTML+= "'></td></tr></div>";
+
+                testPlanHTML+= "<div class='row appRow'>";
+                testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Offset:</p>"; 
+                testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' placeholder='' name='analog_sample_rate' value='" + offset;
+                testPlanHTML+= "'></td></tr></div>";
+
+                testPlanHTML+= "<div class='row appRow'>";
+                testPlanHTML+= "<tr><td class='label'><p class='appLabel'> Units: </p>"; 
+                testPlanHTML+= "<input autocomplete='off' class='appInput' style='margin-bottom:0px; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='text' placeholder='' name='capture_buffer_size' value='" + units;
+                testPlanHTML+= "'></td></tr></div>";
+
+                testPlanHTML+= "<div class='row appRow'>";
+                testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Avg Count Auto: </p>"; 
+                testPlanHTML+= "<input autocomplete='off' class='appInput' type='checkbox'  name='resolution' value=''" + avgCountAuto + "></td></tr></div>";
+
+                testPlanHTML+= "<div style='' class='row appRow'>";
+                testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Range Auto: </p>"; 
+                testPlanHTML+= "<input class='appInput' type='checkbox' name='' autocomplete='off' value=''" + rangeAuto + "></td></tr></div>";
+                                
+                testPlanHTML+= "<div class='row appRow'>";
+                testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Pass/Fail: </p>";
+                testPlanHTML+= "<input class='appInput' type='checkbox' name='' autocomplete='off' value=''" + passFail + "></td></tr></div>"; 
+
+                testPlanHTML+= "<div class='row appRow'>";
+                testPlanHTML+= "<tr><td class='label'><p class='appLabel'> Max: </p>"; 
+                testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' placeholder='12,000' name='capture_buffer_size' value='" + passFailMax;
+                testPlanHTML+= "'></td></tr></div>";
+
+                testPlanHTML+= "<div class='row appRow'>";
+                testPlanHTML+= "<tr><td class='label'><p class='appLabel'> Min: </p>"; 
+                testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' placeholder='12,000' name='capture_buffer_size' value='" + passFailMin;
+                testPlanHTML+= "'></td></tr></div>";
+
+                testPlanHTML+= "</form>";
+                testPlanHTML+= "</div>";
+
+                testPlanHTML+= "<div id='configSearchResults' class='col-md-4'>";
+                testPlanHTML+= "<form method='post'>";
+
+                testPlanHTML+= "<div class='row appRow'>";
+                testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Results:</p>"; 
+                testPlanHTML+= "<p class='configResults' style='width: 180px;' id='results" + index;
+                testPlanHTML+= "'>" + configResults;
+                testPlanHTML+= "</p></td></tr></div>";
+
+                testPlanHTML+= "<div class='row appRow'>";
+                testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Instrument Type:</p>"; 
+                testPlanHTML+= "<p class='configResults' style='' type='text' name='selected_inst_type' value='' id='instType" + index;
+                testPlanHTML+= "'>" + configInstType;
+                testPlanHTML+= "</p></td></tr></div>";
+
+                testPlanHTML+= "<div class='row appRow'>";
+                testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Hardware:</p>"; 
+                testPlanHTML+= "<p class='configResults' style='' type='text' name='selected_hardware' value='' id='hardware" + index;
+                testPlanHTML+= "'>" + configHardware;
+                testPlanHTML+= "</p></td></tr></div>";
+
+                testPlanHTML+= "<div class='row appRow'>";
+                testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Available Instruments:</p>"; 
+                testPlanHTML+= "<p class='configResults' id='avail" + index;
+                testPlanHTML+= "'>" + configAvail;
+                testPlanHTML+= "</p></td></tr></div>";
+
+                testPlanHTML+= "</form>";
+                testPlanHTML+= "</div>";
+                testPlanHTML+= "<button id='configSearchBtn' onclick='configSearch(" + index + ")'>SEARCH</button>";   
+                testPlanHTML+= "</div>";
+
+
 
                 //$('#configSearchBtn').trigger('click'); 
             }else if(planItemType === 'measurement') {
@@ -179,11 +296,11 @@
 
             document.getElementById("testPlan").innerHTML = testPlanHTML; 
             console.log('addDUT: testPlanHTML = ', testPlanHTML); 
-        }else if(type === 'config') {
+        }else if(type === 'config') {       //BitScope
             console.log('TYPE Config')
             testPlanHTML+= "<div type='config' class='configBox' id='" + String(index) + "'>";
             testPlanHTML+= "<div id='configSearch' class='col-md-4'>";
-            testPlanHTML+= "<h4 class='appTitle'>Config - <span onclick='removeWidget(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle' style='left:777px;'></span></h4>";
+            testPlanHTML+= "<h4 class='appTitle'>BitScope - <span onclick='removeWidget(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle' style='left:777px;'></span></h4>";
             testPlanHTML+= "<form method='post'>";
             testPlanHTML+= "<input class='nameWidget' type='text' name='config_name' value='' placeholder='name goes here'>";
 
@@ -240,6 +357,83 @@
 
             document.getElementById("testPlan").innerHTML = testPlanHTML; 
             console.log('addDUT: testPlanHTML = ', testPlanHTML); 
+        }else if(type === 'U2001A') {           //Power Meter
+            console.log('TYPE U2001A')
+            testPlanHTML+= "<div type='U2001A' class='U2001ABox' id='" + String(index) + "'>";
+            testPlanHTML+= "<div id='configSearch' class='col-md-4'>";
+            testPlanHTML+= "<h4 class='appTitle'>U2001A - <span onclick='removeWidget(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle' style='left:777px;'></span></h4>";
+            testPlanHTML+= "<form method='post'>";
+            testPlanHTML+= "<input class='nameWidget' type='text' name='config_name' value='' placeholder='name goes here'>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Freq Correction:</p>"; 
+            testPlanHTML+= "<input autocomplete='off' class='appInput' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' placeholder='' name='analog_bandwidth' value=''></td></tr></div>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Offset:</p>"; 
+            testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' placeholder='' name='analog_sample_rate' value=''></td></tr></div>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'> Units: </p>"; 
+            testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' placeholder='' name='capture_buffer_size' value=''></td></tr></div>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Avg Count Auto: </p>"; 
+            testPlanHTML+= "<input autocomplete='off' class='appInput' type='checkbox'  name='resolution' value=''></td></tr></div>";
+
+            testPlanHTML+= "<div style='' class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Range Auto: </p>"; 
+            testPlanHTML+= "<input class='appInput' style='margin-bottom:0px; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='checkbox' name='' autocomplete='off' value=''></td></tr></div>";
+                            
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Pass/Fail: </p>";
+            testPlanHTML+= "<input class='appInput' type='checkbox' name='' autocomplete='off' value=''></td></tr></div>"; 
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'> Max: </p>"; 
+            testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' placeholder='12,000' name='capture_buffer_size' value=''></td></tr></div>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'> Min: </p>"; 
+            testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' placeholder='12,000' name='capture_buffer_size' value=''></td></tr></div>";
+
+            testPlanHTML+= "</form>";
+            testPlanHTML+= "</div>";
+
+            testPlanHTML+= "<div id='configSearchResults' class='col-md-4' style='left:100px;'>";
+            testPlanHTML+= "<form method='post'>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Results:</p>"; 
+            testPlanHTML+= "<p class='configResults' style='width: 180px;' id='results" + index;
+            testPlanHTML+= "'></p></td></tr></div>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Instrument Type:</p>"; 
+            testPlanHTML+= "<p class='configResults' style='' type='text' name='selected_inst_type' value='' id='instType" + index;
+            testPlanHTML+= "'></p></td></tr></div>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Hardware:</p>"; 
+            testPlanHTML+= "<p class='configResults' style='' type='text' name='selected_hardware' value='' id='hardware" + index;
+            testPlanHTML+= "'></p></td></tr></div>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Available Instruments:</p>"; 
+            testPlanHTML+= "<p class='configResults' id='avail" + index;
+            testPlanHTML+= "''></p></td></tr></div>";
+
+            testPlanHTML+= "</form>";
+            testPlanHTML+= "</div>";
+            testPlanHTML+= "<button id='configSearchBtn' onclick='configSearch(" + index + ")'>SEARCH</button>"; 
+            testPlanHTML+= "</div>";
+
+            document.getElementById("testPlan").innerHTML = testPlanHTML; 
+            console.log('addDUT: testPlanHTML = ', testPlanHTML); 
+
+
+
+
         }else if(type === 'measurement') {
             testPlanHTML+= "<div type='measurement' class='appBox' id='" + String(index) + "'>";
             testPlanHTML+= "<h4 class='appTitle'>RMS Measurement - <span onclick='removeWidget(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle' style='left:685px;'></span></h4>";
@@ -359,7 +553,93 @@
             testPlanHTML+= "</div>";
 
             document.getElementById("testPlan").innerHTML = testPlanHTML;
+       }else if(type === 'sU2001A') {           //Saved Power Meter
 
+            console.log('addWidget: savedSettings sU2001A= ',savedSettings);
+
+            var sconfigName = savedSettings.config_name;
+            var scorrectionFreq = savedSettings.correction_frequency;
+            var soffset = savedSettings.offset;
+            var sunits = savedSettings.units;
+            var savgCountAuto = savedSettings.averaging_count_auto;
+            var srangeAuto = savedSettings.range_auto;
+            var spassFail = savedSettings.pass_fail;
+            var sminPass = savedSettings.min_value;
+            var smaxPass = savedSettings.max_value;
+
+            testPlanHTML+= "<div type='U2001A' class='U2001ABox' id='" + String(index) + "'>";
+            testPlanHTML+= "<div id='configSearch' class='col-md-4'>";
+            testPlanHTML+= "<h4 class='appTitle'>U2001A - <span onclick='removeWidget(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle' style='left:777px;'></span></h4>";
+            testPlanHTML+= "<form method='post'>";
+            testPlanHTML+= "<input class='nameWidget' type='text' name='config_name' placeholder='name goes here' value='" + sconfigName + "'>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Freq Correction:</p>"; 
+            testPlanHTML+= "<input autocomplete='off' class='appInput' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' placeholder='' name='analog_bandwidth' value='" + scorrectionFreq;
+            testPlanHTML+= "'></td></tr></div>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Offset:</p>";
+            testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' placeholder='' name='analog_sample_rate' value='" + soffset + "'></td></tr></div>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'> Units: </p>"; 
+            testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' placeholder='' name='capture_buffer_size' value='" + sunits + "'></td></tr></div>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Avg Count Auto: </p>"; 
+            testPlanHTML+= "<input autocomplete='off' class='appInput' type='checkbox'  name='resolution' value='" + savgCountAuto + "'></td></tr></div>";
+
+            testPlanHTML+= "<div style='' class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Range Auto: </p>"; 
+            testPlanHTML+= "<input class='appInput' style='margin-bottom:0px; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='checkbox' name='' autocomplete='off' value='" + srangeAuto;
+            testPlanHTML+= "'></td></tr></div>";
+                            
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Pass/Fail: </p>";
+            testPlanHTML+= "<input class='appInput' type='checkbox' name='' autocomplete='off' value='" + spassFail + "'></td></tr></div>"; 
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'> Max: </p>"; 
+            testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' placeholder='12,000' name='capture_buffer_size' value='" + smaxPass + "'></td></tr></div>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'> Min: </p>"; 
+            testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' placeholder='12,000' name='capture_buffer_size' value='" + sminPass + "'></td></tr></div>";
+
+            testPlanHTML+= "</form>";
+            testPlanHTML+= "</div>";
+
+            testPlanHTML+= "<div id='configSearchResults' class='col-md-4' style='left:100px;'>";
+            testPlanHTML+= "<form method='post'>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Results:</p>"; 
+            testPlanHTML+= "<p class='configResults' style='width: 180px;' id='results" + index;
+            testPlanHTML+= "'></p></td></tr></div>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Instrument Type:</p>"; 
+            testPlanHTML+= "<p class='configResults' style='' type='text' name='selected_inst_type' value='' id='instType" + index;
+            testPlanHTML+= "'></p></td></tr></div>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Hardware:</p>"; 
+            testPlanHTML+= "<p class='configResults' style='' type='text' name='selected_hardware' value='' id='hardware" + index;
+            testPlanHTML+= "'></p></td></tr></div>";
+
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Available Instruments:</p>"; 
+            testPlanHTML+= "<p class='configResults' id='avail" + index;
+            testPlanHTML+= "''></p></td></tr></div>";
+
+            testPlanHTML+= "</form>";
+            testPlanHTML+= "</div>";
+            testPlanHTML+= "<button id='configSearchBtn' onclick='configSearch(" + index + ")'>SEARCH</button>"; 
+            testPlanHTML+= "</div>";
+
+            document.getElementById("testPlan").innerHTML = testPlanHTML; 
+            console.log('addU2001A: testPlanHTML = ', testPlanHTML); 
         };
         $(document).ready(function () { 
               $(".collapseCommitTest").fadeIn("fast");           
@@ -394,13 +674,15 @@
       }
     };
 
-
     //ADD WIDGET BUTTON CONTROL
     $("#newDUT").click(function () {
       addWidget('dut');
     });
     $("#newConfig").click(function () {
       addWidget('config');
+    });
+    $("#newU2001A").click(function () {
+      addWidget('U2001A');
     });
     $("#RMS").click(function () {
       addWidget('measurement');
@@ -509,7 +791,7 @@
         $(".droppable").sortable({
           update: function( event, ui ) {
             Dropped();
-            console.log('indexArray = ', indexArray);
+            console.log(' = ', indexArray);
             //indexArray=[];
             console.log("New position: ", ui.item.index());
             index ='dev 1  Position:' + ui.item.index();
@@ -523,10 +805,7 @@
     var startTime;
     var testPlanAuthor;
     var companyName;
-    var configArray = [];
-    var measArray = [];
-    var dutArray = [];
-    var indexArray = [];
+    var indexArray = []; 
 
     function postInitInfo() {
         console.log('postInitInfo called!!!!');
@@ -534,6 +813,7 @@
         var testSetUpInfo = testSetUp.childNodes;
         testPlanName = testSetUpInfo[3].children[0].children[1].children[0].value;
         companyName = 'Acme';
+        hardwareName = 'Tahoe';
         testPlanAuthor = 'nedwards';
         startTime = testSetUpInfo[3].children[1].children[1].children[0].value;
         d = new Date(startTime);
@@ -544,7 +824,7 @@
         //var initInfo_url = 'https://gradientone-test.appspot.com/testconfiginput';
         var initInfo_url = window.location.origin;
         initInfo_url += "/testconfiginput";
-        var initData = JSON.stringify({"testplan_name":testPlanName,"author":testPlanAuthor,"company_nickname":companyName,"start_time":startMS,"start_now":startNowLogic});
+        var initData = JSON.stringify({"testplan_name":testPlanName,"author":testPlanAuthor,"company_nickname":companyName,"hardware_name":hardwareName,"start_time":startMS,"start_now":startNowLogic});
         console.log('postInitInfo: initData = ', initData);
         $.ajax({
         type: "POST",
@@ -559,12 +839,18 @@
     };
 
     function commitBtn() {
-        Dropped(); //get order 
+        Dropped(); //get order
+        var configArray = [];
+        var U2001Array = [];
+        var measArray = [];
+        var dutArray = [];
         var testSetUp = document.getElementById('testSetup');
         var testSetUpInfo = testSetUp.childNodes;
         testPlanName = testSetUpInfo[1].children[0].children[1].children[0].value;
+        var opsStart = new Boolean(document.getElementById('opsStartCheck').checked);
         companyName = 'Acme';
         testPlanAuthor = 'nedwards';
+        hardwareName = 'Tahoe';
         startTime = testSetUpInfo[1].children[1].children[1].children[0].value;
         d = new Date(startTime);
         var startMS = d.getTime();
@@ -600,10 +886,30 @@
 
                 var configJsonObj = {"config_name":configName,"analog_bandwidth":configBand,"analog_sample_rate":configSampleRate,"capture_buffer_size":configSampleSize,"resolution":configResolution,"capture_channels":configChNum,"instrument_type":configInstType,"hardware":configHardware};
                 configArray.push(configJsonObj);
+            }else if(planItemType === 'U2001A') {
+                var U2001AName = children[index].children[0].children[1].children[0].value
+                var freqCorrection = children[index].children[0].children[1].children[1].children[1].value
+                var offset = children[index].children[0].children[1].children[2].children[1].value
+                var units = children[index].children[0].children[1].children[3].children[1].value
+                var avgCountAuto = new Boolean(children[index].children[0].children[1].children[4].children[1].checked)
+                var rangeAuto = new Boolean(children[index].children[0].children[1].children[5].children[1].checked)
+                var passFail = new Boolean(children[index].children[0].children[1].children[6].children[1].checked)
+                var passFailMin = 0.0
+                var passFailMax = 0.0
+                if (passFail){
+                    passFailMin = children[index].children[0].children[1].children[7].children[1].value
+                    passFailMax = children[index].children[0].children[1].children[8].children[1].value
+                }
+
+                var U2001AJsonObj = {"config_name":U2001AName, "correction_frequency": freqCorrection, "offset":offset, "units":units, 
+                "instrument_type": "U2001A", "hardware": "Tahoe", "averaging_count_auto": avgCountAuto, "range_auto": rangeAuto, 
+                "pass_fail":passFail, "min_value": passFailMin, "max_value": passFailMax}
+                configArray.push(U2001AJsonObj);
+
             }else if(planItemType === 'measurement') {
                 var measName = children[index].children[1].children[0].value;
                 var measType = children[index].children[1].children[1].children[1].value     
-                var measStart = children[index].children[1].children[2].children[1].value;
+                var measStart = children[index].children[1].children[2].children[1].value
                 var measStop = children[index].children[1].children[3].children[1].value  
 
                 var measJsonObj = {"meas_name":measName,"meas_type":measType,"meas_start_time":measStart,"meas_stop_time":measStop};
@@ -618,7 +924,7 @@
         //var commit_url = 'https://gradientone-test.appspot.com/testconfiginput';
         var commit_url = window.location.origin + "/testconfiginput";
         console.log('commitBtn: indexArray = ', indexArray);
-        var commitData = JSON.stringify({"testplan_name":testPlanName,"author":testPlanAuthor,"company_nickname":companyName,"start_time":startMS,"start_now":startNowLogic,"configs":configArray,"meas":measArray,"duts":dutArray,"order":indexArray});
+        var commitData = JSON.stringify({"testplan_name":testPlanName,"author":testPlanAuthor,"company_nickname":companyName,"hardware_name":hardwareName,"start_time":startMS,"start_now":startNowLogic,"configs":configArray,"meas":measArray,"duts":dutArray,"order":indexArray,"ops_start": opsStart});
         console.log('commitBtn: commitData = ', commitData);
         $.ajax({
         type: "POST",
@@ -650,7 +956,7 @@
             for(var i = 0;i<children.length;i++) {
                 
                 var planItemType = children[i].getAttribute('type');
-                if (planItemType == 'config') {
+                if (planItemType == 'config' ||  'U2001A') {
                     var planItemName = children[i].children[0].children[1].children[0].value;
                 }else {
                     var planItemName = children[i].children[1].children[0].value;

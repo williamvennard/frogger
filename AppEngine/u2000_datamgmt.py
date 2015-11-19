@@ -5,8 +5,8 @@ from gradientone import convert_str_to_cha_list
 from gradientone import render_json_cached
 from gradientone import author_creation
 from gradientone import unic_to_ascii
-from onedb import BscopeDB
-from onedb import company_key
+from onedb import agilentU2000data
+from onedb import agilentU2000data_key
 import collections
 import csv
 import datetime

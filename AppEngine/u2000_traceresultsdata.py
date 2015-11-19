@@ -8,6 +8,9 @@ from gradientone import unic_to_ascii
 from gradientone import author_creation
 from onedb import TestResultsDB
 from onedb import TestResultsDB_key
+from onedb import agilentU2000data
+from onedb import agilentU2000data_key
+from onedb import company_key
 import collections
 import csv
 import datetime
@@ -83,5 +86,12 @@ class Handler(InstrumentDataHandler):
         out_u2000 = json.dumps(window_u2000, ensure_ascii=True)
         key = 'u2000data' + company_nickname + hardware_name + config_name + str(start_tse)
         memcache.set(key, out_u2000)
-
-
+        a = agilentU2000data(parent = company_key(), key_name = str(start_tse),
+                             config_name=config_name,
+                             company_nickname = company_nickname,
+                             hardware_name=hardware_name,
+                             i_settings=str(i_settings),
+                             test_results_data= str(cha),
+                             start_tse=int(start_tse),
+                             )            
+        a.put()

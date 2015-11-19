@@ -36,29 +36,34 @@ class Handler(InstrumentDataHandler):
 
     def post(self):
         testplan_object = json.loads(self.request.body)
-        print testplan_object
+        print "TESTPLAN OBJECT: ", testplan_object
         configs = []
         testplan_name = testplan_object['testplan_name']
         author = testplan_object['author']
         company_nickname = testplan_object['company_nickname']
+        hardware_name = testplan_object['hardware_name']
         order = testplan_object['order']
-        #order = [item.encode("ascii") for item in order]  temporarily comment out to support dummy u2000 config data
+        order = [item.encode("ascii") for item in order]  # temporarily comment out to support dummy u2000 config data
         #order = ['config:mmm1:0', 'config:mmm2:1']
         duts = testplan_object['duts']
         measurements = testplan_object['meas']
-        print testplan_object['configs']
-        #configs = testplan_object['configs']  temporarily comment out to support dummy u2000 config data
-        configs = [{u'instrument_type': u'U2001A', u'config_name': u'dummy',  u'hardware': u'MSP',u'range_auto': u'True',  u'units': u'dBm', u'offset': u'0.0',u'averaging_count_auto': u'True', u'correction_frequency': u'1e9'}]
+        print "CONFIG FROM TESTPLAN OBJECT:", testplan_object['configs']
+        configs = testplan_object['configs']  # previously temporarily comment out to support dummy u2000 config data below
+        #configs = [{u'instrument_type': u'U2001A', u'config_name': u'dummy',  u'hardware': u'MSP',u'range_auto': u'True',  u'units': u'dBm', u'offset': u'0.0',u'averaging_count_auto': u'True', u'correction_frequency': u'1e9'}]
         start_now = testplan_object['start_now']
         start_time = testplan_object['start_time']
         checkbox_names = ["start_measurement_now"]
-        if start_now == True:
+        ops_start = testplan_object['ops_start']
+        if ops_start:
+            date_object = None
+        elif start_now:
             date_object = datetime.datetime.now()
         else:
             date_object = datetime.datetime.fromtimestamp(int(start_time)/1000)
         t = TestDB(key_name = testplan_name, parent = company_key(),
             testplan_name = testplan_name, 
-            company_nickname = company_nickname, 
+            company_nickname = company_nickname,
+            hardware_name = hardware_name, 
             author = author,
             order = order,
             test_plan = True,
@@ -66,6 +71,7 @@ class Handler(InstrumentDataHandler):
             scheduled_start_time = date_object,
             test_ready = True,
             test_scheduled = True,
+            ops_start = ops_start,
             )
         t.put() 
         key = db.Key.from_path('TestDB', testplan_name, parent = company_key())
@@ -126,7 +132,7 @@ class Handler(InstrumentDataHandler):
                 # config_name = item['config_name'],
                 # )
                 # c.put()
-                c = ConfigDB(key_name = (item['config_name']+testplan_name), parent = company_key(),
+                config = ConfigDB(key_name = (item['config_name']+testplan_name), parent = company_key(),
                 company_nickname = company_nickname, 
                 author = author,
                 instrument_type = item['instrument_type'],
@@ -137,32 +143,41 @@ class Handler(InstrumentDataHandler):
                 trace = False,
                 config_name = item['config_name'],
                 )
-                c.put()
-                s = agilentU2000(key_name = (item['config_name']+item['instrument_type']), parent = company_key(),
-                config_name = item['config_name'],
-                company_nickname = company_nickname, 
-                hardware_name = item['hardware'], 
-                instrument_type = item['instrument_type'],
-                averaging_count_auto = item['averaging_count_auto'], 
-                correction_frequency = item['correction_frequency'], 
-                offset = item['offset'], 
-                range_auto = item['range_auto'], 
-                units = item['units'],
-                max_value = '0.0',
-                min_value = '0.0',
-                pass_fail = 'False',
-                pass_fail_type = '',
-                )
-                s.put() 
-            key = db.Key.from_path('ConfigDB', (item['config_name']+testplan_name), parent = company_key())
-            configuration = db.get(key)
-            if test.key() not in configuration.tests:  #add the test plan to the list property of the dut
-                configuration.tests.append(test.key())
-                configuration.put()
-            if configuration.key() not in test.configs:  #add the  dut name to the list property ot the test plan
-                test.configs.append(configuration.key())
-                test.put()    
-        taskqueue.add(url = '/testmanager', method = 'POST', params={'info':(company_nickname,testplan_name)}, eta = date_object)
+                config.put()
+
+                if item['instrument_type'] == "U2001A":
+                    max_value = 0.0
+                    min_value = 0.0
+                    pass_fail = item['pass_fail']
+                    if pass_fail:
+                        max_value = float(item['max_value'])
+                        min_value = float(item['min_value'])
+                    s = agilentU2000(key_name = (item['config_name']+item['instrument_type']), parent = company_key(),
+                    config_name = item['config_name'],
+                    company_nickname = company_nickname, 
+                    hardware_name = item['hardware'], 
+                    instrument_type = item['instrument_type'],
+                    averaging_count_auto = item['averaging_count_auto'], 
+                    correction_frequency = item['correction_frequency'], 
+                    offset = item['offset'], 
+                    range_auto = item['range_auto'], 
+                    units = item['units'],
+                    max_value = max_value,
+                    min_value = min_value,
+                    pass_fail = pass_fail,
+                    pass_fail_type = '',
+                    )
+                    s.put()
+
+                print config
+                if test.key() not in config.tests:  #add the test plan to the list property of the dut
+                    config.tests.append(test.key())
+                    config.put()
+            if config.key() not in test.configs:  #add the  dut name to the list property ot the test plan
+                test.configs.append(config.key())
+                test.put()
+        if date_object:    
+            taskqueue.add(url = '/testmanager', method = 'POST', params={'info':(company_nickname,testplan_name)}, eta = date_object)
                        
         #self.redirect('/testplansummary/' + company_nickname + '/' + hardware_name)
 

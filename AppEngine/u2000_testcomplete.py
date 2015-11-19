@@ -46,7 +46,8 @@ class Handler(InstrumentDataHandler):
             key = 'TestResultsDB'+testplan_name+config_name
             test_plan = True
             trace = False
-            r = TestResultsDB(key_name = testplan_name, parent = company_key(), testplan_name=testplan_name,
+            r = TestResultsDB(key_name = testplan_name+str(test_complete_content['start_tse']), parent = company_key(), 
+                        testplan_name=testplan_name,
                         company_nickname = company_nickname, 
                         Total_Slices=int((test_complete_content['p_settings']['Total_Slices'])),
                         Dec_msec_btw_samples=(test_complete_content['p_settings']['Dec_msec_btw_samples']),
@@ -85,7 +86,7 @@ class Handler(InstrumentDataHandler):
             config_name = test_complete_content['config_name']
             hardware_name = test_complete_content['hardware_name']
             to_save = []
-            key = config_name + testplan_name
+            key = testplan_name + str(test_complete_content['start_tse'])
             r = TestResultsDB(parent = company_key(), testplan_name=testplan_name, key_name = key,
                     company_nickname = company_nickname, 
                     config_name=config_name,
@@ -100,3 +101,29 @@ class Handler(InstrumentDataHandler):
             to_save.append(r) 
             db.put(to_save)
             #memcache.set(key, to_save)
+
+
+class UpdateResults(InstrumentDataHandler):
+    """Called from testops.js to update results with pass_fail data"""
+    def post(self):
+        results_data = json.loads(self.request.body)
+        config_name = results_data['config_name']
+        trace_name = results_data['trace_name']
+        start_tse = results_data['start_tse']
+        pass_fail = results_data['pass_fail']
+        min_pass = results_data['min_pass_value']
+        max_pass = results_data['max_pass_value']
+        key = trace_name + str(start_tse) + pass_fail
+        cached_result = memcache.get(key)
+        key_name = trace_name + str(start_tse)
+        test_key = db.Key.from_path('TestResultsDB', key_name, parent=company_key())
+        if not cached_result:
+            test_results = TestResultsDB.get(test_key)
+            test_results.pass_fail = pass_fail
+            test_results.min_pass = float(min_pass)
+            test_results.max_pass = float(max_pass)
+            test_results.put()
+            memcache.set(key, test_results)
+
+
+
