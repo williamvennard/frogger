@@ -116,7 +116,6 @@ class Handler(InstrumentDataHandler):
                 test.put()    
         for item in configs:
             config = ConfigDB.gql("Where config_name =:1", item['config_name']).get()
-            print "CONFIG FROM NAME: ", config
             if config == None:  #if there is not an instrument with the inputted name, then create it in the DB
                 # c = ConfigDB(key_name = (item['config_name']+testplan_name), parent = company_key(),
                 # company_nickname = company_nickname, author = author,
@@ -145,7 +144,6 @@ class Handler(InstrumentDataHandler):
                 config_name = item['config_name'],
                 )
                 config.put()
-                print "NO CONFIG FROM NAME. WRITING: ", config
 
                 if item['instrument_type'] == "U2001A":
                     max_value = 0.0
@@ -170,14 +168,11 @@ class Handler(InstrumentDataHandler):
                     pass_fail_type = '',
                     )
                     s.put()
-                    print "WRITING U2001A: ", s 
 
             if test.key() not in config.tests:  #add the test plan to the list property of the dut
-                print "WRITING TESTKEY: ", test.key()
                 config.tests.append(test.key())
                 config.put()
             if config.key() not in test.configs:  #add the  dut name to the list property ot the test plan
-                print "WRITING CONFIGKEY: ", config.key()
                 test.configs.append(config.key())
                 test.put()
         if date_object:    
