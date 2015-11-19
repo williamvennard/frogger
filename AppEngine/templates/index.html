@@ -322,9 +322,9 @@
         console.log('savedTestView:Final savedOrderSplit.length = ',savedOrderSplit.length); 
 
         //Search for saved widgets loop... broken stops after i=0
-        for (var i=0;i<savedOrderSplit.length;i++){
-            console.log('i =', i);
-            var widgetId = savedOrderSplit[i].split(":");
+        for (var h=0;h<savedOrderSplit.length;h++){
+            console.log('h =', h);
+            var widgetId = savedOrderSplit[h].split(":");
             console.log('for loop run!');
 
             console.log('savedTestView: widgetId =',widgetId);
@@ -377,7 +377,7 @@
                     if(widgetId[1] === savedU2001As[i].config_name) {
                         createU2001A(i)
                     }else if (widgetId[1] === '') {
-                    addWidget('U2001A');
+                        addWidget('U2001A');
                     };
                 };  
             };
@@ -453,7 +453,7 @@ $(document).ready(function () {
             var savedU2001AsHTML = "";
             savedU2001AsHTML += "<tr><td><p class='savedTitle'>Saved:</p></td></tr>";
             for (var i=0;i<savedU2001As.length;i++){
-                savedU2001AsHTML+= "<tr><td><a onclick='createU2001A(" + i + ")'>" + savedU2001As[i].config_name + "</a></td></tr>";                                                
+                savedU2001AsHTML+= "<tr><td><a onclick='createU2001A(" + i + ")'>" + savedU2001As[i].config_name + "</a></td></tr>";                                            
             };
             console.log('savedU2001AsHTML = ',savedU2001AsHTML);
             document.getElementById("savedU2001As").innerHTML = savedU2001AsHTML;
