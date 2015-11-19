@@ -195,7 +195,7 @@ class UserDB(DictModel):
     admin = db.BooleanProperty(required = False)
 
 def CompanyDB_key(name = 'default'):
-    return db.Key.from_path('emails', name)
+    return db.Key.from_path('CompanyDB', name)
 
 class ProfileDB(DictModel):
     company_nickname = db.StringProperty(required = False)

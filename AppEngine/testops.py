@@ -26,19 +26,24 @@ import json
 class Handler(InstrumentDataHandler):
 	def get(self):
 		profile = get_profile_cookie(self)
-		configs = []
-		if profile.has_key('company_nickname'):
-			query = TestDB.all().filter("company_nickname =", profile['company_nickname'])
-			query = query.filter("ops_start =", True)
-			tests = query.run()
-			for test in tests:
-				for config_key in test.configs:
-					config = db.get(config_key)
-					config.active_testplan_name = test.testplan_name #temp fix to correct displayname TODO- align tests and configs names
-					configs.append(config)
-			self.render('ops.html', configs=configs, profile=profile)
+		print "PROFILE: ", profile
+		if (not profile) or (profile['permissions'] == "viewer"):
+			print "Invalid Permissions"
+			self.redirect('/profile')
 		else:
-			self.render('ops.html', configs=configs, profile=profile)
+			configs = []
+			if profile.has_key('company_nickname'):
+				query = TestDB.all().filter("company_nickname =", profile['company_nickname'])
+				query = query.filter("ops_start =", True)
+				tests = query.run()
+				for test in tests:
+					for config_key in test.configs:
+						config = db.get(config_key)
+						config.active_testplan_name = test.testplan_name #temp fix to correct displayname TODO- align tests and configs names
+						configs.append(config)
+				self.render('ops.html', configs=configs, profile=profile)
+			else:
+				self.render('ops.html', configs=configs, profile=profile)
 	def post(self):
 		configKey = self.request.get('configKey')
 		config = db.get(configKey)

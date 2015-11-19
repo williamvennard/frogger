@@ -48,6 +48,8 @@ class Handler(InstrumentDataHandler):
             self.redirect(users.create_login_url(self.request.uri))
 
         profile = get_profile_cookie(self)
+        if (not profile) or (profile['permissions'] == 'viewer'):
+            self.redirect('/profile')
 
         instrument_name = instrument_name.split('.')
         if instrument_name[-1] == 'json':

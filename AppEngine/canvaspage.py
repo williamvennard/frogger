@@ -39,6 +39,8 @@ class Handler(InstrumentDataHandler):
         else:
             self.redirect(users.create_login_url(self.request.uri))
         profile = get_profile_cookie(self)
+        if (not profile) or (profile['permissions'] == 'viewer'):
+            self.redirect('/profile')
         company_nickname_check = company_nickname.split('.')
         company_nickname = company_nickname_check[0]
         if company_nickname_check[-1] == 'json':

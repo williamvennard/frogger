@@ -38,7 +38,8 @@ from profile import get_profile_cookie
 class Handler(InstrumentDataHandler):
     def get(self, company_nickname="", hardware_name="", config_name="", testplan_name=""):
         profile = get_profile_cookie(self)
-
+        if (not profile) or (profile['permissions'] == "viewer"):
+            self.redirect('/profile')
         query = ConfigDB.all().filter("company_nickname =", company_nickname)
         query.filter("hardware_name =", hardware_name)
         query.filter("config_name =", config_name)

@@ -38,11 +38,12 @@ def get_profile():
     """Get profile object"""
     user = users.get_current_user()
     if user:
-        q = ProfileDB.all().filter("userid =", user.user_id())
+        q = ProfileDB.all().filter("email =", user.email())
         profile = q.get()
+        print "GET PROFILE CALLED: ", profile
         return profile
     else:
-        return False
+        return None
 
 def login_check(self):
     user = users.get_current_user()
@@ -58,27 +59,38 @@ def get_profile_cookie(self):
     permissions = self.request.cookies.get("permissions")
     if comp_cookie:
         profile = {}
+        raw_groups = self.request.cookies.get("groups")
+        if raw_groups:
+            groups = raw_groups.split("|")
+        else:
+            groups = []
+        profile['groups'] = groups
         profile['company_nickname'] = comp_cookie
         profile['permissions'] = permissions
         return profile
     else:
         profile = get_profile()
         if hasattr(profile, 'to_dict'):
-            profile = profile.to_dict()
             set_profile_cookie(self, profile)
-            profile['permissions'] = permissions
+            profile = profile.to_dict()
             return profile
         else:
+            # no profile for this user!!!
             return {}
 
 def set_groups_cookie(self, profile):        
-    groups_string = "|".join(profile['groups'])            
+    groups = profile.groups
+    if groups:        
+        groups_string = "|".join(profile.groups)
+    else:
+        groups_string = None            
     self.response.set_cookie('groups', groups_string)
 
 def set_profile_cookie(self, profile):
-    if 'company_nickname' in profile:
+    if hasattr(profile, 'company_nickname'):
         self.response.set_cookie('company_nickname', 
-            profile['company_nickname'])
+            profile.company_nickname)
+        self.response.set_cookie('permissions', profile.permissions)
         set_groups_cookie(self, profile)
         return True
     else:
@@ -97,12 +109,11 @@ class Handler(InstrumentDataHandler):
                 if profile.userid != user.user_id():
                     profile.userid = user.user_id()
                     profile.put()
-                self.set_profile_cookie(profile)
-                groups = self.request.cookies.get("groups")
+                set_profile_cookie(self, profile)
+                raw_groups = self.request.cookies.get("groups")
                 comp_cookie = self.request.cookies.get("company_nickname")
-                prof_cookie = self.request.cookies.get("profile")
-                self.render('profile.html', profile=profile, groups=groups, 
-                    comp_cookie=comp_cookie, prof_cookie=prof_cookie)
+                self.render('profile.html', profile=profile, groups=raw_groups, 
+                    comp_cookie=comp_cookie)
             else:
                 self.render('profile.html', profile="", groups="", 
                     error="No profile for this account. Contact your \
@@ -111,26 +122,12 @@ class Handler(InstrumentDataHandler):
             self.redirect(users.create_login_url(self.request.uri))
 
 
-    def set_groups_cookie(self, profile):        
-        groups_string = "|".join(profile.groups)            
-        self.response.set_cookie('groups', groups_string)
-
-    def set_profile_cookie(self, profile):
-        if hasattr(profile, 'company_nickname'):
-            self.response.set_cookie('company_nickname', 
-                profile.company_nickname)
-            self.set_groups_cookie(profile)
-            return True
-        else:
-            return False
-
-
 
 class AdduserPage(InstrumentDataHandler):
     def get(self):
         profile = get_profile()
         if profile:
-            if profile.admin:
+            if profile.permissions == 'admin':
                 self.render('adduser.html', 
                     company_nickname=profile.company_nickname)
             else:
@@ -183,7 +180,7 @@ class ListUsersPage(InstrumentDataHandler):
     def get(self):
         profile = get_profile()
         if hasattr(profile, 'admin'):
-            if profile.admin:
+            if profile.permissions == "admin":
                 company_nickname = profile.company_nickname
                 profiles = ProfileDB.all().filter("company_nickname =", company_nickname)
                 if profiles:
