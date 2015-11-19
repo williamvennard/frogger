@@ -24,8 +24,10 @@ class agilentu2000:
     """
     global COMPANYNAME
     global HARDWARENAME
+    global GAE_INSTANCE
     COMPANYNAME = 'Acme'
     HARDWARENAME = 'Tahoe'
+    GAE_INSTANCE = 'gradientone-dev2'
 
     def dt2ms(self, t):
         return int(t.strftime('%s'))*1000 + int(t.microsecond/1000)
@@ -38,8 +40,10 @@ class agilentu2000:
         s = self.s
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
         if test_plan == True:
-            raw_data_url = "https://gradientone-test.appspot.com/u2000data/" + COMPANYNAME + '/' + HARDWARENAME +'/' + config_name + "/%s" % start_tse
-            url_t = "https://gradientone-test.appspot.com/u2000_testresults/" + COMPANYNAME + '/' + active_testplan_name + '/' + config_name
+            # raw_data_url = "https://gradientone-test.appspot.com/u2000data/" + COMPANYNAME + '/' + HARDWARENAME +'/' + config_name + "/%s" % start_tse
+            raw_data_url = "https://" + GAE_INSTANCE + ".appspot.com/u2000data/" + COMPANYNAME + '/' + HARDWARENAME +'/' + config_name + "/%s" % start_tse
+            # url_t = "https://gradientone-test.appspot.com/u2000_testresults/" + COMPANYNAME + '/' + active_testplan_name + '/' + config_name
+            url_t = "https://" + GAE_INSTANCE + ".appspot.com/u2000_testresults/" + COMPANYNAME + '/' + active_testplan_name + '/' + config_name
             window_u2000 = {'i_settings':i_settings, 'cha':stuffing, 'raw_data_url':raw_data_url, 'start_tse':start_tse, 'test_plan':test_plan, 'config_name':config_name, 'testplan_name':active_testplan_name, 'hardware_name':HARDWARENAME}
             out_u2000 = json.dumps(window_u2000, ensure_ascii=True)
             r = s.post(url_t, data=out_u2000, headers=headers)
@@ -47,8 +51,10 @@ class agilentu2000:
             print "r.reason=",r.reason
             print "r.status_code=",r.status_code    
         else:
-            raw_data_url = "https://gradientone-test.appspot.com/u2000data/" + COMPANYNAME + '/' + HARDWARENAME +'/' + config_name + "/%s" % start_tse
-            url_t = "https://gradientone-test.appspot.com/u2000_traceresults/" + COMPANYNAME + '/' + HARDWARENAME + '/' + config_name
+            # raw_data_url = "https://gradientone-test.appspot.com/u2000data/" + COMPANYNAME + '/' + HARDWARENAME +'/' + config_name + "/%s" % start_tse
+            raw_data_url = "https://" + GAE_INSTANCE + ".appspot.com/u2000data/" + COMPANYNAME + '/' + HARDWARENAME +'/' + config_name + "/%s" % start_tse
+            # url_t = "https://gradientone-test.appspot.com/u2000_traceresults/" + COMPANYNAME + '/' + HARDWARENAME + '/' + config_name
+            url_t = "https://" + GAE_INSTANCE + ".appspot.com/u2000_traceresults/" + COMPANYNAME + '/' + HARDWARENAME + '/' + config_name
             window_u2000 = {'i_settings':i_settings, 'cha':stuffing, 'raw_data_url':raw_data_url, 'start_tse':start_tse, 'test_plan':test_plan, 'config_name':config_name, 'testplan_name':active_testplan_name, 'hardware_name':HARDWARENAME}
             out_u2000 = json.dumps(window_u2000, ensure_ascii=True)
             r = s.post(url_t, data=out_u2000, headers=headers)
@@ -61,7 +67,8 @@ class agilentu2000:
         window_complete = {'active_testplan_name':active_testplan_name, 'cha':test_results, 'config_name':config_name,'test_plan':test_plan, 'stop_tse':stop_tse, 'i_settings':i_settings, 'start_tse':start_tse, 'hardware_name':HARDWARENAME}
         out_complete = json.dumps(window_complete, ensure_ascii=True)
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-        url_c = "https://gradientone-test.appspot.com/u2000_testcomplete/" + COMPANYNAME + '/' + active_testplan_name + '/' +config_name + "/%s" % str(stop_tse)
+        # url_c = "https://gradientone-test.appspot.com/u2000_testcomplete/" + COMPANYNAME + '/' + active_testplan_name + '/' +config_name + "/%s" % str(stop_tse)
+        url_c = "https://" + GAE_INSTANCE +".appspot.com/u2000_testcomplete/" + COMPANYNAME + '/' + active_testplan_name + '/' +config_name + "/%s" % str(stop_tse)
         c = s.post(url_c, data=out_complete, headers=headers)
         print "c.reason=",c.reason
         print "c.status_code=",c.status_code

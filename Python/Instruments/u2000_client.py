@@ -22,7 +22,8 @@ def post_status(status):
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
     window = {'status':status, 'time':time.time()}
     status = json.dumps(window, ensure_ascii=True)
-    url_s = "https://gradientone-test.appspot.com/status/" + COMPANYNAME + '/' + HARDWARENAME
+    # url_s = "https://gradientone-test.appspot.com/status/" + COMPANYNAME + '/' + HARDWARENAME
+    url_s = "https://gradientone-dev2.appspot.com/status/" + COMPANYNAME + '/' + HARDWARENAME
     s = requests.post(url_s, data=status, headers=headers)
     print "s.reason=",s.reason
     print "s.status_code=",s.status_code
@@ -32,7 +33,8 @@ def post_complete(config_name, active_testplan_name, s):
     window_complete = {'commence_test':False}
     out_complete = json.dumps(window_complete, ensure_ascii=True)
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-    url_c = "https://gradientone-test.appspot.com/temp_testcomplete/" + COMPANYNAME + '/' + config_name + '/' + active_testplan_name
+    # url_c = "https://gradientone-test.appspot.com/temp_testcomplete/" + COMPANYNAME + '/' + config_name + '/' + active_testplan_name
+    url_c = "https://gradientone-dev2.appspot.com/temp_testcomplete/" + COMPANYNAME + '/' + config_name + '/' + active_testplan_name
     c = s.post(url_c, data=out_complete, headers=headers)
     print "c.reason=",c.reason
     print "c.status_code=",c.status_code
@@ -84,8 +86,9 @@ def make_json(payload):
 def check_config_url():
     """polls the configuration URL for a start signal @ 1sec intervals"""
     #config_url = "http://localhost:18080/testplansummary/Acme/MSP"
-    config_url = "https://gradientone-test.appspot.com/testplansummary/" + COMPANYNAME + '/' + HARDWARENAME
+    #config_url = "https://gradientone-test.appspot.com/testplansummary/" + COMPANYNAME + '/' + HARDWARENAME
     #config_url = "https://gradientone-dev.appspot.com/testplansummary/Acme/MSP"
+    config_url = "https://gradientone-dev2.appspot.com/testplansummary/" + COMPANYNAME + '/' + HARDWARENAME
     s = requests.session()
     r = s.get(config_url)
     if r:
