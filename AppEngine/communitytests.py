@@ -41,7 +41,9 @@ class Handler(InstrumentDataHandler):
 	def get(self):
 		tests = TestDB.all()
 		profile = get_profile_cookie(self)
-
+		if not profile:
+			self.redirect('/profile')
+			return
 		if profile.has_key('company_nickname'):
 			company_nickname = profile['company_nickname'] 
 		else:
@@ -59,7 +61,10 @@ class Handler(InstrumentDataHandler):
 				filterlist.append(profile['company_nickname'])
 				filterlist.append('company')
 				groups = self.request.cookies.get("groups")
-				profile['groups'] = groups.split("|")
+				if groups:
+					profile['groups'] = groups.split("|")
+				else:
+					profile['groups'] = ""
 				if profile.has_key('groups'):
 					filterlist.extend(profile['groups'])
 			group_posts = CommunityPostDB.all().order('-date_created')
