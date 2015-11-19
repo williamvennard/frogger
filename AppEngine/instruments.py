@@ -77,8 +77,8 @@ class Handler(InstrumentDataHandler):
             rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE author =:1", author)
             templatedata = {}
             templatedata['results'] = "No results data yet"
-            #self.render('instruments.html', rows = rows, profile=profile)
-            self.render('instruments.html', data = templatedata, rows = rows, profile=profile)
+            self.render('instruments.html', rows = rows, data = templatedata, profile=profile)
+            #self.render('instruments.html', data = templatedata, rows = rows)
 
 
     def post(self):
@@ -107,9 +107,9 @@ class Handler(InstrumentDataHandler):
         comment_thread['author'] = author
         templatedata['comment_thread'] = comment_thread
         print templatedata
-        self.render('instruments.html', data = templatedata, profile=profile)
+        #self.render('instruments.html', data = templatedata)
+        self.render('instruments.html', rows = rows, data = templatedata, profile=profile)
 
-        #self.render('instruments.html', rows = rows, profile=profile)
 
 
     # def set_groups_cookie(self, profile):        
