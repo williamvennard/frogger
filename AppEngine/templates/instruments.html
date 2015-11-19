@@ -391,6 +391,26 @@
                   </div>
                                    
               </div>
+    <div class= "row">
+    <h3>Comments</h3>
+    {% for comment in data.comment_thread %}
+    <hr>
+    <p>{{comment.content}}</p>
+    <p>by {{comment.author}} </p>
+    {% endfor %}
+
+    <textarea name="content" id="content" form="usrform" rows="5" cols="50">Enter comment here...</textarea>
+    <form action="/instruments"  method="post" id="usrform">
+      <input class="hidden" id="start_tse" name="start_tse">
+      <input class="hidden" id="company_nickname" name="company_nickname">
+      <input class="hidden" id="hardware_name" name="hardware_name"> 
+      <input class="hidden" id="config_name" name="config_name"> 
+      <input class="hidden" id="trace_name" name="trace_name"> 
+
+
+            <input class="text-capitalize optionsBtn" type="submit">
+    </form>
+  </div>
               <!--End Power Meter-->  
           </div>  
         <hr> 

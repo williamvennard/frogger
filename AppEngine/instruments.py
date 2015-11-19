@@ -7,6 +7,9 @@ from gradientone import unic_to_ascii
 from gradientone import author_creation
 from onedb import ConfigDB
 from onedb import ConfigDB_key
+from onedb import company_key
+from onedb import TraceCommentsDB
+from onedb import TraceCommentsDB_key
 from onedb import OscopeDB
 from onedb import OscopeDB_key
 from onedb import Scope
@@ -72,8 +75,38 @@ class Handler(InstrumentDataHandler):
             self.render('instrument_detail.html', profile=profile)
         else:
             rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE author =:1", author)
+            templatedata = {}
+            templatedata['results'] = "No results data yet"
             #self.render('instruments.html', rows = rows, profile=profile)
-            self.render('instruments.html', rows = rows, profile=profile)
+            self.render('instruments.html', data = templatedata, rows = rows)
+
+
+    def post(self):
+        """posts a comment on the test results"""
+        user = users.get_current_user()
+        if not user.nickname():
+            author = "anonymous"
+        else:
+            author = user.nickname()
+        print self.request.body
+        start_tse = self.request.get('start_tse')
+        content = self.request.get('content')
+        company_nickname = self.request.get('company_nickname')
+        hardware_name = self.request.get('hardware_name')
+        config_name = self.request.get('config_name')
+        trace_name = self.request.get('trace_name')
+        key_name = (config_name + trace_name)
+        comment = TraceCommentsDB(key_name = key_name, company_nickname = company_nickname, author=author, content=content, parent=company_key())
+        comment.put()
+        templatedata = {}
+        comment_thread = {}
+        comment_thread['content'] = content
+        comment_thread['author'] = author
+        templatedata['comment_thread'] = comment_thread
+        print templatedata
+        self.render('instruments.html', data = templatedata)
+
+        #self.render('instruments.html', rows = rows, profile=profile)
 
 
     # def set_groups_cookie(self, profile):        
