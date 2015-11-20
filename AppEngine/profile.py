@@ -165,7 +165,7 @@ class AdminAddUser(InstrumentDataHandler):
         company_nickname = companyname.strip()
         company_nickname = company_nickname.replace(" ", "_")
         profile = ProfileDB(email = email, 
-                      company_nickname = companyname, 
+                      company_nickname = company_nickname, 
                       name = name,
                       permissions = permissions,
                       )
