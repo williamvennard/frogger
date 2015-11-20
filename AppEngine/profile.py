@@ -161,10 +161,14 @@ class AdminAddUser(InstrumentDataHandler):
         email = self.request.get('email')
         companyname = self.request.get('companyname')
         name = self.request.get('name')
-        # TODO - handle spaces in companyname
+        permissions = self.request.get('permissions')
+        company_nickname = company_nickname.strip()
+        company_nickname = company_nickname.replace(" ", "_")
         profile = ProfileDB(email = email, 
                       company_nickname = companyname, 
-                      name = name)
+                      name = name,
+                      permissions = permissions
+                      )
         profile.put()
         checked_box = self.request.get("admin")
         if checked_box:
