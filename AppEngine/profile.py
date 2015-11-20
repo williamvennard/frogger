@@ -127,7 +127,7 @@ class AdduserPage(InstrumentDataHandler):
     def get(self):
         profile = get_profile()
         if profile:
-            if profile.permissions == 'admin':
+            if (profile.admin) or (profile.permissions == 'admin'):
                 self.render('adduser.html', 
                     company_nickname=profile.company_nickname)
             else:
@@ -180,7 +180,7 @@ class ListUsersPage(InstrumentDataHandler):
     def get(self):
         profile = get_profile()
         if hasattr(profile, 'admin'):
-            if profile.permissions == "admin":
+            if (profile.admin) or (profile.permissions == 'admin'):
                 company_nickname = profile.company_nickname
                 profiles = ProfileDB.all().filter("company_nickname =", company_nickname)
                 if profiles:
