@@ -106,9 +106,9 @@ class Handler(InstrumentDataHandler):
                 meas_name = item['meas_name'],             
                 # meas_start_time = float(item['meas_stop_time']),
                 # meas_stop_time = float(item['meas_stop_time']),
-                pass_fail = item['pass_fail'],
-                min_value = item['min_value'],
-                max_value = item['max_value'],
+                pass_fail = bool(item['pass_fail']),
+                min_pass = float(item['min_value']),
+                max_pass = float(item['max_value']),
                 )
                 meas.put()
             if test.key() not in meas.tests:

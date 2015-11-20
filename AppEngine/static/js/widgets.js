@@ -484,6 +484,30 @@
             document.getElementById("testPlan").innerHTML = testPlanHTML; 
             console.log('addDUT: testPlanHTML = ', testPlanHTML);
 
+        }else if(type === 'smeasure') {
+            var smeasName = savedSettings.meas_name;
+            var spassFail = savedSettings.pass_fail;
+            var sminPass = savedSettings.min_pass;
+            var smaxPass = savedSettings.max_pass;
+
+            testPlanHTML+= "<div type='measure' class='appBox' id='" + String(index) + "'>";
+            testPlanHTML+= "<h4 class='appTitle'>Measure - <span onclick='removeWidget(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle' style='left:685px;'></span></h4>";
+            testPlanHTML+= "<form method='post'>";
+            testPlanHTML+= "<input style='left:190px;' class='nameWidget' type='text' name='meas_name' value='" + smeasName + "'>";
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Pass/Fail:</p>";                   
+            testPlanHTML+= "<input class='appInput' type='checkbox' name='' autocomplete='off' value='" + spassFail + "'></td></div>";
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Max:</p>";                   
+            testPlanHTML+= "<input autocomplete='off' class='appInput' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' name='' placeholder='200' value='" + smaxPass + "'></td></div>";
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<td class='label'><p class='appLabel'>Min:</p>";
+            testPlanHTML+= "<input autocomplete='off' class='appInput' style='border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='text' name='' placeholder='100' value='" + smaxPass + "'></td></tr></div>";                                                         
+            testPlanHTML+= "</form>";
+            testPlanHTML+= "</div>";
+
+            document.getElementById("testPlan").innerHTML = testPlanHTML; 
+            console.log('addDUT: testPlanHTML = ', testPlanHTML);
 
 
         }else if(type === 'measurement') {
