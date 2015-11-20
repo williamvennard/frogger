@@ -1020,7 +1020,8 @@
             for(var i = 0;i<children.length;i++) {
                 
                 var planItemType = children[i].getAttribute('type');
-                if (planItemType == 'config' ||  'U2001A') {
+                if (planItemType == 'config' ||  planItemType == 'U2001A') {
+                    console.log('planItemType: ', planItemType)
                     var planItemName = children[i].children[0].children[1].children[0].value;
                 }else {
                     var planItemName = children[i].children[1].children[0].value;
