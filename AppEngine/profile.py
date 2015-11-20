@@ -170,13 +170,10 @@ class AdminAddUser(InstrumentDataHandler):
                       permissions = permissions
                       )
         profile.put()
-        checked_box = self.request.get("admin")
-        if checked_box:
+        if permissions == 'admin':
             profile.admin = True
         else:
             profile.admin = False
-        if not profile.bio:
-            profile.bio = "No bio entered yet."
         profile.put()
         self.redirect('/admin/editusers')
 
