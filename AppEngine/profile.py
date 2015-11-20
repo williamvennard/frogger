@@ -162,12 +162,12 @@ class AdminAddUser(InstrumentDataHandler):
         companyname = self.request.get('companyname')
         name = self.request.get('name')
         permissions = self.request.get('permissions')
-        company_nickname = company_nickname.strip()
+        company_nickname = companyname.strip()
         company_nickname = company_nickname.replace(" ", "_")
         profile = ProfileDB(email = email, 
                       company_nickname = companyname, 
                       name = name,
-                      permissions = permissions
+                      permissions = permissions,
                       )
         profile.put()
         if permissions == 'admin':
