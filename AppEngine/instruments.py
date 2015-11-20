@@ -8,8 +8,7 @@ from gradientone import author_creation
 from onedb import ConfigDB
 from onedb import ConfigDB_key
 from onedb import company_key
-from onedb import TraceCommentsDB
-from onedb import TraceCommentsDB_key
+from onedb import CommentsDB
 from onedb import OscopeDB
 from onedb import OscopeDB_key
 from onedb import Scope
@@ -51,6 +50,7 @@ class Handler(InstrumentDataHandler):
             self.redirect(users.create_login_url(self.request.uri))
 
         profile = get_profile_cookie(self)
+        profile['author'] = author
         if (not profile) or (profile['permissions'] == 'viewer'):
             self.redirect('/profile')
 
@@ -92,14 +92,14 @@ class Handler(InstrumentDataHandler):
         profile = get_profile_cookie(self)
         if (not profile) or (profile['permissions'] == 'viewer'):
             self.redirect('/profile')
-        start_tse = self.request.get('start_tse')
-        content = self.request.get('content')
-        company_nickname = self.request.get('company_nickname')
-        hardware_name = self.request.get('hardware_name')
-        config_name = self.request.get('config_name')
-        trace_name = self.request.get('trace_name')
+
+        data = json.loads(self.request.body)
+        config_name = data['config_name']
+        trace_name = data['trace_name']
+        content = data['content']
         key_name = (config_name + trace_name)
-        comment = TraceCommentsDB(key_name = key_name, company_nickname = company_nickname, author=author, content=content, parent=company_key())
+        print "key_name: ", key_name
+        comment = CommentsDB(key_name = key_name, author=author, content=content, parent=company_key())
         comment.put()
         templatedata = {}
         comment_thread = {}
@@ -107,8 +107,6 @@ class Handler(InstrumentDataHandler):
         comment_thread['author'] = author
         templatedata['comment_thread'] = comment_thread
         print templatedata
-        #self.render('instruments.html', data = templatedata)
-        self.render('instruments.html', rows = rows, data = templatedata, profile=profile)
 
 
 

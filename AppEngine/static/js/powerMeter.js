@@ -123,6 +123,11 @@ function powerMeterData() {
         var measurement = testInfo.cha;
         console.log('powerMeterStart: cha', measurement);
 
+        // needed for comments on results
+        var start_tse = testInfo.start_tse
+        console.log('powerMeterStart: start_tse', start_tse);
+        document.getElementById('start_tse').value = start_tse;
+
         //def get(self,company_nickname="", hardware_name="",config_name="",start_tse=""):
         //u2000data
         
