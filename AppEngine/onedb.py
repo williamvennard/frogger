@@ -232,7 +232,7 @@ def TraceCommentsDB_key(name = 'default'):
 class TraceCommentsDB(DictModel):
     author = db.StringProperty(required = True)
     content = db.StringProperty(required = True)
-    timestamp = db.DateTimeProperty(auto_now_add = True)
+    timestamp = db.DateTimeProperty(auto_now_add = False)
 
 class Scope(DictModel):
     acquisition_start_time = db.StringProperty(required = False)

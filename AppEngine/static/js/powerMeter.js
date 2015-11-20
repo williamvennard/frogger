@@ -121,12 +121,24 @@ function powerMeterData() {
         resultsTrigger = results;
 
         var measurement = testInfo.cha;
+        var start_tse = testInfo.start_tse;
+        var company_nickname = "Acme";
+        var hardware_name = "Tahoe";
+/*        var config_name = configName;
+        var trace_name = configName;*/
+
         console.log('powerMeterStart: cha', measurement);
+        console.log('start_tse: cha', start_tse);
 
         //def get(self,company_nickname="", hardware_name="",config_name="",start_tse=""):
         //u2000data
         
         document.getElementById("measurementValue").innerHTML = measurement;
+        document.getElementById("start_tse").value = start_tse;
+        document.getElementById("company_nickname").value = company_nickname;
+        document.getElementById("hardware_name").value = hardware_name;
+        document.getElementById("config_name").value = configName;
+        document.getElementById("trace_name").value = traceName;
        });
     PMtraceTimerID = setTimeout(powerMeterData,1000);
     //stop when there is data

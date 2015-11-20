@@ -18,6 +18,7 @@ from onedb import agilentBaseInfiniiVision
 from onedb import agilent7000
 from onedb import agilent7000A
 from onedb import agilentMSO7014A
+import datetime
 import jinja2
 import json
 import logging
@@ -76,8 +77,8 @@ class Handler(InstrumentDataHandler):
         else:
             rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE author =:1", author)
             templatedata = {}
-            templatedata['results'] = "No results data yet"
-            self.render('instruments.html', rows = rows, data = templatedata, profile=profile)
+            templatedata['info'] = "False"
+            self.render('instruments.html', data = templatedata, profile=profile)
             #self.render('instruments.html', data = templatedata, rows = rows)
 
 
@@ -99,16 +100,18 @@ class Handler(InstrumentDataHandler):
         config_name = self.request.get('config_name')
         trace_name = self.request.get('trace_name')
         key_name = (config_name + trace_name)
-        comment = TraceCommentsDB(key_name = key_name, company_nickname = company_nickname, author=author, content=content, parent=company_key())
+        timestamp = datetime.datetime.now()
+        comment = TraceCommentsDB(key_name = key_name, company_nickname = company_nickname, author=author, content=content, timestamp = timestamp, parent=company_key())
         comment.put()
         templatedata = {}
         comment_thread = {}
         comment_thread['content'] = content
         comment_thread['author'] = author
+        comment_thread['timestamp'] = timestamp
         templatedata['comment_thread'] = comment_thread
         print templatedata
         #self.render('instruments.html', data = templatedata)
-        self.render('instruments.html', rows = rows, data = templatedata, profile=profile)
+        self.render('instruments.html', data = templatedata, profile=profile)
 
 
 
