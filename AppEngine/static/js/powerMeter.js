@@ -110,7 +110,7 @@ var resultsTrigger;
 function powerMeterData() {
   console.log('PowerMeter START!');
       //test_info_url = 'https://gradientone-test.appspot.com/u2000_traceresults/Acme/MSP/Tahoe';
-      test_info_url = window.location.origin + '/u2000_traceresults/Acme/Tahoe' + '/' + configName ;
+      test_info_url = window.location.origin + '/u2000_traceresults/Acme/Tahoe' + '/' + configName ; //unhard code company and hardware asap
       $.ajax({
           async: true,
           url: test_info_url,
@@ -135,4 +135,26 @@ function powerMeterData() {
    };
 };
 
+function PMSaveStatus(status) {
+     document.getElementById("traceSave").disabled = true; 
+      console.log('saveStatus: SAVED!!');
+      
 
+      var saveValue = status;
+      var save_url = window.location.origin + '/datamgmt/u2000' + '/Acme/Tahoe';  //unhard code company and hardware asap
+      console.log('saveStatus: save_url = ',save_url);
+
+      var formData = JSON.stringify({"save_status":saveValue,"totalNumPages":totalNumPages,"sliceSize":sliceSize});
+      console.log('saveStatus: formData =', formData);
+     $.ajax({
+        type: "POST",
+        url: save_url,
+        data: formData,
+        dataType: 'json',
+        success: function(data, textStatus, jqXHR)
+        {
+            console.log('saveStatus: Ajax post was a success!');
+        },
+      }); 
+
+};
