@@ -228,6 +228,7 @@ class CommentsDB(DictModel):
     content = db.StringProperty(required = True)
     timestamp = db.DateTimeProperty(auto_now_add = True)
 
+
 class Scope(DictModel):
     acquisition_start_time = db.StringProperty(required = False)
     acquisition_type = db.StringProperty(required = False)

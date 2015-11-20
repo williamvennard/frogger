@@ -17,6 +17,7 @@ from onedb import agilentBaseInfiniiVision
 from onedb import agilent7000
 from onedb import agilent7000A
 from onedb import agilentMSO7014A
+import datetime
 import jinja2
 import json
 import logging
@@ -76,8 +77,8 @@ class Handler(InstrumentDataHandler):
         else:
             rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE author =:1", author)
             templatedata = {}
-            templatedata['results'] = "No results data yet"
-            self.render('instruments.html', rows = rows, data = templatedata, profile=profile)
+            templatedata['info'] = "False"
+            self.render('instruments.html', data = templatedata, profile=profile)
             #self.render('instruments.html', data = templatedata, rows = rows)
 
 
@@ -98,13 +99,13 @@ class Handler(InstrumentDataHandler):
         trace_name = data['trace_name']
         content = data['content']
         key_name = (config_name + trace_name)
-        print "key_name: ", key_name
         comment = CommentsDB(key_name = key_name, author=author, content=content, parent=company_key())
         comment.put()
         templatedata = {}
         comment_thread = {}
         comment_thread['content'] = content
         comment_thread['author'] = author
+        comment_thread['timestamp'] = timestamp
         templatedata['comment_thread'] = comment_thread
         print templatedata
 
