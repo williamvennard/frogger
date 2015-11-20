@@ -102,6 +102,7 @@ class Handler(InstrumentDataHandler):
                 meas = MeasurementDB(key_name = item['meas_name'], parent = company_key(),
                 company_nickname = company_nickname, author = author,
                 # meas_type = item['meas_type'],
+                meas_type = 'basic',
                 meas_name = item['meas_name'],             
                 # meas_start_time = float(item['meas_stop_time']),
                 # meas_stop_time = float(item['meas_stop_time']),
@@ -114,7 +115,7 @@ class Handler(InstrumentDataHandler):
                 meas.tests.append(test.key())
                 meas.put()
             if meas.key() not in test.measurements:
-                test.measurements.append(meas)
+                test.measurements.append(meas.key())
                 test.put()
                    
         for item in configs:
