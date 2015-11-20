@@ -226,15 +226,6 @@ class CommunityPostDB(DictModel):
 class CommentsDB(DictModel):
     author = db.StringProperty(required = True)
     content = db.StringProperty(required = True)
-    test = db.ReferenceProperty(TestDB, collection_name = 'comments')
-    timestamp = db.DateTimeProperty(auto_now_add = True)
-
-def TraceCommentsDB_key(name = 'default'):
-    return db.Key.from_path('tracecomments', name)
-
-class TraceCommentsDB(DictModel):
-    author = db.StringProperty(required = True)
-    content = db.StringProperty(required = True)
     timestamp = db.DateTimeProperty(auto_now_add = True)
 
 class Scope(DictModel):

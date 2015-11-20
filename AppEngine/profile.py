@@ -122,6 +122,25 @@ class Handler(InstrumentDataHandler):
             self.redirect(users.create_login_url(self.request.uri))
 
 
+def create_profile(self):
+        email = self.request.get('email')
+        name = self.request.get('name')
+        companyname = self.request.get('companyname')
+        company_nickname = companyname.strip()
+        company_nickname = company_nickname.replace(" ", "_")
+        permissions = self.request.get('permissions')
+        if permissions == 'admin':
+            admin = True
+        else:
+            admin = False
+        profile = ProfileDB(email = email, 
+                      company_nickname = company_nickname, 
+                      name = name,
+                      permissions = permissions,
+                      admin = admin,
+                      )
+        profile.put()
+
 
 class AdduserPage(InstrumentDataHandler):
     def get(self):
@@ -136,46 +155,17 @@ class AdduserPage(InstrumentDataHandler):
             self.redirect('/')
 
     def post(self):
-        email = self.request.get('email')
-        name = self.request.get('name')
-        company_nickname = self.request.get('company_nickname')
-        company_nickname = company_nickname.strip()
-        company_nickname = company_nickname.replace(" ", "_")
-        permissions = self.request.get('permissions')
-        profile = ProfileDB(email = email, 
-                      company_nickname = company_nickname, 
-                      name = name,
-                      permissions = permissions,
-                      )
-        if permissions == 'admin':
-            profile.admin = True
-        else:
-            profile.admin = False
-        profile.put()
+        create_profile(self)
         self.redirect('/listusers')
+
 
 class AdminAddUser(InstrumentDataHandler):
     def get(self):
         self.render('admin_adduser.html')
     def post(self):
-        email = self.request.get('email')
-        companyname = self.request.get('companyname')
-        name = self.request.get('name')
-        permissions = self.request.get('permissions')
-        company_nickname = companyname.strip()
-        company_nickname = company_nickname.replace(" ", "_")
-        profile = ProfileDB(email = email, 
-                      company_nickname = company_nickname, 
-                      name = name,
-                      permissions = permissions,
-                      )
-        profile.put()
-        if permissions == 'admin':
-            profile.admin = True
-        else:
-            profile.admin = False
-        profile.put()
+        create_profile(self)
         self.redirect('/admin/editusers')
+
 
 class ListUsersPage(InstrumentDataHandler):
     def get(self):
