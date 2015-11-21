@@ -28,8 +28,8 @@ class agilentu2000:
     global USERNAME
     COMPANYNAME = 'Acme'
     HARDWARENAME = 'Tahoe'
-    GAE_INSTANCE = 'gradientone-dev2'
-    USERNAME = 'tslater'
+    GAE_INSTANCE = 'gradientone-test'
+    USERNAME = 'nedwards'
 
     def dt2ms(self, t):
         return int(t.strftime('%s'))*1000 + int(t.microsecond/1000)

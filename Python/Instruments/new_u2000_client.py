@@ -14,7 +14,7 @@ import ivi
 
 COMPANYNAME = 'Acme'
 HARDWARENAME = 'Tahoe'
-GAE_INSTANCE = 'gradientone-dev2'
+GAE_INSTANCE = 'gradientone-test'
 
 def dt2ms(t):
     return int(t.strftime('%s'))*1000 + int(t.microsecond/1000)
