@@ -1,5 +1,5 @@
 {% extends "one.html" %}
-{% block title %} Test Ops {% endblock %}
+{% block title %} Operator Page {% endblock %}
 {% block head %}
     {{ super() }}
     <link rel="stylesheet" type="text/css" href="/static/css/powerMeter.css">
@@ -16,7 +16,7 @@
 {% block content %}
 <div class="col-md-8 col-md-offset-2">
 	<div class="row">
-		<h1>Operator Page</h1>
+		<h1>{{ self.title() }}</h1>
 		<h3>Test Overview</h3>
 	    <p>Configuration - {{config.config_name}} | Instrument Type - {{config.instrument_type}}</p>
 		<div class="col-md-6">

@@ -1,54 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Instrument Page</title>
-         
-    <script src="../static/js/addons/jquery-1.11.3.js"></script>    
-    <script src="../static/js/jquery-ui-1.11.4/jquery-ui.js"></script>
-    <script src="../static/bootstrap/js/bootstrap.min.js"></script>    
-    <script src="../static/js/addons/lodash.js"></script>  
-    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <script type="text/javascript" src="../static/js/sachart.js"></script>
-    <script type="text/javascript" src="../static/js/chart3.js"></script>
-    <link rel="stylesheet" type="text/css" href="../static/css/fonts/stylesheet.css" charset="utf-8" /> 
-    <link rel="stylesheet" type="text/css" href="../static/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="../static/css/custom.css">
-    <link rel="stylesheet" type="text/css" href="../static/css/oscope.css">
-    <link rel="stylesheet" type="text/css" href="../static/css/specanal.css">
-    <link rel="stylesheet" type="text/css" href="../static/css/powerMeter.css">
+{% extends "one.html" %}
+{% block title %} Instruments {% endblock %}
+{% block head %}
+    {{ super() }}
+    <script type="text/javascript" src="/static/js/sachart.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/oscope.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/specanal.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/powerMeter.css">        
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.13/angular.min.js"></script>
-    <script type="text/javascript" src="../static/js/addons/clickadd.js"></script>
-    <script type="text/javascript" src="../static/js/addons/jquery.knob.min.js"></script>
-    <style type="text/css"></style>
-
-
-</head>
-
-<body id="mainBackground">
-    <div class="container">       
-        <nav id="topNavBar" class="navbar navbar-inverse navbar-collapse collapse">
-                <div class="container-fluid">
-                    <div class="navbar-header">
-                        <img class="logo" src="../static/images/Glogo.png" style="width:110px;">
-                    </div>
-                    <div id="navbar">
-                        <ul class="topmenu nav navbar-nav">
-                            <li><a style="color:rgb(124,175,46);" href="instruments">INSTRUMENTS</a></li>
-                            <li class="dots glyphicon glyphicon-option-vertical"></li>
-                            <li><a href="testresults">CANVAS</a></li>
-                            <li class="dots glyphicon glyphicon-option-vertical"></li>
-                            <li><a href="testlibrary/acme">TEST LIBRARY</a></li>
-                            <li class="dots glyphicon glyphicon-option-vertical"></li>
-                            <li><a href="community">COMMUNITY</a></li>             
-                        </ul>
-                        <ul class="nav navbar-nav navbar-right">
-                          <li><a class="glyphicon glyphicon-envelope" href="../navbar-static-top/"></a></li>
-                          <li><a class="glyphicon glyphicon-bell" href="../navbar-static-top/"></a></li>
-                          <li><a class="glyphicon glyphicon-user" href="profile">Profile</a></li>
-                        </ul>
-                    </div>
-                </div>
-        </nav>
+    <script type="text/javascript" src="/static/js/addons/jquery.knob.min.js"></script>
+    <style type="text/css">
+        #instruments-navlink {color: rgb(124,175,46);}
+    </style>
+{% endblock %}
+{% block content %}
         <div class="container-fluid">
             <div class="col-md-12 canv">
                 <h1 id="instHeader" class="headr">Instruments</h1> 
@@ -60,79 +24,79 @@
                         <li class="side-menu" role="menu">
                           <h4 id="sideHeader">Instruments</h4>
                           <ul  id="isntrumentList" style="">
-                          <li data-toggle="collapse" data-parent="#accordion" href="#collapseOne">My Instruments</li>
-                                    <div id="collapseOne" class="panel-collapse collapse in">
-                                      <div class="panel-body" style="padding-top: 0px; padding-left: 0px;">
-                                      <!--MY INSTRUMENT LIST TEMPLATE-->
-                                          <form method="post" id="resultsForm">
-                                            <table class="savedList">
-                                              <tr>
-                                              </tr>   
-                                        {% block import %}
+                            <li data-toggle="collapse" data-parent="#accordion" href="#collapseOne">My Instruments</li>
+                              <div id="collapseOne" class="panel-collapse collapse in">
+                                <div class="panel-body" style="padding-top: 0px; padding-left: 0px;">
+                                <!--MY INSTRUMENT LIST TEMPLATE-->
+                                    <form method="post" id="resultsForm">
+                                      <table class="savedList">
+                                        <tr>
+                                        </tr>   
+                                  {% block import %}
 
-                                        {% for r in rows %}
-                                          <a class="testName" href ="instruments/{{r.author}}/{{r.instrument_type}}/{{r.instrument_name}}">{{ r.instrument_name }}</a><span class="testAuthor">{{ r.instrument_type }}
-                                          <br><br>   
-                                        {% endfor %}
-                                        {% endblock %}  
-                                            </table>
-                                          </form>
-                                      </div>
-                                    </div>
-                                  <li data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" class="OScope">O-Scope</li>
-                                    <div id="collapseTwo" class="panel-collapse collapse in">
-                                      <div class="panel-body" style="padding-top: 0px; padding-left: 0px;">
-                                          <table class="savedList">
-                                          <p>Saved :</p>
-                                              <tr>
-                                                  <td>
-                                                      <a class="savedLink">John's</a>
-                                                  </td>
-                                              </tr>
-                                              <tr>
-                                                  <td>
-                                                      <a class="savedLink">Bob's</a>
-                                                  </td>
-                                              </tr>
-                                          </table>
-                                      </div>
-                                    </div>
-                                  <li data-toggle="collapse" data-parent="#accordion" href="#collapseThree">VNA</li>
-                                    <div id="collapseThree" class="panel-collapse collapse in">
-                                      <div class="panel-body" style="padding-top: 0px; padding-left: 0px;">
-                                          <table class="savedList">
-                                          <p>Saved :</p>
-                                              <tr>
-                                                  <td>
-                                                      <a class="savedLink">Will's</a>
-                                                  </td>
-                                              </tr>
-                                              <tr>
-                                                  <td>
-                                                      <a class="savedLink">Nick's</a>
-                                                  </td>
-                                              </tr>
-                                          </table>
-                                      </div>
-                                    </div>
-                                    <li data-toggle="collapse" data-parent="#accordion" href="#collapseFour" class="PowerMeter">Power Meter</li>
-                                    <div id="collapseFour" class="panel-collapse collapse in">
-                                      <div class="panel-body" style="padding-top: 0px; padding-left: 0px;">
-                                          <table class="savedList">
-                                          <p>Saved :</p>
-                                              <tr>
-                                                  <td>
-                                                      <a class="savedLink">Sam's</a>
-                                                  </td>
-                                              </tr>
-                                              <tr>
-                                                  <td>
-                                                      <a class="savedLink">Joe's</a>
-                                                  </td>
-                                              </tr>
-                                          </table>
-                                      </div>
-                                    </div>  
+                                  {% for r in rows %}
+                                    <a class="testName" href ="instruments/{{r.author}}/{{r.instrument_type}}/{{r.instrument_name}}">{{ r.instrument_name }}</a><span class="testAuthor">{{ r.instrument_type }}
+                                    <br><br>   
+                                  {% endfor %}
+                                  {% endblock %}  
+                                      </table>
+                                    </form>
+                                </div>
+                              </div>
+                            <li data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" class="OScope">O-Scope</li>
+                              <div id="collapseTwo" class="panel-collapse collapse in">
+                                <div class="panel-body" style="padding-top: 0px; padding-left: 0px;">
+                                    <table class="savedList">
+                                    <p>Saved :</p>
+                                        <tr>
+                                            <td>
+                                                <a class="savedLink">John's</a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <a class="savedLink">Bob's</a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                              </div>
+                            <li data-toggle="collapse" data-parent="#accordion" href="#collapseThree">VNA</li>
+                              <div id="collapseThree" class="panel-collapse collapse in">
+                                <div class="panel-body" style="padding-top: 0px; padding-left: 0px;">
+                                    <table class="savedList">
+                                    <p>Saved :</p>
+                                        <tr>
+                                            <td>
+                                                <a class="savedLink">Will's</a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <a class="savedLink">Nick's</a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                              </div>
+                              <li data-toggle="collapse" data-parent="#accordion" href="#collapseFour" class="PowerMeter">Power Meter</li>
+                              <div id="collapseFour" class="panel-collapse collapse in">
+                                <div class="panel-body" style="padding-top: 0px; padding-left: 0px;">
+                                    <table class="savedList">
+                                    <p>Saved :</p>
+                                        <tr>
+                                            <td>
+                                                <a class="savedLink">Sam's</a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <a class="savedLink">Joe's</a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                              </div>  
                             </ul> 
                         </li>
                     </ul> 
@@ -359,6 +323,7 @@
                         <div class="" id="optionBox">
                           <h2 class="optionsTitle">Options</h2>
                           <button style="margin-left:15px" class="text-capitalize optionsBtn" type="button" id="powerMeterStartStop">Start</button>
+                          <button style="margin-left:15px" class="text-capitalize optionsBtn" type="button" id="PMSave" onclick="PMSaveStatus('save')">Save</button>
                           <button style="margin-left:16px; padding-left:2px;" class="text-capitalize optionsBtn" data-toggle="collapse" data-parent="#accordion" href="#collapsePMConfig">Configure</button> 
 <!--Config Form-->  
                           <div id="collapsePMConfig" class="collapse in PMConfigBox" style="padding-left: 30px;">
@@ -425,14 +390,72 @@
                         </div>
                     </div>
                   </div>
-                                   
               </div>
-              <!--End Power Meter-->  
-          </div>  
-        <hr> 
-    </div> 
-    <script type="text/javascript" src="../static/js/ochart.js"></script>
-    <script type="text/javascript" src="../static/js/powerMeter.js"></script>
+              <!--End Power Meter-->
+
+    <div class= "row">
+      <div id="CommentsBox" class="col-md-4">
+        <h3 style="color: white;">Comments</h3>
+        <div style="color: white;" id ="comments"></div>
+        <textarea name="content" id="content" form="usrform" rows="5" cols="50">Enter comment here...</textarea>
+        <form action="/instruments"  method="post" id="usrform">
+          <input class="hidden" id="start_tse" name="start_tse">
+          <input class="hidden" id="company_nickname" name="company_nickname" value='{{profile.company_nickname}}'>
+          <input class="hidden" id="hardware_name" name="hardware_name"> 
+          <input class="hidden" id="config_name" name="config_name"> 
+          <input class="hidden" id="trace_name" name="trace_name"> 
+          <input class="hidden" id="comment_author" value='{{profile.author}}'>
+          <button class="text-capitalize optionsBtn" type="button" id="SubmitComment" onclick="addComment()">Submit</button>
+        </form>
+      </div>
+    </div>
+    </div>  
+    <hr> 
+    <script type="text/javascript">
+    function addComment() {
+      console.log('addComment START!');
+
+      var d = document.getElementById('PMConfigSettings');
+      var children = d.childNodes;
+      console.log('PMConfig: children = ', children);
+      var comment_url = window.location.origin + '/instruments';
+      configName = children[1].children[1].value;
+      traceName = children[3].children[1].value;
+      var company_nickname = document.getElementById('company_nickname').value;
+      var comment_author = document.getElementById('comment_author').value;
+      // var hardware_name = document.getElementById('hardware_name');
+      var hardware_name = 'Tahoe';
+      // var start_tse = document.getElementById('start_tse')
+      var start_tse = Date.now()
+      var comment_time = start_tse
+      var content = document.getElementById('content').value;
+      var commentData = JSON.stringify({"config_name":configName,"trace_name":traceName, "hardware_name": hardware_name, 
+        "company_nickname":company_nickname, "start_tse":start_tse, "content": content});
+
+      console.log('instConfig: commentData = ',commentData);
+      if (configName && traceName){
+        commentHTML = "<div><p>" + content + " by " + comment_author + "</p></div>"
+        $("#comments").append(commentHTML);
+
+        $.ajax({
+          type: "POST",
+          url: comment_url,
+          data: commentData,
+          dataType: 'json',
+          success: function(data, textStatus, jqXHR)
+          {
+              console.log('saveStatus: Ajax post was a success!');
+
+          }
+        }); 
+      } else {
+          console.log('Missing Input: Need both Config and Trace Name')
+      }
+    };
+    </script>
+
+    <script type="text/javascript" src="/static/js/ochart.js"></script>
+    <script type="text/javascript" src="/static/js/powerMeter.js"></script>
     <script type="text/javascript">$('#collapseOne').collapse("hide");</script><!--stops accordion from loading open -->
     <script type="text/javascript">$('#collapseTwo').collapse("hide");</script>
     <script type="text/javascript">$('#collapseThree').collapse("hide");</script>
@@ -463,5 +486,4 @@
    
 
     <script type="text/javascript">//$("#instBox").hide();</script>
-</body>
-</html>
+{% endblock %}

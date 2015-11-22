@@ -38,37 +38,60 @@ def get_profile():
     """Get profile object"""
     user = users.get_current_user()
     if user:
-        q = ProfileDB.all().filter("userid =", user.user_id())
+        q = ProfileDB.all().filter("email =", user.email())
         profile = q.get()
+        print "GET PROFILE CALLED: ", profile
         return profile
     else:
-        return False
+        return None
+
+def login_check(self):
+    user = users.get_current_user()
+    if user:
+        return True
+    else:
+        self.redirect(users.create_login_url(self.request.uri))
 
 def get_profile_cookie(self):
     """Get cookie data else grabs DB profile and sets cookie. Returns Dictionary."""
+    login_check(self)
     comp_cookie = self.request.cookies.get("company_nickname")
     permissions = self.request.cookies.get("permissions")
     if comp_cookie:
         profile = {}
+        raw_groups = self.request.cookies.get("groups")
+        if raw_groups:
+            groups = raw_groups.split("|")
+        else:
+            groups = []
+        profile['groups'] = groups
         profile['company_nickname'] = comp_cookie
+        profile['permissions'] = permissions
         return profile
     else:
         profile = get_profile()
         if hasattr(profile, 'to_dict'):
             set_profile_cookie(self, profile)
-            return profile.to_dict()
+            profile = profile.to_dict()
+            return profile
         else:
+            # no profile for this user!!!
             return {}
 
 def set_groups_cookie(self, profile):        
-    groups_string = "|".join(profile['groups'])            
+    groups = profile.groups
+    if groups:        
+        groups_string = "|".join(profile.groups)
+    else:
+        groups_string = None            
     self.response.set_cookie('groups', groups_string)
 
 def set_profile_cookie(self, profile):
-    if profile.has_key('company_nickname'):
+    if hasattr(profile, 'company_nickname'):
         self.response.set_cookie('company_nickname', 
-            profile['company_nickname'])
-        self.set_groups_cookie(profile)
+            profile.company_nickname)
+        self.response.set_cookie('permissions', profile.permissions)
+        set_groups_cookie(self, profile)
         return True
     else:
         return False
@@ -86,12 +109,11 @@ class Handler(InstrumentDataHandler):
                 if profile.userid != user.user_id():
                     profile.userid = user.user_id()
                     profile.put()
-                self.set_profile_cookie(profile)
-                groups = self.request.cookies.get("groups")
+                set_profile_cookie(self, profile)
+                raw_groups = self.request.cookies.get("groups")
                 comp_cookie = self.request.cookies.get("company_nickname")
-                prof_cookie = self.request.cookies.get("profile")
-                self.render('profile.html', profile=profile, groups=groups, 
-                    comp_cookie=comp_cookie, prof_cookie=prof_cookie)
+                self.render('profile.html', profile=profile, groups=raw_groups, 
+                    comp_cookie=comp_cookie)
             else:
                 self.render('profile.html', profile="", groups="", 
                     error="No profile for this account. Contact your \
@@ -100,26 +122,31 @@ class Handler(InstrumentDataHandler):
             self.redirect(users.create_login_url(self.request.uri))
 
 
-    def set_groups_cookie(self, profile):        
-        groups_string = "|".join(profile.groups)            
-        self.response.set_cookie('groups', groups_string)
-
-    def set_profile_cookie(self, profile):
-        if hasattr(profile, 'company_nickname'):
-            self.response.set_cookie('company_nickname', 
-                profile.company_nickname)
-            self.set_groups_cookie(profile)
-            return True
+def create_profile(self):
+        email = self.request.get('email')
+        name = self.request.get('name')
+        companyname = self.request.get('companyname')
+        company_nickname = companyname.strip()
+        company_nickname = company_nickname.replace(" ", "_")
+        permissions = self.request.get('permissions')
+        if permissions == 'admin':
+            admin = True
         else:
-            return False
-
+            admin = False
+        profile = ProfileDB(email = email, 
+                      company_nickname = company_nickname, 
+                      name = name,
+                      permissions = permissions,
+                      admin = admin,
+                      )
+        profile.put()
 
 
 class AdduserPage(InstrumentDataHandler):
     def get(self):
         profile = get_profile()
         if profile:
-            if profile.admin:
+            if (profile.admin) or (profile.permissions == 'admin'):
                 self.render('adduser.html', 
                     company_nickname=profile.company_nickname)
             else:
@@ -128,51 +155,23 @@ class AdduserPage(InstrumentDataHandler):
             self.redirect('/')
 
     def post(self):
-        email = self.request.get('email')
-        name = self.request.get('name')
-        company_nickname = self.request.get('company_nickname')
-        company_nickname = company_nickname.strip()
-        company_nickname = company_nickname.replace(" ", "_")
-        permissions = self.request.get('permissions')
-        profile = ProfileDB(email = email, 
-                      company_nickname = company_nickname, 
-                      name = name,
-                      permissions = permissions,
-                      )
-        if permissions == 'admin':
-            profile.admin = True
-        else:
-            profile.admin = False
-        profile.put()
+        create_profile(self)
         self.redirect('/listusers')
+
 
 class AdminAddUser(InstrumentDataHandler):
     def get(self):
         self.render('admin_adduser.html')
     def post(self):
-        email = self.request.get('email')
-        companyname = self.request.get('companyname')
-        name = self.request.get('name')
-        # TODO - handle spaces in companyname
-        profile = ProfileDB(email = email, 
-                      company_nickname = companyname, 
-                      name = name)
-        profile.put()
-        checked_box = self.request.get("admin")
-        if checked_box:
-            profile.admin = True
-        else:
-            profile.admin = False
-        if not profile.bio:
-            profile.bio = "No bio entered yet."
-        profile.put()
+        create_profile(self)
         self.redirect('/admin/editusers')
+
 
 class ListUsersPage(InstrumentDataHandler):
     def get(self):
         profile = get_profile()
         if hasattr(profile, 'admin'):
-            if profile.admin:
+            if (profile.admin) or (profile.permissions == 'admin'):
                 company_nickname = profile.company_nickname
                 profiles = ProfileDB.all().filter("company_nickname =", company_nickname)
                 if profiles:

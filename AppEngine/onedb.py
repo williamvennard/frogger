@@ -52,7 +52,7 @@ class DutDB(DictModel):
     tests = db.ListProperty(db.Key)
 
 def MeasurementDB_key(name = 'default'):
-    return db.Key.from_path('company_nickname', name)
+    return db.Key.from_path('MeasurementDB', name, parent=company_key())
 
 class MeasurementDB(DictModel):
     company_nickname = db.StringProperty(required = True)
@@ -62,6 +62,9 @@ class MeasurementDB(DictModel):
     meas_name = db.StringProperty(required = False)
     meas_start_time = db.FloatProperty(required = False)
     meas_stop_time = db.FloatProperty(required = False)
+    pass_fail = db.BooleanProperty(default = False)
+    min_pass = db.FloatProperty(required = False)
+    max_pass = db.FloatProperty(required = False)
     tests = db.ListProperty(db.Key)
 
 def OscopeDB_key(name = 'default'):
@@ -75,7 +78,7 @@ class OscopeDB(DictModel):
     start_tse = db.IntegerProperty(required = True)
 
 def TestDB_key(name = 'default'):
-    return db.Key.from_path('tests', name)
+    return db.Key.from_path('TestDB', name, parent=company_key())
 
 class TestDB(DictModel):
     testplan_name = db.StringProperty(required = False)
@@ -195,7 +198,7 @@ class UserDB(DictModel):
     admin = db.BooleanProperty(required = False)
 
 def CompanyDB_key(name = 'default'):
-    return db.Key.from_path('emails', name)
+    return db.Key.from_path('CompanyDB', name)
 
 class ProfileDB(DictModel):
     company_nickname = db.StringProperty(required = False)
@@ -223,7 +226,6 @@ class CommunityPostDB(DictModel):
 class CommentsDB(DictModel):
     author = db.StringProperty(required = True)
     content = db.StringProperty(required = True)
-    test = db.ReferenceProperty(TestDB, collection_name = 'comments')
     timestamp = db.DateTimeProperty(auto_now_add = True)
 
 

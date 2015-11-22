@@ -242,7 +242,40 @@
 
 
 
-                //$('#configSearchBtn').trigger('click'); 
+                //$('#configSearchBtn').trigger('click');
+            }else if(planItemType === 'measure') {
+                console.log('TYPE meas');
+                var measName = children[index].children[1].children[0].value;
+  
+                if (children[index].children[1].children[1].children[1].checked==true) {
+                    var passFail = 'checked'
+                }else{
+                    var passFail = ''
+                }; 
+
+                var passFailMax = children[index].children[1].children[2].children[1].value;
+                var passFailMin = children[index].children[1].children[3].children[1].value
+                
+
+                testPlanHTML+= "<div type='measure' class='appBox' id='" + String(index) + "'>";
+                testPlanHTML+= "<h4 class='appTitle'>Measure - <span onclick='removeWidget(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle' style='left:685px;'></span></h4>";
+                testPlanHTML+= "<form method='post'>";
+                testPlanHTML+= "<input style='left:190px;' class='nameWidget' type='text' name='meas_name' value='" + measName;
+                testPlanHTML+= "' placeholder='name goes here'>";
+                testPlanHTML+= "<div class='row appRow'>";
+                testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Pass/Fail:</p>";                   
+                testPlanHTML+= "<input class='appInput' type='checkbox' name='' autocomplete='off' value=''" + passFail + "></td></div>";
+                testPlanHTML+= "<div class='row appRow'>";
+                testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Max:</p>";                   
+                testPlanHTML+= "<input autocomplete='off' class='appInput' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' name='' placeholder='200' value='" + passFailMax;
+                testPlanHTML+= "'></td></div>";
+                testPlanHTML+= "<div class='row appRow'>";
+                testPlanHTML+= "<td class='label'><p class='appLabel'>Min:</p>";
+                testPlanHTML+= "<input autocomplete='off' class='appInput' style='border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='text' name='' placeholder='100' value='" + passFailMin;
+                testPlanHTML+= "'></td></tr></div>";                                                         
+                testPlanHTML+= "</form>";
+                testPlanHTML+= "</div>";
+
             }else if(planItemType === 'measurement') {
                 console.log('TYPE meas');
                 var measName = children[index].children[1].children[0].value;
@@ -431,7 +464,50 @@
             document.getElementById("testPlan").innerHTML = testPlanHTML; 
             console.log('addDUT: testPlanHTML = ', testPlanHTML); 
 
+        }else if(type === 'measure') {
+            testPlanHTML+= "<div type='measure' class='appBox' id='" + String(index) + "'>";
+            testPlanHTML+= "<h4 class='appTitle'>Measure - <span onclick='removeWidget(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle' style='left:685px;'></span></h4>";
+            testPlanHTML+= "<form method='post'>";
+            testPlanHTML+= "<input style='left:190px;' class='nameWidget' type='text' name='meas_name' value='' placeholder='name goes here'>";
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Pass/Fail:</p>";                   
+            testPlanHTML+= "<input class='appInput' type='checkbox' name='' autocomplete='off' value=''></td></div>";
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Max:</p>";                   
+            testPlanHTML+= "<input autocomplete='off' class='appInput' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' name='' placeholder='200' value=''></td></div>";
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<td class='label'><p class='appLabel'>Min:</p>";
+            testPlanHTML+= "<input autocomplete='off' class='appInput' style='border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='text' name='' placeholder='100' value=''></td></tr></div>";                                                         
+            testPlanHTML+= "</form>";
+            testPlanHTML+= "</div>";
 
+            document.getElementById("testPlan").innerHTML = testPlanHTML; 
+            console.log('addDUT: testPlanHTML = ', testPlanHTML);
+
+        }else if(type === 'smeasure') {
+            var smeasName = savedSettings.meas_name;
+            var spassFail = savedSettings.pass_fail;
+            var sminPass = savedSettings.min_pass;
+            var smaxPass = savedSettings.max_pass;
+
+            testPlanHTML+= "<div type='measure' class='appBox' id='" + String(index) + "'>";
+            testPlanHTML+= "<h4 class='appTitle'>Measure - <span onclick='removeWidget(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle' style='left:685px;'></span></h4>";
+            testPlanHTML+= "<form method='post'>";
+            testPlanHTML+= "<input style='left:190px;' class='nameWidget' type='text' name='meas_name' value='" + smeasName + "'>";
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Pass/Fail:</p>";                   
+            testPlanHTML+= "<input class='appInput' type='checkbox' name='' autocomplete='off' value='" + spassFail + "'></td></div>";
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Max:</p>";                   
+            testPlanHTML+= "<input autocomplete='off' class='appInput' style='border-top-right-radius: 5px; border-top-left-radius: 5px;' type='text' name='' placeholder='200' value='" + smaxPass + "'></td></div>";
+            testPlanHTML+= "<div class='row appRow'>";
+            testPlanHTML+= "<td class='label'><p class='appLabel'>Min:</p>";
+            testPlanHTML+= "<input autocomplete='off' class='appInput' style='border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='text' name='' placeholder='100' value='" + smaxPass + "'></td></tr></div>";                                                         
+            testPlanHTML+= "</form>";
+            testPlanHTML+= "</div>";
+
+            document.getElementById("testPlan").innerHTML = testPlanHTML; 
+            console.log('addDUT: testPlanHTML = ', testPlanHTML);
 
 
         }else if(type === 'measurement') {
@@ -684,6 +760,9 @@
     $("#newU2001A").click(function () {
       addWidget('U2001A');
     });
+    $("#measure").click(function () {
+      addWidget('measure');
+    });
     $("#RMS").click(function () {
       addWidget('measurement');
     });
@@ -906,6 +985,15 @@
                 "pass_fail":passFail, "min_value": passFailMin, "max_value": passFailMax}
                 configArray.push(U2001AJsonObj);
 
+            }else if(planItemType === 'measure') {
+                var measName = children[index].children[1].children[0].value;
+                var passFail = new Boolean(children[index].children[1].children[1].children[1].checked)    
+                var passFailMax = children[index].children[1].children[2].children[1].value
+                var passFailMin = children[index].children[1].children[3].children[1].value  
+
+                var measureJsonObj = {"meas_name":measName,"pass_fail":passFail,"max_value": passFailMax,"min_value": passFailMin};
+
+                measArray.push(measureJsonObj);
             }else if(planItemType === 'measurement') {
                 var measName = children[index].children[1].children[0].value;
                 var measType = children[index].children[1].children[1].children[1].value     
@@ -956,7 +1044,8 @@
             for(var i = 0;i<children.length;i++) {
                 
                 var planItemType = children[i].getAttribute('type');
-                if (planItemType == 'config' ||  'U2001A') {
+                if (planItemType == 'config' ||  planItemType == 'U2001A') {
+                    console.log('planItemType: ', planItemType)
                     var planItemName = children[i].children[0].children[1].children[0].value;
                 }else {
                     var planItemName = children[i].children[1].children[0].value;

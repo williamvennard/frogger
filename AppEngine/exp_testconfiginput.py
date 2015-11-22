@@ -11,6 +11,7 @@ from onedb import DutDB
 from onedb import CapabilitiesDB
 from onedb import InstrumentsDB
 from onedb import MeasurementDB
+from onedb import MeasurementDB_key
 from onedb import agilentU2000
 import datetime
 import jinja2
@@ -36,7 +37,7 @@ class Handler(InstrumentDataHandler):
 
     def post(self):
         testplan_object = json.loads(self.request.body)
-        print testplan_object
+        print "TESTPLAN OBJECT: ", testplan_object
         configs = []
         testplan_name = testplan_object['testplan_name']
         author = testplan_object['author']
@@ -47,7 +48,7 @@ class Handler(InstrumentDataHandler):
         #order = ['config:mmm1:0', 'config:mmm2:1']
         duts = testplan_object['duts']
         measurements = testplan_object['meas']
-        print testplan_object['configs']
+        print "CONFIG FROM TESTPLAN OBJECT:", testplan_object['configs']
         configs = testplan_object['configs']  # previously temporarily comment out to support dummy u2000 config data below
         #configs = [{u'instrument_type': u'U2001A', u'config_name': u'dummy',  u'hardware': u'MSP',u'range_auto': u'True',  u'units': u'dBm', u'offset': u'0.0',u'averaging_count_auto': u'True', u'correction_frequency': u'1e9'}]
         start_now = testplan_object['start_now']
@@ -96,24 +97,27 @@ class Handler(InstrumentDataHandler):
                 test.put()    
         
         for item in measurements:
-            meas = MeasurementDB.gql("Where meas_name =:1", item['meas_name']).get()
-            if meas == None:  #if there is not an instrument with the inputted name, then create it in the DB
-                m = MeasurementDB(key_name = item['meas_name'], parent = company_key(),
+            meas = MeasurementDB.get(MeasurementDB_key(item['meas_name']))
+            if meas == None:  #if there is not a measurement with the inputted name, then create it in the DB
+                meas = MeasurementDB(key_name = item['meas_name'], parent = company_key(),
                 company_nickname = company_nickname, author = author,
-                meas_type = item['meas_type'],
+                # meas_type = item['meas_type'],
+                meas_type = 'basic',
                 meas_name = item['meas_name'],             
-                meas_start_time = float(item['meas_stop_time']),
-                meas_stop_time = float(item['meas_stop_time']),
+                # meas_start_time = float(item['meas_stop_time']),
+                # meas_stop_time = float(item['meas_stop_time']),
+                pass_fail = bool(item['pass_fail']),
+                min_pass = float(item['min_value']),
+                max_pass = float(item['max_value']),
                 )
-                m.put()
-            key = db.Key.from_path('MeasurementDB', item['meas_name'], parent = company_key())
-            measurement = db.get(key)
-            if test.key() not in measurement.tests:  #add the test plan to the list property of the dut
-                measurement.tests.append(test.key())
-                measurement.put()
-            if measurement.key() not in test.measurements:  #add the  dut name to the list property ot the test plan
-                test.measurements.append(measurement.key())
-                test.put()    
+                meas.put()
+            if test.key() not in meas.tests:
+                meas.tests.append(test.key())
+                meas.put()
+            if meas.key() not in test.measurements:
+                test.measurements.append(meas.key())
+                test.put()
+                   
         for item in configs:
             config = ConfigDB.gql("Where config_name =:1", item['config_name']).get()
             if config == None:  #if there is not an instrument with the inputted name, then create it in the DB
@@ -142,7 +146,6 @@ class Handler(InstrumentDataHandler):
                 commence_test = False,
                 trace = False,
                 config_name = item['config_name'],
-                ops_start = item['ops_start'],
                 )
                 config.put()
 
@@ -168,11 +171,12 @@ class Handler(InstrumentDataHandler):
                     pass_fail = pass_fail,
                     pass_fail_type = '',
                     )
-                    s.put() 
+                    s.put()
 
-            if test.key() not in config.tests:  #add the test plan to the list property of the dut
-                config.tests.append(test.key())
-                config.put()
+                print config
+                if test.key() not in config.tests:  #add the test plan to the list property of the dut
+                    config.tests.append(test.key())
+                    config.put()
             if config.key() not in test.configs:  #add the  dut name to the list property ot the test plan
                 test.configs.append(config.key())
                 test.put()
