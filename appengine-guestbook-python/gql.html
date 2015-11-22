@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+  <head>
+  </head>
+  <body>
+
+      {% for greeting in greetings %}
+        {% if greeting.author %}
+          <b>author: {{ greeting.author.email }}
+        {% else %}
+          <b>no author found</b>
+        {% endif %}
+        <b>content:</b>
+        <blockquote>{{ greeting.content }}</blockquote>
+        <br>
+      {% endfor %}
+
+  </body>
+</html>
+{% endautoescape %}
