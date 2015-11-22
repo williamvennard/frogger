@@ -20,6 +20,29 @@ import StringIO
 import csv
 from encode import multipart_encode, MultipartParam
 from google.appengine.api import urlfetch
+from google.appengine.ext import ndb
+
+
+
+class NewBlob(ndb.Model):
+    _use_datastore = False
+    Start_TSE = ndb.StringProperty()
+    config_name = ndb.StringProperty()
+    i_settings = ndb.StringProperty()
+    test_plan = ndb.StringProperty()
+    active_testplan_name = ndb.StringProperty()
+    data = ndb.StringProperty()
+
+
+
+def process_csv(blob_info):
+    blob_reader = blobstore.BlobReader(blob_info.key())
+    reader = csv.reader(blob_reader, delimiter=';')
+    for row in reader:
+        date, data, value = row
+        entry = EntriesDB(date=date, data=data, value=int(value))
+        entry.put()
+ 
 
 def existing_blob_parser(headers, item):
     new_rows = []
@@ -75,19 +98,47 @@ class Handler(InstrumentDataHandler):
             counter += 1
         contents = tmp.getvalue()
         tmp.close()
-        new_url =  blobstore.create_upload_url('/upload_agg/upload_file')
-        params = []
-        params.append(MultipartParam(
-                    "FileItem1",
-                    filename=list_of_inputs,
-                    filetype='text/plain',
-                    value=contents))
-        payloadgen, headers = multipart_encode(params)
-        payload = str().join(payloadgen)
-        result = urlfetch.fetch(
-                    url=new_url,
-                    payload=payload,
-                    method=urlfetch.POST,
-                    headers=headers,
-                    deadline=10)
+        #reader = csv.reader(contents, delimiter=';')
+        reader = csv.reader(StringIO.StringIO(contents))
+        updated = []
+        new_counter = 0
+        for row in reader:
+            if new_counter != 0:
+                newblob_entry = NewBlob()
+                newblob_entry.populate(Start_TSE = row[0],
+                                     config_name = row[1],
+                                     i_settings = row[2],
+                                     test_plan = row[3],
+                                     active_testplan_name = ("NEW"+row[4]),
+                                     data = row[5],
+                                     )
+                updated.append(newblob_entry)
+            else:
+                pass
+            new_counter +=1
+        list_of_keys = ndb.put_multi(updated)
+        list_of_entities = ndb.get_multi(list_of_keys)
+        print list_of_entities
+
+
+
+            # date, data, value = row
+            # entry = EntriesDB(date=date, data=data, value=int(value))
+            # entry.put()
+ 
+        # new_url =  blobstore.create_upload_url('/upload_agg/upload_file')
+        # params = []
+        # params.append(MultipartParam(
+        #             "FileItem1",
+        #             filename=list_of_inputs,
+        #             filetype='text/plain',
+        #             value=contents))
+        # payloadgen, headers = multipart_encode(params)
+        # payload = str().join(payloadgen)
+        # result = urlfetch.fetch(
+        #             url=new_url,
+        #             payload=payload,
+        #             method=urlfetch.POST,
+        #             headers=headers,
+        #             deadline=None)
 
