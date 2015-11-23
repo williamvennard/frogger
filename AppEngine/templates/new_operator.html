@@ -1,0 +1,141 @@
+{% extends "one.html" %}
+{% block title %} Operator Page {% endblock %}
+{% block head %}
+    {{ super() }}
+    <script type="text/javascript" src="/static/js/sachart.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/oscope.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/specanal.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/powerMeter.css">        
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.13/angular.min.js"></script>
+    <script type="text/javascript" src="/static/js/addons/jquery.knob.min.js"></script>
+    <style type="text/css">
+      #run {color: black;}
+      .ops_button {color: black;}
+      .black_ops {color: black;}
+      h1,h2,h3,p {color: white;}
+      #pass_feedback {color: green; font-size: 300%;}
+      #fail_feedback {color: red; font-size: 300%;}
+    </style>
+{% endblock %}
+{% block content %}
+<div class="col-md-8 col-md-offset-2">
+	<div class="row">
+		<h1>{{ self.title() }}</h1>
+		<h3>Test Overview</h3>
+	    <p>Test - {{test.testplan_name}}</p>
+      {% for config in configs %}
+      <p>Config - {{config.config_name}}</p>
+      {% endfor %}
+      {% for inst_config in instrument_configs  %}
+      <p>Instrument Config - {{inst_config.config_name}}</p>
+      {% endfor %}
+      {% for measurement in measurements  %}
+      <p>Measurement - {{measurement.meas_name}}</p>
+      {% endfor %}
+		<div class="col-md-6">
+			<p>Max Pass Value:</p>
+			<input class="black_ops" type="text" id="max_pass_value" value=""><br>
+			<p style="margin-top:20px">Min Pass Value:</p>
+			<input class="black_ops" type="text" id="min_pass_value" value="">
+			<button style="margin-left:15px" class="text-capitalize optionsBtn" type="button" id="powerMeterStartStop">Start</button>
+		</div>
+		<div id ="PassFailBox" class="col-md-6">
+			<p>Results:</p>
+  		    <p><span id="pass_feedback"></span></p>
+  		    <p><span id="fail_feedback"></span></p>
+		</div>
+	</div>
+	<br>
+	<div class= "row">
+     <div id="powerMeterBox" class="PowerMeterInstBox">
+        <h2 class="row" id="instrumentName" class="instname" style="margin:5px 0 0 20px; color: white;">Power Meter</h2>
+        <h4 class="row" id="hardwareName" class="hardwareName" style="margin:0 0 0 20px"></h4>
+        <div class="row">
+          <div class="col-md-10" id="leftDisplay">
+            <div class="row">
+              <div class="" id="valueBox">
+                <h3>
+                  <span id="measurementValue" class="valueDisplay" style=""></span>
+                  <span id="PMUnits" class="unitsDisplay" style=""></span>
+                </h3> 
+              </div>
+            </div>
+            <div class="row">  
+              <div id="PMSettingsDisplay" class="col-md-6 configInfoBox" style="margin-left: 5px;">
+                <h6 style="margin-bottom: 0px;"><span style="margin-right:3px;">Config:</span><span class="configSettings"></span><span style="position:absolute; left:150px; margin-right:3px;">Trace:</span><span style="position:absolute; left:190px;"></span></h6>
+                <h6 style="margin-bottom: 0px;"><span style="margin-right:3px;">FC:</span><span class="configSettings"></span><span style="position:absolute; left:150px; margin-right:3px;">Offset:</span><span style="position:absolute; left:195px;"></span></h6>
+              </div>
+              <div class="col-md-2 statusInfoBox" style="margin-left:10px;">
+                <h5 style="margin-bottom: 0px; text-align:center;">Status <span id="currentStatus" class="status"></span> </h5>   
+              </div>
+            </div> 
+          </div>
+        </div>
+     </div>
+     <hr>
+	</div>
+    <div class= "row">
+      <div id="CommentsBox" class="col-md-4">
+        <h3 style="color: white;">Comments</h3>
+        <div style="color: white;" id ="comments"></div>
+        <textarea name="content" id="content" form="usrform" rows="5" cols="50">Enter comment here...</textarea>
+        <form action="/instruments"  method="post" id="usrform">
+          <input class="hidden" id="start_tse" name="start_tse">
+          <input class="hidden" id="company_nickname" name="company_nickname" value='{{profile.company_nickname}}'>
+          <input class="hidden" id="hardware_name" name="hardware_name"> 
+          <input class="hidden" id="config_name" name="config_name"> 
+          <input class="hidden" id="trace_name" name="trace_name"> 
+          <input class="hidden" id="comment_author" value='{{profile.author}}'>
+          <button class="text-capitalize optionsBtn" type="button" id="SubmitComment" onclick="addComment()">Submit</button>
+        </form>
+      </div>
+    </div>
+    <hr> 
+</div>
+<script type="text/javascript">
+function addComment() {
+  console.log('addComment START!');
+  var comment_url = window.location.origin + '/comments';
+  var testplan_name = '{{test.testplan_name}}';
+  var comment_author = document.getElementById('comment_author').value;
+  var start_tse = document.getElementById('start_tse');
+  if (!start_tse){ start_tse = Date.now()};
+  var comment_time = Date.now();
+  var content = document.getElementById('content').value;
+  var commentData = JSON.stringify({"testplan_name": testplan_name, "start_tse":start_tse, "content": content});
+
+  console.log('instConfig: commentData = ',commentData);
+  if (configName && traceName){
+    commentHTML = "<div><p>" + content + " by " + comment_author + "</p></div>"
+    $("#comments").append(commentHTML);
+
+    $.ajax({
+      type: "POST",
+      url: comment_url,
+      data: commentData,
+      dataType: 'json',
+      success: function(data, textStatus, jqXHR)
+      {
+          console.log('saveStatus: Ajax post was a success!');
+      }
+    }); 
+  };
+};
+</script>
+{% for instrument_config in instrument_configs %}
+  <script type="text/javascript">
+    var instrument_config = {
+    configName : '{{instrument_config.config_name}}',
+    traceName : '{{data.testplan_name}}',
+    frequencyCorrection : '{{instrument_config.correction_frequency}}',
+    offset : '{{instrument_config.offset}}',
+    units : '{{instrument_config.units}}',
+    avgCountAuto : '{{instrument_config.averaging_count_auto}}',
+    rangeAuto : '{{instrument_config.range_auto}}',
+    };
+  $( document ).ready(function(){OPConfig(instrument_config);});
+  </script>
+{% endfor %}
+<script typo="text/javascript" src="/static/js/testops.js"></script>
+
+{% endblock %}
