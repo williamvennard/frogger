@@ -84,6 +84,7 @@ class agilentu2000:
     def testcomplete(self):
         
         stop_tse = self.dt2ms(datetime.datetime.now())
+        print self.u2000_test_results
         active_testplan_name = self.u2000_test_results['active_testplan_name']
         config_name = self.u2000_test_results['config_name']
         test_plan = self.u2000_test_results['test_plan']
@@ -109,6 +110,7 @@ class agilentu2000:
         w.writerow(u2000_test_results.keys())
         w.writerow(u2000_test_results.values())
         f.close()
+
         # m = MultipartEncoder(
         #           fields={'field0':(filename, open('/home/' + USERNAME + '/' + COMPANYNAME + '/Blobs/tempfile.csv', 'rb'), 'text/plain')}
         #           )
