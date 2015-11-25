@@ -130,11 +130,9 @@ class AggFileUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
             blob_key = upload.key()
             load = self.request.body
             load = load.split()
-            print load
             load = load[4].split('=')
             load = load[1].rstrip('"')
             active_testplan_name = load.lstrip('"')
-            print active_testplan_name
             dbfile = FileBlob(key_name = active_testplan_name, blob_key=blob_key)
             dbfile.put()
             str_form = str(blob_key)
@@ -153,54 +151,9 @@ class BlobberDB(DictModel):
 def incoming_blob_parser(value):
     headers = value[0].split(',')
     headers[-1] = headers[-1].rstrip()
-    entry = value[1].split('{')
-    a = entry[0].rstrip(',"')
-    new = a.split(',')
-    b = entry[1].split('}')
-    c = "".join(b[0])
-    new.append(c)
-    d = b[1].rstrip()
-    d = d.lstrip('",')
-    d = d.split(',')
-    new.append(d[0])
-    new.append(d[1])
-    new.append(d[2])
-    return headers, new
-
-def existing_blob_parser(headers, item):
-    new_rows = []
-    entry = item.split('"')
-    first = entry[0].split(',')
-    del first[-1]
-    last = entry[2].split(',')
-    del last[0]
-    new_rows.append(first[0])
-    new_rows.append(first[1])
-    new_rows.append(entry[1])
-    new_rows.append(last[0])
-    new_rows.append(last[1])
-    new_rows.append((last[2].rstrip()))
-    input_dictionary = dict(zip(headers, new_rows))
-    return input_dictionary
-
-def new_blob_parser(value):
-    headers = value[0].split(',')
-    headers[-1] = headers[-1].rstrip()
-    entry = value[1].split('{')
-    a = entry[0].rstrip(',"')
-    new = a.split(',')
-    b = entry[1].split('}')
-    c = "".join(b[0])
-    new.append(c)
-    d = b[1].rstrip()
-    d = d.lstrip('",')
-    d = d.split(',')
-    new.append(d[0])
-    new.append(d[1])
-    new.append(d[2])
-    input_dictionary = dict(zip(headers, new))
-    return input_dictionary
-
+    content = value[1].split(',')
+    content[-1] = content[-1].rstrip()
+    return headers, content
 
 class FileUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
     def post(self):
@@ -237,8 +190,9 @@ class FileUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
                 headers = new_lines[0].split(',')
                 headers[-1] = headers[-1].rstrip()
                 for item in new_lines[1:]:
-                    input_dictionary = existing_blob_parser(headers, item)
-                    writer.writerow(input_dictionary.values())
+                    item = item.split(',')
+                    item[-1] = item[-1].rstrip()
+                    writer.writerow(item)
                 contents = tmp.getvalue()
                 tmp.close()
                 blobstore.delete(newkey)
@@ -261,11 +215,11 @@ class FileUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
                 print 'nothing found'
                 blob_reader = blobstore.BlobReader(blob_key)
                 value = blob_reader.readlines()
-                input_dictionary = new_blob_parser(value)
+                input_to_blob = incoming_blob_parser(value)
                 tmp = StringIO.StringIO()
                 writer = csv.writer(tmp)
-                writer.writerow(input_dictionary.keys())
-                writer.writerow(input_dictionary.values())
+                writer.writerow(input_to_blob[0])
+                writer.writerow(input_to_blob[1])
                 contents = tmp.getvalue()
                 tmp.close()
                 str_form = str(blob_key)
