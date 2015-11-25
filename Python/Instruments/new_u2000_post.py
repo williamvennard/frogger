@@ -98,13 +98,17 @@ class agilentu2000:
         u2000_test_results = self.u2000_test_results
         print u2000_test_results['i_settings']
         filename = config_name + ':' + active_testplan_name 
-        f = open('/home/' + USERNAME + '/' + COMPANYNAME + '/Blobs/tempfile.csv', 'w')
+        #f = open('/home/' + USERNAME + '/' + COMPANYNAME + '/Blobs/tempfile.csv', 'w')
+        f = open('/home/nedwards/BitScope/Examples/tempfile.csv', 'w')
         w = csv.writer(f)
         w.writerow(self.u2000_test_results.keys())
         w.writerow(self.u2000_test_results.values())
         f.close()
+        # m = MultipartEncoder(
+        #           fields={'field0':(filename, open('/home/' + USERNAME + '/' + COMPANYNAME + '/Blobs/tempfile.csv', 'rb'), 'text/plain')}
+        #           )
         m = MultipartEncoder(
-                  fields={'field0':(filename, open('/home/' + USERNAME + '/' + COMPANYNAME + '/Blobs/tempfile.csv', 'rb'), 'text/plain')}
+                  fields={'field0':(filename, open('/home/nedwards/BitScope/Examples/tempfile.csv', 'rb'), 'text/plain')}
                   )
         blob_url = requests.get("https://"+ GAE_INSTANCE + ".appspot.com/upload/geturl")
         #m = MultipartEncoder(
