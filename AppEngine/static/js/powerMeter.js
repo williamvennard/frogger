@@ -2,8 +2,39 @@
 var configName;
 var traceName;
 
+function loadConfig(type, savedSettings){
+      console.log('loadConfig: Type = ', type);
+      if (type == 'sU2001A') {
+        var sconfigName = savedSettings.config_name;
+        var scorrectionFreq = savedSettings.correction_frequency;
+        var soffset = savedSettings.offset;
+        var sunits = savedSettings.units;
+        var savgCountAuto = savedSettings.averaging_count_auto;
+        var srangeAuto = savedSettings.range_auto;
+        var spassFail = savedSettings.pass_fail;
+        var sminPass = savedSettings.min_value;
+        var smaxPass = savedSettings.max_value;
+        var d = document.getElementById('PMConfigSettings');
+
+        var children = d.childNodes;
+        console.log('PMConfig: children = ', children);
+
+        children[1].children[1].value = sconfigName;
+        children[3].children[1].value = 'DefaultTraceName'
+
+        children[5].children[1].value = scorrectionFreq;
+        children[7].children[1].value = soffset; 
+        children[9].children[1].value = sunits;
+        console.log("averaging_count_auto: ", savgCountAuto)
+        avgCountAuto = children[11].children[1].checked = (savgCountAuto === 'True'); 
+        rangeAuto = children[13].children[1].checked = (srangeAuto === 'True');
+      } else {
+        console.log('No type match')
+      };
+      $('#collapsePMConfig').collapse("show");
+};
 function PMConfig() {
-      $('#collapseConfig').collapse("hide");
+      $('#collapsePMConfig').collapse("hide");
 
       var d = document.getElementById('PMConfigSettings');
 
