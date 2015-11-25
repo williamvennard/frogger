@@ -36,7 +36,6 @@ class agilentu2000:
 
     def __init__(self, u2000_test_results, s):
         self.u2000_test_results = u2000_test_results
-        self.i_settings = u2000_test_results['i_settings']
         self.s = s
 
     def post_creation_data(self, i_settings, stuffing, start_tse, parent, config_name, active_testplan_name, test_plan) :
@@ -89,7 +88,7 @@ class agilentu2000:
         active_testplan_name = self.u2000_test_results['active_testplan_name']
         config_name = self.u2000_test_results['config_name']
         test_plan = self.u2000_test_results['test_plan']
-        i_settings = self.i_settings
+        i_settings = self.u2000_test_results['i_settings']
         start_tse = int(self.u2000_test_results['Start_TSE'])
         test_results = self.u2000_test_results['data']
         self.post_complete(active_testplan_name, config_name, test_plan, stop_tse, i_settings, start_tse, test_results)
@@ -97,7 +96,7 @@ class agilentu2000:
     def transmitblob(self):
         active_testplan_name = self.u2000_test_results['active_testplan_name']
         config_name = self.u2000_test_results['config_name']
-        blob_u2000_test_results = self.u2000_test_results
+        blob_u2000_test_results = self.u2000_test_results.copy()
         blob_u2000_test_results['max_value'] = blob_u2000_test_results['i_settings']['max_value']
         blob_u2000_test_results['min_value'] = blob_u2000_test_results['i_settings']['min_value']
         blob_u2000_test_results['pass_fail'] = blob_u2000_test_results['i_settings']['pass_fail']
