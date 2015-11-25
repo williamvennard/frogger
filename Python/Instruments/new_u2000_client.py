@@ -5,7 +5,7 @@ import time   # time is a module here
 import math
 import datetime
 import threading
-from u2000_post import agilentu2000
+from new_u2000_post import agilentu2000
 import numpy as np
 import numpy.fft as fft
 import scipy.signal 
