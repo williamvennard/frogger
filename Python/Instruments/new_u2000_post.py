@@ -95,7 +95,8 @@ class agilentu2000:
     def transmitblob(self):
         active_testplan_name = self.u2000_test_results['active_testplan_name']
         config_name = self.u2000_test_results['config_name']
-        print self.u2000_test_results['i_settings']
+        u2000_test_results = self.u2000_test_results
+        print u2000_test_results['i_settings']
         filename = config_name + ':' + active_testplan_name 
         f = open('/home/' + USERNAME + '/' + COMPANYNAME + '/Blobs/tempfile.csv', 'w')
         w = csv.writer(f)
