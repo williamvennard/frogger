@@ -96,13 +96,18 @@ class agilentu2000:
         active_testplan_name = self.u2000_test_results['active_testplan_name']
         config_name = self.u2000_test_results['config_name']
         u2000_test_results = self.u2000_test_results
-        print u2000_test_results['i_settings']
+        u2000_test_results['max_value'] = u2000_test_results['i_settings']['max_value']
+        u2000_test_results['min_value'] = u2000_test_results['i_settings']['min_value']
+        u2000_test_results['pass_fail'] = u2000_test_results['i_settings']['pass_fail']
+        u2000_test_results['pass_fail_type'] = u2000_test_results['i_settings']['pass_fail_type']
+        u2000_test_results['correction_frequency'] = u2000_test_results['i_settings']['correction_frequency']
+        del u2000_test_results['i_settings']
         filename = config_name + ':' + active_testplan_name 
         #f = open('/home/' + USERNAME + '/' + COMPANYNAME + '/Blobs/tempfile.csv', 'w')
         f = open('/home/nedwards/BitScope/Examples/tempfile.csv', 'w')
         w = csv.writer(f)
-        w.writerow(self.u2000_test_results.keys())
-        w.writerow(self.u2000_test_results.values())
+        w.writerow(u2000_test_results.keys())
+        w.writerow(u2000_test_results.values())
         f.close()
         # m = MultipartEncoder(
         #           fields={'field0':(filename, open('/home/' + USERNAME + '/' + COMPANYNAME + '/Blobs/tempfile.csv', 'rb'), 'text/plain')}
