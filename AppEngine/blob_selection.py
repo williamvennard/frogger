@@ -84,12 +84,16 @@ class Handler(InstrumentDataHandler):
         contents = tmp.getvalue()
         tmp.close()
         print output
+        name = []
+        for entry in output:
+            name.append(entry['config_name'])
+        newname = ''.join(name)
         new_url =  blobstore.create_upload_url('/upload_agg/upload_file')
         params = []
         temp_filename = 'merged'
         params.append(MultipartParam(
                     "FileItem1",
-                    filename=temp_filename,
+                    filename=newname,
                     filetype='text/plain',
                     value=contents))
         payloadgen, headers = multipart_encode(params)
@@ -123,6 +127,6 @@ class Handler(InstrumentDataHandler):
         #     new_counter +=1
         # records = pydb(active_testplan_name="Senator")
         # print records
-        self.render('blob_analyzer.html', result = output, download_key = temp_filename)
+        self.render('blob_analyzer.html', result = output, download_key = newname)
 
 
