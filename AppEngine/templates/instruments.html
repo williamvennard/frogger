@@ -10,6 +10,7 @@
     <script type="text/javascript" src="/static/js/addons/jquery.knob.min.js"></script>
     <style type="text/css">
         #instruments-navlink {color: rgb(124,175,46);}
+        #ShareBox {margin-left: 10px}
     </style>
 {% endblock %}
 {% block content %}
@@ -46,18 +47,7 @@
                             <li data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" class="OScope">O-Scope</li>
                               <div id="collapseTwo" class="panel-collapse collapse in">
                                 <div class="panel-body" style="padding-top: 0px; padding-left: 0px;">
-                                    <table class="savedList">
-                                    <p>Saved :</p>
-                                        <tr>
-                                            <td>
-                                                <a class="savedLink">John's</a>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <a class="savedLink">Bob's</a>
-                                            </td>
-                                        </tr>
+                                    <table class="savedList" id="savedOList">
                                     </table>
                                 </div>
                               </div>
@@ -82,18 +72,7 @@
                               <li data-toggle="collapse" data-parent="#accordion" href="#collapseFour" class="PowerMeter">Power Meter</li>
                               <div id="collapseFour" class="panel-collapse collapse in">
                                 <div class="panel-body" style="padding-top: 0px; padding-left: 0px;">
-                                    <table class="savedList">
-                                    <p>Saved :</p>
-                                        <tr>
-                                            <td>
-                                                <a class="savedLink">Sam's</a>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <a class="savedLink">Joe's</a>
-                                            </td>
-                                        </tr>
+                                    <table class="savedList" id="savedU2001As">
                                     </table>
                                 </div>
                               </div>  
@@ -393,24 +372,53 @@
               </div>
               <!--End Power Meter-->
 
-    <div class= "row">
-      <div id="CommentsBox" class="col-md-4">
-        <h3 style="color: white;">Comments</h3>
-        <div style="color: white;" id ="comments"></div>
-        <textarea name="content" id="content" form="usrform" rows="5" cols="50">Enter comment here...</textarea>
-        <form action="/instruments"  method="post" id="usrform">
-          <input class="hidden" id="start_tse" name="start_tse">
-          <input class="hidden" id="company_nickname" name="company_nickname" value='{{profile.company_nickname}}'>
-          <input class="hidden" id="hardware_name" name="hardware_name"> 
-          <input class="hidden" id="config_name" name="config_name"> 
-          <input class="hidden" id="trace_name" name="trace_name"> 
-          <input class="hidden" id="comment_author" value='{{profile.author}}'>
-          <button class="text-capitalize optionsBtn" type="button" id="SubmitComment" onclick="addComment()">Submit</button>
-        </form>
+      <div class= "row">
+        <div id="CommentsBox" class="col-md-4">
+          <h3 style="color: white;">Comments</h3>
+          <div style="color: white;" id ="comments"></div>
+          <textarea name="content" id="content" form="usrform" rows="5" cols="50">Enter comment here...</textarea>
+          <form action="/instruments"  method="post" id="usrform">
+            <input class="hidden" id="start_tse" name="start_tse">
+            <input class="hidden" id="company_nickname" name="company_nickname" value='{{profile.company_nickname}}'>
+            <input class="hidden" id="hardware_name" name="hardware_name"> 
+            <input class="hidden" id="config_name" name="config_name"> 
+            <input class="hidden" id="trace_name" name="trace_name"> 
+            <input class="hidden" id="comment_author" value='{{profile.author}}'>
+            <button class="text-capitalize optionsBtn" type="button" id="SubmitComment" onclick="addComment()">Submit</button>
+          </form>
+        </div>
       </div>
-    </div>
-    </div>  
-    <hr> 
+      <div class= "row">
+        <div id="ShareBox" class="col-md-11">
+          <h3 style="color: white;">Share Results</h3>
+          <form id="shareForm" action="/report_summary/a">
+            <label style="color:white;" for="email_input">Email Address Of Recipient</label>
+            <input type="text" id="email_input"name="recipient_email" value="{{recipient_email}}">
+            <button class="text-capitalize optionsBtn" type="button" id="ShareResults">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>  <!-- End Top Row -->
+
+    <script>
+    $(document).ready(function(){
+        $("#ShareResults").click(function(){
+          var email = document.getElementById('email_input').value;
+          var measurement = document.getElementById('measurementValue').value;
+          var units = document.getElementById('PMUnits').value;
+            $.post($('#shareForm').attr('action'),
+            {
+              recipient_email : email,
+              measurement : measurement,
+              unist : units,
+            },
+            function(data,status){
+                alert("Data: " + data + "\nStatus: " + status);
+            });
+        });
+    });
+    </script>
+  
     <script type="text/javascript">
     function addComment() {
       console.log('addComment START!');
@@ -482,8 +490,82 @@
           $(".PowerMeterInstBox").hide(); 
     });
 
-    </script>
-   
+    </script> 
 
     <script type="text/javascript">//$("#instBox").hide();</script>
+
+    <script type="text/javascript">
+      var savedResults
+
+      function loadU2001A(index) {
+        console.log("savedSettings: ", savedResults);
+        console.log("INDEX: ", index);
+        var savedSettings = savedResults.u2000configs[index]
+        loadConfig('sU2001A',savedSettings);
+      };
+    </script>     
+
+    <script type="text/javascript">
+    $(document).ready(function () {
+    //widget_url = 'https://gradientone-test.appspot.com/testresults/widgets/Acme.json';
+
+    widget_url = window.location.origin + '/testresults/widgets/Acme.json';
+    console.log('widget_url', widget_url);
+        $.ajax({
+            async: true,
+            url: widget_url,            
+            dataType: 'json',
+        }).done(function (results) {
+            var savedWidgets = results
+            savedConfigs = results.configs;
+            savedDuts = results.duts;
+            savedSeq = results.sequences;
+            savedMeas = results.measurements;
+            savedTests = results.tests;
+            savedU2001As = results.u2000configs;
+
+            savedResults = results;
+            //console.log('Saved Widgets: results', results);
+            console.log('Saved Widgets: savedConfigs', savedConfigs);
+            console.log('Saved Widgets: savedDuts', savedDuts);
+            console.log('Saved Widgets: savedMeas', savedMeas);
+            console.log('Saved Widgets: savedSeq', savedSeq);
+            console.log('Saved Widgets: savedTests', savedTests);
+            console.log('Saved Widgets: savedU2001As', savedU2001As);
+
+// SAVED CONFIGS                      
+            // var savedConfigsHTML = "";
+            // savedConfigsHTML += "<tr><td><p class='savedTitle'>Saved:</p></td></tr>";
+            // for (var i=0;i<savedConfigs.length;i++){
+            //     savedConfigsHTML+= "<tr><td><a onclick='createConfig(" + i + ")'>" + savedConfigs[i].config_name + "</a></td></tr>";                                                
+            // };
+            // console.log('savedConfigsHTML = ',savedConfigsHTML);
+            // document.getElementById("savedOList").innerHTML = savedConfigsHTML;
+// SAVED U2001AS
+            var savedU2001AsHTML = "";
+            savedU2001AsHTML += "<tr><td><p class='savedTitle'>Saved:</p></td></tr>";
+            for (var i=0;i<savedU2001As.length;i++){
+                savedU2001AsHTML+= "<tr><td><a id=loadU2001A-" + i + "'>" + savedU2001As[i].config_name + "</a></td></tr>";
+                // document.getElementById("loadU2001A"+i).addEventListener("click", loadU2001A(i));                                            
+            };
+            console.log('savedU2001AsHTML = ',savedU2001AsHTML);
+            sU2001ADoc = document.getElementById("savedU2001As");
+            sU2001ADoc.innerHTML = savedU2001AsHTML;
+            var elem = sU2001ADoc.querySelectorAll('a');
+            console.log("ELEMENT: ", elem);
+            for (var index=0; index<elem.length; index++){
+              (function(index){ 
+                console.log("INDEX: ", index);
+                elem[index].addEventListener("click", function(){loadU2001A(index)}, false);
+              console.log("TargetListener: ", index);
+              }(index))
+            };
+
+
+        }); //end of ajax
+        
+
+    }); //end doc ready 
+    </script>
+
 {% endblock %}

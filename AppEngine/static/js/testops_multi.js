@@ -3,9 +3,14 @@ var configName;
 var traceName;
 var company = 'Acme';
 var hardware = 'Tahoe';
+var measurement = null; //change once measurement is read
+var configList;
+function OPConfig(config_list) {
 
-function OPConfig(instrument_config) {
+  configList = config_list;
 
+  for (i = 0; i < config_list.length; i++){
+      instrument_config = config_list[i];
       configName = instrument_config.configName;
       traceName = instrument_config.traceName;
       frequencyCorrection = instrument_config.frequencyCorrection;
@@ -25,68 +30,78 @@ function OPConfig(instrument_config) {
       document.getElementById("PMUnits").innerHTML = units;
     
 
-      var config_url = window.location.origin + '/u2000_configinput';
-      console.log('saveStatus: config_url = ',config_url);
+     //  var config_url = window.location.origin + '/u2000_configinput';
+     //  console.log('saveStatus: config_url = ',config_url);
 
-      var configSettings = JSON.stringify({"config_name":configName,"trace_name":traceName, "correction_frequency":frequencyCorrection,
-       "offset":offset, "units":units, "avg_count_auto":avgCountAuto, "range_auto":rangeAuto, "hardware_name":"Tahoe",
-       "inst_name":"U2001A","company_nickname":"Acme"});
+     //  var configSettings = JSON.stringify({"config_name":configName,"trace_name":traceName, "correction_frequency":frequencyCorrection,
+     //   "offset":offset, "units":units, "avg_count_auto":avgCountAuto, "range_auto":rangeAuto, "hardware_name":"Tahoe",
+     //   "inst_name":"U2001A","company_nickname":"Acme"});
 
-      console.log('instConfig: configSettings = ',configSettings);
+     //  console.log('instConfig: configSettings = ',configSettings);
 
-     $.ajax({
-        type: "POST",
-        url: config_url,
-        data: configSettings,
-        dataType: 'json',
-        success: function(data, textStatus, jqXHR)
-        {
-            console.log('saveStatus: Ajax post was a success!');
-        },
-      }); 
+     // $.ajax({
+     //    type: "POST",
+     //    url: config_url,
+     //    data: configSettings,
+     //    dataType: 'json',
+     //    success: function(data, textStatus, jqXHR)
+     //    {
+     //        console.log('saveStatus: Ajax post was a success!');
+     //    },
+     //  }); 
     };  
 
 function PMtraceStart(el){
       console.log('traceStart !!!!!')
       //formatStartUrl = raw_urlPath.split('/');
       //https://gradientone-test.appspot.com/panelcontrol/Acme/Tahoe/Primetime
-      var startValue = 'Start_Trace';
-      var start_url = window.location.origin + '/panelcontrol/' + company + '/' + hardware + '/' + configName + '/' + traceName;// + formatStartUrl[formatStartUrl.length-2];
-      console.log('exploreStart: start_url =',start_url);
-      var startData = JSON.stringify({"command":startValue});
-      console.log('exploreStart: startData =', startData);
-     $.ajax({
-        type: "POST",
-        url: start_url,
-        data: startData,
-        dataType: 'json',
-        success: function(data, textStatus, jqXHR)
-        {
-          console.log('saveStatus: Ajax post was a success!');
-        },
-      });
-      powerMeterData();
+      for (i = 0; i < config_list.length; i++){
+        instrument_config = config_list[i];
+        configName = instrument_config.config_name;
+        var startValue = 'Start_Trace';
+        var start_url = window.location.origin + '/panelcontrol/' + company + '/' + hardware + '/' + configName + '/' + traceName;// + formatStartUrl[formatStartUrl.length-2];
+        console.log('exploreStart: start_url =',start_url);
+        var startData = JSON.stringify({"command":startValue});
+        console.log('exploreStart: startData =', startData);
+         $.ajax({
+            type: "POST",
+            url: start_url,
+            data: startData,
+            dataType: 'json',
+            success: function(data, textStatus, jqXHR)
+            {
+              console.log('saveStatus: Ajax post was a success!');
+            },
+          });
+          if (measurement){
+            powerMeterData();
+          }
+      }
     };
     function PMtraceStop(el){
       console.log('traceStop !!!!!')
       
-      var startValue = 'Stop_Trace';
-      var start_url = window.location.origin + '/panelcontrol/' + company + '/' + hardware + '/' + configName + '/' + traceName;
-      console.log('exploreStart: start_url =',start_url);
+      for (i = 0; i < config_list.length; i++){
+        instrument_config = config_list[i];
+        configName = instrument_config.config_name;
+        var startValue = 'Stop_Trace';
+        var start_url = window.location.origin + '/panelcontrol/' + company + '/' + hardware + '/' + configName + '/' + traceName;
+        console.log('exploreStart: start_url =',start_url);
 
-      var startData = JSON.stringify({"command":startValue});
-      console.log('exploreStart: startData =', startData);
-     $.ajax({
-        type: "POST",
-        url: start_url,
-        data: startData,
-        dataType: 'json',
-        success: function(data, textStatus, jqXHR)
-        {
-          console.log('saveStatus: Ajax post was a success!');
-        },
-      });
-      clearTimeout(PMtraceTimerID);
+        var startData = JSON.stringify({"command":startValue});
+        console.log('exploreStart: startData =', startData);
+         $.ajax({
+            type: "POST",
+            url: start_url,
+            data: startData,
+            dataType: 'json',
+            success: function(data, textStatus, jqXHR)
+            {
+              console.log('saveStatus: Ajax post was a success!');
+            },
+          });
+       }
+       clearTimeout(PMtraceTimerID);
     };
 
 

@@ -33,9 +33,44 @@ from time import gmtime, strftime
 import appengine_config
 import json
 from profile import get_profile_cookie
+from onedb import TestDB_key
 
+
+class NewHandler(InstrumentDataHandler):
+    def get(self, company_nickname, hardware_name, testplan_name):
+        user = users.get_current_user()
+        if user:
+            active_user = user.email()
+            active_user = active_user.split('@')
+            author = active_user[0]
+        else:
+            self.redirect(users.create_login_url(self.request.uri))
+        profile = get_profile_cookie(self)
+        profile['author'] = author
+        if (not profile) or (profile['permissions'] == "viewer"):
+            self.redirect('/profile')
+        templatedata = {
+            'company_nickname' : company_nickname,
+            'hardware_name' : hardware_name,
+            'testplan_name' : testplan_name,
+        }
+
+        test_key = TestDB_key(testplan_name)
+        test = TestDB.get(test_key)
+        configs = db.get(test.configs)
+        instrument_configs = db.get(test.instrument_configs)
+        measurements = db.get(test.measurements)
+
+        self.render('new_operator.html', data=templatedata, 
+            test = test,
+            configs=configs,
+            instrument_configs=instrument_configs,
+            measurements=measurements,
+            profile=profile,
+        )
 
 class Handler(InstrumentDataHandler):
+
     def get(self, company_nickname="", hardware_name="", config_name="", testplan_name=""):
         profile = get_profile_cookie(self)
         if (not profile) or (profile['permissions'] == "viewer"):

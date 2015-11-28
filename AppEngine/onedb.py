@@ -100,6 +100,7 @@ class TestDB(DictModel):
     start_time = db.DateTimeProperty(required = False)
     duts = db.ListProperty(db.Key)
     measurements = db.ListProperty(db.Key)
+    instrument_configs = db.ListProperty(db.Key)
     order = db.StringListProperty()
     stop_time = db.DateTimeProperty(required = False)
     test_ready = db.BooleanProperty(required = False)

@@ -172,11 +172,12 @@ class Handler(InstrumentDataHandler):
                     pass_fail_type = '',
                     )
                     s.put()
-
-                print config
-                if test.key() not in config.tests:  #add the test plan to the list property of the dut
-                    config.tests.append(test.key())
-                    config.put()
+                    if s.key() not in test.instrument_configs:
+                        test.instrument_configs.append(s.key())
+                        test.put()
+            if test.key() not in config.tests:  #add the test plan to the list property of the dut
+                config.tests.append(test.key())
+                config.put()
             if config.key() not in test.configs:  #add the  dut name to the list property ot the test plan
                 test.configs.append(config.key())
                 test.put()
