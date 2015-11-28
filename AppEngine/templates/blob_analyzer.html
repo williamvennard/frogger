@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+                  {% block import %}
+
+<html>
+  <head>
+    <title>Blob Analyzer </title>
+    <style type="text/css">
+      .label {text-align: right}
+      .error {color: red}
+    </style>
+
+  </head>
+
+
+  <body>
+    <h2>Blob Analyzer</h2>
+        <table style="width:100%">
+        <a href ="blob_export/{{download_key}}">export </a>
+          <tr>
+            <th>Start_TSE</th>
+            <th>Config_name</th> 
+            <th>max_value</th>
+            <th>min_value</th>
+            <th>pass_fail_type</th> 
+            <th>test_plan</th>
+            <th>correction_frequency</th>
+            <th>active_testplan_name</th> 
+            <th>data</th>
+            <th>pass_fail</th>
+          </tr>
+          {% for entry in result %}
+            <tr>
+            {% for key, value in entry.iteritems() %}
+
+                    <td> {{ value }} </td>
+
+            {% endfor %}
+            </tr>
+          {% endfor %}
+        </table>
+
+  </body>
+
+
+
+</html>
+                  {% endblock %}  

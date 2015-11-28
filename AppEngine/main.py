@@ -69,6 +69,8 @@ from onedb import ProfileDB
 from onedb import UserDB
 from onedb import company_key
 from onedb import FileBlob
+from onedb import BlobberDB
+from onedb import Blobber_key
 import measurements
 import test_make_interface
 import operatordata
@@ -85,6 +87,7 @@ from google.appengine.api import urlfetch
 from encode import multipart_encode, MultipartParam
 import view_testplan
 import blob_selection
+import blob_export
 
 authorized_users = ['charlie@gradientone.com',
                     'nedwards@gradientone.com',
@@ -142,11 +145,11 @@ class AggFileUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
         except:
             self.redirect('/upload_failure.html')
 
-def Blobber_key(name = 'default'):
-    return db.Key.from_path('company_nickname', name)
+# def Blobber_key(name = 'default'):
+#     return db.Key.from_path('company_nickname', name)
 
-class BlobberDB(DictModel):
-    b_key = db.StringProperty(required = True)
+# class BlobberDB(DictModel):
+#     b_key = db.StringProperty(required = True)
 
 def incoming_blob_parser(value):
     headers = value[0].split(',')
@@ -340,6 +343,7 @@ app = webapp2.WSGIApplication([
     ('/u2000_traceresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000_traceresultsdata.Handler),
     ('/u2000_testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000_testresultsdata.Handler),
     ('/blob_selection', blob_selection.Handler),
+    ('/blob_export/([a-zA-Z0-9-]+)', blob_export.Handler),
 ], debug=True)
 
 

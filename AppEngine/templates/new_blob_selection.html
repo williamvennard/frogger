@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+                  {% block import %}
+
+<html>
+  <head>
+    <title>Blob Selection </title>
+    <style type="text/css">
+      .label {text-align: right}
+      .error {color: red}
+    </style>
+
+  </head>
+
+
+  <body>
+    <h2>Blob Selection</h2>
+        <form method="post">
+
+
+                  {% for r in rows %}
+                    {{ r.test_batch }}  <input type="checkbox" name="test_batch" value = "{{r.test_batch}}">
+                    <br><br>   
+                  {% endfor %}
+ 
+  <input type="submit" value="Submit">
+    </form>
+
+  </body>
+
+
+</html>
+                  {% endblock %}  

@@ -354,3 +354,9 @@ class FileBlob(db.Model):
     blob_key = blobstore.BlobReferenceProperty(required=True)
     test_batch = db.StringProperty(required = False)
 
+def Blobber_key(name = 'default'):
+    return db.Key.from_path('company_nickname', name)
+
+class BlobberDB(DictModel):
+    b_key = db.StringProperty(required = True)
+
