@@ -29,7 +29,7 @@ class Handler(blobstore_handlers.BlobstoreDownloadHandler):
         print input_resource
         resource = str(urllib.unquote(input_resource))
         key = db.Key.from_path('BlobberDB', input_resource, parent = company_key())
-        filename = input_resource, + '.csv'
+        filename = str(input_resource), + '.csv'
         print 'key =', key
         new_blob_key = db.get(key)
         print 'new blob key = ', new_blob_key
