@@ -57,8 +57,8 @@ def get_profile_cookie(self):
     login_check(self)
     comp_cookie = self.request.cookies.get("company_nickname")
     permissions = self.request.cookies.get("permissions")
+    profile = collections.defaultdict(str)
     if comp_cookie:
-        profile = {}
         raw_groups = self.request.cookies.get("groups")
         if raw_groups:
             groups = raw_groups.split("|")
@@ -67,28 +67,26 @@ def get_profile_cookie(self):
         profile['groups'] = groups
         profile['company_nickname'] = comp_cookie
         profile['permissions'] = permissions
-        return profile
     else:
-        profile = get_profile()
-        if hasattr(profile, 'to_dict'):
-            set_profile_cookie(self, profile)
-            profile = profile.to_dict()
-            return profile
-        else:
-            # no profile for this user!!!
-            return {}
+        new_profile = get_profile()
+        if new_profile:
+            profile = new_profile
+            if  hasattr(profile, 'to_dict'):
+                set_profile_cookie(self, profile)
+                profile = profile.to_dict()
+    return profile
 
-def set_groups_cookie(self, profile):        
+def set_groups_cookie(self, profile):
     groups = profile.groups
-    if groups:        
+    if groups:
         groups_string = "|".join(profile.groups)
     else:
-        groups_string = None            
+        groups_string = None
     self.response.set_cookie('groups', groups_string)
 
 def set_profile_cookie(self, profile):
     if hasattr(profile, 'company_nickname'):
-        self.response.set_cookie('company_nickname', 
+        self.response.set_cookie('company_nickname',
             profile.company_nickname)
         self.response.set_cookie('permissions', profile.permissions)
         set_groups_cookie(self, profile)
@@ -112,10 +110,10 @@ class Handler(InstrumentDataHandler):
                 set_profile_cookie(self, profile)
                 raw_groups = self.request.cookies.get("groups")
                 comp_cookie = self.request.cookies.get("company_nickname")
-                self.render('profile.html', profile=profile, groups=raw_groups, 
+                self.render('profile.html', profile=profile, groups=raw_groups,
                     comp_cookie=comp_cookie)
             else:
-                self.render('profile.html', profile="", groups="", 
+                self.render('profile.html', profile="", groups="",
                     error="No profile for this account. Contact your \
                     administrator for help")
         else:
@@ -133,8 +131,8 @@ def create_profile(self):
             admin = True
         else:
             admin = False
-        profile = ProfileDB(email = email, 
-                      company_nickname = company_nickname, 
+        profile = ProfileDB(email = email,
+                      company_nickname = company_nickname,
                       name = name,
                       permissions = permissions,
                       admin = admin,
@@ -147,7 +145,7 @@ class AdduserPage(InstrumentDataHandler):
         profile = get_profile()
         if profile:
             if (profile.admin) or (profile.permissions == 'admin'):
-                self.render('adduser.html', 
+                self.render('adduser.html',
                     company_nickname=profile.company_nickname)
             else:
                 self.redirect('/profile')
@@ -225,5 +223,5 @@ class AdminEditUsers(InstrumentDataHandler):
         profile.groups = filter(None, profile.groups)
         profile.put()
 
-        self.redirect('/admin/editusers')    
-        
+        self.redirect('/admin/editusers')
+
