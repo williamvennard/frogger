@@ -54,7 +54,7 @@ def check_config_vars(config, nested_config):
         units= config['units']
         test_plan =config['test_plan']
     else:
-        print 'config =', config_name
+        print 'config =', config
         print 'nested_config', nested_config
         active_testplan_name = config['active_testplan_name']
         test_plan = 'False'
