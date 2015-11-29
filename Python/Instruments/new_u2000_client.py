@@ -44,6 +44,8 @@ def post_complete(config_name, active_testplan_name, s):
 
 def check_config_vars(config, nested_config):
     "creates config variables to pass to the main u2000 code"
+    print 'config =', config_name
+    print 'nested_config', nested_config
     if config['test_plan'] == 'True':
         active_testplan_name = config['active_testplan_name']
         config_name = config['config_name']
