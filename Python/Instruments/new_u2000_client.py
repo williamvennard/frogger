@@ -47,11 +47,15 @@ def check_config_vars(config, nested_config):
     if config['test_plan'] == 'True':
         active_testplan_name = config['active_testplan_name']
         config_name = config['config_name']
-        averaging_count_auto = config['averaging_count_auto']
-        correction_frequency= config['correction_frequency']
-        offset= config['offset']
-        range_auto= config['range_auto']
-        units= config['units']
+        averaging_count_auto = nested_config['averaging_count_auto']
+        correction_frequency= nested_config['correction_frequency']
+        offset= nested_config['offset']
+        range_auto= nested_config['range_auto']
+        units= nested_config['units']
+        pass_fail = nested_config['pass_fail']
+        pass_fail_type = nested_config['pass_fail_type']
+        max_value = nested_config['max_value']
+        min_value = nested_config['min_value']
         test_plan =config['test_plan']
     else:
         print 'config =', config
