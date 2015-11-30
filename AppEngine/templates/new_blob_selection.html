@@ -18,10 +18,16 @@
 
 
                   {% for r in rows %}
-                    {{ r.test_batch }}  <input type="checkbox" name="test_batch" value = "{{r.test_batch}}">
-                    <br><br>   
+
+                    {% if r.test_batch %}
+
+                    <input type="checkbox" name="test_batch" value = "{{r.test_batch}}">  {{ r.test_batch }}
+                    <br><br> 
+                    {% endif %}
+  
                   {% endfor %}
- 
+
+
   <input type="submit" value="Submit">
     </form>
 

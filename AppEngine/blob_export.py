@@ -25,18 +25,24 @@ import urllib
 
 
 class Handler(blobstore_handlers.BlobstoreDownloadHandler):
-    def get(self, input_resource):
-        print input_resource
-        resource = str(urllib.unquote(input_resource))
-        key = db.Key.from_path('BlobberDB', input_resource, parent = company_key())
-        filename = str(input_resource) + '.csv'
-        print 'key =', key
-        new_blob_key = db.get(key)
-        print 'new blob key = ', new_blob_key
-        newkey = new_blob_key.b_key
-        print 'newkey =', newkey
-        blob_info = blobstore.BlobInfo.get(newkey)
-        print blob_info
-        self.send_blob(blob_info,save_as=filename)
+    def get(self, key):
+        output = memcache.get(key)
+        headers = self.response.headers
+        headers['Content-Type'] = 'text/csv'
+        headers['Content-Disposition'] =  'attachment; filename=' + key + '.csv'
+        tmp = StringIO.StringIO()
+        writer = csv.writer(tmp)
+        counter = 0
+        for item in output:
+            if counter == 0:
+                writer.writerow(item.keys())
+                writer.writerow(item.values())
+            else:
+                writer.writerow(item.values()) 
+            counter +=1
+        contents = tmp.getvalue()
+        tmp.close()
+        self.response.out.write(contents)
+
 
 

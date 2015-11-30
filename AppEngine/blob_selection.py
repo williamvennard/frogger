@@ -44,7 +44,13 @@ def existing_blob_parser(headers, item):
     input_dictionary = dict(zip(headers, new_rows))
     return input_dictionary
 
+
+
+
+
+
 class Handler(InstrumentDataHandler):
+
     def get(self):
         #if not self.authcheck():
          #   return
@@ -75,64 +81,21 @@ class Handler(InstrumentDataHandler):
             new_lines = blob_reader.readlines()
             headers = new_lines[0].split(',')
             headers[-1] = headers[-1].rstrip()
-            print headers
             for item in new_lines[1:]:
                 if counter == 0:
                     writer.writerow(headers)                        
                 item = item.split(',')
                 item[-1] = item[-1].rstrip()
-                print item
                 writer.writerow(item)
             input_dictionary = dict(zip(headers, item))
             counter += 1
             output.append(input_dictionary)
         contents = tmp.getvalue()
         tmp.close()
-        print output
-        name = []
-        for entry in output:
-            name.append(entry['config_name'])
         name_time = str(dt2ms(datetime.datetime.now()))
         newname = author + name_time
-        new_url =  blobstore.create_upload_url('/upload_agg/upload_file')
-        params = []
-        temp_filename = 'merged'
-        params.append(MultipartParam(
-                    "FileItem1",
-                    filename=newname,
-                    filetype='text/plain',
-                    value=contents))
-        payloadgen, headers = multipart_encode(params)
-        payload = str().join(payloadgen)
-        result = urlfetch.fetch(
-                    url=new_url,
-                    payload=payload,
-                    method=urlfetch.POST,
-                    headers=headers,
-                    deadline=10)
-        # reader = csv.reader(StringIO.StringIO(contents))
-        # pydb = Base('temp', save_to_file=False)
-        # # create new base with field names
-        # pydb.create('Start_TSE', 'config_name', 'test_plan', 'active_testplan_name', 'data', 'max_value', 'min_value', 'pass_fail', 'pass_fail_type', 'correction_frequency')
-        # new_counter = 0
-        # for row in reader:
-        #     if new_counter != 0:
-        #         pydb.insert(max_value = row[0],
-        #                              min_value = row[1],
-        #                              data = row[2],
-        #                              pass_fail = row[3],
-        #                              Start_TSE = row[4],
-        #                              config_name= row[5],
-        #                              pass_fail_type = row[6], 
-        #                              test_plan = row[7],
-        #                              correction_frequency = row[8],
-        #                              active_testplan_name = row[9],
-        #                              )
-        #     else:
-        #         pass
-        #     new_counter +=1
-        # records = pydb(active_testplan_name="Senator")
-        # print records
+        key = newname
+        memcache.set(key, output)
         self.render('blob_analyzer.html', result = output, download_key = newname)
 
 
