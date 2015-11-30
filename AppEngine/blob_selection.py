@@ -5,6 +5,8 @@ import json
 import itertools
 import jinja2
 import webapp2
+import time
+import datetime
 from google.appengine.api import memcache
 from google.appengine.api import oauth
 from google.appengine.api import users
@@ -22,6 +24,9 @@ from encode import multipart_encode, MultipartParam
 from google.appengine.api import urlfetch
 from pydblite import Base
 
+
+def dt2ms(t):
+    return int(t.strftime('%s'))*1000 + int(t.microsecond/1000)
 
 def existing_blob_parser(headers, item):
     new_rows = []
@@ -87,7 +92,8 @@ class Handler(InstrumentDataHandler):
         name = []
         for entry in output:
             name.append(entry['config_name'])
-        newname = ''.join(name)
+        name_time = str(dt2ms(datetime.datetime.now()))
+        newname = author + name_time
         new_url =  blobstore.create_upload_url('/upload_agg/upload_file')
         params = []
         temp_filename = 'merged'

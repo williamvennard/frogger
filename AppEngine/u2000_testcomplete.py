@@ -46,23 +46,18 @@ class Handler(InstrumentDataHandler):
             key = 'TestResultsDB'+testplan_name+config_name
             test_plan = True
             trace = False
-            r = TestResultsDB(key_name = testplan_name+str(test_complete_content['start_tse']), parent = company_key(), 
-                        testplan_name=testplan_name,
-                        company_nickname = company_nickname, 
-                        Total_Slices=int((test_complete_content['p_settings']['Total_Slices'])),
-                        Dec_msec_btw_samples=(test_complete_content['p_settings']['Dec_msec_btw_samples']),
-                        Raw_msec_btw_samples=(test_complete_content['p_settings']['Raw_msec_btw_samples']),
-                        Slice_Size_msec=(test_complete_content['p_settings']['Slice_Size_msec']),
-                        dec_data_url=str(test_complete_content['dec_data_url']),
-                        raw_data_url=str(test_complete_content['raw_data_url']),
-                        config_name=str(test_complete_content['config_name']),
-                        hardware_name=str(test_complete_content['hardware_name']),
-                        test_plan = test_plan,
-                        test_complete_bool = True,
-                        test_complete = int(stop_tse),
-                        trace = trace, 
-                        start_tse=(test_complete_content['start_tse'])
-                        )
+            hardware_name = test_complete_content['hardware_name']
+            r = TestResultsDB(parent = company_key(), testplan_name=testplan_name, key_name = key,
+                    company_nickname = company_nickname, 
+                    config_name=config_name,
+                    hardware_name=hardware_name,
+                    test_plan = test_plan,
+                    test_complete_bool = True,
+                    test_complete = int(stop_tse),
+                    trace = trace, 
+                    start_tse=(test_complete_content['start_tse']),
+                    u2000_result = str(test_complete_content['cha']),
+                    )
             to_save.append(r) 
             db.put(to_save)
             if next_state == None:

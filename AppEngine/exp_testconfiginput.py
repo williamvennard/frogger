@@ -150,12 +150,11 @@ class Handler(InstrumentDataHandler):
                 config.put()
 
                 if item['instrument_type'] == "U2001A":
-                    max_value = 0.0
-                    min_value = 0.0
+                    print 'item =', item
                     pass_fail = item['pass_fail']
-                    if pass_fail:
-                        max_value = float(item['max_value'])
-                        min_value = float(item['min_value'])
+                    max_value = float(item['max_value'])
+                    min_value = float(item['min_value'])
+                    print pass_fail, max_value, min_value
                     s = agilentU2000(key_name = (item['config_name']+item['instrument_type']), parent = company_key(),
                     config_name = item['config_name'],
                     company_nickname = company_nickname, 

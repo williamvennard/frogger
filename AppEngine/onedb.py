@@ -163,7 +163,7 @@ class TestResultsDB(DictModel):
     test_plan = db.BooleanProperty(required = False)
     saved_state = db.BooleanProperty(required = False)
     u2000_result = db.StringProperty(required = False)
-    pass_fail = db.StringProperty(required = False)  #PASS or FAIL
+    pass_fail = db.StringProperty(default = 'No Pass Fail Criteria Specified')  #PASS or FAIL
     max_pass = db.FloatProperty(required = False)
     min_pass = db.FloatProperty(required = False)
 
