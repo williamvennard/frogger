@@ -30,7 +30,7 @@ class Handler(InstrumentDataHandler):
         test_plan = test_complete_content['test_plan']
         if test_plan == 'True':   
             stop_time = datetime.datetime.now()
-            key= testplan_name+'config'+config_name
+            key= testplan_name+'U2001A'+config_name
             prior_key = db.Key.from_path('StateDB', key, parent = company_key())
             prior_event = db.get(prior_key)
             prior_event.stop_time = stop_time
