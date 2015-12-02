@@ -168,7 +168,7 @@ class Handler(InstrumentDataHandler):
                     max_value = max_value,
                     min_value = min_value,
                     pass_fail = pass_fail,
-                    pass_fail_type = '',
+                    pass_fail_type = 'Range',
                     )
                     s.put()
                     if s.key() not in test.instrument_configs:
