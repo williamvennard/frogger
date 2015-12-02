@@ -99,6 +99,7 @@ class agilentu2000:
         blob_u2000_test_results = self.u2000_test_results.copy()
         blob_u2000_test_results['max_value'] = blob_u2000_test_results['i_settings']['max_value']
         blob_u2000_test_results['min_value'] = blob_u2000_test_results['i_settings']['min_value']
+        blob_u2000_test_results['offset'] = blob_u2000_test_results['i_settings']['offset']
         if float(blob_u2000_test_results['min_value']) <= float(self.u2000_test_results['data']) <= float(blob_u2000_test_results['max_value']):
             blob_u2000_test_results['pass_fail'] = 'PASS'
         elif blob_u2000_test_results['i_settings']['pass_fail_type'] == 'N/A':
