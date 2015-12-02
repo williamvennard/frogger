@@ -32,6 +32,17 @@ from profile import set_profile_cookie
 from profile import get_profile_cookie
 #from send_script_post import Script
 
+def get_google_user():
+    user = None
+    try:
+       user = oauth.get_current_user('https://www.googleapis.com/auth/userinfo.email')
+       logging.info("instruments:get: from oauth.get_current_user: user = %s" % user)
+    except:
+       pass
+    if not user:
+       user = users.get_current_user()
+    logging.info("get_google_user: user = %s" % user)
+    return user
 
 class Handler(InstrumentDataHandler):
     def get(self, author="", instrument_type="", instrument_name=""):
@@ -42,16 +53,18 @@ class Handler(InstrumentDataHandler):
         #company_name = 'Acme'
         #key = name_of_inst+company_name
         #myscope = agilentMSO7014A(key_name = key)
-        user = users.get_current_user()
+        user = get_google_user()
+        logging.info("instruments:get: user = %s" % user)
         if user:
             active_user = user.email()
             active_user= active_user.split('@')
             author = active_user[0]
+            logging.info("instruments:get: author = %s" % author)
         else:
             self.redirect(users.create_login_url(self.request.uri))
         profile = get_profile_cookie(self)
         profile['author'] = author
-        if profile['permissions'] == '' or (profile['permissions'] == 'viewer'):
+        if profile['permissions'] == '' or profile['permissions'] == 'viewer':
             self.redirect('/profile')
         instrument_name = instrument_name.split('.')
         if instrument_name[-1] == 'json':
