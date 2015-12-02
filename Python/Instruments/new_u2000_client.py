@@ -145,7 +145,7 @@ def u2000_acq(config, nested_config, s):
     inst_dict = set_v_for_k(inst_dict, 'pass_fail_type', config_vars[8])
     inst_dict = set_v_for_k(inst_dict, 'max_value', config_vars[9])
     inst_dict = set_v_for_k(inst_dict, 'min_value', config_vars[10])
-    inst_dict = set_v_for_k(inst_dict, 'offset', config_vars[4])
+    inst_dict = set_v_for_k(inst_dict, 'offset', config_vars[3])
     acq_dict = set_v_for_k(acq_dict, 'i_settings', inst_dict)    
     acq_dict = set_v_for_k(acq_dict, 'config_name', config_vars[1]) 
     acq_dict = set_v_for_k(acq_dict, 'active_testplan_name', config_vars[0])
