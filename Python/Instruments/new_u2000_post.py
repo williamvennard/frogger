@@ -73,7 +73,7 @@ class agilentu2000:
 
     def transmitraw(self):
         parent = 'raw'
-        test_results = self.u2000_test_results['data']
+        test_results = self.u2000_test_results['data(dBm)']
         i_settings = self.u2000_test_results['i_settings']
         test_plan = self.u2000_test_results['test_plan']
         config_name = self.u2000_test_results['config_name']
@@ -90,7 +90,7 @@ class agilentu2000:
         test_plan = self.u2000_test_results['test_plan']
         i_settings = self.u2000_test_results['i_settings']
         start_tse = int(self.u2000_test_results['Start_TSE'])
-        test_results = self.u2000_test_results['data']
+        test_results = self.u2000_test_results['data(dBm)']
         self.post_complete(active_testplan_name, config_name, test_plan, stop_tse, i_settings, start_tse, test_results)
 
     def transmitblob(self):
@@ -99,15 +99,15 @@ class agilentu2000:
         blob_u2000_test_results = self.u2000_test_results.copy()
         blob_u2000_test_results['max_value'] = blob_u2000_test_results['i_settings']['max_value']
         blob_u2000_test_results['min_value'] = blob_u2000_test_results['i_settings']['min_value']
-        blob_u2000_test_results['offset'] = blob_u2000_test_results['i_settings']['offset']
-        if float(blob_u2000_test_results['min_value']) <= float(self.u2000_test_results['data']) <= float(blob_u2000_test_results['max_value']):
+        blob_u2000_test_results['offset(dBm)'] = blob_u2000_test_results['i_settings']['offset']
+        if float(blob_u2000_test_results['min_value']) <= float(self.u2000_test_results['data(dBm)']) <= float(blob_u2000_test_results['max_value']):
             blob_u2000_test_results['pass_fail'] = 'PASS'
         elif blob_u2000_test_results['i_settings']['pass_fail_type'] == 'N/A':
             blob_u2000_test_results['pass_fail'] = 'N/A'
         else:
             blob_u2000_test_results['pass_fail'] = 'FAIL'
         blob_u2000_test_results['pass_fail_type'] = blob_u2000_test_results['i_settings']['pass_fail_type']
-        blob_u2000_test_results['correction_frequency'] = blob_u2000_test_results['i_settings']['correction_frequency']
+        blob_u2000_test_results['correction_frequency(Hz)'] = blob_u2000_test_results['i_settings']['correction_frequency']
         del blob_u2000_test_results['i_settings']
         filename = config_name + ':' + active_testplan_name 
         #f = open('/home/' + USERNAME + '/' + COMPANYNAME + '/Blobs/tempfile.csv', 'w')
