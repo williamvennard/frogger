@@ -5,7 +5,7 @@ import time   # time is a module here
 import math
 import datetime
 import threading
-from new_u2000_post import agilentu2000
+from u2000_post import agilentu2000
 import numpy as np
 import numpy.fft as fft
 import scipy.signal 
@@ -47,19 +47,13 @@ def check_config_vars(config, nested_config):
     if config['test_plan'] == 'True':
         active_testplan_name = config['active_testplan_name']
         config_name = config['config_name']
-        averaging_count_auto = nested_config['averaging_count_auto']
-        correction_frequency= nested_config['correction_frequency']
-        offset= nested_config['offset']
-        range_auto= nested_config['range_auto']
-        units= nested_config['units']
-        pass_fail = nested_config['pass_fail']
-        pass_fail_type = nested_config['pass_fail_type']
-        max_value = nested_config['max_value']
-        min_value = nested_config['min_value']
+        averaging_count_auto = config['averaging_count_auto']
+        correction_frequency= config['correction_frequency']
+        offset= config['offset']
+        range_auto= config['range_auto']
+        units= config['units']
         test_plan =config['test_plan']
     else:
-        print 'config =', config
-        print 'nested_config', nested_config
         active_testplan_name = config['active_testplan_name']
         test_plan = 'False'
         config_name = config['config_name']
@@ -139,19 +133,16 @@ def u2000_acq(config, nested_config, s):
     tse = dt2ms(datetime.datetime.now())
     config_dict = {}
     plot_dict = {}
-    inst_dict ={}
-    inst_dict = set_v_for_k(inst_dict, 'correction_frequency', config_vars[2])
-    inst_dict = set_v_for_k(inst_dict, 'pass_fail', config_vars[7])
-    inst_dict = set_v_for_k(inst_dict, 'pass_fail_type', config_vars[8])
-    inst_dict = set_v_for_k(inst_dict, 'max_value', config_vars[9])
-    inst_dict = set_v_for_k(inst_dict, 'min_value', config_vars[10])
-    inst_dict = set_v_for_k(inst_dict, 'offset', config_vars[3])
-    acq_dict = set_v_for_k(acq_dict, 'i_settings', inst_dict)    
+    acq_dict = set_v_for_k(acq_dict, 'correction_frequency', config_vars[2])
+    acq_dict = set_v_for_k(acq_dict, 'pass_fail', config_vars[7])
+    acq_dict = set_v_for_k(acq_dict, 'pass_fail_type', config_vars[8])
+    acq_dict = set_v_for_k(acq_dict, 'max_value', config_vars[9])
+    acq_dict = set_v_for_k(acq_dict, 'min_value', config_vars[10]) 
     acq_dict = set_v_for_k(acq_dict, 'config_name', config_vars[1]) 
     acq_dict = set_v_for_k(acq_dict, 'active_testplan_name', config_vars[0])
     acq_dict = set_v_for_k(acq_dict, 'test_plan', config_vars[6])
     acq_dict = set_v_for_k(acq_dict, 'Start_TSE', tse) 
-    acq_dict = set_v_for_k(acq_dict, 'data(dBm)', power)  
+    acq_dict = set_v_for_k(acq_dict, 'data', power)  
     print acq_dict
     bits = agilentu2000(acq_dict,s)
     bits.transmitraw()
