@@ -10,6 +10,7 @@ import numpy as np
 import numpy.fft as fft
 import scipy.signal 
 import ivi
+import collections
 
 
 COMPANYNAME = 'Acme'
@@ -146,12 +147,14 @@ def u2000_acq(config, nested_config, s):
     inst_dict = set_v_for_k(inst_dict, 'max_value', config_vars[9])
     inst_dict = set_v_for_k(inst_dict, 'min_value', config_vars[10])
     inst_dict = set_v_for_k(inst_dict, 'offset', config_vars[3])
+    acq_dict = collections.OrderedDict()
+    acq_dict = set_v_for_k(acq_dict, 'Start_TSE', tse) 
+    acq_dict = set_v_for_k(acq_dict, 'data(dBm)', power)  
     acq_dict = set_v_for_k(acq_dict, 'i_settings', inst_dict)    
     acq_dict = set_v_for_k(acq_dict, 'config_name', config_vars[1]) 
     acq_dict = set_v_for_k(acq_dict, 'active_testplan_name', config_vars[0])
     acq_dict = set_v_for_k(acq_dict, 'test_plan', config_vars[6])
-    acq_dict = set_v_for_k(acq_dict, 'Start_TSE', tse) 
-    acq_dict = set_v_for_k(acq_dict, 'data(dBm)', power)  
+
     print acq_dict
     bits = agilentu2000(acq_dict,s)
     bits.transmitraw()
