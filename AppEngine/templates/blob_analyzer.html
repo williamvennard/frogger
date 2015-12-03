@@ -17,17 +17,19 @@
         <table style="width:100%">
         <a href ="blob_export/{{download_key}}">export </a>
           <tr>
+
+            <th>correction_frequency(Hz)</th>
             <th>Start_TSE</th>
             <th>Config_name</th> 
             <th>max_value</th>
             <th>min_value</th>
-            <th>pass_fail_type</th> 
-            <th>test_plan</th>
-            <th>offset</th>
-            <th>correction_frequency</th>
-            <th>active_testplan_name</th> 
-            <th>data</th>
+            <th>offset(dBm)</th>
             <th>pass_fail</th>
+            <th>test_plan</th>
+            <th>data(dBm)</th>
+            <th>active_testplan_name</th> 
+            <th>pass_fail_type</th> 
+
           </tr>
           {% for entry in result %}
             <tr>
