@@ -136,7 +136,7 @@ def u2000_acq(config, nested_config, s):
     #post_status('Acquiring')
     power = u2000.measurement.fetch()
     u2000.close()
-    tse = dt2ms(datetime.datetime.now())
+    tse = int(dt2ms(datetime.datetime.now()))
     config_dict = {}
     plot_dict = {}
     inst_dict ={}
