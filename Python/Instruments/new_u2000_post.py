@@ -97,7 +97,8 @@ class agilentu2000:
         active_testplan_name = self.u2000_test_results['active_testplan_name']
         config_name = self.u2000_test_results['config_name']
         blob_u2000_test_results = self.u2000_test_results.copy()
-        print blob_u2000_test_results
+        blob_u2000_test_results['offset(dBm)'] = blob_u2000_test_results['i_settings']['offset']
+        blob_u2000_test_results['correction_frequency(Hz)'] = blob_u2000_test_results['i_settings']['correction_frequency']
         blob_u2000_test_results['max_value'] = blob_u2000_test_results['i_settings']['max_value']
         blob_u2000_test_results['min_value'] = blob_u2000_test_results['i_settings']['min_value']
         if float(blob_u2000_test_results['min_value']) <= float(self.u2000_test_results['data(dBm)']) <= float(blob_u2000_test_results['max_value']):
@@ -107,11 +108,7 @@ class agilentu2000:
         else:
             blob_u2000_test_results['pass_fail'] = 'FAIL'
         blob_u2000_test_results['pass_fail_type'] = blob_u2000_test_results['i_settings']['pass_fail_type']
-        blob_u2000_test_results['offset(dBm)'] = blob_u2000_test_results['i_settings']['offset']
-        blob_u2000_test_results['correction_frequency(Hz)'] = blob_u2000_test_results['i_settings']['correction_frequency']
         del blob_u2000_test_results['i_settings']
-
-        #['1e9', '0.0', '0.0', '0.0', 'N/A', '1449161528460', 'Number4', 'N/A', 'False', '-63.6855509', 'Thursday']
         filename = config_name + ':' + active_testplan_name 
         #f = open('/home/' + USERNAME + '/' + COMPANYNAME + '/Blobs/tempfile.csv', 'w')
         f = open('/home/nedwards/BitScope/Examples/tempfile.csv', 'w')
