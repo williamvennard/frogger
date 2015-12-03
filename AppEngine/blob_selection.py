@@ -86,9 +86,9 @@ class Handler(InstrumentDataHandler):
                     writer.writerow(headers)                        
                 item = item.split(',')
                 item[-1] = item[-1].rstrip()
-                if item[7] == 'N/A':
-                    item[0] = 'N/A'
-                    item[1] = 'N/A'
+                if item[10] == 'N/A':
+                    item[7] = 'N/A'
+                    item[8] = 'N/A'
                 print item
                 writer.writerow(item)
             input_dictionary = dict(zip(headers, item))
