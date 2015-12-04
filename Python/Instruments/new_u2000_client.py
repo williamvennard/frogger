@@ -11,7 +11,7 @@ import numpy.fft as fft
 import scipy.signal 
 import ivi
 import collections
-
+import nuc_auth
 
 COMPANYNAME = 'Acme'
 HARDWARENAME = 'Tahoe'
@@ -98,8 +98,14 @@ def check_config_url():
     #config_url = "https://gradientone-test.appspot.com/testplansummary/" + COMPANYNAME + '/' + HARDWARENAME
     #config_url = "https://gradientone-dev.appspot.com/testplansummary/Acme/MSP"
     config_url = "https://" + GAE_INSTANCE + ".appspot.com/testplansummary/" + COMPANYNAME + '/' + HARDWARENAME
+    token = nuc_auth.get_access_token()
+    headers = {'Authorization': 'Bearer '+token}
     s = requests.session()
-    r = s.get(config_url)
+    r = s.get(config_url, headers=headers)
+    if r.status_code == 401:
+        token = nuc_auth.get_new_token()
+        headers = {'Authorization': 'Bearer '+token}
+        r = s.get(config_url, headers=headrs)
     if r:
         print 'checking'
         config = r.json()
