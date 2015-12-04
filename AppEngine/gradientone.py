@@ -11,7 +11,9 @@ from onedb import CapabilitiesDB
 from google.appengine.api import users
 from google.appengine.api import memcache
 from google.appengine.ext import db
+from google.appengine.api import oauth
 import hashlib
+import traceback
 
 
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
@@ -308,3 +310,27 @@ def instruments_and_explanations(analog_bandwidth, analog_sample_rate, capture_b
     else:
         master_insts = "No instruments available."
     return master_insts, master_explanations
+
+def oauth_check(self):
+    scope = 'https://www.googleapis.com/auth/userinfo.email'
+    # self.response.write('\noauth.get_current_user(%s)' % repr(scope)) # Debug check
+    try:
+      user = oauth.get_current_user(scope)
+      allowed_clients = ['287290951141-dl34gtgp8tvnanm809utk7if4klj0upg.apps.googleusercontent.com'] # list your client ids here
+      token_audience = oauth.get_client_id(scope)
+      if token_audience not in allowed_clients:
+        raise oauth.OAuthRequestError('audience of token \'%s\' is not in allowed list (%s)'
+                                      % (token_audience, allowed_clients))
+
+      # Debug statements for verfiying Oauth 2.0
+      # self.response.write(' = %s\n' % user)
+      # self.response.write('- auth_domain = %s\n' % user.auth_domain())
+      # self.response.write('- email       = %s\n' % user.email())
+      # self.response.write('- nickname    = %s\n' % user.nickname())
+      # self.response.write('- user_id     = %s\n' % user.user_id())
+      return True
+    except oauth.OAuthRequestError, e:
+      self.response.set_status(401)
+      self.response.write(' -> %s %s\n' % (e.__class__.__name__, e.message))
+      logging.warn(traceback.format_exc())
+      return False

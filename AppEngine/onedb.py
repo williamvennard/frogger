@@ -1,14 +1,16 @@
 from google.appengine.ext import db
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
+from collections import defaultdict
+
 
 class DictModel(db.Model):
     def to_dict(self):
-       return dict([(p, unicode(getattr(self, p))) for p in self.properties()])
+       return defaultdict(str, [(p, unicode(getattr(self, p))) for p in self.properties()])
 
 class FlexModel(db.Expando):
     def to_dict(self):
-       return dict([(p, unicode(getattr(self, p))) for p in self.properties()])
+       return defaultdict(str, [(p, unicode(getattr(self, p))) for p in self.properties()])
 
 def company_key(name = 'default'):
     return db.Key.from_path('companies', name)

@@ -64,6 +64,7 @@ import profile
 import scriptconfig
 import u2000data
 import temp_testcomplete
+import comments
 from gradientone import InstrumentDataHandler
 from onedb import ProfileDB
 from onedb import UserDB
@@ -278,6 +279,7 @@ app = webapp2.WSGIApplication([
     ('/admin/adduser', profile.AdminAddUser),
     ('/admin/editusers', profile.AdminEditUsers),
     ('/configlookup', configlookup.Handler),
+    ('/comments', comments.Handler),
     ('/instruments', instruments.Handler),
     ('/instruments/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', instruments.Handler),
     ('/instruments/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+.json)', instruments.Handler),
@@ -297,6 +299,7 @@ app = webapp2.WSGIApplication([
     ('/saveposttotest', communitytests.SavePostToTest),
     ('/search', search.Handler),
     ('/status/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', status.Handler),
+    ('/oauthtest/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', status.OAuthHandler),
     ('/testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', testcomplete.Handler),
     ('/testresults', canvaspage.Handler),
     ('/testresults/([a-zA-Z0-9-]+)', testresultsdata.Handler),
@@ -306,8 +309,9 @@ app = webapp2.WSGIApplication([
     ('/testlibrary', testlibrary.Handler),
     ('/testlibrary/([a-zA-Z0-9-]+)', testlibrary.Handler),
     ('/testlibrary/([a-zA-Z0-9-]+.json)', testlibrary.JSON_Handler),
+    ('/testlibrary/testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+.json)', testlibrarytest.TestResultsSet),
     ('/testlibrary/testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', testlibrarytest.Handler),
-    ('/testlibrary/testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+.json)', testlibrarytest.Handler),
+    ('/testlibrary/testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+.json)', testlibrarytest.JSON_Handler),
     ('/testlibrary/traceresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', testlibrarytrace.Handler),
     ('/testlibrary/traceresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+.json)', testlibrarytrace.Handler),
     ('/testanalyzer/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', testanalyzer.Handler),

@@ -57,8 +57,9 @@ def get_profile_cookie(self):
     login_check(self)
     comp_cookie = self.request.cookies.get("company_nickname")
     permissions = self.request.cookies.get("permissions")
+    name = self.request.cookies.get("name")
     profile = collections.defaultdict(str)
-    if comp_cookie:
+    if comp_cookie and name:
         raw_groups = self.request.cookies.get("groups")
         if raw_groups:
             groups = raw_groups.split("|")
@@ -67,10 +68,11 @@ def get_profile_cookie(self):
         profile['groups'] = groups
         profile['company_nickname'] = comp_cookie
         profile['permissions'] = permissions
+        profile['name'] = name 
     else:
-        new_profile = get_profile()
-        if new_profile:
-            profile = new_profile
+        fresh_profile = get_profile()
+        if fresh_profile:
+            profile = fresh_profile
             if  hasattr(profile, 'to_dict'):
                 set_profile_cookie(self, profile)
                 profile = profile.to_dict()
@@ -89,6 +91,7 @@ def set_profile_cookie(self, profile):
         self.response.set_cookie('company_nickname',
             profile.company_nickname)
         self.response.set_cookie('permissions', profile.permissions)
+        self.response.set_cookie('name', profile.name)
         set_groups_cookie(self, profile)
         return True
     else:

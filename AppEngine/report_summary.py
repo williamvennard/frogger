@@ -27,6 +27,7 @@ import appengine_config
 from google.appengine.api import mail
 #from send_script_post import Script
 
+DOMAIN = "gradientone-dev2.appspot.com"
 
 class Handler(InstrumentDataHandler):
     def get(self, company_nickname=""):
@@ -35,14 +36,19 @@ class Handler(InstrumentDataHandler):
         self.render('report_summary.html', rows = rows)
     def post(self, company_nickname=""):
         recipient_email = self.request.get('recipient_email')
-        message = mail.EmailMessage(sender="GradientOne Support <nedwards@gradientone.com>",
-                            subject="Test Data For You!")
+        start_tse = self.request.get('start_tse')
+        testplan_name = self.request.get('testplan_name')
+        result_url = ('https://' + DOMAIN + '/testlibrary/testresults/' +
+            company_nickname + '/' + testplan_name + '/' + start_tse)
+        message = mail.EmailMessage(
+            sender="GradientOne Support <nedwards@gradientone.com>",
+            subject="Test Data For You!")
         message.to = recipient_email
         message.body = """
 
         John Doe has shared this link with you!
 
-        https://gradientone-test.appspot.com/report_summary/Acme
+        """ + result_url + """
 
         GradientOne Inc
         """
