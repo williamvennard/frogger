@@ -11,36 +11,33 @@
 
   </head>
 
-
   <body>
     <h2>Blob Analyzer</h2>
-        <table style="width:100%">
-        <a href ="blob_export/{{download_key}}">export </a>
-          <tr>
+  <table style="width:100%">
+  <a href ="blob_export/{{download_key}}">export </a>
+    <tr>
+      <th>Start_TSE</th>
+      <th>data(dBm)</th>
+      <th>Config_name</th> 
+      <th>active_testplan_name</th> 
+      <th>test_plan</th>
+      <th>offset(dBm)</th>
+      <th>correction_frequency(Hz)</th>
+      <th>max_value</th>
+      <th>min_value</th>
+      <th>pass_fail</th> 
+      <th>pass_fail_type</th>
+    </tr>
+    {% for entry in result %}
+      <tr>
+      {% for key, value in entry.iteritems() %}
 
-            <th>correction_frequency(Hz)</th>
-            <th>Start_TSE</th>
-            <th>Config_name</th> 
-            <th>max_value</th>
-            <th>min_value</th>
-            <th>offset(dBm)</th>
-            <th>pass_fail</th>
-            <th>test_plan</th>
-            <th>data(dBm)</th>
-            <th>active_testplan_name</th> 
-            <th>pass_fail_type</th> 
+              <td> {{ value }} </td>
 
-          </tr>
-          {% for entry in result %}
-            <tr>
-            {% for key, value in entry.iteritems() %}
-
-                    <td> {{ value }} </td>
-
-            {% endfor %}
-            </tr>
-          {% endfor %}
-        </table>
+      {% endfor %}
+      </tr>
+    {% endfor %}
+  </table>
 
   </body>
 
