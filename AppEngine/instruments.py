@@ -27,8 +27,6 @@ from google.appengine.api import oauth
 from google.appengine.api import users
 from google.appengine.ext import db
 import appengine_config
-from profile import get_profile
-from profile import set_profile_cookie
 from profile import get_profile_cookie
 #from send_script_post import Script
 
@@ -95,16 +93,10 @@ class Handler(InstrumentDataHandler):
 
     def post(self):
         """posts a comment on the test results"""
-        user = users.get_current_user()
-        if not user.nickname():
-            author = "anonymous"
-        else:
-            author = user.nickname()
-        print self.request.body
         profile = get_profile_cookie(self)
         if (not profile) or (profile['permissions'] == 'viewer'):
             self.redirect('/profile')
-
+        author = profile['name']
         data = json.loads(self.request.body)
         config_name = data['config_name']
         trace_name = data['trace_name']

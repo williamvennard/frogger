@@ -64,6 +64,7 @@ class agilentu2000:
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
         url_c = "https://gradientone-test.appspot.com/u2000_testcomplete/" + COMPANYNAME + '/' + active_testplan_name + '/' +config_name + "/%s" % str(stop_tse)
         c = s.post(url_c, data=out_complete, headers=headers)
+        print "testplan_name: ", active_testplan_name
         print "c.reason=",c.reason
         print "c.status_code=",c.status_code
         #print "dir(c)=",dir(c)

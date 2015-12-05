@@ -11,6 +11,14 @@ import numpy.fft as fft
 import scipy.signal 
 import ivi
 
+from oauth2client.client import SignedJwtAssertionCredentials
+
+client_email = 'account-1@gradientone-dev2.iam.gserviceaccount.com'
+with open("gradientone-dev2-c41898312fe9.json") as f:
+  private_key = f.read()
+
+credentials = SignedJwtAssertionCredentials(client_email, private_key,
+    'https://www.googleapis.com/auth/datastore')
 
 COMPANYNAME = 'Acme'
 HARDWARENAME = 'Tahoe'
@@ -94,10 +102,11 @@ def check_config_url():
         if config['configs_tps_traces']:
             nested_config = config['nested_config'][0]
             config = config['configs_tps_traces'][0]
+            measurements = config['measurements'][0]
             if config['commence_test'] == 'True':  
                 print "Starting API"
                 post_status('Starting')
-                u2000_acq(config, nested_config, s)
+                u2000_acq(config, nested_config, measurements, s)
                 config_vars = check_config_vars(config, nested_config)
                 config_name = config_vars[1]
                 active_testplan_name = config_vars[0]
@@ -107,7 +116,7 @@ def check_config_url():
     threading.Timer(1, check_config_url()).start()
 
 
-def u2000_acq(config, nested_config, s):    
+def u2000_acq(config, nested_config, measurements, s):    
     """sets the configuration for the u2000 API and calls the u2000 class"""
     time_start = time.time()
     acq_dict = {}
@@ -128,12 +137,16 @@ def u2000_acq(config, nested_config, s):
     tse = dt2ms(datetime.datetime.now())
     config_dict = {}
     plot_dict = {}
-    inst_dict ={}
+    inst_dict = {}
     inst_dict = set_v_for_k(inst_dict, 'correction_frequency', config_vars[2])
     inst_dict = set_v_for_k(inst_dict, 'pass_fail', config_vars[7])
     inst_dict = set_v_for_k(inst_dict, 'pass_fail_type', config_vars[8])
     inst_dict = set_v_for_k(inst_dict, 'max_value', config_vars[9])
     inst_dict = set_v_for_k(inst_dict, 'min_value', config_vars[10])
+    # inst_dict = set_v_for_k(inst_dict, 'pass_fail', measurements['pass_fail'])
+    # inst_dict = set_v_for_k(inst_dict, 'pass_fail_type', measurements['pass_fail_type'])
+    # inst_dict = set_v_for_k(inst_dict, 'max_value', measurements['max_value'])
+    # inst_dict = set_v_for_k(inst_dict, 'min_value', measurements['min_value'])
     acq_dict = set_v_for_k(acq_dict, 'i_settings', inst_dict)    
     acq_dict = set_v_for_k(acq_dict, 'config_name', config_vars[1]) 
     acq_dict = set_v_for_k(acq_dict, 'active_testplan_name', config_vars[0])
