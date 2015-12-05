@@ -1,53 +1,75 @@
 from gradientone import InstrumentDataHandler
-from gradientone import query_to_dict
-from gradientone import create_psettings
-from gradientone import convert_str_to_cha_list
-from gradientone import render_json
-from gradientone import dropdown_creation
 from gradientone import author_creation
-from onedb import BscopeDB
-from onedb import BscopeDB_key
-from onedb import TestResultsDB
-from onedb import TestResultsDB_key
+from gradientone import query_to_dict
+import json
 import itertools
 import jinja2
-import json
-import logging
-import os
 import webapp2
+import time
+import datetime
 from google.appengine.api import memcache
 from google.appengine.api import oauth
 from google.appengine.api import users
 from google.appengine.ext import db
+from time import gmtime, strftime
 import appengine_config
+from onedb import FileBlob
+from onedb import company_key
+from onedb import FileBlob
+from google.appengine.ext import blobstore
+from google.appengine.ext.webapp import blobstore_handlers
+import StringIO
+import csv
+from encode import multipart_encode, MultipartParam
+from google.appengine.api import urlfetch
+from pydblite import Base
 
 class Handler(InstrumentDataHandler):
-    def get(self, name="", slicename="", start_tse=""):
-        dropdown = dropdown_creation()
-        self.render('search.html', dropdown = dropdown)
     def post(self):
-        dropdown = dropdown_creation()
-        name = self.request.get('name')
-        if int(self.request.get('start_time')):
-            start_time = int(self.request.get('start_time'))
-        else:
-            start_time = None
-        end_time = int(self.request.get('end_time'))
-        instrument = self.request.get('instrument')
-        testplan_name = self.request.get('testplan_name')
-        if instrument == 'BitScope':
-            instrument = BscopeDB.gql
-        elif instrument == 'Tektronix':
-            instrument = OscopeDB.gql
-        #query = instrument("where name = :1 and start_tse =:2 and slicename =:3 and config =:4", name, start_tse, slicename, config)
-        results = set()
-               #summary.add((str(r.start_tse), str(r.name), str(r.config))) #make set to eliminate dupes
-        query=TestResultsDB.all()
-        start_tse_query = query.filter("start_tse =",start_time).run()
-        for i in start_tse_query:
-            results.add((str(i.start_tse), str(i.name)))
-        #config_query = query.filter("config =",config).run()
-        #for i in config_query:
-            #results.add((str(i.start_tse), str(i.name)))
-        #results = list(results)
-        self.render('search.html', results = results, dropdown = dropdown, name = name, slicename = slicename, start_time = start_time, end_time = end_time)
+        params = self.request.body
+        params = params.split('=')
+        key = params[1].split('&')
+        key = key[0]
+        search_input = params[2]
+        print search_input
+        print key
+        output = memcache.get(key)
+        tmp = StringIO.StringIO()
+        writer = csv.writer(tmp)
+        counter = 0
+        for item in output:
+            if counter == 0:
+                writer.writerow(item.keys())
+                writer.writerow(item.values())
+            else:
+                writer.writerow(item.values()) 
+            counter +=1
+        contents = tmp.getvalue()
+        tmp.close()
+        #reader = csv.reader(contents, delimiter=';')
+        reader = csv.reader(StringIO.StringIO(contents))
+        pydb = Base('temp', save_to_file=False)
+        # create new base with field names
+        pydb.create('Start_TSE', 'correction_frequency', 'config_name', 'max_value', 'min_value', 'offset', 'pass_fail_type', 'test_plan', 'data',  'active_testplan_name', 'data', 'pass_fail')
+        new_counter = 0
+        for row in reader:
+            if new_counter != 0:
+                pydb.insert(Start_TSE = row[0], 
+                    correction_frequency = row[1], 
+                    config_name = row[2], 
+                    max_value= row[3], 
+                    min_value = row[4], 
+                    offset = row[5], 
+                    pass_fail_type = row[6], 
+                    test_plan = row[7],
+                    data = row[8],
+                    active_testplan_name = row[9],
+                    pass_fail = row[10],
+                                     )
+            else:
+                pass
+            new_counter +=1
+        records = pydb(active_testplan_name="Production")
+        print records
+        for r in records:
+            print r

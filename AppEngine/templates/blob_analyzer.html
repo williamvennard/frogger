@@ -10,23 +10,47 @@
     </style>
 
   </head>
-
   <body>
     <h2>Blob Analyzer</h2>
+
+      <form name="searchform" action="/search" method="post">
+      <input type="hidden" name="download_key" value="{{download_key}}"/>
+
+      <table>
+
+      <tr>
+
+      <td>
+
+       <input type="text" id="query" name="query" size="80" value="{{base_query}}" />
+
+      </td>
+
+
+
+      <tr>
+      <td>
+       <input type="submit" class="btn primary"  name="searchsub" value="Search"/>
+       <input type="reset" class="btn primary"  name="searchreset" value="Clear"/>
+      </td><td></td><td></td></tr>
+
+      </table>
+
+    </form>
   <table style="width:100%">
   <a href ="blob_export/{{download_key}}">export </a>
     <tr>
-      <th>Start_TSE</th>
-      <th>data(dBm)</th>
-      <th>Config_name</th> 
-      <th>active_testplan_name</th> 
-      <th>test_plan</th>
-      <th>offset(dBm)</th>
-      <th>correction_frequency(Hz)</th>
-      <th>max_value</th>
-      <th>min_value</th>
-      <th>pass_fail</th> 
-      <th>pass_fail_type</th>
+      <th>Start Time</th>
+      <th>Correction Freq (Hz)</th>
+      <th>Config Name</th> 
+      <th>Max</th>
+      <th>Min</th>
+      <th>Offset (dBm)</th>
+      <th>Pass Fail Type</th>
+      <th>Test Plan</th>
+      <th>Data (dBm)</th>
+      <th>Active Testplan Name</th> 
+      <th>Pass/Fail</th> 
     </tr>
     {% for entry in result %}
       <tr>
