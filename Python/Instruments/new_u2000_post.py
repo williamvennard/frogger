@@ -121,8 +121,8 @@ class agilentu2000:
         blob_u2000_test_results['pass_fail_type'] = blob_u2000_test_results['i_settings']['pass_fail_type']
         del blob_u2000_test_results['i_settings']
         filename = config_name + ':' + active_testplan_name 
-        #f = open('/home/' + USERNAME + '/' + COMPANYNAME + '/Blobs/tempfile.csv', 'w')
-        f = open('/home/nedwards/BitScope/Examples/tempfile.csv', 'w')
+        f = open('/home/nedwards/Acme/Blobs/tempfile.csv', 'w')
+        #f = open('/home/nedwards/BitScope/Examples/tempfile.csv', 'w')
         w = csv.writer(f)
         w.writerow(blob_u2000_test_results.keys())
         w.writerow(blob_u2000_test_results.values())
@@ -132,14 +132,10 @@ class agilentu2000:
         #           fields={'field0':(filename, open('/home/' + USERNAME + '/' + COMPANYNAME + '/Blobs/tempfile.csv', 'rb'), 'text/plain')}
         #           )
         m = MultipartEncoder(
-                  fields={'field0':(filename, open('/home/nedwards/BitScope/Examples/tempfile.csv', 'rb'), 'text/plain')}
+                  fields={'field0':(filename, f, 'text/plain')}
                   )
         blob_url = requests.get("https://"+ GAE_INSTANCE + ".appspot.com/upload/geturl")
-        #m = MultipartEncoder(
-        #        fields={'field0': ('tek0012ALL', open('../../DataFiles/tekcsv/tek0012ALL.csv', 'rb'), 'text/plain')}
-        #        )
         b = requests.post(blob_url.text, data = m, headers={'Content-Type': m.content_type})
-        print blob_url.text
         print "b.reason=",b.reason
         print "b.status_code=",b.status_code
 
