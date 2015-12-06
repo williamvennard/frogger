@@ -73,7 +73,7 @@ class agilentu2000:
 
     def transmitraw(self):
         """transmitraw function sends a json object that can be used for UI presentation
-        >>> x.transmitraw()
+        >>> transmitraw()
         r.reason= OK
         r.status_code= 200
         """
@@ -88,7 +88,7 @@ class agilentu2000:
 
     def testcomplete(self):
         """transmitcomplete function sends a json object that is used to update DB on test status.
-        >>> x.testcomplete()
+        >>> testcomplete()
         c.reason= OK
         c.status_code= 200
         """
@@ -103,7 +103,7 @@ class agilentu2000:
 
     def transmitblob(self):
         """transmitblob function sends a json object that puts the test results in the blobstore
-        >>> x.transmitblob()
+        >>> transmitblob()
         b.reason= OK
         b.status_code= 200
         """
