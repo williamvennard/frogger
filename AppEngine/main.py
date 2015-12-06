@@ -15,6 +15,7 @@ import re
 import time
 import webapp2
 import math
+import searchdemo
 import StringIO
 from google.appengine.api import memcache
 from google.appengine.api import oauth
@@ -298,6 +299,9 @@ app = webapp2.WSGIApplication([
     ('/communityprivate', communitytests.PrivateHandler),
     ('/saveposttotest', communitytests.SavePostToTest),
     ('/search', search.Handler),
+    ('/searchdemo', searchdemo.Handler),
+    ('/searchdemo/', searchdemo.Handler),
+    ('/searchdemo/upload', searchdemo.Handler),
     ('/status/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', status.Handler),
     ('/oauthtest/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', status.OAuthHandler),
     ('/testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', testcomplete.Handler),
