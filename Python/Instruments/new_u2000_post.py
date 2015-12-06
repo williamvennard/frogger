@@ -132,6 +132,8 @@ class agilentu2000:
                    fields={'field0':(filename, open('/home/' + USERNAME + '/' + COMPANYNAME + '/Blobs/tempfile.csv', 'rb'), 'text/plain')}
                    )
         blob_url = requests.get("https://"+ GAE_INSTANCE + ".appspot.com/upload/geturl")
+        print blob_url
+        print blob_url.text
         b = requests.post(blob_url.text, data = m, headers={'Content-Type': m.content_type})
         print "b.reason=",b.reason
         print "b.status_code=",b.status_code
