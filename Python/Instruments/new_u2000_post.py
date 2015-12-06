@@ -1,8 +1,5 @@
 """
 The new_u2000_post module supplies one class, agilentu2000.  
->>> u2000dict = {'Start_TSE':1449181132570, 'data(dBm)':-66.2397506, 'i_settings':{'pass_fail_type': u'Range', 'max_value': u'-40.0', 'min_value': u'-70.0', 'offset': u'0.0', 'correction_frequency': u'1e9', 'pass_fail': u'True'}, 'config_name':u'Batch4', 'active_testplan_name':u'Production', 'test_plan':u'True'}
->>> s = requests.session()
->>> x = agilentu2000(u2000dict, s)
 
 """
 
@@ -21,6 +18,7 @@ from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 class agilentu2000:
     """Send script config to server.
+    >>> u2000dict = {'Start_TSE':1449181132570, 'data(dBm)':-66.2397506, 'i_settings':{'pass_fail_type': u'Range', 'max_value': u'-40.0', 'min_value': u'-70.0', 'offset': u'0.0', 'correction_frequency': u'1e9', 'pass_fail': u'True'}, 'config_name':u'Batch4', 'active_testplan_name':u'Production', 'test_plan':u'True'}
     >>> s = requests.session()
     >>> x = agilentu2000(u2000dict, s)
     >>> transmitraw()
