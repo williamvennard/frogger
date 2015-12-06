@@ -1,6 +1,14 @@
+"""Post status to monitor URL
+>>> import ivi
+>>> import new_u2000_client
+>>> new_u2000_client.post_status("Testing")
+s.reason= OK
+s.status_code= 200
+>>>
+"""
+
 import json
 import requests
-import grequests
 import time   # time is a module here
 import math
 import datetime
@@ -169,5 +177,19 @@ def u2000_acq(config, nested_config, s):
     #post_status('Idle')
 
 #post_status('Idle')
-check_config_url()
+
+
+# To test, use "export TEST_U2000_CLIENT=1"
+# To stop testing, "unset TEST_U2000_CLIENT"
+
+if __name__ == "__main__":
+    import os
+    if not 'TEST_U2000_CLIENT' in os.environ:
+        check_config_url()
+    else:
+        import doctest
+        print "running doctest"
+        doctest.testmod()
+        print "doctest complete"
+        #print "TestResults =", doctest.TestResults  # later
 
