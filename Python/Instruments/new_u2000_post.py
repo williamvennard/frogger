@@ -21,6 +21,17 @@ from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 class agilentu2000:
     """Send script config to server.
+    >>> s = requests.session()
+    >>> x = agilentu2000(u2000dict, s)
+    >>> transmitraw()
+        r.reason= OK
+        r.status_code= 200
+    >>> testcomplete()
+        c.reason= OK
+        c.status_code= 200
+    >>> transmitblob()
+        b.reason= OK
+        b.status_code= 200
     """
     global COMPANYNAME
     global HARDWARENAME
@@ -73,9 +84,6 @@ class agilentu2000:
 
     def transmitraw(self):
         """transmitraw function sends a json object that can be used for UI presentation
-        >>> transmitraw()
-        r.reason= OK
-        r.status_code= 200
         """
         parent = 'raw'
         test_results = self.u2000_test_results['data(dBm)']
@@ -88,9 +96,6 @@ class agilentu2000:
 
     def testcomplete(self):
         """transmitcomplete function sends a json object that is used to update DB on test status.
-        >>> testcomplete()
-        c.reason= OK
-        c.status_code= 200
         """
         stop_tse = self.dt2ms(datetime.datetime.now())
         active_testplan_name = self.u2000_test_results['active_testplan_name']
@@ -103,9 +108,6 @@ class agilentu2000:
 
     def transmitblob(self):
         """transmitblob function sends a json object that puts the test results in the blobstore
-        >>> transmitblob()
-        b.reason= OK
-        b.status_code= 200
         """
         active_testplan_name = self.u2000_test_results['active_testplan_name']
         config_name = self.u2000_test_results['config_name']
