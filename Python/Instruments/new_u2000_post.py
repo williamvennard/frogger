@@ -18,7 +18,7 @@ from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 class agilentu2000:
     """Send script config to server.
-    >>> u2000dict = {'Start_TSE':1330181132570, 'data(dBm)':-66.2397506, 'i_settings':{'pass_fail_type': u'Range', 'max_value': u'-40.0', 'min_value': u'-70.0', 'offset': u'0.0', 'correction_frequency': u'1e9', 'pass_fail': u'True'}, 'config_name':u'Batchtdoc', 'active_testplan_name':u'Doctest', 'test_plan':u'True'}
+    >>> u2000dict = {'Start_TSE':1330181132570, 'data(dBm)':-66.2397506, 'i_settings':{'pass_fail_type': u'Range', 'max_value': u'-40.0', 'min_value': u'-70.0', 'offset': u'0.0', 'correction_frequency': u'1e9', 'pass_fail': u'True'}, 'config_name':u'Batchtdoc', 'active_testplan_name':u'Doctest', 'test_plan':u'False'}
     >>> s = requests.session()
     >>> x = agilentu2000(u2000dict, s)
     >>> x.transmitraw()
