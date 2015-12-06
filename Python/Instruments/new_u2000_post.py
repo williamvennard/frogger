@@ -22,14 +22,14 @@ class agilentu2000:
     >>> s = requests.session()
     >>> x = agilentu2000(u2000dict, s)
     >>> x.transmitraw()
-        r.reason= OK
-        r.status_code= 200
+    r.reason= OK
+    r.status_code= 200
     >>> x.testcomplete()
-        c.reason= OK
-        c.status_code= 200
+    c.reason= OK
+    c.status_code= 200
     >>> x.transmitblob()
-        b.reason= OK
-        b.status_code= 200
+    b.reason= OK
+    b.status_code= 200
     """
     global COMPANYNAME
     global HARDWARENAME
