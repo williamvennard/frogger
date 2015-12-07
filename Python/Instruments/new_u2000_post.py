@@ -1,9 +1,6 @@
 """
-The bscopepost module supplies one class, BitScope.  For example,
+The new_u2000_post module supplies one class, agilentu2000.  
 
->>> from bscopepost import BitScope
->>> bits = BitScope(acq_dict)
->>> bits.transmit()
 """
 
 import time
@@ -21,6 +18,18 @@ from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 class agilentu2000:
     """Send script config to server.
+    >>> u2000dict = {'Start_TSE':1330181132570, 'data(dBm)':-66.2397506, 'i_settings':{'pass_fail_type': u'Range', 'max_value': u'-40.0', 'min_value': u'-70.0', 'offset': u'0.0', 'correction_frequency': u'1e9', 'pass_fail': u'True'}, 'config_name':u'Batchtdoc', 'active_testplan_name':u'Doctest', 'test_plan':u'False'}
+    >>> s = requests.session()
+    >>> x = agilentu2000(u2000dict, s)
+    >>> x.transmitraw()
+    r.reason= OK
+    r.status_code= 200
+    >>> x.testcomplete()
+    c.reason= OK
+    c.status_code= 200
+    >>> x.transmitblob()
+    b.reason= OK
+    b.status_code= 200
     """
     global COMPANYNAME
     global HARDWARENAME
@@ -72,6 +81,8 @@ class agilentu2000:
         #print "dir(c)=",dir(c)
 
     def transmitraw(self):
+        """transmitraw function sends a json object that can be used for UI presentation
+        """
         parent = 'raw'
         test_results = self.u2000_test_results['data(dBm)']
         i_settings = self.u2000_test_results['i_settings']
@@ -82,9 +93,9 @@ class agilentu2000:
         self.post_creation_data(i_settings, test_results, start_tse, parent, config_name, active_testplan_name, test_plan)
 
     def testcomplete(self):
-        
+        """transmitcomplete function sends a json object that is used to update DB on test status.
+        """
         stop_tse = self.dt2ms(datetime.datetime.now())
-        print 'test complete', self.u2000_test_results
         active_testplan_name = self.u2000_test_results['active_testplan_name']
         config_name = self.u2000_test_results['config_name']
         test_plan = self.u2000_test_results['test_plan']
@@ -94,6 +105,8 @@ class agilentu2000:
         self.post_complete(active_testplan_name, config_name, test_plan, stop_tse, i_settings, start_tse, test_results)
 
     def transmitblob(self):
+        """transmitblob function sends a json object that puts the test results in the blobstore
+        """
         active_testplan_name = self.u2000_test_results['active_testplan_name']
         config_name = self.u2000_test_results['config_name']
         blob_u2000_test_results = self.u2000_test_results.copy()
@@ -110,35 +123,25 @@ class agilentu2000:
         blob_u2000_test_results['pass_fail_type'] = blob_u2000_test_results['i_settings']['pass_fail_type']
         del blob_u2000_test_results['i_settings']
         filename = config_name + ':' + active_testplan_name 
-        #f = open('/home/' + USERNAME + '/' + COMPANYNAME + '/Blobs/tempfile.csv', 'w')
-        f = open('/home/nedwards/BitScope/Examples/tempfile.csv', 'w')
+        f = open('/home/' + USERNAME + '/' + COMPANYNAME + '/Blobs/tempfile.csv', 'w')
         w = csv.writer(f)
         w.writerow(blob_u2000_test_results.keys())
         w.writerow(blob_u2000_test_results.values())
         f.close()
-
-        # m = MultipartEncoder(
-        #           fields={'field0':(filename, open('/home/' + USERNAME + '/' + COMPANYNAME + '/Blobs/tempfile.csv', 'rb'), 'text/plain')}
-        #           )
         m = MultipartEncoder(
-                  fields={'field0':(filename, open('/home/nedwards/BitScope/Examples/tempfile.csv', 'rb'), 'text/plain')}
-                  )
+                   fields={'field0':(filename, open('/home/' + USERNAME + '/' + COMPANYNAME + '/Blobs/tempfile.csv', 'rb'), 'text/plain')}
+                   )
         blob_url = requests.get("https://"+ GAE_INSTANCE + ".appspot.com/upload/geturl")
-        #m = MultipartEncoder(
-        #        fields={'field0': ('tek0012ALL', open('../../DataFiles/tekcsv/tek0012ALL.csv', 'rb'), 'text/plain')}
-        #        )
         b = requests.post(blob_url.text, data = m, headers={'Content-Type': m.content_type})
-        print blob_url.text
         print "b.reason=",b.reason
         print "b.status_code=",b.status_code
 
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
+
         
 
-
-       
             
 
         
