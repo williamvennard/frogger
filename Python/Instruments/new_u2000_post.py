@@ -120,12 +120,12 @@ class agilentu2000:
             blob_u2000_test_results['pass_fail'] = 'N/A'
         else:
             blob_u2000_test_results['pass_fail'] = 'FAIL'
-        blob_u2000_test_results['hardware_name'] = HARDWARENAME
         if blob_u2000_test_results['test_plan'] == 'False':
             blob_u2000_test_results['measurement_source'] = 'Instrument'
         else:
             blob_u2000_test_results['measurement_source'] = 'Testplan'    
         blob_u2000_test_results['pass_fail_type'] = blob_u2000_test_results['i_settings']['pass_fail_type']
+        blob_u2000_test_results['hardware_name'] = HARDWARENAME
         del blob_u2000_test_results['i_settings']
         filename = config_name + ':' + active_testplan_name 
         f = open('/home/' + USERNAME + '/' + COMPANYNAME + '/Blobs/tempfile.csv', 'w')
