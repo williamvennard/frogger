@@ -1,20 +1,18 @@
-{% extends "base.html" %}
-                  {% block import %}
-
-<html>
-  <head>
-    <title>Blob Analyzer </title>
-    <style type="text/css">
-      .label {text-align: right}
-      .error {color: red}
-    </style>
-
-  </head>
-
-  <body>
-    <h2>Blob Analyzer</h2>
+{% extends "one.html" %}
+{% block title %} Blob Analyzer {% endblock %}
+{% block head %}
+{{ super() }}
+<title> {{ self.title() }} </title>
+<style type="text/css">
+  .label {text-align: right}
+  .error {color: red}
+  body {color: white;}
+</style>
+{% endblock %}
+{% block content %}
+  <h2> {{ self.title() }} </h2>
   <table style="width:100%">
-  <a href ="blob_export/{{download_key}}">export </a>
+  <a href ="blob_export/{{download_key}}">export</a>
     <tr>
       <th>Start_TSE</th>
       <th>data(dBm)</th>
@@ -38,10 +36,4 @@
       </tr>
     {% endfor %}
   </table>
-
-  </body>
-
-
-
-</html>
-                  {% endblock %}  
+{% endblock %}  

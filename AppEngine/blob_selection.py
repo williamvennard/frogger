@@ -23,10 +23,12 @@ import csv
 from encode import multipart_encode, MultipartParam
 from google.appengine.api import urlfetch
 from pydblite import Base
+from profile import get_profile_cookie
 
 
 def dt2ms(t):
     return int(t.strftime('%s'))*1000 + int(t.microsecond/1000)
+
 
 def existing_blob_parser(headers, item):
     new_rows = []
@@ -45,19 +47,17 @@ def existing_blob_parser(headers, item):
     return input_dictionary
 
 
-
-
-
-
 class Handler(InstrumentDataHandler):
 
     def get(self):
+        profile = get_profile_cookie(self)
         #if not self.authcheck():
          #   return
         rows = db.GqlQuery("SELECT * FROM FileBlob")
         print rows
-        self.render('new_blob_selection.html', rows = rows)
+        self.render('new_blob_selection.html', rows = rows, profile = profile)
     def post(self):
+        profile = get_profile_cookie(self)
         author = 'nedwards'
         #author = author_creation()
         config_data = self.request.body
@@ -86,9 +86,9 @@ class Handler(InstrumentDataHandler):
                     writer.writerow(headers)                        
                 item = item.split(',')
                 item[-1] = item[-1].rstrip()
-                if item[10] == 'N/A':
-                    item[7] = 'N/A'
-                    item[8] = 'N/A'
+                # if item[10] == 'N/A':
+                #     item[7] = 'N/A'
+                #     item[8] = 'N/A'
                 print item
                 writer.writerow(item)
             input_dictionary = dict(zip(headers, item))
@@ -100,6 +100,7 @@ class Handler(InstrumentDataHandler):
         newname = author + name_time
         key = newname
         memcache.set(key, output)
-        self.render('blob_analyzer.html', result = output, download_key = newname)
+        self.render('blob_analyzer.html', result = output, 
+            download_key = newname, profile = profile)
 
 
