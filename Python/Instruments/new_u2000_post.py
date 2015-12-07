@@ -114,13 +114,13 @@ class agilentu2000:
         blob_u2000_test_results['correction_frequency(Hz)'] = blob_u2000_test_results['i_settings']['correction_frequency']
         blob_u2000_test_results['max_value'] = blob_u2000_test_results['i_settings']['max_value']
         blob_u2000_test_results['min_value'] = blob_u2000_test_results['i_settings']['min_value']
-        blob_u2000_test_results['hardware_name'] = HARDWARENAME
         if float(blob_u2000_test_results['min_value']) <= float(self.u2000_test_results['data(dBm)']) <= float(blob_u2000_test_results['max_value']):
             blob_u2000_test_results['pass_fail'] = 'PASS'
         elif blob_u2000_test_results['i_settings']['pass_fail_type'] == 'N/A':
             blob_u2000_test_results['pass_fail'] = 'N/A'
         else:
             blob_u2000_test_results['pass_fail'] = 'FAIL'
+        blob_u2000_test_results['hardware_name'] = HARDWARENAME
         if blob_u2000_test_results['test_plan'] == 'False':
             blob_u2000_test_results['measurement_source'] = 'Instrument'
         else:
