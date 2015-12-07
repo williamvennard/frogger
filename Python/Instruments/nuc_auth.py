@@ -38,9 +38,10 @@ def refresh():
 
 
 def get_new_token():
-    cred = refresh()
-    token = cred['access_token']
-    return token
+   raw_cred = refresh()
+   cred = json.loads(raw_cred)
+   token = cred['access_token']
+   return token
 
 
 def get_access_token():
