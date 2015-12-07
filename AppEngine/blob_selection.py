@@ -99,6 +99,8 @@ class Handler(InstrumentDataHandler):
         name_time = str(dt2ms(datetime.datetime.now()))
         newname = author + name_time
         key = newname
+        for entry in output:
+            del entry['test_plan']
         memcache.set(key, output)
         self.render('blob_analyzer.html', result = output, download_key = newname)
 
