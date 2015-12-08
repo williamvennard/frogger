@@ -10,6 +10,7 @@
     <script type="text/javascript" src="/static/js/addons/jquery.knob.min.js"></script>
     <style type="text/css">
         #instruments-navlink {color: rgb(124,175,46);}
+        #ShareBox {margin-left: 10px}
     </style>
 {% endblock %}
 {% block content %}
@@ -46,18 +47,7 @@
                             <li data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" class="OScope">O-Scope</li>
                               <div id="collapseTwo" class="panel-collapse collapse in">
                                 <div class="panel-body" style="padding-top: 0px; padding-left: 0px;">
-                                    <table class="savedList">
-                                    <p>Saved :</p>
-                                        <tr>
-                                            <td>
-                                                <a class="savedLink">John's</a>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <a class="savedLink">Bob's</a>
-                                            </td>
-                                        </tr>
+                                    <table class="savedList" id="savedOList">
                                     </table>
                                 </div>
                               </div>
@@ -82,18 +72,7 @@
                               <li data-toggle="collapse" data-parent="#accordion" href="#collapseFour" class="PowerMeter">Power Meter</li>
                               <div id="collapseFour" class="panel-collapse collapse in">
                                 <div class="panel-body" style="padding-top: 0px; padding-left: 0px;">
-                                    <table class="savedList">
-                                    <p>Saved :</p>
-                                        <tr>
-                                            <td>
-                                                <a class="savedLink">Sam's</a>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <a class="savedLink">Joe's</a>
-                                            </td>
-                                        </tr>
+                                    <table class="savedList" id="savedU2001As">
                                     </table>
                                 </div>
                               </div>  
@@ -323,6 +302,7 @@
                         <div class="" id="optionBox">
                           <h2 class="optionsTitle">Options</h2>
                           <button style="margin-left:15px" class="text-capitalize optionsBtn" type="button" id="powerMeterStartStop">Start</button>
+                          <button style="margin-left:15px" class="text-capitalize optionsBtn" type="button" id="PMSave" onclick="PMSaveStatus('save')">Save</button>
                           <button style="margin-left:16px; padding-left:2px;" class="text-capitalize optionsBtn" data-toggle="collapse" data-parent="#accordion" href="#collapsePMConfig">Configure</button> 
 <!--Config Form-->  
                           <div id="collapsePMConfig" class="collapse in PMConfigBox" style="padding-left: 30px;">
@@ -389,31 +369,108 @@
                         </div>
                     </div>
                   </div>
-                                   
               </div>
-    <div class= "row">
-    <h3>Comments</h3>
-    {% for comment in data.comment_thread %}
-    <hr>
-    <p>{{comment.content}}</p>
-    <p>by {{comment.author}} </p>
-    {% endfor %}
+              <!--End Power Meter-->
 
-    <textarea name="content" id="content" form="usrform" rows="5" cols="50">Enter comment here...</textarea>
-    <form action="/instruments"  method="post" id="usrform">
-      <input class="hidden" id="start_tse" name="start_tse">
-      <input class="hidden" id="company_nickname" name="company_nickname">
-      <input class="hidden" id="hardware_name" name="hardware_name"> 
-      <input class="hidden" id="config_name" name="config_name"> 
-      <input class="hidden" id="trace_name" name="trace_name"> 
+      <div class= "row">
+        <div id="CommentsBox" class="col-md-4">
+          <h3 style="color: white;">Comments</h3>
+          <div style="color: white;" id ="comments"></div>
+          <textarea name="content" id="content" form="usrform" rows="5" cols="50">Enter comment here...</textarea>
+          <form action="/instruments"  method="post" id="usrform">
+            <input class="hidden" id="start_tse" name="start_tse">
+            <input class="hidden" id="company_nickname" name="company_nickname" value='{{profile.company_nickname}}'>
+            <input class="hidden" id="hardware_name" name="hardware_name"> 
+            <input class="hidden" id="config_name" name="config_name"> 
+            <input class="hidden" id="trace_name" name="trace_name"> 
+            <input class="hidden" id="comment_author" value='{{profile.author}}'>
+            <button class="text-capitalize optionsBtn" type="button" id="SubmitComment" onclick="addComment()">Submit</button>
+          </form>
+        </div>
+      </div>
+      <div class= "row">
+        <div id="ShareBox" class="col-md-11">
+          <h3 style="color: white;">Share Results</h3>
+          <form id="shareForm" action="/report_summary/{{profile.company_nickname}}">
+            <label style="color:white;" for="email_input">Email Address Of Recipient</label>
+            <input type="text" id="email_input"name="recipient_email" value="">
+            <button class="text-capitalize optionsBtn" type="button" id="ShareResults">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>  <!-- End Top Row -->
 
+    <!-- Share results through email with a link -->
+    <script>
+    $(document).ready(function(){
+        $("#ShareResults").click(function(){
+          test_info_url = window.location.origin + '/u2000_traceresults/Acme/Tahoe' + '/' + configName ; //unhard code company and hardware asap
+            var email = document.getElementById('email_input').value;
+            var measurement = document.getElementById('measurementValue').value;
+            var units = document.getElementById('PMUnits').value;
+            var start_tse = document.getElementById('start_tse').value;
+            var d = document.getElementById('PMConfigSettings');
+            var children = d.childNodes;
+            traceName = children[3].children[1].value
+            $.post($('#shareForm').attr('action'),
+            {
+              recipient_email : email,
+              measurement : measurement,
+              units : units,
+              company_nickname : '{{company_nickname}}',
+              testplan_name : traceName,
+              start_tse : start_tse,
+            },
+            function(data,status){
+                alert("Data: " + data + "\nStatus: " + status);
+            });
+        });
+    });
+    </script>
+  
+    <script type="text/javascript">
+    function addComment() {
+      console.log('addComment START!');
 
-            <input class="text-capitalize optionsBtn" type="submit">
-    </form>
-  </div>
-              <!--End Power Meter-->  
-          </div>  
-        <hr> 
+      var d = document.getElementById('PMConfigSettings');
+      var children = d.childNodes;
+      console.log('PMConfig: children = ', children);
+      var comment_url = window.location.origin + '/instruments';
+      configName = children[1].children[1].value;
+      traceName = children[3].children[1].value;
+      var company_nickname = document.getElementById('company_nickname').value;
+      var comment_author = document.getElementById('comment_author').value;
+      // var hardware_name = document.getElementById('hardware_name');
+      var hardware_name = 'Tahoe';
+      // var start_tse = document.getElementById('start_tse')
+      var start_tse = Date.now()
+      var comment_time = start_tse
+      var content = document.getElementById('content').value;
+      var commentData = JSON.stringify({"config_name":configName,"trace_name":traceName, "hardware_name": hardware_name, 
+        "company_nickname":company_nickname, "start_tse":start_tse, "content": content});
+
+      console.log('instConfig: commentData = ', commentData);
+      if (configName && traceName){
+        commentHTML = "<div><p>" + content + " by " + comment_author + "</p></div>"
+        $("#comments").append(commentHTML);
+
+        $.ajax({
+          type: "POST",
+          url: comment_url,
+          data: commentData,
+          dataType: 'json',
+          success: function(data, textStatus, jqXHR)
+          {
+              console.log('saveStatus: Ajax post was a success!');
+
+          }
+        }); 
+      } else {
+          console.log('Missing Input: Need both Config and Trace Name')
+      }
+    };
+    </script>
+
     <script type="text/javascript" src="/static/js/ochart.js"></script>
     <script type="text/javascript" src="/static/js/powerMeter.js"></script>
     <script type="text/javascript">$('#collapseOne').collapse("hide");</script><!--stops accordion from loading open -->
@@ -442,8 +499,82 @@
           $(".PowerMeterInstBox").hide(); 
     });
 
-    </script>
-   
+    </script> 
 
     <script type="text/javascript">//$("#instBox").hide();</script>
+
+    <script type="text/javascript">
+      var savedResults
+
+      function loadU2001A(index) {
+        console.log("savedSettings: ", savedResults);
+        console.log("INDEX: ", index);
+        var savedSettings = savedResults.u2000configs[index]
+        loadConfig('sU2001A',savedSettings);
+      };
+    </script>     
+
+    <script type="text/javascript">
+    $(document).ready(function () {
+    //widget_url = 'https://gradientone-test.appspot.com/testresults/widgets/Acme.json';
+
+    widget_url = window.location.origin + '/testresults/widgets/Acme.json';
+    console.log('widget_url', widget_url);
+        $.ajax({
+            async: true,
+            url: widget_url,            
+            dataType: 'json',
+        }).done(function (results) {
+            var savedWidgets = results
+            savedConfigs = results.configs;
+            savedDuts = results.duts;
+            savedSeq = results.sequences;
+            savedMeas = results.measurements;
+            savedTests = results.tests;
+            savedU2001As = results.u2000configs;
+
+            savedResults = results;
+            //console.log('Saved Widgets: results', results);
+            console.log('Saved Widgets: savedConfigs', savedConfigs);
+            console.log('Saved Widgets: savedDuts', savedDuts);
+            console.log('Saved Widgets: savedMeas', savedMeas);
+            console.log('Saved Widgets: savedSeq', savedSeq);
+            console.log('Saved Widgets: savedTests', savedTests);
+            console.log('Saved Widgets: savedU2001As', savedU2001As);
+
+// SAVED CONFIGS                      
+            // var savedConfigsHTML = "";
+            // savedConfigsHTML += "<tr><td><p class='savedTitle'>Saved:</p></td></tr>";
+            // for (var i=0;i<savedConfigs.length;i++){
+            //     savedConfigsHTML+= "<tr><td><a onclick='createConfig(" + i + ")'>" + savedConfigs[i].config_name + "</a></td></tr>";                                                
+            // };
+            // console.log('savedConfigsHTML = ',savedConfigsHTML);
+            // document.getElementById("savedOList").innerHTML = savedConfigsHTML;
+// SAVED U2001AS
+            var savedU2001AsHTML = "";
+            savedU2001AsHTML += "<tr><td><p class='savedTitle'>Saved:</p></td></tr>";
+            for (var i=0;i<savedU2001As.length;i++){
+                savedU2001AsHTML+= "<tr><td><a id=loadU2001A-" + i + "'>" + savedU2001As[i].config_name + "</a></td></tr>";
+                // document.getElementById("loadU2001A"+i).addEventListener("click", loadU2001A(i));                                            
+            };
+            console.log('savedU2001AsHTML = ',savedU2001AsHTML);
+            sU2001ADoc = document.getElementById("savedU2001As");
+            sU2001ADoc.innerHTML = savedU2001AsHTML;
+            var elem = sU2001ADoc.querySelectorAll('a');
+            console.log("ELEMENT: ", elem);
+            for (var index=0; index<elem.length; index++){
+              (function(index){ 
+                console.log("INDEX: ", index);
+                elem[index].addEventListener("click", function(){loadU2001A(index)}, false);
+              console.log("TargetListener: ", index);
+              }(index))
+            };
+
+
+        }); //end of ajax
+        
+
+    }); //end doc ready 
+    </script>
+
 {% endblock %}

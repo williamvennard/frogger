@@ -1,0 +1,3 @@
+import doctest
+import new_u2000_client
+doctest.testmod(new_u2000_client)

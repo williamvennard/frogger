@@ -15,6 +15,7 @@ import re
 import time
 import webapp2
 import math
+import searchdemo
 import StringIO
 from google.appengine.api import memcache
 from google.appengine.api import oauth
@@ -64,11 +65,14 @@ import profile
 import scriptconfig
 import u2000data
 import temp_testcomplete
+import comments
 from gradientone import InstrumentDataHandler
 from onedb import ProfileDB
 from onedb import UserDB
 from onedb import company_key
 from onedb import FileBlob
+from onedb import BlobberDB
+from onedb import Blobber_key
 import measurements
 import test_make_interface
 import operatordata
@@ -85,6 +89,7 @@ from google.appengine.api import urlfetch
 from encode import multipart_encode, MultipartParam
 import view_testplan
 import blob_selection
+import blob_export
 
 authorized_users = ['charlie@gradientone.com',
                     'nedwards@gradientone.com',
@@ -130,11 +135,9 @@ class AggFileUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
             blob_key = upload.key()
             load = self.request.body
             load = load.split()
-            print load
             load = load[4].split('=')
             load = load[1].rstrip('"')
             active_testplan_name = load.lstrip('"')
-            print active_testplan_name
             dbfile = FileBlob(key_name = active_testplan_name, blob_key=blob_key)
             dbfile.put()
             str_form = str(blob_key)
@@ -144,63 +147,18 @@ class AggFileUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
         except:
             self.redirect('/upload_failure.html')
 
-def Blobber_key(name = 'default'):
-    return db.Key.from_path('company_nickname', name)
+# def Blobber_key(name = 'default'):
+#     return db.Key.from_path('company_nickname', name)
 
-class BlobberDB(DictModel):
-    b_key = db.StringProperty(required = True)
+# class BlobberDB(DictModel):
+#     b_key = db.StringProperty(required = True)
 
 def incoming_blob_parser(value):
     headers = value[0].split(',')
     headers[-1] = headers[-1].rstrip()
-    entry = value[1].split('{')
-    a = entry[0].rstrip(',"')
-    new = a.split(',')
-    b = entry[1].split('}')
-    c = "".join(b[0])
-    new.append(c)
-    d = b[1].rstrip()
-    d = d.lstrip('",')
-    d = d.split(',')
-    new.append(d[0])
-    new.append(d[1])
-    new.append(d[2])
-    return headers, new
-
-def existing_blob_parser(headers, item):
-    new_rows = []
-    entry = item.split('"')
-    first = entry[0].split(',')
-    del first[-1]
-    last = entry[2].split(',')
-    del last[0]
-    new_rows.append(first[0])
-    new_rows.append(first[1])
-    new_rows.append(entry[1])
-    new_rows.append(last[0])
-    new_rows.append(last[1])
-    new_rows.append((last[2].rstrip()))
-    input_dictionary = dict(zip(headers, new_rows))
-    return input_dictionary
-
-def new_blob_parser(value):
-    headers = value[0].split(',')
-    headers[-1] = headers[-1].rstrip()
-    entry = value[1].split('{')
-    a = entry[0].rstrip(',"')
-    new = a.split(',')
-    b = entry[1].split('}')
-    c = "".join(b[0])
-    new.append(c)
-    d = b[1].rstrip()
-    d = d.lstrip('",')
-    d = d.split(',')
-    new.append(d[0])
-    new.append(d[1])
-    new.append(d[2])
-    input_dictionary = dict(zip(headers, new))
-    return input_dictionary
-
+    content = value[1].split(',')
+    content[-1] = content[-1].rstrip()
+    return headers, content
 
 class FileUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
     def post(self):
@@ -237,8 +195,9 @@ class FileUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
                 headers = new_lines[0].split(',')
                 headers[-1] = headers[-1].rstrip()
                 for item in new_lines[1:]:
-                    input_dictionary = existing_blob_parser(headers, item)
-                    writer.writerow(input_dictionary.values())
+                    item = item.split(',')
+                    item[-1] = item[-1].rstrip()
+                    writer.writerow(item)
                 contents = tmp.getvalue()
                 tmp.close()
                 blobstore.delete(newkey)
@@ -261,11 +220,11 @@ class FileUploadHandler(blobstore_handlers.BlobstoreUploadHandler):
                 print 'nothing found'
                 blob_reader = blobstore.BlobReader(blob_key)
                 value = blob_reader.readlines()
-                input_dictionary = new_blob_parser(value)
+                input_to_blob = incoming_blob_parser(value)
                 tmp = StringIO.StringIO()
                 writer = csv.writer(tmp)
-                writer.writerow(input_dictionary.keys())
-                writer.writerow(input_dictionary.values())
+                writer.writerow(input_to_blob[0])
+                writer.writerow(input_to_blob[1])
                 contents = tmp.getvalue()
                 tmp.close()
                 str_form = str(blob_key)
@@ -314,77 +273,85 @@ class FileNotFound(InstrumentDataHandler):
 
 app = webapp2.WSGIApplication([
     ('/', mainpage.Handler),
-    ('/help', mainpage.Handler),
+    ('/404', FileNotFound),
     ('/adduser', profile.AdduserPage),
-    ('/listusers', profile.ListUsersPage),
-    ('/profile', profile.Handler),
     ('/admin/adduser', profile.AdminAddUser),
     ('/admin/editusers', profile.AdminEditUsers),
-    ('/configlookup', configlookup.Handler),
-    ('/instruments', instruments.Handler),
-    ('/instruments/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', instruments.Handler),
-    ('/instruments/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+.json)', instruments.Handler),
-    ('/panelcontrol/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', panelcontrol.Handler),
-    ('/configinput', configinput.Handler),
+    ('/blob_export/([a-zA-Z0-9-]+)', blob_export.Handler),
+    ('/blob_selection', blob_selection.Handler),
     ('/bscopeconfiginput', bscopeconfig.Handler),
+    ('/bscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', bscopedata.Handler),
+    ('/bscopedata/([a-zA-Z0-9-]+)//([a-zA-Z0-9.-]+)', bscopedata.Handler),
+    ('/bscopedata/dec/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', bscopedatadec.Handler),
+    ('/comments', comments.Handler),
+    ('/community', communitytests.Handler),
+    ('/communityprivate', communitytests.PrivateHandler),
+    ('/configinput', configinput.Handler),
+    ('/configlookup', configlookup.Handler),
     ('/configoutput/([a-zA-Z0-9-]+)', configoutput.Handler),
     ('/configoutput/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', configoutput.Handler),
     ('/datamgmt/bscopedata/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', datamgmt.Handler),
+    ('/exploremodestop/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', exploremodestop.Handler),
+    ('/help', mainpage.Handler),
+    ('/instlookup/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', instlookup.Handler),
+    ('/instruments', instruments.Handler),
+    ('/instruments/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', instruments.Handler),
+    ('/instruments/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+.json)', instruments.Handler),
+    ('/listusers', profile.ListUsersPage),
+    ('/oauthtest/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', status.OAuthHandler),
+    ('/operator/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', operatordata.NewHandler),
+    ('/operator/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', operatordata.Handler),
+    ('/operator/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/run', operatordata.RunTest),
+    ('/oscopedata/([a-zA-Z0-9-]+)', oscopedata.Handler),
+    ('/oscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)', oscopedata.Handler),
+    ('/panelcontrol/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', panelcontrol.Handler),
+    ('/profile', profile.Handler),
+    ('/report_summary/([a-zA-Z0-9.-]+)',  report_summary.Handler),
+    ('/report_summary/report_detail/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)',  report_detail.Handler),
+    ('/saveposttotest', communitytests.SavePostToTest),
+    ('/scriptconfig', scriptconfig.Handler),
+    ('/search', searchdemo.Handler),
+    ('/searchdemo', searchdemo.Handler),
+    ('/searchdemo/', searchdemo.Handler),
+    ('/searchdemo/upload', searchdemo.Handler),
+    ('/status/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', status.Handler),
+    ('/temp_testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', temp_testcomplete.Handler),
+    ('/test_make_interface', test_make_interface.Handler),    
+    ('/testanalyzer/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', testanalyzer.Handler),
+    ('/testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', testcomplete.Handler),
     ('/testconfiginput', exp_testconfiginput.Handler),
     ('/testconfigoutput/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', testconfigoutput.Handler),
-    ('/testplansummary/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', testplansummary.Handler),
-    ('/testplansummary/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', testplansummary.Handler),
-    ('/exploremodestop/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', exploremodestop.Handler),
-    ('/community', communitytests.Handler),
-    ('/communityprivate', communitytests.PrivateHandler),
-    ('/saveposttotest', communitytests.SavePostToTest),
-    ('/search', search.Handler),
-    ('/status/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', status.Handler),
-    ('/testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', testcomplete.Handler),
-    ('/testresults', canvaspage.Handler),
-    ('/testresults/([a-zA-Z0-9-]+)', testresultsdata.Handler),
-    ('/testresults/([a-zA-Z0-9-]+.json)', canvaspage.Handler),
-    ('/testresults/widgets/([a-zA-Z0-9-]+.json)', canvaspage.Handler),
-    ('/testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', testresultsdata.Handler),
     ('/testlibrary', testlibrary.Handler),
     ('/testlibrary/([a-zA-Z0-9-]+)', testlibrary.Handler),
     ('/testlibrary/([a-zA-Z0-9-]+.json)', testlibrary.JSON_Handler),
     ('/testlibrary/testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', testlibrarytest.Handler),
-    ('/testlibrary/testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+.json)', testlibrarytest.Handler),
+    ('/testlibrary/testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+.json)', testlibrarytest.JSON_Handler),
+    ('/testlibrary/testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+.json)', testlibrarytest.TestResultsSet),
     ('/testlibrary/traceresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', testlibrarytrace.Handler),
     ('/testlibrary/traceresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+.json)', testlibrarytrace.Handler),
-    ('/testanalyzer/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', testanalyzer.Handler),
-    ('/oscopedata/([a-zA-Z0-9-]+)', oscopedata.Handler),
-    ('/oscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)', oscopedata.Handler),
-    ('/bscopedata/([a-zA-Z0-9-]+)//([a-zA-Z0-9.-]+)', bscopedata.Handler),
-    ('/bscopedata/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', bscopedata.Handler),
-    ('/bscopedata/dec/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', bscopedatadec.Handler),
-    ('/testsave', testsave.Handler),
-    ('/upload/geturl', UploadURLGenerator),
-    ('/upload/upload_file', FileUploadHandler),
-    ('/upload_agg/upload_file', AggFileUploadHandler),
-    ('/upload/success',FileUploadSuccess),
-    ('/upload/failure',FileUploadFailure),
     ('/testmanager', testmanager.Handler),
-    ('/scriptconfig', scriptconfig.Handler),
-    ('/instlookup/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', instlookup.Handler),
-    ('/traceresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', traceresultsdata.Handler),
-    ('/u2000data/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000data.Handler),
-    ('/temp_testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', temp_testcomplete.Handler),
-    ('/test_make_interface', test_make_interface.Handler),    
-    ('/operator/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', operatordata.Handler),
-    ('/operator/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/run', operatordata.RunTest),
-    ('/404', FileNotFound),
     ('/testops', testops.Handler),
-    ('/view_testplan/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', view_testplan.Handler),
-    ('/u2000_update_results', u2000_testcomplete.UpdateResults),
+    ('/testplansummary/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', testplansummary.Handler),
+    ('/testplansummary/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', testplansummary.Handler),
+    ('/testresults', canvaspage.Handler),
+    ('/testresults/([a-zA-Z0-9-]+)', testresultsdata.Handler),
+    ('/testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', testresultsdata.Handler),
+    ('/testresults/([a-zA-Z0-9-]+.json)', canvaspage.Handler),
+    ('/testresults/widgets/([a-zA-Z0-9-]+.json)', canvaspage.Handler),
+    ('/testsave', testsave.Handler),
+    ('/traceresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', traceresultsdata.Handler),
     ('/u2000_configinput', u2000_configinput.Handler),
     ('/u2000_testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000_testcomplete.Handler),
-    ('/report_summary/([a-zA-Z0-9.-]+)',  report_summary.Handler),
-    ('/report_summary/report_detail/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)',  report_detail.Handler),
-    ('/u2000_traceresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000_traceresultsdata.Handler),
     ('/u2000_testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000_testresultsdata.Handler),
-    ('/blob_selection', blob_selection.Handler),
+    ('/u2000_traceresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000_traceresultsdata.Handler),
+    ('/u2000_update_results', u2000_testcomplete.UpdateResults),
+    ('/u2000data/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', u2000data.Handler),
+    ('/upload/failure',FileUploadFailure),
+    ('/upload/geturl', UploadURLGenerator),
+    ('/upload/success',FileUploadSuccess),
+    ('/upload/upload_file', FileUploadHandler),
+    ('/upload_agg/upload_file', AggFileUploadHandler),
+    ('/view_testplan/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', view_testplan.Handler),
 ], debug=True)
 
 

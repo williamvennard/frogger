@@ -27,6 +27,7 @@ import appengine_config
 class Handler(InstrumentDataHandler):
     def post(self):
         names = co_and_tp_names(self.request.body)
+        print names 
         results = db.GqlQuery("SELECT configs FROM TestDB WHERE company_nickname =:1 and testplan_name =:2", names[0], names[-1])
         for r in results:
             config = db.get(r.configs[0])

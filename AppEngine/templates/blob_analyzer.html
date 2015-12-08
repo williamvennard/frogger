@@ -1,0 +1,62 @@
+{% extends "one.html" %}
+{% block title %} Blob Analyzer {% endblock %}
+{% block head %}
+{{ super() }}
+<title> {{ self.title() }} </title>
+<style type="text/css">
+  .label {text-align: right}
+  .error {color: red}
+  body {color: white;}
+</style>
+{% endblock %}
+{% block content %}
+  <h2> {{ self.title() }} </h2>
+      <form name="searchform" action="/search" method="post">
+      <input type="hidden" name="download_key" value="{{download_key}}"/>
+
+      <table>
+
+      <tr>
+
+      <td>
+
+       <input type="text" id="query" name="query" size="80" value="{{base_query}}" />
+
+      </td>
+
+      <tr>
+      <td>
+       <input type="submit" class="btn primary"  name="searchsub" value="Search"/>
+       <input type="reset" class="btn primary"  name="searchreset" value="Clear"/>
+      </td><td></td><td></td></tr>
+
+      </table>
+
+    </form>
+  <table style="width:100%">
+  <a href ="blob_export/{{download_key}}">export</a>
+    <tr>
+      <th>Start Time</th>
+      <th>Correction Freq (Hz)</th>
+      <th>Config Name</th> 
+      <th>Measurement Source</th>
+      <th>Max</th>
+      <th>Min</th>
+      <th>Offset (dBm)</th>
+      <th>Pass Fail Type</th>
+      <th>Data (dBm)</th>
+      <th>Testplan Name or Trace Name</th> 
+      <th>Hardware Name</th>
+      <th>Pass/Fail</th> 
+
+    </tr>
+    {% for entry in result %}
+      <tr>
+      {% for item in entry %}
+              <td> {{ item.value }} </td>
+
+      {% endfor %}
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock %}  

@@ -101,17 +101,17 @@
                                 <table class="table">
                                     <tr>
                                         <td>
-                                            <a>Peak Power</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a>Spectral Mask</a>
+                                            <a id="measure">Measure</a>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
                                             <a id="RMS">RMS</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <a>Peak Power</a>
                                         </td>
                                     </tr>
                                     <tr>
@@ -289,7 +289,11 @@
     function createU2001A(index) {
         var savedSettings = savedResults.u2000configs[index]
         addWidget('sU2001A',savedSettings);
-    };        
+    };
+    function createMeasurement(index) {
+        var savedSettings = savedResults.measurements[index]
+        addWidget('smeasure',savedSettings);        
+    }        
 
 
     function savedTestView(index) {
@@ -348,8 +352,6 @@
                         break     
                     };
                 };
-                
-            
             }else if(widgetId[0] === 'config'){
                 console.log('search for config widget!');
                 for (var i=0;i<savedConfigs.length;i++) {
@@ -360,18 +362,18 @@
                     addWidget('config');
                     };
                 };               
-            }else if(widgetId[0] === 'measurement'){
-                console.log('search for meas widget!');
-                for (var i=0;i<savedConfigs.length;i++) {
+            }else if(widgetId[0] === 'measure'){
+                console.log('found widgetId for measure!');
+                for (var i=0;i<savedMeas.length;i++) {
                     console.log('search for config widget!')
-                    if(widgetId[1] === savedConfigs[i].config_name) {
-                        createConfig(i)
+                    if(widgetId[1] === savedMeas[i].meas_name) {
+                        createMeasurement(i)
                     }else if (widgetId[1] === '') {
                     addWidget('measurement');
                     };
                 };
             }else if(widgetId[0] === 'U2001A'){
-                console.log('search for U2001A widget!');
+                console.log('found widgetId for U2001A widget!');
                 for (var i=0;i<savedU2001As.length;i++) {
                     console.log('search for U2001A widget!')
                     if(widgetId[1] === savedU2001As[i].config_name) {
@@ -457,6 +459,14 @@ $(document).ready(function () {
             };
             console.log('savedU2001AsHTML = ',savedU2001AsHTML);
             document.getElementById("savedU2001As").innerHTML = savedU2001AsHTML;
+// SAVED MEAS                      
+            // var savedMeasHTML = "";
+            // savedMeasHTML += "<tr><td><p class='savedTitle'>Saved:</p></td></tr>";
+            // for (var i=0;i<savedMeas.length;i++){
+            //     savedMeasHTML+= "<tr><td><a onclick='createMeasurement(" + i + ")'>" + savedMeas[i].config_name + "</a></td></tr>";                                                
+            // };
+            // console.log('savedConfigsHTML = ',savedMeasHTML);
+            // document.getElementById("savedMeas").innerHTML = savedMeasHTML;
         }); //end of ajax
         
 

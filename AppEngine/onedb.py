@@ -1,14 +1,16 @@
 from google.appengine.ext import db
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
+from collections import defaultdict
+from google.appengine.api import search
 
 class DictModel(db.Model):
     def to_dict(self):
-       return dict([(p, unicode(getattr(self, p))) for p in self.properties()])
+       return defaultdict(str, [(p, unicode(getattr(self, p))) for p in self.properties()])
 
 class FlexModel(db.Expando):
     def to_dict(self):
-       return dict([(p, unicode(getattr(self, p))) for p in self.properties()])
+       return defaultdict(str, [(p, unicode(getattr(self, p))) for p in self.properties()])
 
 def company_key(name = 'default'):
     return db.Key.from_path('companies', name)
@@ -52,7 +54,7 @@ class DutDB(DictModel):
     tests = db.ListProperty(db.Key)
 
 def MeasurementDB_key(name = 'default'):
-    return db.Key.from_path('company_nickname', name)
+    return db.Key.from_path('MeasurementDB', name, parent=company_key())
 
 class MeasurementDB(DictModel):
     company_nickname = db.StringProperty(required = True)
@@ -62,6 +64,9 @@ class MeasurementDB(DictModel):
     meas_name = db.StringProperty(required = False)
     meas_start_time = db.FloatProperty(required = False)
     meas_stop_time = db.FloatProperty(required = False)
+    pass_fail = db.BooleanProperty(default = False)
+    min_pass = db.FloatProperty(required = False)
+    max_pass = db.FloatProperty(required = False)
     tests = db.ListProperty(db.Key)
 
 def OscopeDB_key(name = 'default'):
@@ -75,7 +80,7 @@ class OscopeDB(DictModel):
     start_tse = db.IntegerProperty(required = True)
 
 def TestDB_key(name = 'default'):
-    return db.Key.from_path('tests', name)
+    return db.Key.from_path('TestDB', name, parent=company_key())
 
 class TestDB(DictModel):
     testplan_name = db.StringProperty(required = False)
@@ -97,6 +102,7 @@ class TestDB(DictModel):
     start_time = db.DateTimeProperty(required = False)
     duts = db.ListProperty(db.Key)
     measurements = db.ListProperty(db.Key)
+    instrument_configs = db.ListProperty(db.Key)
     order = db.StringListProperty()
     stop_time = db.DateTimeProperty(required = False)
     test_ready = db.BooleanProperty(required = False)
@@ -159,7 +165,7 @@ class TestResultsDB(DictModel):
     test_plan = db.BooleanProperty(required = False)
     saved_state = db.BooleanProperty(required = False)
     u2000_result = db.StringProperty(required = False)
-    pass_fail = db.StringProperty(required = False)  #PASS or FAIL
+    pass_fail = db.StringProperty(default = 'No Pass Fail Criteria Specified')  #PASS or FAIL
     max_pass = db.FloatProperty(required = False)
     min_pass = db.FloatProperty(required = False)
 
@@ -223,16 +229,8 @@ class CommunityPostDB(DictModel):
 class CommentsDB(DictModel):
     author = db.StringProperty(required = True)
     content = db.StringProperty(required = True)
-    test = db.ReferenceProperty(TestDB, collection_name = 'comments')
     timestamp = db.DateTimeProperty(auto_now_add = True)
 
-def TraceCommentsDB_key(name = 'default'):
-    return db.Key.from_path('tracecomments', name)
-
-class TraceCommentsDB(DictModel):
-    author = db.StringProperty(required = True)
-    content = db.StringProperty(required = True)
-    timestamp = db.DateTimeProperty(auto_now_add = True)
 
 class Scope(DictModel):
     acquisition_start_time = db.StringProperty(required = False)
@@ -358,4 +356,40 @@ def FileBlob_key(name = 'default'):
 class FileBlob(db.Model):
     blob_key = blobstore.BlobReferenceProperty(required=True)
     test_batch = db.StringProperty(required = False)
+
+def Blobber_key(name = 'default'):
+    return db.Key.from_path('company_nickname', name)
+
+class BlobberDB(DictModel):
+    b_key = db.StringProperty(required = True)
+
+INDEX_NAME = "testresults"
+NAMESPACE = "gradientone"
+
+def buildSearch():
+    testresults = BlobberDB.all() 
+    for blob in testresults:
+        logging.info("blob: %s", blob)
+        fields = [ search.TextField(name='ResultName', value=blob.key().name()),
+                search.NumberField(name=docs.U2000.start_tse, value=int(start_tse)),
+                search.NumberField(name=docs.U2000.correction_frequency(Hz), value=float(correction_frequency(Hz))), 
+                search.NumberField(name=docs.U2000.max_value, value=float(max_value)), 
+                search.NumberField(name=docs.U2000.min_value, value=float(min_value)), 
+                search.NumberField(name=docs.U2000.offset(dBm), value=float(offset(dBm))), 
+                search.TextField(name=docs.U2000.pass_fail_type, value=pass_fail_type),
+                search.TextField(name=docs.U2000.test_plan, value=test_plan),
+                search.TextField(name=docs.U2000.pass_fail, value=pass_fail),
+                search.TextField(name=docs.U2000.hardware_name, value=hardware_name),
+                search.TextField(name=docs.U2000.data, value=int(cha)),
+                search.TextField(name=docs.U2000.instrument_type, value='U2000'),
+                search.TextField(name=docs.U2000.config_name, value=config_name),
+                search.TextField(name=docs.U2000.testplan_name, value=testplan_name) ]        
+        d = search.Document(doc_id=blob.b_key, fields=fields)
+        try:
+            add_result = search.Index(name=INDEX_NAME, namespace=NAMESPACE).put(d)
+        except search.Error:
+            logging.exception("Search error adding document")
+
+
+
 

@@ -11,6 +11,7 @@ from onedb import DutDB
 from onedb import CapabilitiesDB
 from onedb import InstrumentsDB
 from onedb import MeasurementDB
+from onedb import MeasurementDB_key
 from onedb import agilentU2000
 import datetime
 import jinja2
@@ -96,24 +97,27 @@ class Handler(InstrumentDataHandler):
                 test.put()    
         
         for item in measurements:
-            meas = MeasurementDB.gql("Where meas_name =:1", item['meas_name']).get()
-            if meas == None:  #if there is not an instrument with the inputted name, then create it in the DB
-                m = MeasurementDB(key_name = item['meas_name'], parent = company_key(),
+            meas = MeasurementDB.get(MeasurementDB_key(item['meas_name']))
+            if meas == None:  #if there is not a measurement with the inputted name, then create it in the DB
+                meas = MeasurementDB(key_name = item['meas_name'], parent = company_key(),
                 company_nickname = company_nickname, author = author,
-                meas_type = item['meas_type'],
+                # meas_type = item['meas_type'],
+                meas_type = 'basic',
                 meas_name = item['meas_name'],             
-                meas_start_time = float(item['meas_stop_time']),
-                meas_stop_time = float(item['meas_stop_time']),
+                # meas_start_time = float(item['meas_stop_time']),
+                # meas_stop_time = float(item['meas_stop_time']),
+                pass_fail = bool(item['pass_fail']),
+                min_pass = float(item['min_value']),
+                max_pass = float(item['max_value']),
                 )
-                m.put()
-            key = db.Key.from_path('MeasurementDB', item['meas_name'], parent = company_key())
-            measurement = db.get(key)
-            if test.key() not in measurement.tests:  #add the test plan to the list property of the dut
-                measurement.tests.append(test.key())
-                measurement.put()
-            if measurement.key() not in test.measurements:  #add the  dut name to the list property ot the test plan
-                test.measurements.append(measurement.key())
-                test.put()    
+                meas.put()
+            if test.key() not in meas.tests:
+                meas.tests.append(test.key())
+                meas.put()
+            if meas.key() not in test.measurements:
+                test.measurements.append(meas.key())
+                test.put()
+                   
         for item in configs:
             config = ConfigDB.gql("Where config_name =:1", item['config_name']).get()
             if config == None:  #if there is not an instrument with the inputted name, then create it in the DB
@@ -146,12 +150,11 @@ class Handler(InstrumentDataHandler):
                 config.put()
 
                 if item['instrument_type'] == "U2001A":
-                    max_value = 0.0
-                    min_value = 0.0
+                    print 'item =', item
                     pass_fail = item['pass_fail']
-                    if pass_fail:
-                        max_value = float(item['max_value'])
-                        min_value = float(item['min_value'])
+                    max_value = float(item['max_value'])
+                    min_value = float(item['min_value'])
+                    print pass_fail, max_value, min_value
                     s = agilentU2000(key_name = (item['config_name']+item['instrument_type']), parent = company_key(),
                     config_name = item['config_name'],
                     company_nickname = company_nickname, 
@@ -165,14 +168,15 @@ class Handler(InstrumentDataHandler):
                     max_value = max_value,
                     min_value = min_value,
                     pass_fail = pass_fail,
-                    pass_fail_type = '',
+                    pass_fail_type = 'Range',
                     )
                     s.put()
-
-                print config
-                if test.key() not in config.tests:  #add the test plan to the list property of the dut
-                    config.tests.append(test.key())
-                    config.put()
+                    if s.key() not in test.instrument_configs:
+                        test.instrument_configs.append(s.key())
+                        test.put()
+            if test.key() not in config.tests:  #add the test plan to the list property of the dut
+                config.tests.append(test.key())
+                config.put()
             if config.key() not in test.configs:  #add the  dut name to the list property ot the test plan
                 test.configs.append(config.key())
                 test.put()

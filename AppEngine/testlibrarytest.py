@@ -32,16 +32,43 @@ import decimate
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
 from string import maketrans
+from profile import get_profile_cookie
 
 class Handler(InstrumentDataHandler):
-    def get(self, company_nickname="", testplan_name="", start_tse=""):
-        if start_tse:
-            start_tse_check = start_tse.split('.')
-            start_tse = int(start_tse_check[0])
-        if company_nickname and testplan_name and start_tse and start_tse_check[-1] == 'json':
-            rows = db.GqlQuery("SELECT * FROM TestResultsDB WHERE testplan_name =:1 and start_tse =:2 and company_nickname =:3", testplan_name, start_tse, company_nickname)
-            rows = list(rows)            
-            test_results = query_to_dict(rows)
-            render_json(self, test_results)
-        elif company_nickname and testplan_name and start_tse:
-            self.render('testLibResults.html')
+    def get(self, company_nickname, testplan_name, start_tse):
+        profile = get_profile_cookie(self)
+        if company_nickname and testplan_name and start_tse:
+            self.render('testLibResults.html', profile=profile, 
+                testplan_name = testplan_name)
+        else:
+            logging.warn("Bad input for test results")
+            self.redirect('/')
+
+
+class TestResultsSet(InstrumentDataHandler):
+    def get(self, company_nickname, testplan_name):
+        testplan_name = testplan_name.split('.')[0]
+        if company_nickname and testplan_name:
+            rows = db.GqlQuery("""SELECT * FROM TestResultsDB 
+                                  WHERE testplan_name =:1 
+                                  AND company_nickname =:2""",
+                                  testplan_name, 
+                                  company_nickname)
+            rows = list(rows)
+            test_results_set = query_to_dict(rows)
+            render_json(self, test_results_set)
+
+
+class JSON_Handler(InstrumentDataHandler):
+    def get(self, company_nickname, testplan_name, signature):
+        start_tse_check = signature.split('.')
+        start_tse = int(start_tse_check[0])
+        rows = db.GqlQuery("""SELECT * FROM TestResultsDB 
+                              WHERE testplan_name =:1
+                              AND start_tse =:2 
+                              AND company_nickname =:3""",
+                              testplan_name, 
+                              start_tse, 
+                              company_nickname)
+        test_results = query_to_dict(list(rows))
+        render_json(self, test_results)

@@ -57,8 +57,9 @@ def get_profile_cookie(self):
     login_check(self)
     comp_cookie = self.request.cookies.get("company_nickname")
     permissions = self.request.cookies.get("permissions")
-    if comp_cookie:
-        profile = {}
+    name = self.request.cookies.get("name")
+    profile = collections.defaultdict(str)
+    if comp_cookie and name:
         raw_groups = self.request.cookies.get("groups")
         if raw_groups:
             groups = raw_groups.split("|")
@@ -67,30 +68,30 @@ def get_profile_cookie(self):
         profile['groups'] = groups
         profile['company_nickname'] = comp_cookie
         profile['permissions'] = permissions
-        return profile
+        profile['name'] = name 
     else:
-        profile = get_profile()
-        if hasattr(profile, 'to_dict'):
-            set_profile_cookie(self, profile)
-            profile = profile.to_dict()
-            return profile
-        else:
-            # no profile for this user!!!
-            return {}
+        fresh_profile = get_profile()
+        if fresh_profile:
+            profile = fresh_profile
+            if  hasattr(profile, 'to_dict'):
+                set_profile_cookie(self, profile)
+                profile = profile.to_dict()
+    return profile
 
-def set_groups_cookie(self, profile):        
+def set_groups_cookie(self, profile):
     groups = profile.groups
-    if groups:        
+    if groups:
         groups_string = "|".join(profile.groups)
     else:
-        groups_string = None            
+        groups_string = None
     self.response.set_cookie('groups', groups_string)
 
 def set_profile_cookie(self, profile):
     if hasattr(profile, 'company_nickname'):
-        self.response.set_cookie('company_nickname', 
+        self.response.set_cookie('company_nickname',
             profile.company_nickname)
         self.response.set_cookie('permissions', profile.permissions)
+        self.response.set_cookie('name', profile.name)
         set_groups_cookie(self, profile)
         return True
     else:
@@ -112,23 +113,42 @@ class Handler(InstrumentDataHandler):
                 set_profile_cookie(self, profile)
                 raw_groups = self.request.cookies.get("groups")
                 comp_cookie = self.request.cookies.get("company_nickname")
-                self.render('profile.html', profile=profile, groups=raw_groups, 
+                self.render('profile.html', profile=profile, groups=raw_groups,
                     comp_cookie=comp_cookie)
             else:
-                self.render('profile.html', profile="", groups="", 
+                self.render('profile.html', profile="", groups="",
                     error="No profile for this account. Contact your \
                     administrator for help")
         else:
             self.redirect(users.create_login_url(self.request.uri))
 
 
+def create_profile(self):
+        email = self.request.get('email')
+        name = self.request.get('name')
+        companyname = self.request.get('companyname')
+        company_nickname = companyname.strip()
+        company_nickname = company_nickname.replace(" ", "_")
+        permissions = self.request.get('permissions')
+        if permissions == 'admin':
+            admin = True
+        else:
+            admin = False
+        profile = ProfileDB(email = email,
+                      company_nickname = company_nickname,
+                      name = name,
+                      permissions = permissions,
+                      admin = admin,
+                      )
+        profile.put()
+
 
 class AdduserPage(InstrumentDataHandler):
     def get(self):
         profile = get_profile()
         if profile:
-            if profile.permissions == 'admin':
-                self.render('adduser.html', 
+            if (profile.admin) or (profile.permissions == 'admin'):
+                self.render('adduser.html',
                     company_nickname=profile.company_nickname)
             else:
                 self.redirect('/profile')
@@ -136,51 +156,23 @@ class AdduserPage(InstrumentDataHandler):
             self.redirect('/')
 
     def post(self):
-        email = self.request.get('email')
-        name = self.request.get('name')
-        company_nickname = self.request.get('company_nickname')
-        company_nickname = company_nickname.strip()
-        company_nickname = company_nickname.replace(" ", "_")
-        permissions = self.request.get('permissions')
-        profile = ProfileDB(email = email, 
-                      company_nickname = company_nickname, 
-                      name = name,
-                      permissions = permissions,
-                      )
-        if permissions == 'admin':
-            profile.admin = True
-        else:
-            profile.admin = False
-        profile.put()
+        create_profile(self)
         self.redirect('/listusers')
+
 
 class AdminAddUser(InstrumentDataHandler):
     def get(self):
         self.render('admin_adduser.html')
     def post(self):
-        email = self.request.get('email')
-        companyname = self.request.get('companyname')
-        name = self.request.get('name')
-        # TODO - handle spaces in companyname
-        profile = ProfileDB(email = email, 
-                      company_nickname = companyname, 
-                      name = name)
-        profile.put()
-        checked_box = self.request.get("admin")
-        if checked_box:
-            profile.admin = True
-        else:
-            profile.admin = False
-        if not profile.bio:
-            profile.bio = "No bio entered yet."
-        profile.put()
+        create_profile(self)
         self.redirect('/admin/editusers')
+
 
 class ListUsersPage(InstrumentDataHandler):
     def get(self):
         profile = get_profile()
         if hasattr(profile, 'admin'):
-            if profile.permissions == "admin":
+            if (profile.admin) or (profile.permissions == 'admin'):
                 company_nickname = profile.company_nickname
                 profiles = ProfileDB.all().filter("company_nickname =", company_nickname)
                 if profiles:
@@ -234,5 +226,5 @@ class AdminEditUsers(InstrumentDataHandler):
         profile.groups = filter(None, profile.groups)
         profile.put()
 
-        self.redirect('/admin/editusers')    
-        
+        self.redirect('/admin/editusers')
+

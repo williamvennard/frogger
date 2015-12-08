@@ -1,0 +1,32 @@
+{% extends "one.html" %}
+{% block title %} Blob Selection {% endblock %}
+{% block head %}
+{{ super()}}
+<title>{{ self.title() }}</title>
+<style type="text/css">
+  .label {text-align: right;}
+  .error {color: red;}
+  h2,p,body {color: white;}
+</style>
+{% endblock %}
+{% block content %}
+<div class="row">
+  <h2>{{ self.title() }}</h2>
+  <div class="col-md-10 col-md-offset-1">
+    <form method="post">
+
+        {% for r in rows %}
+
+          {% if r.test_batch %}
+
+          <input type="checkbox" name="test_batch" value = "{{r.test_batch}}">  {{ r.test_batch }}
+          <br><br> 
+          {% endif %}
+
+        {% endfor %}
+
+    <input type="submit" value="Submit">
+    </form>
+  </div>
+</div>
+{% endblock %}  

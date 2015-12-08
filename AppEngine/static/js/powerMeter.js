@@ -2,8 +2,39 @@
 var configName;
 var traceName;
 
+function loadConfig(type, savedSettings){
+      console.log('loadConfig: Type = ', type);
+      if (type == 'sU2001A') {
+        var sconfigName = savedSettings.config_name;
+        var scorrectionFreq = savedSettings.correction_frequency;
+        var soffset = savedSettings.offset;
+        var sunits = savedSettings.units;
+        var savgCountAuto = savedSettings.averaging_count_auto;
+        var srangeAuto = savedSettings.range_auto;
+        var spassFail = savedSettings.pass_fail;
+        var sminPass = savedSettings.min_value;
+        var smaxPass = savedSettings.max_value;
+        var d = document.getElementById('PMConfigSettings');
+
+        var children = d.childNodes;
+        console.log('PMConfig: children = ', children);
+
+        children[1].children[1].value = sconfigName;
+        children[3].children[1].value = 'DefaultTraceName'
+
+        children[5].children[1].value = scorrectionFreq;
+        children[7].children[1].value = soffset; 
+        children[9].children[1].value = sunits;
+        console.log("averaging_count_auto: ", savgCountAuto)
+        avgCountAuto = children[11].children[1].checked = (savgCountAuto === 'True'); 
+        rangeAuto = children[13].children[1].checked = (srangeAuto === 'True');
+      } else {
+        console.log('No type match')
+      };
+      $('#collapsePMConfig').collapse("show");
+};
 function PMConfig() {
-      $('#collapseConfig').collapse("hide");
+      $('#collapsePMConfig').collapse("hide");
 
       var d = document.getElementById('PMConfigSettings');
 
@@ -110,7 +141,7 @@ var resultsTrigger;
 function powerMeterData() {
   console.log('PowerMeter START!');
       //test_info_url = 'https://gradientone-test.appspot.com/u2000_traceresults/Acme/MSP/Tahoe';
-      test_info_url = window.location.origin + '/u2000_traceresults/Acme/Tahoe' + '/' + configName ;
+      test_info_url = window.location.origin + '/u2000_traceresults/Acme/Tahoe' + '/' + configName ; //unhard code company and hardware asap
       $.ajax({
           async: true,
           url: test_info_url,
@@ -121,12 +152,29 @@ function powerMeterData() {
         resultsTrigger = results;
 
         var measurement = testInfo.cha;
+        var start_tse = testInfo.start_tse;
+        var company_nickname = "Acme";
+        var hardware_name = "Tahoe";
+/*        var config_name = configName;
+        var trace_name = configName;*/
+
         console.log('powerMeterStart: cha', measurement);
+        console.log('start_tse: cha', start_tse);
+
+        // needed for comments on results
+        var start_tse = testInfo.start_tse
+        console.log('powerMeterStart: start_tse', start_tse);
+        document.getElementById('start_tse').value = start_tse;
 
         //def get(self,company_nickname="", hardware_name="",config_name="",start_tse=""):
         //u2000data
         
         document.getElementById("measurementValue").innerHTML = measurement;
+        document.getElementById("start_tse").value = start_tse;
+        document.getElementById("company_nickname").value = company_nickname;
+        document.getElementById("hardware_name").value = hardware_name;
+        document.getElementById("config_name").value = configName;
+        document.getElementById("trace_name").value = traceName;
        });
     PMtraceTimerID = setTimeout(powerMeterData,1000);
     //stop when there is data
@@ -135,4 +183,26 @@ function powerMeterData() {
    };
 };
 
+function PMSaveStatus(status) {
+     document.getElementById("traceSave").disabled = true; 
+      console.log('saveStatus: SAVED!!');
+      
 
+      var saveValue = status;
+      var save_url = window.location.origin + '/datamgmt/u2000' + '/Acme/Tahoe';  //unhard code company and hardware asap
+      console.log('saveStatus: save_url = ',save_url);
+
+      var formData = JSON.stringify({"save_status":saveValue,"totalNumPages":totalNumPages,"sliceSize":sliceSize});
+      console.log('saveStatus: formData =', formData);
+     $.ajax({
+        type: "POST",
+        url: save_url,
+        data: formData,
+        dataType: 'json',
+        success: function(data, textStatus, jqXHR)
+        {
+            console.log('saveStatus: Ajax post was a success!');
+        },
+      }); 
+
+};

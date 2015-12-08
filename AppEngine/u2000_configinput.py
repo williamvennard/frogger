@@ -61,7 +61,7 @@ class Handler(InstrumentDataHandler):
             # max_value = max_value,
             # min_value = min_value,
             # pass_fail = pass_fail,
-            # pass_fail_type = pass_fail_type,
+            pass_fail_type = 'N/A',
             )
         c.put() 
         s = ConfigDB(key_name = (config_name+testplan_name), parent = company_key(),
