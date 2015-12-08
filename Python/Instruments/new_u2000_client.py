@@ -23,7 +23,7 @@ import nuc_auth
 
 COMPANYNAME = 'Acme'
 HARDWARENAME = 'Tahoe'
-GAE_INSTANCE = 'gradientone-test'
+GAE_INSTANCE = 'gradientone-dev2'
 
 def dt2ms(t):
     return int(t.strftime('%s'))*1000 + int(t.microsecond/1000)
@@ -113,7 +113,7 @@ def check_config_url():
     if r.status_code == 401:
         token = nuc_auth.get_new_token()
         headers = {'Authorization': 'Bearer '+token}
-        r = s.get(config_url, headers=headrs)
+        r = s.get(config_url, headers=headers)
     if r:
         print 'checking'
         config = r.json()
