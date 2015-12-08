@@ -10,18 +10,13 @@ import numpy as np
 import numpy.fft as fft
 import scipy.signal 
 import ivi
-
-from oauth2client.client import SignedJwtAssertionCredentials
-
-client_email = 'account-1@gradientone-dev2.iam.gserviceaccount.com'
-with open("gradientone-dev2-c41898312fe9.json") as f:
-  private_key = f.read()
-
-credentials = SignedJwtAssertionCredentials(client_email, private_key,
-    'https://www.googleapis.com/auth/datastore')
+import usb
+import nuc_auth
 
 COMPANYNAME = 'Acme'
 HARDWARENAME = 'Tahoe'
+GAE_INSTANCE = 'gradientone-dev2'
+
 def dt2ms(t):
     return int(t.strftime('%s'))*1000 + int(t.microsecond/1000)
 
@@ -30,7 +25,8 @@ def post_status(status):
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
     window = {'status':status, 'time':time.time()}
     status = json.dumps(window, ensure_ascii=True)
-    url_s = "https://gradientone-test.appspot.com/status/" + COMPANYNAME + '/' + HARDWARENAME
+    # url_s = "https://gradientone-test.appspot.com/status/" + COMPANYNAME + '/' + HARDWARENAME
+    url_s = "https://" + GAE_INSTANCE + ".appspot.com/status/" + COMPANYNAME + '/' + HARDWARENAME
     s = requests.post(url_s, data=status, headers=headers)
     print "s.reason=",s.reason
     print "s.status_code=",s.status_code
@@ -40,7 +36,8 @@ def post_complete(config_name, active_testplan_name, s):
     window_complete = {'commence_test':False}
     out_complete = json.dumps(window_complete, ensure_ascii=True)
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-    url_c = "https://gradientone-test.appspot.com/temp_testcomplete/" + COMPANYNAME + '/' + config_name + '/' + active_testplan_name
+    # url_c = "https://gradientone-test.appspot.com/temp_testcomplete/" + COMPANYNAME + '/' + config_name + '/' + active_testplan_name
+    url_c = "https://" + GAE_INSTANCE + ".appspot.com/temp_testcomplete/" + COMPANYNAME + '/' + config_name + '/' + active_testplan_name
     c = s.post(url_c, data=out_complete, headers=headers)
     print "c.reason=",c.reason
     print "c.status_code=",c.status_code
@@ -92,10 +89,17 @@ def make_json(payload):
 def check_config_url():
     """polls the configuration URL for a start signal @ 1sec intervals"""
     #config_url = "http://localhost:18080/testplansummary/Acme/MSP"
-    config_url = "https://gradientone-test.appspot.com/testplansummary/" + COMPANYNAME + '/' + HARDWARENAME
+    #config_url = "https://gradientone-test.appspot.com/testplansummary/" + COMPANYNAME + '/' + HARDWARENAME
     #config_url = "https://gradientone-dev.appspot.com/testplansummary/Acme/MSP"
+    config_url = "https://" + GAE_INSTANCE + ".appspot.com/testplansummary/" + COMPANYNAME + '/' + HARDWARENAME
+    token = nuc_auth.get_access_token()
+    headers = {'Authorization': 'Bearer '+token}
     s = requests.session()
-    r = s.get(config_url)
+    r = s.get(config_url, headers=headers)
+    if r.status_code == 401:
+        token = nuc_auth.get_new_token()
+        headers = {'Authorization': 'Bearer '+token}
+        r = s.get(config_url, headers=headrs)
     if r:
         print 'checking'
         config = r.json()
@@ -122,7 +126,7 @@ def u2000_acq(config, nested_config, measurements, s):
     acq_dict = {}
     print "Starting: Attempting to open one device..."
     config_vars = check_config_vars(config, nested_config)
-    u2000 = ivi.agilent.agilentU2001A(("USB::0x0957::0x2b18::INSTR"))
+    u2000 = get_u2000_device()
     u2000.channels['channel1']
     u2000.channels['channel1'].correction_frequency = config_vars[2]
     #u2000.channels['channel1'].offset = config_vars[3]
@@ -134,6 +138,7 @@ def u2000_acq(config, nested_config, measurements, s):
     #post_status('Acquiring')
     power = u2000.measurement.fetch()
     u2000.close()
+    del u2000
     tse = dt2ms(datetime.datetime.now())
     config_dict = {}
     plot_dict = {}
@@ -159,6 +164,7 @@ def u2000_acq(config, nested_config, measurements, s):
     bits.transmitblob()
     bits.testcomplete()
     #post_status('Idle')
+    time.sleep(5)
 
 #post_status('Idle')
 check_config_url()
