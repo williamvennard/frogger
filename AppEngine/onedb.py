@@ -2,7 +2,7 @@ from google.appengine.ext import db
 from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
 from collections import defaultdict
-
+from google.appengine.api import search
 
 class DictModel(db.Model):
     def to_dict(self):
@@ -362,4 +362,34 @@ def Blobber_key(name = 'default'):
 
 class BlobberDB(DictModel):
     b_key = db.StringProperty(required = True)
+
+INDEX_NAME = "testresults"
+NAMESPACE = "gradientone"
+
+def buildSearch():
+    testresults = BlobberDB.all() 
+    for blob in testresults:
+        logging.info("blob: %s", blob)
+        fields = [ search.TextField(name='ResultName', value=blob.key().name()),
+                search.NumberField(name=docs.U2000.start_tse, value=int(start_tse)),
+                search.NumberField(name=docs.U2000.correction_frequency(Hz), value=float(correction_frequency(Hz))), 
+                search.NumberField(name=docs.U2000.max_value, value=float(max_value)), 
+                search.NumberField(name=docs.U2000.min_value, value=float(min_value)), 
+                search.NumberField(name=docs.U2000.offset(dBm), value=float(offset(dBm))), 
+                search.TextField(name=docs.U2000.pass_fail_type, value=pass_fail_type),
+                search.TextField(name=docs.U2000.test_plan, value=test_plan),
+                search.TextField(name=docs.U2000.pass_fail, value=pass_fail),
+                search.TextField(name=docs.U2000.hardware_name, value=hardware_name),
+                search.TextField(name=docs.U2000.data, value=int(cha)),
+                search.TextField(name=docs.U2000.instrument_type, value='U2000'),
+                search.TextField(name=docs.U2000.config_name, value=config_name),
+                search.TextField(name=docs.U2000.testplan_name, value=testplan_name) ]        
+        d = search.Document(doc_id=blob.b_key, fields=fields)
+        try:
+            add_result = search.Index(name=INDEX_NAME, namespace=NAMESPACE).put(d)
+        except search.Error:
+            logging.exception("Search error adding document")
+
+
+
 
