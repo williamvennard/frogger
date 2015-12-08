@@ -142,9 +142,9 @@ def u2000_acq(config, nested_config, s):
     u2000 = ivi.agilent.agilentU2001A(("USB::0x0957::0x2b18::INSTR"))
     u2000.channels['channel1']
     u2000.channels['channel1'].correction_frequency = config_vars[2]
-    #u2000.channels['channel1'].offset = config_vars[3]
+    u2000.channels['channel1'].offset = config_vars[3]
     #u2000.channels['channel1'].range_auto = config_vars[4]
-    #u2000.channels['channel1'].units = config_vars[5]
+    u2000.channels['channel1'].units = config_vars[5]
     #   initiate measurement
     u2000.measurement.initiate()
     # read out channel 1 power data
