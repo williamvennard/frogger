@@ -50,9 +50,8 @@
     </tr>
     {% for entry in result %}
       <tr>
-      {% for key, value in entry.iteritems() %}
-
-              <td> {{ value }} </td>
+      {% for item in entry %}
+              <td> {{ item.value }} </td>
 
       {% endfor %}
       </tr>

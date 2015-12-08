@@ -310,7 +310,7 @@ app = webapp2.WSGIApplication([
     ('/report_summary/report_detail/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)',  report_detail.Handler),
     ('/saveposttotest', communitytests.SavePostToTest),
     ('/scriptconfig', scriptconfig.Handler),
-    ('/search', search.Handler),
+    ('/search', searchdemo.Handler),
     ('/searchdemo', searchdemo.Handler),
     ('/searchdemo/', searchdemo.Handler),
     ('/searchdemo/upload', searchdemo.Handler),

@@ -1,3 +1,4 @@
+import requests
 import json
 import os
 from oauth2client.file import Storage
@@ -37,7 +38,8 @@ def refresh():
 
 
 def get_new_token():
-    cred = refresh()
+    raw_cred = refresh()
+    cred = json.loads(raw_cred)
     token = cred['access_token']
     return token
 
