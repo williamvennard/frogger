@@ -86,10 +86,10 @@ class Handler(InstrumentDataHandler):
                     writer.writerow(headers)                        
                 item = item.split(',')
                 item[-1] = item[-1].rstrip()
-                # if item[10] == 'N/A':
-                #     item[7] = 'N/A'
-                #     item[8] = 'N/A'
                 print item
+                if item[11] == 'N/A':
+                    item[8] = 'N/A'
+                    item[7] = 'N/A'
                 writer.writerow(item)
             input_dictionary = dict(zip(headers, item))
             counter += 1
@@ -99,6 +99,8 @@ class Handler(InstrumentDataHandler):
         name_time = str(dt2ms(datetime.datetime.now()))
         newname = author + name_time
         key = newname
+        for entry in output:
+            del entry['test_plan']
         memcache.set(key, output)
         self.render('blob_analyzer.html', result = output, 
             download_key = newname, profile = profile)

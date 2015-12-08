@@ -1,6 +1,7 @@
 import requests
 import json
 import os
+import requests
 from oauth2client.file import Storage
 from oauth2client.client import AccessTokenCredentials
 import cPickle as pickle
@@ -53,7 +54,7 @@ def get_access_token():
 
 def check_token(token):
     """Checks token. Returns true if valid. Attemps one refresh if token expired"""
-    config_url = "https://gradientone-dev2.appspot.com/testplansummary/" + COMPANYNAME + '/' + HARDWARENAME
+    config_url = "https://gradientone-test.appspot.com/testplansummary/" + COMPANYNAME + '/' + HARDWARENAME
     r = s.get(config_url, headers=headers)
     if r.status_code == 200:
       return True
@@ -66,7 +67,7 @@ def check_token(token):
 
 def check_new_token(cred):
     """Checks new token. No refresh"""
-    config_url = "https://gradientone-dev2.appspot.com/testplansummary/" + COMPANYNAME + '/' + HARDWARENAME
+    config_url = "https://gradientone-test.appspot.com/testplansummary/" + COMPANYNAME + '/' + HARDWARENAME
     r = s.get(config_url, headers=headers)
     if r.status_code == 200:
       return True
@@ -76,7 +77,7 @@ def check_new_token(cred):
 
 def raw_auth_check():
     """Makes a get request to testplansummary to test functions and tokens"""
-    config_url = "https://gradientone-dev2.appspot.com/testplansummary/" + COMPANYNAME + '/' + HARDWARENAME
+    config_url = "https://gradientone-test.appspot.com/testplansummary/" + COMPANYNAME + '/' + HARDWARENAME
     raw_cred = pickle.load(open('saved_cred.p', 'rb'))
     cred = json.loads(raw_cred)
     access_token = cred['access_token']
