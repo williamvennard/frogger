@@ -25,9 +25,11 @@ class agilentu2000:
     global COMPANYNAME
     global HARDWARENAME
     global GAE_INSTANCE
+    global USERNAME
     COMPANYNAME = 'Acme'
     HARDWARENAME = 'Tahoe'
     GAE_INSTANCE = 'gradientone-dev2'
+    USERNAME = 'tslater'
 
     def dt2ms(self, t):
         return int(t.strftime('%s'))*1000 + int(t.microsecond/1000)
@@ -40,9 +42,7 @@ class agilentu2000:
         s = self.s
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
         if test_plan == True:
-            # raw_data_url = "https://gradientone-test.appspot.com/u2000data/" + COMPANYNAME + '/' + HARDWARENAME +'/' + config_name + "/%s" % start_tse
             raw_data_url = "https://" + GAE_INSTANCE + ".appspot.com/u2000data/" + COMPANYNAME + '/' + HARDWARENAME +'/' + config_name + "/%s" % start_tse
-            # url_t = "https://gradientone-test.appspot.com/u2000_testresults/" + COMPANYNAME + '/' + active_testplan_name + '/' + config_name
             url_t = "https://" + GAE_INSTANCE + ".appspot.com/u2000_testresults/" + COMPANYNAME + '/' + active_testplan_name + '/' + config_name
             window_u2000 = {'i_settings':i_settings, 'cha':stuffing, 'raw_data_url':raw_data_url, 'start_tse':start_tse, 'test_plan':test_plan, 'config_name':config_name, 'testplan_name':active_testplan_name, 'hardware_name':HARDWARENAME}
             out_u2000 = json.dumps(window_u2000, ensure_ascii=True)
@@ -51,9 +51,7 @@ class agilentu2000:
             print "r.reason=",r.reason
             print "r.status_code=",r.status_code    
         else:
-            # raw_data_url = "https://gradientone-test.appspot.com/u2000data/" + COMPANYNAME + '/' + HARDWARENAME +'/' + config_name + "/%s" % start_tse
             raw_data_url = "https://" + GAE_INSTANCE + ".appspot.com/u2000data/" + COMPANYNAME + '/' + HARDWARENAME +'/' + config_name + "/%s" % start_tse
-            # url_t = "https://gradientone-test.appspot.com/u2000_traceresults/" + COMPANYNAME + '/' + HARDWARENAME + '/' + config_name
             url_t = "https://" + GAE_INSTANCE + ".appspot.com/u2000_traceresults/" + COMPANYNAME + '/' + HARDWARENAME + '/' + config_name
             window_u2000 = {'i_settings':i_settings, 'cha':stuffing, 'raw_data_url':raw_data_url, 'start_tse':start_tse, 'test_plan':test_plan, 'config_name':config_name, 'testplan_name':active_testplan_name, 'hardware_name':HARDWARENAME}
             out_u2000 = json.dumps(window_u2000, ensure_ascii=True)
@@ -67,9 +65,9 @@ class agilentu2000:
         window_complete = {'active_testplan_name':active_testplan_name, 'cha':test_results, 'config_name':config_name,'test_plan':test_plan, 'stop_tse':stop_tse, 'i_settings':i_settings, 'start_tse':start_tse, 'hardware_name':HARDWARENAME}
         out_complete = json.dumps(window_complete, ensure_ascii=True)
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-        # url_c = "https://gradientone-test.appspot.com/u2000_testcomplete/" + COMPANYNAME + '/' + active_testplan_name + '/' +config_name + "/%s" % str(stop_tse)
         url_c = "https://" + GAE_INSTANCE +".appspot.com/u2000_testcomplete/" + COMPANYNAME + '/' + active_testplan_name + '/' +config_name + "/%s" % str(stop_tse)
         c = s.post(url_c, data=out_complete, headers=headers)
+        print "testplan_name: ", active_testplan_name
         print "c.reason=",c.reason
         print "c.status_code=",c.status_code
         #print "dir(c)=",dir(c)
@@ -99,15 +97,15 @@ class agilentu2000:
         active_testplan_name = self.u2000_test_results['active_testplan_name']
         config_name = self.u2000_test_results['config_name']
         filename = config_name + ':' + active_testplan_name 
-        f = open('/home/nedwards/BitScope/Examples/tempfile.csv', 'w')
+        f = open('/home/' + USERNAME + '/' + COMPANYNAME + '/Blobs/tempfile.csv', 'w')
         w = csv.writer(f)
         w.writerow(self.u2000_test_results.keys())
         w.writerow(self.u2000_test_results.values())
         f.close()
         m = MultipartEncoder(
-                  fields={'field0':(filename, open('/home/nedwards/BitScope/Examples/tempfile.csv', 'rb'), 'text/plain')}
+                  fields={'field0':(filename, open('/home/' + USERNAME + '/' + COMPANYNAME + '/Blobs/tempfile.csv', 'rb'), 'text/plain')}
                   )
-        blob_url = requests.get("https://gradientone-test.appspot.com/upload/geturl")
+        blob_url = requests.get("https://"+ GAE_INSTANCE + ".appspot.com/upload/geturl")
         #m = MultipartEncoder(
         #        fields={'field0': ('tek0012ALL', open('../../DataFiles/tekcsv/tek0012ALL.csv', 'rb'), 'text/plain')}
         #        )
