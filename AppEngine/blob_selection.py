@@ -24,6 +24,7 @@ from encode import multipart_encode, MultipartParam
 from google.appengine.api import urlfetch
 from pydblite import Base
 from profile import get_profile_cookie
+import collections
 
 
 def dt2ms(t):
@@ -99,10 +100,26 @@ class Handler(InstrumentDataHandler):
         name_time = str(dt2ms(datetime.datetime.now()))
         newname = author + name_time
         key = newname
+        final_output = []
         for entry in output:
+            print entry
+            temp_dict = collections.OrderedDict()
             del entry['test_plan']
-        memcache.set(key, output)
-        self.render('blob_analyzer.html', result = output, 
+            temp_dict['start_time'] = entry['Start_TSE']
+            temp_dict['correction_frequency(Hz)'] = entry['correction_frequency(Hz)']
+            temp_dict['config_name'] = entry['config_name']
+            temp_dict['measurement_source'] = entry['measurement_source']
+            temp_dict['max_value'] = entry['max_value']
+            temp_dict['min_value'] = entry['min_value']
+            temp_dict['offset(dBm)'] = entry['offset(dBm)']
+            temp_dict['pass_fail_type'] = entry['pass_fail_type']
+            temp_dict['data(dBm)'] = entry['data(dBm)']
+            temp_dict['active_testplan_name'] = entry['active_testplan_name']
+            temp_dict['hardware_name'] = entry['hardware_name']
+            temp_dict['pass_fail'] = entry['pass_fail']
+            final_output.append(temp_dict)
+        memcache.set(key, final_output)
+        self.render('blob_analyzer.html', result = final_output, 
             download_key = newname, profile = profile)
 
 
