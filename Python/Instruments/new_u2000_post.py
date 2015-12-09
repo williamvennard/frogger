@@ -152,31 +152,29 @@ class agilentu2000:
         """
         active_testplan_name = self.u2000_test_results['active_testplan_name']
         config_name = self.u2000_test_results['config_name']
-        blob_u2000_test_results = self.u2000_test_results.copy()
-        blob_u2000_test_results['offset(dBm)'] = 
-            (blob_u2000_test_results['i_settings']['offset'])
-        blob_u2000_test_results['correction_frequency(Hz)'] = 
-            (blob_u2000_test_results['i_settings']['correction_frequency'])
-        blob_u2000_test_results['max_value'] = blob_u2000_test_results['i_settings']['max_value']
-        blob_u2000_test_results['min_value'] = blob_u2000_test_results['i_settings']['min_value']
-        if float(blob_u2000_test_results['min_value']) <= float(self.u2000_test_results['data(dBm)']) <= float(blob_u2000_test_results['max_value']):
-            blob_u2000_test_results['pass_fail'] = 'PASS'
-        elif blob_u2000_test_results['i_settings']['pass_fail_type'] == 'N/A':
-            blob_u2000_test_results['pass_fail'] = 'N/A'
+        blob_u2k_tr = self.u2000_test_results.copy()
+        blob_u2k_tr['offset(dBm)'] = (blob_u2k_tr['i_settings']['offset'])
+        blob_u2k_tr['correction_frequency(Hz)'] = (blob_u2k_tr['i_settings']['correction_frequency'])
+        blob_u2k_tr['max_value'] = blob_u2k_tr['i_settings']['max_value']
+        blob_u2k_tr['min_value'] = blob_u2k_tr['i_settings']['min_value']
+        if float(blob_u2k_tr['min_value']) <= float(self.u2000_test_results['data(dBm)']) <= float(blob_u2k_tr['max_value']):
+            blob_u2k_tr['pass_fail'] = 'PASS'
+        elif blob_u2k_tr['i_settings']['pass_fail_type'] == 'N/A':
+            blob_u2k_tr['pass_fail'] = 'N/A'
         else:
-            blob_u2000_test_results['pass_fail'] = 'FAIL'
-        if blob_u2000_test_results['test_plan'] == 'False':
-            blob_u2000_test_results['measurement_source'] = 'Instrument'
+            blob_u2k_tr['pass_fail'] = 'FAIL'
+        if blob_u2k_tr['test_plan'] == 'False':
+            blob_u2k_tr['measurement_source'] = 'Instrument'
         else:
-            blob_u2000_test_results['measurement_source'] = 'Testplan'    
-        blob_u2000_test_results['pass_fail_type'] = blob_u2000_test_results['i_settings']['pass_fail_type']
-        blob_u2000_test_results['hardware_name'] = HARDWARENAME
-        del blob_u2000_test_results['i_settings']
+            blob_u2k_tr['measurement_source'] = 'Testplan'    
+        blob_u2k_tr['pass_fail_type'] = blob_u2k_tr['i_settings']['pass_fail_type']
+        blob_u2k_tr['hardware_name'] = HARDWARENAME
+        del blob_u2k_tr['i_settings']
         filename = config_name + ':' + active_testplan_name 
         f = open('/home/' + USERNAME + '/' + COMPANYNAME + '/Blobs/tempfile.csv', 'w')
         w = csv.writer(f)
-        w.writerow(blob_u2000_test_results.keys())
-        w.writerow(blob_u2000_test_results.values())
+        w.writerow(blob_u2k_tr.keys())
+        w.writerow(blob_u2k_tr.values())
         f.close()
         m = MultipartEncoder(
                    fields={'field0':(filename, open('/home/' + USERNAME + '/' + COMPANYNAME + '/Blobs/tempfile.csv', 'rb'), 'text/plain')}
