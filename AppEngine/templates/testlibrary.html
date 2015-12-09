@@ -95,7 +95,8 @@
               config_name = orderstringArray[1];
               configTable+="<a class='resultsLink' href='" + ops_url + testArray[i].company_nickname + "/" + testArray[i].hardware_name + "/" + config_name + "/" + testArray[i].testplan_name +  "'>Operator</a>";
             };
-            configTable+="</span><br><br>"
+            configTable+="<a class='resultsLink' href='" + window.location.origin + "/canvas?library=saved&index=" + i + "'>Canvas</a>"
+            configTable+="</span><br>"
             configTable+="</div>" 
         };
         configTable+="</div>"

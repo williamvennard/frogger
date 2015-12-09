@@ -966,7 +966,7 @@
                 var configJsonObj = {"config_name":configName,"analog_bandwidth":configBand,"analog_sample_rate":configSampleRate,"capture_buffer_size":configSampleSize,"resolution":configResolution,"capture_channels":configChNum,"instrument_type":configInstType,"hardware":configHardware};
                 configArray.push(configJsonObj);
             }else if(planItemType === 'U2001A') {
-                var U2001AName = children[index].children[0].children[1].children[0].value
+                var configName = children[index].children[0].children[1].children[0].value
                 var freqCorrection = children[index].children[0].children[1].children[1].children[1].value
                 var offset = children[index].children[0].children[1].children[2].children[1].value
                 var units = children[index].children[0].children[1].children[3].children[1].value
@@ -980,7 +980,7 @@
                     passFailMax = children[index].children[0].children[1].children[8].children[1].value
                 }
 
-                var U2001AJsonObj = {"config_name":U2001AName, "correction_frequency": freqCorrection, "offset":offset, "units":units, 
+                var U2001AJsonObj = {"config_name":configName, "correction_frequency": freqCorrection, "offset":offset, "units":units, 
                 "instrument_type": "U2001A", "hardware": "Tahoe", "averaging_count_auto": avgCountAuto, "range_auto": rangeAuto, 
                 "pass_fail":passFail, "min_value": passFailMin, "max_value": passFailMax}
                 configArray.push(U2001AJsonObj);
@@ -991,7 +991,8 @@
                 var passFailMax = children[index].children[1].children[2].children[1].value
                 var passFailMin = children[index].children[1].children[3].children[1].value  
 
-                var measureJsonObj = {"meas_name":measName,"pass_fail":passFail,"max_value": passFailMax,"min_value": passFailMin};
+                var measureJsonObj = {"meas_name":measName,"pass_fail":passFail,"max_value": passFailMax,
+                "min_value": passFailMin, "config_name": configName};
 
                 measArray.push(measureJsonObj);
             }else if(planItemType === 'measurement') {

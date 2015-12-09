@@ -34,16 +34,16 @@ function OPConfig(instrument_config) {
 
       console.log('instConfig: configSettings = ',configSettings);
 
-     $.ajax({
-        type: "POST",
-        url: config_url,
-        data: configSettings,
-        dataType: 'json',
-        success: function(data, textStatus, jqXHR)
-        {
-            console.log('saveStatus: Ajax post was a success!');
-        },
-      }); 
+     // $.ajax({
+     //    type: "POST",
+     //    url: config_url,
+     //    data: configSettings,
+     //    dataType: 'json',
+     //    success: function(data, textStatus, jqXHR)
+     //    {
+     //        console.log('saveStatus: Ajax post was a success!');
+     //    },
+     //  }); 
     };  
 
 function PMtraceStart(el){
@@ -104,7 +104,7 @@ var resultsTrigger;
 function powerMeterData() {
   console.log('PowerMeter START!');
       //test_info_url = 'https://gradientone-test.appspot.com/u2000_traceresults/Acme/MSP/Tahoe';
-      test_info_url = window.location.origin + '/u2000_traceresults/' + company + '/' + hardware '/' + configName;
+      test_info_url = window.location.origin + '/u2000_traceresults/' + company + '/' + hardware + '/' + configName;
       $.ajax({
           async: true,
           url: test_info_url,

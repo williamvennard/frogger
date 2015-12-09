@@ -67,9 +67,8 @@ class Handler(InstrumentDataHandler):
                 nested_config = query_to_dict(rows)
                 print nested_config
                 # grab measurements associated with the config
-                meas_name = configs_tps_traces[0]['meas_name']
-                rows = db.GqlQuery("SELECT * FROM MeasurementDB WHERE company_nickname =:1 and meas_name =:2",
-                                    company_nickname, meas_name)
+                rows = db.GqlQuery("SELECT * FROM MeasurementDB WHERE company_nickname =:1 and config_name =:2",
+                                    company_nickname, nested_config_name)
                 measurements = query_to_dict(rows)
                 rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE company_nickname =:1 and commence_explore =:2 and hardware_name =:3", 
                                     company_nickname, True, hardware_name)
