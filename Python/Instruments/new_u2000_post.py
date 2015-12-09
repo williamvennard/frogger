@@ -18,6 +18,16 @@ USERNAME = 'nedwards'
 # from urllib3.poolmanager import PoolManager
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
+def dt2ms(dtime):
+        """Converts date time to miliseconds
+        >>> from new_u2000_client import dt2ms
+        >>> import datetime
+        >>> dtime = datetime.datetime(2015, 12, 8, 18, 11, 44, 320012)
+        >>> dt2ms(dtime)
+        1449627104320
+        """
+        return int(dtime.strftime('%s'))*1000 + int(dtime.microsecond/1000)
+
 class AgilentU2000:
     """Send script config to server.
     >>> u2000dict = ({'Start_TSE':1330181132570, 'data(dBm)':-66.2397506,
@@ -38,16 +48,6 @@ class AgilentU2000:
     b.reason= OK
     b.status_code= 200
     """
-
-    def dt2ms(self, dtime):
-        """Converts date time to miliseconds
-        >>> from new_u2000_client import dt2ms
-        >>> import datetime
-        >>> dtime = datetime.datetime(2015, 12, 8, 18, 11, 44, 320012)
-        >>> dt2ms(dtime)
-        1449627104320
-        """
-        return int(dtime.strftime('%s'))*1000 + int(dtime.microsecond/1000)
 
     def __init__(self, u2000_test_results, ses):
         self.u2000_test_results = u2000_test_results
