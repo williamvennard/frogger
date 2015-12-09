@@ -108,9 +108,10 @@ def make_json(payload):
 def check_config_url():
     """polls the configuration URL for a start signal @ 1sec intervals"""
     #config_url = "http://localhost:18080/testplansummary/Acme/MSP"
-    #config_url = ("https://gradientone-test.appspot.com/testplansummary/" 
+    #config_url = ("https://gradientone-test.appspot.com/testplansummary/"
     #           + COMPANYNAME + '/' + HARDWARENAME)
-    #config_url = ("https://gradientone-dev.appspot.com/testplansummary/Acme/MSP")
+    #config_url = ("https://gradientone-dev.appspot.com/
+    #             testplansummary/Acme/MSP")
     config_url = ("https://" + GAE_INSTANCE + ".appspot.com/testplansummary/"
                + COMPANYNAME + '/' + HARDWARENAME)
     token = nuc_auth.get_access_token()
@@ -140,7 +141,7 @@ def check_config_url():
     threading.Timer(1, check_config_url()).start()
 
 
-def u2000_acq(config, nested_config, s):    
+def u2000_acq(config, nested_config, s):
     """sets the configuration for the u2000 API and calls the u2000 class"""
     time_start = time.time()
     acq_dict = {}
@@ -161,7 +162,7 @@ def u2000_acq(config, nested_config, s):
     tse = int(dt2ms(datetime.datetime.now()))
     config_dict = {}
     plot_dict = {}
-    inst_dict ={}
+    inst_dict = {}
     inst_dict = set_v_for_k(inst_dict, 'correction_frequency', config_vars[2])
     inst_dict = set_v_for_k(inst_dict, 'pass_fail', config_vars[7])
     inst_dict = set_v_for_k(inst_dict, 'pass_fail_type', config_vars[8])
@@ -169,10 +170,10 @@ def u2000_acq(config, nested_config, s):
     inst_dict = set_v_for_k(inst_dict, 'min_value', config_vars[10])
     inst_dict = set_v_for_k(inst_dict, 'offset', config_vars[3])
     acq_dict = collections.OrderedDict()
-    acq_dict = set_v_for_k(acq_dict, 'Start_TSE', tse) 
-    acq_dict = set_v_for_k(acq_dict, 'data(dBm)', power)  
-    acq_dict = set_v_for_k(acq_dict, 'i_settings', inst_dict)    
-    acq_dict = set_v_for_k(acq_dict, 'config_name', config_vars[1]) 
+    acq_dict = set_v_for_k(acq_dict, 'Start_TSE', tse)
+    acq_dict = set_v_for_k(acq_dict, 'data(dBm)', power)
+    acq_dict = set_v_for_k(acq_dict, 'i_settings', inst_dict)
+    acq_dict = set_v_for_k(acq_dict, 'config_name', config_vars[1])
     acq_dict = set_v_for_k(acq_dict, 'active_testplan_name', config_vars[0])
     acq_dict = set_v_for_k(acq_dict, 'test_plan', config_vars[6])
 
