@@ -40,6 +40,8 @@ class Handler(InstrumentDataHandler):
         print "TESTPLAN OBJECT: ", testplan_object
         configs = []
         testplan_name = testplan_object['testplan_name']
+        summary = testplan_object['summary']
+        print summary
         author = testplan_object['author']
         company_nickname = testplan_object['company_nickname']
         hardware_name = testplan_object['hardware_name']
@@ -73,6 +75,7 @@ class Handler(InstrumentDataHandler):
             test_ready = True,
             test_scheduled = True,
             ops_start = ops_start,
+            summary = summary,
             )
         t.put() 
         key = db.Key.from_path('TestDB', testplan_name, parent = company_key())
@@ -109,7 +112,6 @@ class Handler(InstrumentDataHandler):
                 pass_fail = bool(item['pass_fail']),
                 min_pass = float(item['min_value']),
                 max_pass = float(item['max_value']),
-                config_name = item['config_name'],
                 )
                 meas.put()
             if test.key() not in meas.tests:
@@ -120,7 +122,7 @@ class Handler(InstrumentDataHandler):
                 test.put()
                    
         for item in configs:
-            config = ConfigDB.get(ConfigDB_key(config_name+testplan_name))
+            config = ConfigDB.gql("Where config_name =:1", item['config_name']).get()
             if config == None:  #if there is not an instrument with the inputted name, then create it in the DB
                 # c = ConfigDB(key_name = (item['config_name']+testplan_name), parent = company_key(),
                 # company_nickname = company_nickname, author = author,
@@ -137,7 +139,7 @@ class Handler(InstrumentDataHandler):
                 # config_name = item['config_name'],
                 # )
                 # c.put()
-                config = ConfigDB(key_name = (item['config_name']+testplan_name), parent = company_key())
+                config = ConfigDB(key_name = (item['config_name']+testplan_name), parent = company_key(),
                 company_nickname = company_nickname, 
                 author = author,
                 instrument_type = item['instrument_type'],
