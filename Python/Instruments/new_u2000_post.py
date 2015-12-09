@@ -51,14 +51,21 @@ class agilentu2000:
 
     def post_creation_data(self, i_settings, stuffing, start_tse, 
                           parent, config_name, active_testplan_name, test_plan):
+        """ post_creation_data function sends a json object that tells
+           the browser where to get data for plotting
+        """
         s = self.s
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
         if test_plan == True:
-            raw_data_url = ("https://" + GAE_INSTANCE + ".appspot.com/u2000data/"
-                           + COMPANYNAME + '/' + HARDWARENAME +'/' + config_name
+            raw_data_url = ("https://" + GAE_INSTANCE +
+                           ".appspot.com/u2000data/"
+                           + COMPANYNAME + '/' + HARDWARENAME +'/'
+                           + config_name
                            + "/%s" % start_tse)
-            url_t = ("https://" + GAE_INSTANCE + ".appspot.com/u2000_testresults/"
-                    + COMPANYNAME + '/' + active_testplan_name + '/' + config_name)
+            url_t = ("https://" + GAE_INSTANCE
+                    + ".appspot.com/u2000_testresults/"
+                    + COMPANYNAME + '/' + active_testplan_name
+                    + '/' + config_name)
             window_u2000 = ({'i_settings':i_settings, 'cha':stuffing,
                            'raw_data_url':raw_data_url, 'start_tse':start_tse,
                            'test_plan':test_plan, 'config_name':config_name,
@@ -70,15 +77,17 @@ class agilentu2000:
             print "r.reason=", r.reason
             print "r.status_code=", r.status_code    
         else:
-            raw_data_url = ("https://" + GAE_INSTANCE + ".appspot.com/u2000data/"
+            raw_data_url = ("https://" + GAE_INSTANCE
+                           + ".appspot.com/u2000data/"
                            + COMPANYNAME + '/' + HARDWARENAME +'/'
                            + config_name + "/%s" % start_tse)
-            url_t = ("https://" + GAE_INSTANCE + ".appspot.com/u2000_traceresults/" 
+            url_t = ("https://" + GAE_INSTANCE
+                    + ".appspot.com/u2000_traceresults/"
                     + COMPANYNAME + '/' + HARDWARENAME + '/' + config_name)
             window_u2000 = ({'i_settings':i_settings, 'cha':stuffing,
                            'raw_data_url':raw_data_url, 'start_tse':start_tse,
-                           'test_plan':test_plan, 'config_name':config_name, 
-                           'testplan_name':active_testplan_name, 
+                           'test_plan':test_plan, 'config_name':config_name,
+                           'testplan_name':active_testplan_name,
                            'hardware_name':HARDWARENAME})
             out_u2000 = json.dumps(window_u2000, ensure_ascii=True)
             r = s.post(url_t, data=out_u2000, headers=headers)
@@ -89,15 +98,19 @@ class agilentu2000:
     def post_complete(self, active_testplan_name, config_name,
                      test_plan, stop_tse, i_settings,
                     start_tse, test_results):
+        """post_complete function sends a json object that can
+           tells the server the test is complete
+        """
         s = self.s
         window_complete = ({'active_testplan_name':active_testplan_name,
-                           'cha':test_results, 'config_name':config_name,'test_plan':test_plan,
-                           'stop_tse':stop_tse, 'i_settings':i_settings, 'start_tse':start_tse,
+                           'cha':test_results, 'config_name':config_name,
+                           'test_plan':test_plan, 'stop_tse':stop_tse,
+                           'i_settings':i_settings, 'start_tse':start_tse,
                            'hardware_name':HARDWARENAME})
         out_complete = json.dumps(window_complete, ensure_ascii=True)
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
         url_c = ("https://" + GAE_INSTANCE +".appspot.com/u2000_testcomplete/" 
-                + COMPANYNAME + '/' + active_testplan_name 
+                + COMPANYNAME + '/' + active_testplan_name
                 + '/' +config_name + "/%s" % str(stop_tse))
         c = s.post(url_c, data=out_complete, headers=headers)
         print "c.reason=", c.reason
@@ -105,7 +118,8 @@ class agilentu2000:
         #print "dir(c)=", dir(c)
 
     def transmitraw(self):
-        """transmitraw function sends a json object that can be used for UI presentation
+        """transmitraw function sends a json object that can
+           be used for UI presentation
         """
         parent = 'raw'
         test_results = self.u2000_test_results['data(dBm)']
@@ -114,10 +128,13 @@ class agilentu2000:
         config_name = self.u2000_test_results['config_name']
         active_testplan_name = self.u2000_test_results['active_testplan_name']
         start_tse = int(self.u2000_test_results['Start_TSE'])
-        self.post_creation_data(i_settings, test_results, start_tse, parent, config_name, active_testplan_name, test_plan)
+        self.post_creation_data(i_settings, test_results, 
+                                start_tse, parent, config_name, 
+                                active_testplan_name, test_plan)
 
     def testcomplete(self):
-        """transmitcomplete function sends a json object that is used to update DB on test status.
+        """transmitcomplete function sends a json object that is used 
+           to update DB on test status.
         """
         stop_tse = self.dt2ms(datetime.datetime.now())
         active_testplan_name = self.u2000_test_results['active_testplan_name']
@@ -126,7 +143,9 @@ class agilentu2000:
         i_settings = self.u2000_test_results['i_settings']
         start_tse = int(self.u2000_test_results['Start_TSE'])
         test_results = self.u2000_test_results['data(dBm)']
-        self.post_complete(active_testplan_name, config_name, test_plan, stop_tse, i_settings, start_tse, test_results)
+        self.post_complete(active_testplan_name, config_name,
+                           test_plan, stop_tse, i_settings,
+                           start_tse, test_results)
 
     def transmitblob(self):
         """transmitblob function sends a json object that puts the test results in the blobstore
