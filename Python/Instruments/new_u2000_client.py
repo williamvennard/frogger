@@ -64,7 +64,7 @@ def check_config_vars(config, nested_config):
     if config['test_plan'] == 'True':
         active_testplan_name = config['active_testplan_name']
         config_name = config['config_name']
-        averaging_count_auto = nested_config['averaging_count_auto']
+        #averaging_count_auto = nested_config['averaging_count_auto']
         correction_frequency = nested_config['correction_frequency']
         offset = nested_config['offset']
         range_auto = nested_config['range_auto']
@@ -80,7 +80,7 @@ def check_config_vars(config, nested_config):
         active_testplan_name = config['active_testplan_name']
         test_plan = 'False'
         config_name = config['config_name']
-        averaging_count_auto = nested_config['averaging_count_auto']
+        #averaging_count_auto = nested_config['averaging_count_auto']
         correction_frequency = nested_config['correction_frequency']
         offset = nested_config['offset']
         range_auto = nested_config['range_auto']
@@ -148,7 +148,7 @@ def u2000_acq(config, nested_config, s):
     print "Starting: Attempting to open one device..."
     config_vars = check_config_vars(config, nested_config)
     u2000 = ivi.agilent.agilentU2001A(("USB::0x0957::0x2b18::INSTR"))
-    u2000.channels['channel1']
+    #u2000.channels['channel1']
     u2000.channels['channel1'].correction_frequency = config_vars[2]
     u2000.channels['channel1'].offset = config_vars[3]
     #u2000.channels['channel1'].range_auto = config_vars[4]
