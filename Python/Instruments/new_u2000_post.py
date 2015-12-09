@@ -49,7 +49,7 @@ class agilentu2000:
         self.u2000_test_results = u2000_test_results
         self.s = s
 
-    def post_creation_data(self, i_settings, stuffing, start_tse, 
+    def post_creation_data(self, i_settings, stuffing, start_tse,
                           config_name, active_testplan_name, test_plan):
         """ post_creation_data function sends a json object that tells
            the browser where to get data for plotting
@@ -75,7 +75,7 @@ class agilentu2000:
             r = s.post(url_t, data=out_u2000, headers=headers)
             #print "dir(r)=", dir(r)
             print "r.reason=", r.reason
-            print "r.status_code=", r.status_code    
+            print "r.status_code=", r.status_code
         else:
             raw_data_url = ("https://" + GAE_INSTANCE
                            + ".appspot.com/u2000data/"
@@ -109,7 +109,7 @@ class agilentu2000:
                            'hardware_name':HARDWARENAME})
         out_complete = json.dumps(window_complete, ensure_ascii=True)
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-        url_c = ("https://" + GAE_INSTANCE +".appspot.com/u2000_testcomplete/" 
+        url_c = ("https://" + GAE_INSTANCE +".appspot.com/u2000_testcomplete/"
                 + COMPANYNAME + '/' + active_testplan_name
                 + '/' +config_name + "/%s" % str(stop_tse))
         c = s.post(url_c, data=out_complete, headers=headers)
@@ -127,12 +127,12 @@ class agilentu2000:
         config_name = self.u2000_test_results['config_name']
         active_testplan_name = self.u2000_test_results['active_testplan_name']
         start_tse = int(self.u2000_test_results['Start_TSE'])
-        self.post_creation_data(i_settings, test_results, 
-                                start_tse, config_name, 
+        self.post_creation_data(i_settings, test_results,
+                                start_tse, config_name,
                                 active_testplan_name, test_plan)
 
     def testcomplete(self):
-        """transmitcomplete function sends a json object that is used 
+        """transmitcomplete function sends a json object that is used
            to update DB on test status.
         """
         stop_tse = self.dt2ms(datetime.datetime.now())
@@ -147,7 +147,7 @@ class agilentu2000:
                            start_tse, test_results)
 
     def transmitblob(self):
-        """transmitblob function sends a json object that 
+        """transmitblob function sends a json object that
           puts the test results in the blobstore
         """
         active_testplan_name = self.u2000_test_results['active_testplan_name']
@@ -157,7 +157,7 @@ class agilentu2000:
         blob_u2k_tr['correction_frequency(Hz)'] = (blob_u2k_tr['i_settings']['correction_frequency'])
         blob_u2k_tr['max_value'] = blob_u2k_tr['i_settings']['max_value']
         blob_u2k_tr['min_value'] = blob_u2k_tr['i_settings']['min_value']
-        if float(blob_u2k_tr['min_value']) <= float(self.u2000_test_results['data(dBm)']) <= float(blob_u2k_tr['max_value']):
+        if float(blob_u2k_tr['min_value']) <= float(blob_u2k_tr'data(dBm)']) <= float(blob_u2k_tr['max_value']):
             blob_u2k_tr['pass_fail'] = 'PASS'
         elif blob_u2k_tr['i_settings']['pass_fail_type'] == 'N/A':
             blob_u2k_tr['pass_fail'] = 'N/A'
@@ -177,9 +177,12 @@ class agilentu2000:
         w.writerow(blob_u2k_tr.values())
         f.close()
         m = MultipartEncoder(
-                   fields={'field0':(filename, open('/home/' + USERNAME + '/' + COMPANYNAME + '/Blobs/tempfile.csv', 'rb'), 'text/plain')}
+                   fields={'field0':(filename, open('/home/' 
+                   + USERNAME + '/' + COMPANYNAME 
+                   + '/Blobs/tempfile.csv', 'rb'), 'text/plain')}
                    )
-        blob_url = requests.get("https://"+ GAE_INSTANCE + ".appspot.com/upload/geturl")
+        blob_url = requests.get("https://" 
+                   + GAE_INSTANCE + ".appspot.com/upload/geturl")
         b = requests.post(blob_url.text, data = m, 
                           headers={'Content-Type': m.content_type})
         print "b.reason=", b.reason
