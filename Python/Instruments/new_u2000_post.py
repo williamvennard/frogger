@@ -1,24 +1,26 @@
 """
-The new_u2000_post module supplies one class, agilentu2000.  
+The new_u2000_post module supplies one class, agilentu2000.
 
 """
 
-import time
-import datetime 
-import math
-import itertools
+
+import datetime
 import json
 import requests
-import os, sys, stat
 import csv
-import grequests
-# import urllib3 
+
+# import urllib3
 # from urllib3.poolmanager import PoolManager
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 class agilentu2000:
     """Send script config to server.
-    >>> u2000dict = {'Start_TSE':1330181132570, 'data(dBm)':-66.2397506, 'i_settings':{'pass_fail_type': u'Range', 'max_value': u'-40.0', 'min_value': u'-70.0', 'offset': u'0.0', 'correction_frequency': u'1e9', 'pass_fail': u'True'}, 'config_name':u'Batchtdoc', 'active_testplan_name':u'Doctest', 'test_plan':u'False'}
+    >>> u2000dict = ({'Start_TSE':1330181132570, 'data(dBm)':-66.2397506,
+                   'i_settings':{'pass_fail_type': u'Range', 
+                'max_value': u'-40.0', 'min_value': u'-70.0', 
+                'offset': u'0.0', 'correction_frequency': u'1e9', 
+                'pass_fail': u'True'}, 'config_name':u'Batchtdoc', 
+                'active_testplan_name':u'Doctest', 'test_plan':u'False'})
     >>> s = requests.session()
     >>> x = agilentu2000(u2000dict, s)
     >>> x.transmitraw()
@@ -51,18 +53,32 @@ class agilentu2000:
         s = self.s
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
         if test_plan == True:
-            raw_data_url = "https://" + GAE_INSTANCE + ".appspot.com/u2000data/" + COMPANYNAME + '/' + HARDWARENAME +'/' + config_name + "/%s" % start_tse
-            url_t = "https://" + GAE_INSTANCE + ".appspot.com/u2000_testresults/" + COMPANYNAME + '/' + active_testplan_name + '/' + config_name
-            window_u2000 = {'i_settings':i_settings, 'cha':stuffing, 'raw_data_url':raw_data_url, 'start_tse':start_tse, 'test_plan':test_plan, 'config_name':config_name, 'testplan_name':active_testplan_name, 'hardware_name':HARDWARENAME}
+            raw_data_url = ("https://" + GAE_INSTANCE + ".appspot.com/u2000data/"
+                           + COMPANYNAME + '/' + HARDWARENAME +'/' + config_name
+                           + "/%s" % start_tse)
+            url_t = ("https://" + GAE_INSTANCE + ".appspot.com/u2000_testresults/"
+                    + COMPANYNAME + '/' + active_testplan_name + '/' + config_name)
+            window_u2000 = ({'i_settings':i_settings, 'cha':stuffing,
+                           'raw_data_url':raw_data_url, 'start_tse':start_tse,
+                           'test_plan':test_plan, 'config_name':config_name,
+                           'testplan_name':active_testplan_name,
+                           'hardware_name':HARDWARENAME})
             out_u2000 = json.dumps(window_u2000, ensure_ascii=True)
             r = s.post(url_t, data=out_u2000, headers=headers)
             #print "dir(r)=",dir(r)
             print "r.reason=",r.reason
             print "r.status_code=",r.status_code    
         else:
-            raw_data_url = "https://" + GAE_INSTANCE + ".appspot.com/u2000data/" + COMPANYNAME + '/' + HARDWARENAME +'/' + config_name + "/%s" % start_tse
-            url_t = "https://" + GAE_INSTANCE + ".appspot.com/u2000_traceresults/" + COMPANYNAME + '/' + HARDWARENAME + '/' + config_name
-            window_u2000 = {'i_settings':i_settings, 'cha':stuffing, 'raw_data_url':raw_data_url, 'start_tse':start_tse, 'test_plan':test_plan, 'config_name':config_name, 'testplan_name':active_testplan_name, 'hardware_name':HARDWARENAME}
+            raw_data_url = ("https://" + GAE_INSTANCE + ".appspot.com/u2000data/"
+                           + COMPANYNAME + '/' + HARDWARENAME +'/'
+                           + config_name + "/%s" % start_tse)
+            url_t = ("https://" + GAE_INSTANCE + ".appspot.com/u2000_traceresults/" 
+                    + COMPANYNAME + '/' + HARDWARENAME + '/' + config_name)
+            window_u2000 = ({'i_settings':i_settings, 'cha':stuffing,
+                           'raw_data_url':raw_data_url, 'start_tse':start_tse,
+                           'test_plan':test_plan, 'config_name':config_name, 
+                           'testplan_name':active_testplan_name, 
+                           'hardware_name':HARDWARENAME}
             out_u2000 = json.dumps(window_u2000, ensure_ascii=True)
             r = s.post(url_t, data=out_u2000, headers=headers)
             #print "dir(r)=",dir(r)
@@ -144,17 +160,3 @@ class agilentu2000:
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
-
-        
-
-            
-
-        
-
-
-
-   
-
-
-
-
