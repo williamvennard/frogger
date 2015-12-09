@@ -153,8 +153,10 @@ class agilentu2000:
         active_testplan_name = self.u2000_test_results['active_testplan_name']
         config_name = self.u2000_test_results['config_name']
         blob_u2000_test_results = self.u2000_test_results.copy()
-        blob_u2000_test_results['offset(dBm)'] = blob_u2000_test_results['i_settings']['offset']
-        blob_u2000_test_results['correction_frequency(Hz)'] = blob_u2000_test_results['i_settings']['correction_frequency']
+        blob_u2000_test_results['offset(dBm)'] = 
+            (blob_u2000_test_results['i_settings']['offset'])
+        blob_u2000_test_results['correction_frequency(Hz)'] = 
+            (blob_u2000_test_results['i_settings']['correction_frequency'])
         blob_u2000_test_results['max_value'] = blob_u2000_test_results['i_settings']['max_value']
         blob_u2000_test_results['min_value'] = blob_u2000_test_results['i_settings']['min_value']
         if float(blob_u2000_test_results['min_value']) <= float(self.u2000_test_results['data(dBm)']) <= float(blob_u2000_test_results['max_value']):
