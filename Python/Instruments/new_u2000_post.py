@@ -192,7 +192,7 @@ class agilentu2000:
                    )
         blob_url = requests.get("https://"
                    + GAE_INSTANCE + ".appspot.com/upload/geturl")
-        result = requests.post(blob_url.text, data = multipartblob, 
+        result = requests.post(blob_url.text, data=multipartblob,
                           headers={'Content-Type': m.content_type})
         print "result.reason=", result.reason
         print "result.status_code=", result.status_code
