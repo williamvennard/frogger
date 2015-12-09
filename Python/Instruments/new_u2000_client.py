@@ -2,8 +2,8 @@
 >>> import ivi
 >>> import new_u2000_client
 >>> new_u2000_client.post_status("Testing")
-s.reason= OK
-s.status_code= 200
+result.reason= OK
+result.status_code= 200
 >>>
 """
 
