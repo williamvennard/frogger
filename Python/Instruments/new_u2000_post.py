@@ -157,8 +157,6 @@ class agilentu2000:
         blob_u2k_tr['correction_frequency(Hz)'] = (blob_u2k_tr['i_settings']['correction_frequency'])
         blob_u2k_tr['max_value'] = blob_u2k_tr['i_settings']['max_value']
         blob_u2k_tr['min_value'] = blob_u2k_tr['i_settings']['min_value']
-        if float(blob_u2000_u2k_tr['min_value']) <= float(self.u2000_test_results['data(dBm)']) <= float(blob_u2k_tr['max_value']):
-        #if float(blob_u2000_u2k_tr['min_value']) <= float(self.u2000_test_results['data(dBm)']) <= float(blob_u2k_tr['max_value']):
         if float(blob_u2k_tr['min_value']) <= float(blob_u2k_tr['data(dBm)']) <= float(blob_u2k_tr['max_value']):
             blob_u2k_tr['pass_fail'] = 'PASS'
         elif blob_u2k_tr['i_settings']['pass_fail_type'] == 'N/A':
