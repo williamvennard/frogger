@@ -10,13 +10,9 @@ s.status_code= 200
 import json
 import requests
 import time   # time is a module here
-import math
 import datetime
 import threading
 from new_u2000_post import agilentu2000
-import numpy as np
-import numpy.fft as fft
-import scipy.signal
 import ivi
 import collections
 import nuc_auth
@@ -26,6 +22,13 @@ HARDWARENAME = 'Tahoe'
 GAE_INSTANCE = 'gradientone-dev2'
 
 def dt2ms(t):
+    """Converts date time to miliseconds 
+    >>> from new_u2000_client import dt2ms
+    >>> import datetime
+    >>> t = datetime.datetime(2015, 12, 8, 18, 11, 44, 320012)
+    >>> dt2ms(y)
+    1449627104320
+    """
     return int(t.strftime('%s'))*1000 + int(t.microsecond/1000)
 
 def post_status(status):
@@ -178,7 +181,7 @@ def u2000_acq(config, nested_config, s):
     acq_dict = set_v_for_k(acq_dict, 'test_plan', config_vars[6])
 
     print acq_dict
-    bits = agilentu2000(acq_dict,s)
+    bits = agilentu2000(acq_dict, s)
     bits.transmitraw()
     bits.transmitblob()
     bits.testcomplete()
