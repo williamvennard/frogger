@@ -34,6 +34,25 @@ class Handler(webapp2.RequestHandler):
               logging.error("search.Index error")
 
     def get(self):
-        for index in search.get_indexes(fetch_schema=True):
+        #self.delete_all()
+        if False:
+          for index in search.get_indexes(fetch_schema=True):
             logging.info("index %s", index.name)
             logging.info("schema: %s", index.schema)
+            logging.info("index attributes: %s", dir(index))
+            logging.info("index.delete.__doc__: %s", index.delete.__doc__)
+            logging.info("index.get.__doc__: %s", index.get.__doc__)
+            logging.info("index.search.__doc__: %s", index.search.__doc__)
+        for index in search.get_indexes():
+            results = index.search("")
+            doc_ids = [ result.doc_id for result in results ]
+            logging.info("doc_ids: %s", doc_ids)
+
+    def delete_all(self):
+            for index in search.get_indexes():
+                results = index.search("")
+                doc_ids = [ result.doc_id for result in results ]
+                try:
+                    index.delete(doc_ids)
+                except search.Error, e:
+                    logging.error("Search delete index error, e = %s" % str(e))
