@@ -22,7 +22,7 @@ HARDWARENAME = 'Tahoe'
 GAE_INSTANCE = 'gradientone-dev2'
 
 def dt2ms(t):
-    """Converts date time to miliseconds 
+    """Converts date time to miliseconds
     >>> from new_u2000_client import dt2ms
     >>> import datetime
     >>> t = datetime.datetime(2015, 12, 8, 18, 11, 44, 320012)
@@ -46,6 +46,7 @@ def post_status(status):
     #print "dir(s)=", dir(s)
 
 def post_complete(config_name, active_testplan_name, s):
+    "posts information telling the server the test is complete"
     window_complete = {'commence_test':False}
     out_complete = json.dumps(window_complete, ensure_ascii=True)
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
@@ -100,9 +101,6 @@ def set_v_for_k(test_dict, k, v):
     test_dict[k.encode('ascii')] = v
     return test_dict
 
-def roundup(x):
-    return int(((x//SLICE_SIZE) * SLICE_SIZE) + SLICE_SIZE)
-
 def make_json(payload):
     "makes json based off input payload"
     acq_dict = json.dumps(payload)
@@ -146,7 +144,6 @@ def check_config_url():
 
 def u2000_acq(config, nested_config, s):
     """sets the configuration for the u2000 API and calls the u2000 class"""
-    time_start = time.time()
     acq_dict = {}
     print "Starting: Attempting to open one device..."
     config_vars = check_config_vars(config, nested_config)
@@ -163,8 +160,6 @@ def u2000_acq(config, nested_config, s):
     power = u2000.measurement.fetch()
     u2000.close()
     tse = int(dt2ms(datetime.datetime.now()))
-    config_dict = {}
-    plot_dict = {}
     inst_dict = {}
     inst_dict = set_v_for_k(inst_dict, 'correction_frequency', config_vars[2])
     inst_dict = set_v_for_k(inst_dict, 'pass_fail', config_vars[7])
@@ -179,7 +174,6 @@ def u2000_acq(config, nested_config, s):
     acq_dict = set_v_for_k(acq_dict, 'config_name', config_vars[1])
     acq_dict = set_v_for_k(acq_dict, 'active_testplan_name', config_vars[0])
     acq_dict = set_v_for_k(acq_dict, 'test_plan', config_vars[6])
-
     print acq_dict
     bits = agilentu2000(acq_dict, s)
     bits.transmitraw()
