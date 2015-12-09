@@ -76,13 +76,15 @@
 }
 
 .testName {
-    font-family: 'nexa_boldregular'
+    font-family: 'nexa_boldregular';
+    font-size: 110%;
 }
 
 .name {
-    margin-left: 30px;
+    /*margin-left: 30px;*/
     color:rgb(197,44,72);
-    font-family: 'nexa_boldregular'
+    font-family: 'nexa_boldregular';
+    font-size: 110%;
 }
 
 .instType {
@@ -90,14 +92,22 @@
     font-family: 'nexa_lightregular';    
 }
 
+.subField {
+    color:rgb(197,44,72);
+    font-family: 'nexa_lightregular';
+    float: left;
+    margin-right: 5px;
+}
+
 .resultsLink {
-    color: white;
-    font-family: 'nexa_lightregular';    
+    color: #337ab7;
+    font-family: 'nexa_boldregular';    
 }
 
 .startTime {
     color:rgb(197,44,72);
     font-family: 'nexa_lightregular';
+    margin-right: 5px;
 }
 
 .endTime {
