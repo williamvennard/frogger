@@ -109,6 +109,7 @@ class Handler(InstrumentDataHandler):
                 pass_fail = bool(item['pass_fail']),
                 min_pass = float(item['min_value']),
                 max_pass = float(item['max_value']),
+                config_name = item['config_name'],
                 )
                 meas.put()
             if test.key() not in meas.tests:
@@ -119,7 +120,7 @@ class Handler(InstrumentDataHandler):
                 test.put()
                    
         for item in configs:
-            config = ConfigDB.gql("Where config_name =:1", item['config_name']).get()
+            config = ConfigDB.get(ConfigDB_key(config_name+testplan_name))
             if config == None:  #if there is not an instrument with the inputted name, then create it in the DB
                 # c = ConfigDB(key_name = (item['config_name']+testplan_name), parent = company_key(),
                 # company_nickname = company_nickname, author = author,
@@ -136,7 +137,7 @@ class Handler(InstrumentDataHandler):
                 # config_name = item['config_name'],
                 # )
                 # c.put()
-                config = ConfigDB(key_name = (item['config_name']+testplan_name), parent = company_key(),
+                config = ConfigDB(key_name = (item['config_name']+testplan_name), parent = company_key())
                 company_nickname = company_nickname, 
                 author = author,
                 instrument_type = item['instrument_type'],

@@ -17,6 +17,8 @@ from google.appengine.api import users
 from google.appengine.ext import db
 from time import gmtime, strftime
 import appengine_config
+from profile import get_profile_cookie
+
 
 class Handler(InstrumentDataHandler):
     def get(self):
@@ -28,7 +30,8 @@ class Handler(InstrumentDataHandler):
         print b
         self.render('u2000_configinput.html')
     def post(self):
-        author = 'nedwards'
+        profile = get_profile_cookie(self)
+        author = profile['name']
         #author = author_creation()
         config_data = json.loads(self.request.body)
         company_nickname = config_data['company_nickname']
@@ -42,6 +45,7 @@ class Handler(InstrumentDataHandler):
         range_auto = config_data['range_auto']
         units = config_data['units']
         testplan_name = config_data['trace_name']
+        measurement = config_data['measurement']
         # max_value = config_data['max_value']
         # min_value = config_data['min_value']
         # pass_fail = config_data['pass_fail']
@@ -69,6 +73,7 @@ class Handler(InstrumentDataHandler):
             company_nickname = company_nickname,
             hardware_name = hardware_name, 
             instrument_type = instrument_type,
+            measurement = measurement,
             author = author,
             test_plan = False,
             active_testplan_name = testplan_name,
