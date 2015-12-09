@@ -314,7 +314,7 @@ app = webapp2.WSGIApplication([
     ('/search', searchdemo.Handler),
     ('/searchdemo', searchdemo.Handler),
     ('/searchdemo/', searchdemo.Handler),
-    ('/searchdemo/upload', searchdemo.Handler),
+    ('/searchdemo/upload', searchdemo.UploadHandler),
     ('/status/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', status.Handler),
     ('/temp_testcomplete/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', temp_testcomplete.Handler),
     ('/test_make_interface', test_make_interface.Handler),    
