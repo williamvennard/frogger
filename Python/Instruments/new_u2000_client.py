@@ -34,9 +34,9 @@ def post_status(status):
     window = {'status':status, 'time':time.time()}
     status = json.dumps(window, ensure_ascii=True)
     # url_s = ("https://gradientone-test.appspot.com/status/"
-            + COMPANYNAME + '/' + HARDWARENAME)
+    #        + COMPANYNAME + '/' + HARDWARENAME)
     url_s = ("https://" + GAE_INSTANCE + ".appspot.com/status/" 
-            + COMPANYNAME + '/' + HARDWARENAME)
+             + COMPANYNAME + '/' + HARDWARENAME)
     s = requests.post(url_s, data=status, headers=headers)
     print "s.reason=", s.reason
     print "s.status_code=", s.status_code
