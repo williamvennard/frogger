@@ -50,7 +50,7 @@ class agilentu2000:
         self.s = s
 
     def post_creation_data(self, i_settings, stuffing, start_tse, 
-                          parent, config_name, active_testplan_name, test_plan):
+                          config_name, active_testplan_name, test_plan):
         """ post_creation_data function sends a json object that tells
            the browser where to get data for plotting
         """
