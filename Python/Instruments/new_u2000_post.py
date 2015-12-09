@@ -19,14 +19,14 @@ USERNAME = 'nedwards'
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
 def dt2ms(dtime):
-        """Converts date time to miliseconds
-        >>> from new_u2000_client import dt2ms
-        >>> import datetime
-        >>> dtime = datetime.datetime(2015, 12, 8, 18, 11, 44, 320012)
-        >>> dt2ms(dtime)
-        1449627104320
-        """
-        return int(dtime.strftime('%s'))*1000 + int(dtime.microsecond/1000)
+    """Converts date time to miliseconds
+    >>> from new_u2000_client import dt2ms
+    >>> import datetime
+    >>> dtime = datetime.datetime(2015, 12, 8, 18, 11, 44, 320012)
+    >>> dt2ms(dtime)
+    1449627104320
+    """
+    return int(dtime.strftime('%s'))*1000 + int(dtime.microsecond/1000)
 
 class AgilentU2000:
     """Send script config to server.
@@ -139,7 +139,7 @@ class AgilentU2000:
         """transmitcomplete function sends a json object that is used
            to update DB on test status.
         """
-        stop_tse = self.dt2ms(datetime.datetime.now())
+        stop_tse = dt2ms(datetime.datetime.now())
         active_testplan_name = self.u2000_test_results['active_testplan_name']
         config_name = self.u2000_test_results['config_name']
         test_plan = self.u2000_test_results['test_plan']
