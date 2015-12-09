@@ -16,10 +16,10 @@ from requests_toolbelt.multipart.encoder import MultipartEncoder
 class agilentu2000:
     """Send script config to server.
     >>> u2000dict = ({'Start_TSE':1330181132570, 'data(dBm)':-66.2397506,
-                   'i_settings':{'pass_fail_type': u'Range', 
-                'max_value': u'-40.0', 'min_value': u'-70.0', 
-                'offset': u'0.0', 'correction_frequency': u'1e9', 
-                'pass_fail': u'True'}, 'config_name':u'Batchtdoc', 
+                   'i_settings':{'pass_fail_type': u'Range',
+                'max_value': u'-40.0', 'min_value': u'-70.0',
+                'offset': u'0.0', 'correction_frequency': u'1e9',
+                'pass_fail': u'True'}, 'config_name':u'Batchtdoc',
                 'active_testplan_name':u'Doctest', 'test_plan':u'False'})
     >>> s = requests.session()
     >>> x = agilentu2000(u2000dict, s)
@@ -49,7 +49,8 @@ class agilentu2000:
         self.u2000_test_results = u2000_test_results
         self.s = s
 
-    def post_creation_data(self, i_settings, stuffing, start_tse, parent, config_name, active_testplan_name, test_plan) :
+    def post_creation_data(self, i_settings, stuffing, start_tse, 
+                          parent, config_name, active_testplan_name, test_plan):
         s = self.s
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
         if test_plan == True:
@@ -65,9 +66,9 @@ class agilentu2000:
                            'hardware_name':HARDWARENAME})
             out_u2000 = json.dumps(window_u2000, ensure_ascii=True)
             r = s.post(url_t, data=out_u2000, headers=headers)
-            #print "dir(r)=",dir(r)
-            print "r.reason=",r.reason
-            print "r.status_code=",r.status_code    
+            #print "dir(r)=", dir(r)
+            print "r.reason=", r.reason
+            print "r.status_code=", r.status_code    
         else:
             raw_data_url = ("https://" + GAE_INSTANCE + ".appspot.com/u2000data/"
                            + COMPANYNAME + '/' + HARDWARENAME +'/'
@@ -81,20 +82,27 @@ class agilentu2000:
                            'hardware_name':HARDWARENAME})
             out_u2000 = json.dumps(window_u2000, ensure_ascii=True)
             r = s.post(url_t, data=out_u2000, headers=headers)
-            #print "dir(r)=",dir(r)
-            print "r.reason=",r.reason
-            print "r.status_code=",r.status_code
+            #print "dir(r)=", dir(r)
+            print "r.reason=", r.reason
+            print "r.status_code=", r.status_code
 
-    def post_complete(self, active_testplan_name, config_name, test_plan, stop_tse, i_settings, start_tse, test_results):
+    def post_complete(self, active_testplan_name, config_name,
+                     test_plan, stop_tse, i_settings,
+                    start_tse, test_results):
         s = self.s
-        window_complete = {'active_testplan_name':active_testplan_name, 'cha':test_results, 'config_name':config_name,'test_plan':test_plan, 'stop_tse':stop_tse, 'i_settings':i_settings, 'start_tse':start_tse, 'hardware_name':HARDWARENAME}
+        window_complete = ({'active_testplan_name':active_testplan_name,
+                           'cha':test_results, 'config_name':config_name,'test_plan':test_plan,
+                           'stop_tse':stop_tse, 'i_settings':i_settings, 'start_tse':start_tse,
+                           'hardware_name':HARDWARENAME})
         out_complete = json.dumps(window_complete, ensure_ascii=True)
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-        url_c = "https://" + GAE_INSTANCE +".appspot.com/u2000_testcomplete/" + COMPANYNAME + '/' + active_testplan_name + '/' +config_name + "/%s" % str(stop_tse)
+        url_c = ("https://" + GAE_INSTANCE +".appspot.com/u2000_testcomplete/" 
+                + COMPANYNAME + '/' + active_testplan_name 
+                + '/' +config_name + "/%s" % str(stop_tse))
         c = s.post(url_c, data=out_complete, headers=headers)
-        print "c.reason=",c.reason
-        print "c.status_code=",c.status_code
-        #print "dir(c)=",dir(c)
+        print "c.reason=", c.reason
+        print "c.status_code=", c.status_code
+        #print "dir(c)=", dir(c)
 
     def transmitraw(self):
         """transmitraw function sends a json object that can be used for UI presentation
@@ -154,8 +162,8 @@ class agilentu2000:
                    )
         blob_url = requests.get("https://"+ GAE_INSTANCE + ".appspot.com/upload/geturl")
         b = requests.post(blob_url.text, data = m, headers={'Content-Type': m.content_type})
-        print "b.reason=",b.reason
-        print "b.status_code=",b.status_code
+        print "b.reason=", b.reason
+        print "b.status_code=", b.status_code
 
 if __name__ == "__main__":
     import doctest
