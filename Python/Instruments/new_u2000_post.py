@@ -78,7 +78,7 @@ class agilentu2000:
                            'raw_data_url':raw_data_url, 'start_tse':start_tse,
                            'test_plan':test_plan, 'config_name':config_name, 
                            'testplan_name':active_testplan_name, 
-                           'hardware_name':HARDWARENAME}
+                           'hardware_name':HARDWARENAME})
             out_u2000 = json.dumps(window_u2000, ensure_ascii=True)
             r = s.post(url_t, data=out_u2000, headers=headers)
             #print "dir(r)=",dir(r)
