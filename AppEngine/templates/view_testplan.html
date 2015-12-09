@@ -3,7 +3,8 @@
 {% block head %}
     {{ super() }}
     <style type="text/css">
-      h1,h2,h3,p {color: white;}
+      h1,h2,h3,p,body {color: #ededed;}
+      #TestplanValues p {color: white;}
     </style>
 {% endblock %}
 {% block content %}
@@ -12,7 +13,31 @@
     <div class="col-md-12">
 		  <h1>View Test Plan</h1>
 		  <h3>Test Overview</h3>
-      <p>{{data.testplan}}</p>
+      <div class="col-md-4">
+        Testplan Name: <br>
+        Author: <br>
+        Date Created: <br>
+        Scheduled Start Time: <br>
+        Hardware Name: <br>
+        Company Name: <br>
+        Configs: <br>
+        Measurements: <br>
+      </div>
+      <div class="col-md-8" id="TestplanValues">
+        <p>
+        {{data.testplan.testplan_name}}<br>
+        {{data.testplan.author}}<br>
+        {{data.testplan.date_created}}<br>
+        {{data.testplan.scheduled_start_time}}<br>
+        {{data.testplan.hardware_name}}<br>
+        {{data.testplan.company_nickname}}<br>
+        {% for config in data.configs %}
+          {{ config.config_name }}
+        {% endfor %} <br>
+        {% for measurement in data.measurements %}
+          {{ measurement.meas_name }}
+        {% endfor %} <br></p>
+      </div>
     </div>
 	</div>
 	<br>

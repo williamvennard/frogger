@@ -23,10 +23,13 @@ import csv
 from encode import multipart_encode, MultipartParam
 from google.appengine.api import urlfetch
 from pydblite import Base
+from profile import get_profile_cookie
+import collections
 
 
 def dt2ms(t):
     return int(t.strftime('%s'))*1000 + int(t.microsecond/1000)
+
 
 def existing_blob_parser(headers, item):
     new_rows = []
@@ -45,19 +48,17 @@ def existing_blob_parser(headers, item):
     return input_dictionary
 
 
-
-
-
-
 class Handler(InstrumentDataHandler):
 
     def get(self):
+        profile = get_profile_cookie(self)
         #if not self.authcheck():
          #   return
         rows = db.GqlQuery("SELECT * FROM FileBlob")
         print rows
-        self.render('new_blob_selection.html', rows = rows)
+        self.render('new_blob_selection.html', rows = rows, profile = profile)
     def post(self):
+        profile = get_profile_cookie(self)
         author = 'nedwards'
         #author = author_creation()
         config_data = self.request.body
@@ -86,10 +87,10 @@ class Handler(InstrumentDataHandler):
                     writer.writerow(headers)                        
                 item = item.split(',')
                 item[-1] = item[-1].rstrip()
-                if item[10] == 'N/A':
-                    item[7] = 'N/A'
-                    item[8] = 'N/A'
                 print item
+                if item[11] == 'N/A':
+                    item[8] = 'N/A'
+                    item[7] = 'N/A'
                 writer.writerow(item)
             input_dictionary = dict(zip(headers, item))
             counter += 1
@@ -99,7 +100,26 @@ class Handler(InstrumentDataHandler):
         name_time = str(dt2ms(datetime.datetime.now()))
         newname = author + name_time
         key = newname
-        memcache.set(key, output)
-        self.render('blob_analyzer.html', result = output, download_key = newname)
+        final_output = []
+        for entry in output:
+            print entry
+            temp_dict = collections.OrderedDict()
+            del entry['test_plan']
+            temp_dict['start_time'] = entry['Start_TSE']
+            temp_dict['correction_frequency(Hz)'] = entry['correction_frequency(Hz)']
+            temp_dict['config_name'] = entry['config_name']
+            temp_dict['measurement_source'] = entry['measurement_source']
+            temp_dict['max_value'] = entry['max_value']
+            temp_dict['min_value'] = entry['min_value']
+            temp_dict['offset(dBm)'] = entry['offset(dBm)']
+            temp_dict['pass_fail_type'] = entry['pass_fail_type']
+            temp_dict['data(dBm)'] = entry['data(dBm)']
+            temp_dict['active_testplan_name'] = entry['active_testplan_name']
+            temp_dict['hardware_name'] = entry['hardware_name']
+            temp_dict['pass_fail'] = entry['pass_fail']
+            final_output.append(temp_dict)
+        memcache.set(key, final_output)
+        self.render('blob_analyzer.html', result = final_output, 
+            download_key = newname, profile = profile)
 
 

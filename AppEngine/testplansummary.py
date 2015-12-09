@@ -51,34 +51,40 @@ class Handler(InstrumentDataHandler):
             config = {'test_config':test_config, 'inst_config':inst_config}
             render_json(self, config)
         elif company_nickname and hardware_name:
+            commands = ["keep doing what you are doing", "say cheese!"]
             # grab configs set to commence
             rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE company_nickname =:1 and commence_test =:2 and hardware_name =:3", 
                                 company_nickname, True, hardware_name)
             rows = list(rows)
             configs_tps_traces = query_to_dict(rows)
-            print configs_tps_traces
             # grab instrument configurations associated with the config that need to run
-            nested_config_name = configs_tps_traces[0]['config_name']
-            nested_instrument_type = configs_tps_traces[0]['instrument_type']
-            rows = db.GqlQuery("SELECT * FROM agilentU2000 WHERE company_nickname =:1 and config_name =:2", 
-                                company_nickname, nested_config_name)
-            nested_config = query_to_dict(rows)
-            print nested_config
-            # grab measurements associated with the config
-            meas_name = configs_tps_traces[0]['meas_name']
-            rows = db.GqlQuery("SELECT * FROM MeasurementDB WHERE company_nickname =:1 and meas_name =:2",
-                                company_nickname, meas_name)
-            measurements = query_to_dict(rows)
-            rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE company_nickname =:1 and commence_explore =:2 and hardware_name =:3", 
-                                company_nickname, True, hardware_name)
-            rows = list(rows)
-            configs_exps = query_to_dict(rows)
-            commands = ["keep doing what you are doing", "say cheese!"]
-
-            config = {'configs_exps' : configs_exps, 
-                      'configs_tps_traces' : configs_tps_traces, 
-                      'nested_config' : nested_config,
-                      'measurements' : measurements,
-                      'commands' : commands,
-                      }
+            if configs_tps_traces:
+                print configs_tps_traces
+                nested_config_name = configs_tps_traces[0]['config_name']
+                nested_instrument_type = configs_tps_traces[0]['instrument_type']
+                rows = db.GqlQuery("SELECT * FROM agilentU2000 WHERE company_nickname =:1 and config_name =:2", 
+                                    company_nickname, nested_config_name)
+                nested_config = query_to_dict(rows)
+                print nested_config
+                # grab measurements associated with the config
+                meas_name = configs_tps_traces[0]['meas_name']
+                rows = db.GqlQuery("SELECT * FROM MeasurementDB WHERE company_nickname =:1 and meas_name =:2",
+                                    company_nickname, meas_name)
+                measurements = query_to_dict(rows)
+                rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE company_nickname =:1 and commence_explore =:2 and hardware_name =:3", 
+                                    company_nickname, True, hardware_name)
+                rows = list(rows)
+                configs_exps = query_to_dict(rows)
+                config = {
+                            'configs_exps' : configs_exps, 
+                            'configs_tps_traces' : configs_tps_traces, 
+                            'nested_config' : nested_config,
+                            'measurements' : measurements,
+                            'commands' : commands,
+                }
+            else:
+                config = {
+                            'configs_tps_traces' : None,
+                            'commands' : commands,
+                }
             render_json(self, config)

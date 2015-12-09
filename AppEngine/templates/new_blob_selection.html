@@ -1,38 +1,32 @@
-{% extends "base.html" %}
-                  {% block import %}
+{% extends "one.html" %}
+{% block title %} Blob Selection {% endblock %}
+{% block head %}
+{{ super()}}
+<title>{{ self.title() }}</title>
+<style type="text/css">
+  .label {text-align: right;}
+  .error {color: red;}
+  h2,p,body {color: white;}
+</style>
+{% endblock %}
+{% block content %}
+<div class="row">
+  <h2>{{ self.title() }}</h2>
+  <div class="col-md-10 col-md-offset-1">
+    <form method="post">
 
-<html>
-  <head>
-    <title>Blob Selection </title>
-    <style type="text/css">
-      .label {text-align: right}
-      .error {color: red}
-    </style>
+        {% for r in rows %}
 
-  </head>
+          {% if r.test_batch %}
 
+          <input type="checkbox" name="test_batch" value = "{{r.test_batch}}">  {{ r.test_batch }}
+          <br><br> 
+          {% endif %}
 
-  <body>
-    <h2>Blob Selection</h2>
-        <form method="post">
+        {% endfor %}
 
-
-                  {% for r in rows %}
-
-                    {% if r.test_batch %}
-
-                    <input type="checkbox" name="test_batch" value = "{{r.test_batch}}">  {{ r.test_batch }}
-                    <br><br> 
-                    {% endif %}
-  
-                  {% endfor %}
-
-
-  <input type="submit" value="Submit">
+    <input type="submit" value="Submit">
     </form>
-
-  </body>
-
-
-</html>
-                  {% endblock %}  
+  </div>
+</div>
+{% endblock %}  
