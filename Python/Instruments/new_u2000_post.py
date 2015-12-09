@@ -97,7 +97,7 @@ class agilentu2000:
                            'testplan_name':active_testplan_name,
                            'hardware_name':HARDWARENAME})
             out_u2000 = json.dumps(window_u2000, ensure_ascii=True)
-            r = ses.post(url_t, data=out_u2000, headers=headers)
+            result = ses.post(url_t, data=out_u2000, headers=headers)
             #print "dir(r)=", dir(r)
             print "result.reason=", result.reason
             print "result.status_code=", result.status_code
@@ -119,7 +119,7 @@ class agilentu2000:
         url_c = ("https://" + GAE_INSTANCE +".appspot.com/u2000_testcomplete/"
                 + COMPANYNAME + '/' + active_testplan_name
                 + '/' +config_name + "/%s" % str(stop_tse))
-        c = ses.post(url_c, data=out_complete, headers=headers)
+        result = ses.post(url_c, data=out_complete, headers=headers)
         print "result.reason=", result.reason
         print "result.status_code=", result.status_code
         #print "dir(c)=", dir(c)
@@ -179,18 +179,18 @@ class agilentu2000:
         del blob_u2k_tr['i_settings']
         filename = config_name + ':' + active_testplan_name
         fileblob = open('/home/' + USERNAME + '/' + COMPANYNAME + '/Blobs/tempfile.csv', 'w')
-        w = csv.writer(fileblob)
-        w.writerow(blob_u2k_tr.keys())
-        w.writerow(blob_u2k_tr.values())
+        wblob = csv.writer(fileblob)
+        wblob.writerow(blob_u2k_tr.keys())
+        wblob.writerow(blob_u2k_tr.values())
         fileblob.close()
-        m = MultipartEncoder(
+        multipartblob = MultipartEncoder(
                    fields={'field0':(filename, open('/home/'
                    + USERNAME + '/' + COMPANYNAME
                    + '/Blobs/tempfile.csv', 'rb'), 'text/plain')}
                    )
         blob_url = requests.get("https://" 
                    + GAE_INSTANCE + ".appspot.com/upload/geturl")
-        b = requests.post(blob_url.text, data = m, 
+        result = requests.post(blob_url.text, data = multipartblob, 
                           headers={'Content-Type': m.content_type})
         print "result.reason=", result.reason
         print "result.status_code=", result.status_code
