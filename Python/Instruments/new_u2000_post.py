@@ -1,5 +1,5 @@
 """
-The new_u2000_post module supplies one class, agilentu2000.
+The new_u2000_post module supplies one class, AgilentU2000.
 
 """
 
@@ -9,10 +9,6 @@ import json
 import requests
 import csv
 
-global COMPANYNAME
-global HARDWARENAME
-global GAE_INSTANCE
-global USERNAME
 COMPANYNAME = 'Acme'
 HARDWARENAME = 'Tahoe'
 GAE_INSTANCE = 'gradientone-test'
@@ -22,7 +18,7 @@ USERNAME = 'nedwards'
 # from urllib3.poolmanager import PoolManager
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
-class agilentu2000:
+class AgilentU2000:
     """Send script config to server.
     >>> u2000dict = ({'Start_TSE':1330181132570, 'data(dBm)':-66.2397506,
                    'i_settings':{'pass_fail_type': u'Range',
