@@ -9,6 +9,15 @@ import json
 import requests
 import csv
 
+global COMPANYNAME
+global HARDWARENAME
+global GAE_INSTANCE
+global USERNAME
+COMPANYNAME = 'Acme'
+HARDWARENAME = 'Tahoe'
+GAE_INSTANCE = 'gradientone-test'
+USERNAME = 'nedwards'
+
 # import urllib3
 # from urllib3.poolmanager import PoolManager
 from requests_toolbelt.multipart.encoder import MultipartEncoder
@@ -33,14 +42,6 @@ class agilentu2000:
     b.reason= OK
     b.status_code= 200
     """
-    global COMPANYNAME
-    global HARDWARENAME
-    global GAE_INSTANCE
-    global USERNAME
-    COMPANYNAME = 'Acme'
-    HARDWARENAME = 'Tahoe'
-    GAE_INSTANCE = 'gradientone-test'
-    USERNAME = 'nedwards'
 
     def dt2ms(self, dtime):
         """Converts date time to miliseconds
@@ -79,7 +80,7 @@ class agilentu2000:
                            'testplan_name':active_testplan_name,
                            'hardware_name':HARDWARENAME})
             out_u2000 = json.dumps(window_u2000, ensure_ascii=True)
-            r = ses.post(url_t, data=out_u2000, headers=headers)
+            result = ses.post(url_t, data=out_u2000, headers=headers)
             #print "dir(r)=", dir(r)
             print "result.reason=", result.reason
             print "result.status_code=", result.status_code
@@ -193,7 +194,7 @@ class agilentu2000:
         blob_url = requests.get("https://"
                    + GAE_INSTANCE + ".appspot.com/upload/geturl")
         result = requests.post(blob_url.text, data=multipartblob,
-                          headers={'Content-Type': m.content_type})
+                          headers={'Content-Type': multipartblob.content_type})
         print "result.reason=", result.reason
         print "result.status_code=", result.status_code
 
