@@ -21,15 +21,15 @@ COMPANYNAME = 'Acme'
 HARDWARENAME = 'Tahoe'
 GAE_INSTANCE = 'gradientone-dev2'
 
-def dt2ms(t):
+def dt2ms(dtime):
     """Converts date time to miliseconds
     >>> from new_u2000_client import dt2ms
     >>> import datetime
-    >>> t = datetime.datetime(2015, 12, 8, 18, 11, 44, 320012)
-    >>> dt2ms(y)
+    >>> dtime = datetime.datetime(2015, 12, 8, 18, 11, 44, 320012)
+    >>> dt2ms(dtime)
     1449627104320
     """
-    return int(t.strftime('%s'))*1000 + int(t.microsecond/1000)
+    return int(dtime.strftime('%s'))*1000 + int(dtime.microsecond/1000)
 
 def post_status(status):
     "posts hardware status updates to the server"
@@ -37,27 +37,27 @@ def post_status(status):
     window = {'status':status, 'time':time.time()}
     status = json.dumps(window, ensure_ascii=True)
     # url_s = ("https://gradientone-test.appspot.com/status/"
-    #       + COMPANYNAME + '/' + HARDWARENAME)
+    #          + COMPANYNAME + '/' + HARDWARENAME)
     url_s = ("https://" + GAE_INSTANCE + ".appspot.com/status/"
-          + COMPANYNAME + '/' + HARDWARENAME)
-    s = requests.post(url_s, data=status, headers=headers)
-    print "s.reason=", s.reason
-    print "s.status_code=", s.status_code
-    #print "dir(s)=", dir(s)
+             + COMPANYNAME + '/' + HARDWARENAME)
+    result = requests.post(url_s, data=status, headers=headers)
+    print "result.reason=", result.reason
+    print "result.status_code=", result.status_code
 
-def post_complete(config_name, active_testplan_name, s):
+def post_complete(config_name, active_testplan_name, ses):
     "posts information telling the server the test is complete"
     window_complete = {'commence_test':False}
     out_complete = json.dumps(window_complete, ensure_ascii=True)
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
     # url_c = ("https://gradientone-test.appspot.com/temp_testcomplete/"
-    # + COMPANYNAME + '/' + config_name + '/' + active_testplan_name)
+    #          + COMPANYNAME + '/' + config_name + '/'
+    #          + active_testplan_name)
     url_c = ("https://" + GAE_INSTANCE + ".appspot.com/temp_testcomplete/"
-          + COMPANYNAME + '/' + config_name + '/' + active_testplan_name)
-    c = s.post(url_c, data=out_complete, headers=headers)
-    print "c.reason=", c.reason
-    print "c.status_code=", c.status_code
-    #print "dir(c)=", dir(c)
+             + COMPANYNAME + '/' + config_name + '/'
+             + active_testplan_name)
+    result = ses.post(url_c, data=out_complete, headers=headers)
+    print "result.reason=", result.reason
+    print "result.status_code=", result.status_code
 
 def check_config_vars(config, nested_config):
     "creates config variables to pass to the main u2000 code"
@@ -91,14 +91,14 @@ def check_config_vars(config, nested_config):
         min_value = nested_config['min_value']
 
     return (active_testplan_name, config_name, correction_frequency,
-           offset, range_auto, units, test_plan, pass_fail,
-           pass_fail_type, max_value, min_value)
+            offset, range_auto, units, test_plan, pass_fail,
+            pass_fail_type, max_value, min_value)
 
 
 
-def set_v_for_k(test_dict, k, v):
+def set_v_for_k(test_dict, key, val):
     "creates dictionary based off empty dictionary and key/value args"
-    test_dict[k.encode('ascii')] = v
+    test_dict[key.encode('ascii')] = val
     return test_dict
 
 def make_json(payload):
@@ -110,39 +110,39 @@ def check_config_url():
     """polls the configuration URL for a start signal @ 1sec intervals"""
     #config_url = "http://localhost:18080/testplansummary/Acme/MSP"
     #config_url = ("https://gradientone-test.appspot.com/testplansummary/"
-    #           + COMPANYNAME + '/' + HARDWARENAME)
+    #              + COMPANYNAME + '/' + HARDWARENAME)
     #config_url = ("https://gradientone-dev.appspot.com/
-    #             testplansummary/Acme/MSP")
+    #              testplansummary/Acme/MSP")
     config_url = ("https://" + GAE_INSTANCE + ".appspot.com/testplansummary/"
-               + COMPANYNAME + '/' + HARDWARENAME)
+                  + COMPANYNAME + '/' + HARDWARENAME)
     token = nuc_auth.get_access_token()
     headers = {'Authorization': 'Bearer '+token}
-    s = requests.session()
-    r = s.get(config_url, headers=headers)
-    if r.status_code == 401:
+    ses = requests.session()
+    result = ses.get(config_url, headers=headers)
+    if result.status_code == 401:
         token = nuc_auth.get_new_token()
         headers = {'Authorization': 'Bearer '+token}
-        r = s.get(config_url, headers=headers)
-    if r:
+        result = ses.get(config_url, headers=headers)
+    if result:
         print 'checking'
-        config = r.json()
+        config = result.json()
         if config['configs_tps_traces']:
             nested_config = config['nested_config'][0]
             config = config['configs_tps_traces'][0]
             if config['commence_test'] == 'True':
                 print "Starting API"
                 post_status('Starting')
-                u2000_acq(config, nested_config, s)
+                u2000_acq(config, nested_config, ses)
                 config_vars = check_config_vars(config, nested_config)
                 config_name = config_vars[1]
                 active_testplan_name = config_vars[0]
-                post_complete(config_name, active_testplan_name, s)
+                post_complete(config_name, active_testplan_name, ses)
         else:
             print "No start order found"
     threading.Timer(1, check_config_url()).start()
 
 
-def u2000_acq(config, nested_config, s):
+def u2000_acq(config, nested_config, ses):
     """sets the configuration for the u2000 API and calls the u2000 class"""
     acq_dict = {}
     print "Starting: Attempting to open one device..."
@@ -175,7 +175,7 @@ def u2000_acq(config, nested_config, s):
     acq_dict = set_v_for_k(acq_dict, 'active_testplan_name', config_vars[0])
     acq_dict = set_v_for_k(acq_dict, 'test_plan', config_vars[6])
     print acq_dict
-    bits = agilentu2000(acq_dict, s)
+    bits = agilentu2000(acq_dict, ses)
     bits.transmitraw()
     bits.transmitblob()
     bits.testcomplete()
