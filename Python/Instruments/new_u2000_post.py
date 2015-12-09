@@ -42,7 +42,7 @@ class agilentu2000:
     GAE_INSTANCE = 'gradientone-test'
     USERNAME = 'nedwards'
 
-    def dt2ms(dtime):
+    def dt2ms(self, dtime):
         """Converts date time to miliseconds
         >>> from new_u2000_client import dt2ms
         >>> import datetime
@@ -178,7 +178,9 @@ class agilentu2000:
         blob_u2k_tr['hardware_name'] = HARDWARENAME
         del blob_u2k_tr['i_settings']
         filename = config_name + ':' + active_testplan_name
-        fileblob = open('/home/' + USERNAME + '/' + COMPANYNAME + '/Blobs/tempfile.csv', 'w')
+        fileblob = open('/home/'
+                   + USERNAME + '/' + COMPANYNAME
+                   + '/Blobs/tempfile.csv', 'w')
         wblob = csv.writer(fileblob)
         wblob.writerow(blob_u2k_tr.keys())
         wblob.writerow(blob_u2k_tr.values())
@@ -188,7 +190,7 @@ class agilentu2000:
                    + USERNAME + '/' + COMPANYNAME
                    + '/Blobs/tempfile.csv', 'rb'), 'text/plain')}
                    )
-        blob_url = requests.get("https://" 
+        blob_url = requests.get("https://"
                    + GAE_INSTANCE + ".appspot.com/upload/geturl")
         result = requests.post(blob_url.text, data = multipartblob, 
                           headers={'Content-Type': m.content_type})
