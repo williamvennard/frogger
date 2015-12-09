@@ -16,7 +16,7 @@ import threading
 from new_u2000_post import agilentu2000
 import numpy as np
 import numpy.fft as fft
-import scipy.signal 
+import scipy.signal
 import ivi
 import collections
 import nuc_auth
@@ -33,12 +33,14 @@ def post_status(status):
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
     window = {'status':status, 'time':time.time()}
     status = json.dumps(window, ensure_ascii=True)
-    # url_s = "https://gradientone-test.appspot.com/status/" + COMPANYNAME + '/' + HARDWARENAME
-    url_s = "https://" + GAE_INSTANCE + ".appspot.com/status/" + COMPANYNAME + '/' + HARDWARENAME
+    # url_s = ("https://gradientone-test.appspot.com/status/"
+            + COMPANYNAME + '/' + HARDWARENAME)
+    url_s = ("https://" + GAE_INSTANCE + ".appspot.com/status/" 
+            + COMPANYNAME + '/' + HARDWARENAME)
     s = requests.post(url_s, data=status, headers=headers)
-    print "s.reason=",s.reason
-    print "s.status_code=",s.status_code
-    #print "dir(s)=",dir(s)
+    print "s.reason=", s.reason
+    print "s.status_code=", s.status_code
+    #print "dir(s)=", dir(s)
 
 def post_complete(config_name, active_testplan_name, s):
     window_complete = {'commence_test':False}
@@ -47,9 +49,9 @@ def post_complete(config_name, active_testplan_name, s):
     # url_c = "https://gradientone-test.appspot.com/temp_testcomplete/" + COMPANYNAME + '/' + config_name + '/' + active_testplan_name
     url_c = "https://" + GAE_INSTANCE + ".appspot.com/temp_testcomplete/" + COMPANYNAME + '/' + config_name + '/' + active_testplan_name
     c = s.post(url_c, data=out_complete, headers=headers)
-    print "c.reason=",c.reason
-    print "c.status_code=",c.status_code
-    #print "dir(c)=",dir(c)
+    print "c.reason=", c.reason
+    print "c.status_code=", c.status_code
+    #print "dir(c)=", dir(c)
 
 def check_config_vars(config, nested_config):
     "creates config variables to pass to the main u2000 code"
