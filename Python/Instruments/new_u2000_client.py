@@ -34,9 +34,9 @@ def post_status(status):
     window = {'status':status, 'time':time.time()}
     status = json.dumps(window, ensure_ascii=True)
     # url_s = ("https://gradientone-test.appspot.com/status/"
-    #        + COMPANYNAME + '/' + HARDWARENAME)
-    url_s = ("https://" + GAE_INSTANCE + ".appspot.com/status/" 
-             + COMPANYNAME + '/' + HARDWARENAME)
+    #       + COMPANYNAME + '/' + HARDWARENAME)
+    url_s = ("https://" + GAE_INSTANCE + ".appspot.com/status/"
+          + COMPANYNAME + '/' + HARDWARENAME)
     s = requests.post(url_s, data=status, headers=headers)
     print "s.reason=", s.reason
     print "s.status_code=", s.status_code
@@ -46,8 +46,10 @@ def post_complete(config_name, active_testplan_name, s):
     window_complete = {'commence_test':False}
     out_complete = json.dumps(window_complete, ensure_ascii=True)
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-    # url_c = "https://gradientone-test.appspot.com/temp_testcomplete/" + COMPANYNAME + '/' + config_name + '/' + active_testplan_name
-    url_c = "https://" + GAE_INSTANCE + ".appspot.com/temp_testcomplete/" + COMPANYNAME + '/' + config_name + '/' + active_testplan_name
+    # url_c = ("https://gradientone-test.appspot.com/temp_testcomplete/"
+    # + COMPANYNAME + '/' + config_name + '/' + active_testplan_name)
+    url_c = ("https://" + GAE_INSTANCE + ".appspot.com/temp_testcomplete/"
+          + COMPANYNAME + '/' + config_name + '/' + active_testplan_name)
     c = s.post(url_c, data=out_complete, headers=headers)
     print "c.reason=", c.reason
     print "c.status_code=", c.status_code
@@ -59,15 +61,15 @@ def check_config_vars(config, nested_config):
         active_testplan_name = config['active_testplan_name']
         config_name = config['config_name']
         averaging_count_auto = nested_config['averaging_count_auto']
-        correction_frequency= nested_config['correction_frequency']
-        offset= nested_config['offset']
-        range_auto= nested_config['range_auto']
-        units= nested_config['units']
+        correction_frequency = nested_config['correction_frequency']
+        offset = nested_config['offset']
+        range_auto = nested_config['range_auto']
+        units = nested_config['units']
         pass_fail = nested_config['pass_fail']
         pass_fail_type = nested_config['pass_fail_type']
         max_value = nested_config['max_value']
         min_value = nested_config['min_value']
-        test_plan =config['test_plan']
+        test_plan = config['test_plan']
     else:
         print 'config =', config
         print 'nested_config', nested_config
@@ -75,17 +77,18 @@ def check_config_vars(config, nested_config):
         test_plan = 'False'
         config_name = config['config_name']
         averaging_count_auto = nested_config['averaging_count_auto']
-        correction_frequency= nested_config['correction_frequency']
-        offset= nested_config['offset']
-        range_auto= nested_config['range_auto']
-        units= nested_config['units']
+        correction_frequency = nested_config['correction_frequency']
+        offset = nested_config['offset']
+        range_auto = nested_config['range_auto']
+        units = nested_config['units']
         pass_fail = nested_config['pass_fail']
         pass_fail_type = nested_config['pass_fail_type']
         max_value = nested_config['max_value']
         min_value = nested_config['min_value']
 
-
-    return active_testplan_name, config_name, correction_frequency, offset, range_auto, units, test_plan, pass_fail, pass_fail_type, max_value, min_value
+    return (active_testplan_name, config_name, correction_frequency,
+           offset, range_auto, units, test_plan, pass_fail,
+           pass_fail_type, max_value, min_value)
 
 
 
@@ -105,9 +108,11 @@ def make_json(payload):
 def check_config_url():
     """polls the configuration URL for a start signal @ 1sec intervals"""
     #config_url = "http://localhost:18080/testplansummary/Acme/MSP"
-    #config_url = "https://gradientone-test.appspot.com/testplansummary/" + COMPANYNAME + '/' + HARDWARENAME
-    #config_url = "https://gradientone-dev.appspot.com/testplansummary/Acme/MSP"
-    config_url = "https://" + GAE_INSTANCE + ".appspot.com/testplansummary/" + COMPANYNAME + '/' + HARDWARENAME
+    #config_url = ("https://gradientone-test.appspot.com/testplansummary/" 
+    #           + COMPANYNAME + '/' + HARDWARENAME)
+    #config_url = ("https://gradientone-dev.appspot.com/testplansummary/Acme/MSP")
+    config_url = ("https://" + GAE_INSTANCE + ".appspot.com/testplansummary/"
+               + COMPANYNAME + '/' + HARDWARENAME)
     token = nuc_auth.get_access_token()
     headers = {'Authorization': 'Bearer '+token}
     s = requests.session()
@@ -122,7 +127,7 @@ def check_config_url():
         if config['configs_tps_traces']:
             nested_config = config['nested_config'][0]
             config = config['configs_tps_traces'][0]
-            if config['commence_test'] == 'True':  
+            if config['commence_test'] == 'True':
                 print "Starting API"
                 post_status('Starting')
                 u2000_acq(config, nested_config, s)
