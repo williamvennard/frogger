@@ -121,7 +121,6 @@ class agilentu2000:
         """transmitraw function sends a json object that can
            be used for UI presentation
         """
-        parent = 'raw'
         test_results = self.u2000_test_results['data(dBm)']
         i_settings = self.u2000_test_results['i_settings']
         test_plan = self.u2000_test_results['test_plan']
@@ -129,7 +128,7 @@ class agilentu2000:
         active_testplan_name = self.u2000_test_results['active_testplan_name']
         start_tse = int(self.u2000_test_results['Start_TSE'])
         self.post_creation_data(i_settings, test_results, 
-                                start_tse, parent, config_name, 
+                                start_tse, config_name, 
                                 active_testplan_name, test_plan)
 
     def testcomplete(self):
