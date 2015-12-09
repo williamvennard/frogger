@@ -148,7 +148,8 @@ class agilentu2000:
                            start_tse, test_results)
 
     def transmitblob(self):
-        """transmitblob function sends a json object that puts the test results in the blobstore
+        """transmitblob function sends a json object that 
+          puts the test results in the blobstore
         """
         active_testplan_name = self.u2000_test_results['active_testplan_name']
         config_name = self.u2000_test_results['config_name']
@@ -180,7 +181,8 @@ class agilentu2000:
                    fields={'field0':(filename, open('/home/' + USERNAME + '/' + COMPANYNAME + '/Blobs/tempfile.csv', 'rb'), 'text/plain')}
                    )
         blob_url = requests.get("https://"+ GAE_INSTANCE + ".appspot.com/upload/geturl")
-        b = requests.post(blob_url.text, data = m, headers={'Content-Type': m.content_type})
+        b = requests.post(blob_url.text, data = m, 
+                          headers={'Content-Type': m.content_type})
         print "b.reason=", b.reason
         print "b.status_code=", b.status_code
 
