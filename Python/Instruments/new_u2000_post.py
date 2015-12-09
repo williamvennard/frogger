@@ -1,5 +1,5 @@
 """
-The new_u2000_post module supplies one class, agilentu2000.
+The new_u2000_post module supplies one class, AgilentU2000.
 
 """
 
@@ -9,11 +9,26 @@ import json
 import requests
 import csv
 
+COMPANYNAME = 'Acme'
+HARDWARENAME = 'Tahoe'
+GAE_INSTANCE = 'gradientone-test'
+USERNAME = 'nedwards'
+
 # import urllib3
 # from urllib3.poolmanager import PoolManager
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 
-class agilentu2000:
+def dt2ms(dtime):
+    """Converts date time to miliseconds
+    >>> from new_u2000_client import dt2ms
+    >>> import datetime
+    >>> dtime = datetime.datetime(2015, 12, 8, 18, 11, 44, 320012)
+    >>> dt2ms(dtime)
+    1449627104320
+    """
+    return int(dtime.strftime('%s'))*1000 + int(dtime.microsecond/1000)
+
+class AgilentU2000:
     """Send script config to server.
     >>> u2000dict = ({'Start_TSE':1330181132570, 'data(dBm)':-66.2397506,
                    'i_settings':{'pass_fail_type': u'Range',
@@ -33,24 +48,6 @@ class agilentu2000:
     b.reason= OK
     b.status_code= 200
     """
-    global COMPANYNAME
-    global HARDWARENAME
-    global GAE_INSTANCE
-    global USERNAME
-    COMPANYNAME = 'Acme'
-    HARDWARENAME = 'Tahoe'
-    GAE_INSTANCE = 'gradientone-test'
-    USERNAME = 'nedwards'
-
-    def dt2ms(dtime):
-        """Converts date time to miliseconds
-        >>> from new_u2000_client import dt2ms
-        >>> import datetime
-        >>> dtime = datetime.datetime(2015, 12, 8, 18, 11, 44, 320012)
-        >>> dt2ms(dtime)
-        1449627104320
-        """
-        return int(dtime.strftime('%s'))*1000 + int(dtime.microsecond/1000)
 
     def __init__(self, u2000_test_results, ses):
         self.u2000_test_results = u2000_test_results
@@ -79,7 +76,7 @@ class agilentu2000:
                            'testplan_name':active_testplan_name,
                            'hardware_name':HARDWARENAME})
             out_u2000 = json.dumps(window_u2000, ensure_ascii=True)
-            r = ses.post(url_t, data=out_u2000, headers=headers)
+            result = ses.post(url_t, data=out_u2000, headers=headers)
             #print "dir(r)=", dir(r)
             print "result.reason=", result.reason
             print "result.status_code=", result.status_code
@@ -97,7 +94,7 @@ class agilentu2000:
                            'testplan_name':active_testplan_name,
                            'hardware_name':HARDWARENAME})
             out_u2000 = json.dumps(window_u2000, ensure_ascii=True)
-            r = ses.post(url_t, data=out_u2000, headers=headers)
+            result = ses.post(url_t, data=out_u2000, headers=headers)
             #print "dir(r)=", dir(r)
             print "result.reason=", result.reason
             print "result.status_code=", result.status_code
@@ -119,7 +116,7 @@ class agilentu2000:
         url_c = ("https://" + GAE_INSTANCE +".appspot.com/u2000_testcomplete/"
                 + COMPANYNAME + '/' + active_testplan_name
                 + '/' +config_name + "/%s" % str(stop_tse))
-        c = ses.post(url_c, data=out_complete, headers=headers)
+        result = ses.post(url_c, data=out_complete, headers=headers)
         print "result.reason=", result.reason
         print "result.status_code=", result.status_code
         #print "dir(c)=", dir(c)
@@ -142,7 +139,7 @@ class agilentu2000:
         """transmitcomplete function sends a json object that is used
            to update DB on test status.
         """
-        stop_tse = self.dt2ms(datetime.datetime.now())
+        stop_tse = dt2ms(datetime.datetime.now())
         active_testplan_name = self.u2000_test_results['active_testplan_name']
         config_name = self.u2000_test_results['config_name']
         test_plan = self.u2000_test_results['test_plan']
@@ -178,20 +175,22 @@ class agilentu2000:
         blob_u2k_tr['hardware_name'] = HARDWARENAME
         del blob_u2k_tr['i_settings']
         filename = config_name + ':' + active_testplan_name
-        fileblob = open('/home/' + USERNAME + '/' + COMPANYNAME + '/Blobs/tempfile.csv', 'w')
-        w = csv.writer(fileblob)
-        w.writerow(blob_u2k_tr.keys())
-        w.writerow(blob_u2k_tr.values())
+        fileblob = open('/home/'
+                   + USERNAME + '/' + COMPANYNAME
+                   + '/Blobs/tempfile.csv', 'w')
+        wblob = csv.writer(fileblob)
+        wblob.writerow(blob_u2k_tr.keys())
+        wblob.writerow(blob_u2k_tr.values())
         fileblob.close()
-        m = MultipartEncoder(
+        multipartblob = MultipartEncoder(
                    fields={'field0':(filename, open('/home/'
                    + USERNAME + '/' + COMPANYNAME
                    + '/Blobs/tempfile.csv', 'rb'), 'text/plain')}
                    )
-        blob_url = requests.get("https://" 
+        blob_url = requests.get("https://"
                    + GAE_INSTANCE + ".appspot.com/upload/geturl")
-        b = requests.post(blob_url.text, data = m, 
-                          headers={'Content-Type': m.content_type})
+        result = requests.post(blob_url.text, data=multipartblob,
+                          headers={'Content-Type': multipartblob.content_type})
         print "result.reason=", result.reason
         print "result.status_code=", result.status_code
 

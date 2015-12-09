@@ -12,7 +12,7 @@ import requests
 import time   # time is a module here
 import datetime
 import threading
-from new_u2000_post import agilentu2000
+from new_u2000_post import AgilentU2000
 import ivi
 import collections
 import nuc_auth
@@ -175,7 +175,7 @@ def u2000_acq(config, nested_config, ses):
     acq_dict = set_v_for_k(acq_dict, 'active_testplan_name', config_vars[0])
     acq_dict = set_v_for_k(acq_dict, 'test_plan', config_vars[6])
     print acq_dict
-    bits = agilentu2000(acq_dict, ses)
+    bits = AgilentU2000(acq_dict, ses)
     bits.transmitraw()
     bits.transmitblob()
     bits.testcomplete()
