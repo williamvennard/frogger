@@ -15,9 +15,9 @@ class FlexModel(db.Expando):
 def company_key(name = 'default'):
     return db.Key.from_path('companies', name)
 
-def ConfigDB_key(company_nickname ="", config_name =""):
+def ConfigDB_key(config_name ="", testplan_name=""):
     print 'onedb', config_name
-    return db.Key.from_path('ConfigDB',company_nickname+config_name)
+    return db.Key.from_path('ConfigDB', config_name+testplan_name, parent=company_key())
 
 class ConfigDB(DictModel):
     company_nickname = db.StringProperty(required = True)
@@ -67,6 +67,7 @@ class MeasurementDB(DictModel):
     pass_fail = db.BooleanProperty(default = False)
     min_pass = db.FloatProperty(required = False)
     max_pass = db.FloatProperty(required = False)
+    config_name = db.StringProperty(required = False)
     tests = db.ListProperty(db.Key)
 
 def OscopeDB_key(name = 'default'):
