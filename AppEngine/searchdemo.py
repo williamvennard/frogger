@@ -55,6 +55,39 @@ class Handler(InstrumentDataHandler):
         for index in search.get_indexes(fetch_schema=True):
             logging.info("index %s", index.name)
             logging.info("schema: %s", index.schema)
+        
+        profile = get_profile_cookie(self)
+        querystring = ""
+        doc_limit = 20
+        logging.debug("QUERYSTRING: %s" % querystring)
+        try:
+          index = search.Index(INDEX_NAME)
+          search_query = search.Query(
+              query_string=querystring,
+              options=search.QueryOptions(
+                  limit=doc_limit))
+          search_results = index.search(search_query)
+        except search.Error, e:
+          logging.error("Search Query Error: %s" % e )
+
+        try:
+          returned_count = len(search_results.results)
+          number_found = search_results.number_found
+          output = []
+          logging.debug("SEARCH: %s" % search_results)
+          for doc in search_results:
+            doc_id = doc.doc_id
+            fields = doc.fields
+            logging.debug("FIELDS: %s" % fields)
+            output.append(fields)
+            
+        except search.Error:
+          logging.error("Search Results Error: %s" % e )
+        name_time = str(dt2ms(datetime.datetime.now()))
+        newname = profile['name'] + name_time
+        key = newname
+        self.render('blob_analyzer.html', result = output, 
+            download_key = newname, profile = profile)
 
 
 class UploadHandler(InstrumentDataHandler):

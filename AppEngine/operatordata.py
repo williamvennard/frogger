@@ -57,12 +57,14 @@ class NewHandler(InstrumentDataHandler):
 
         test_key = TestDB_key(testplan_name)
         test = TestDB.get(test_key)
+        order = test.order
         configs = db.get(test.configs)
         instrument_configs = db.get(test.instrument_configs)
         measurements = db.get(test.measurements)
 
         self.render('new_operator.html', data=templatedata, 
             test = test,
+            order = order,
             configs=configs,
             instrument_configs=instrument_configs,
             measurements=measurements,

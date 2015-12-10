@@ -327,8 +327,8 @@ class pwrmeter(DictModel):
     reference_oscillator_frequency = db.StringProperty(default = '10e6')
     reference_oscillator_level = db.StringProperty(default = '0.0')
 
-def agilentU2000_key(name = 'default'):
-    return db.Key.from_path('company_nickname', name)
+def agilentU2000_key(key_name):
+    return db.Key.from_path('agilentU2000', key_name, parent=company_key())
     
 class agilentU2000(pwrmeter):
     channel_count = db.StringProperty(default = '1')
@@ -340,6 +340,7 @@ class agilentU2000(pwrmeter):
     pass_fail_type = db.StringProperty(default = "")
     max_value = db.FloatProperty(default = 0.0)
     min_value = db.FloatProperty(default = 0.0)
+    test_plan = db.BooleanProperty(default = True)
 
 
 def agilentU2000data_key(name = 'default'):

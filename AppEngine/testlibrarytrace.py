@@ -34,10 +34,11 @@ from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import blobstore_handlers
 from string import maketrans
 from onedb import CommentsDB
-
+from profile import get_profile_cookie
 
 class Handler(InstrumentDataHandler):
     def get(self, company_nickname="", config_name="", start_tse=""):
+        profile = get_profile_cookie(self)
         if start_tse:
             start_tse_check = start_tse.split('.')
             start_tse = int(start_tse_check[0])
@@ -65,15 +66,13 @@ class Handler(InstrumentDataHandler):
                 'config_name' : config_name,
                 'start_tse' : start_tse,
             }
-            self.render('testLibResults.html', comment_thread=comment_thread, data=data)
+            self.render('testLibResults.html', comment_thread=comment_thread, 
+                data=data, profile = profile)
 
     def post(self, company_nickname="", config_name="", start_tse=""):
         """posts a comment on the test results"""
-        user = users.get_current_user()
-        if not user.nickname():
-            author = "anonymous"
-        else:
-            author = user.nickname()
+        profile = get_profile_cookie(self)
+        author = profile['name']
         content = self.request.get('content')
         testplan_name = self.request.get('testplan_name')
         key_name = testplan_name+str(start_tse)

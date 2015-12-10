@@ -554,8 +554,9 @@
             var savedU2001AsHTML = "";
             savedU2001AsHTML += "<tr><td><p class='savedTitle'>Saved:</p></td></tr>";
             for (var i=0;i<savedU2001As.length;i++){
+              if (savedU2001As[i].test_plan == 'False'){
                 savedU2001AsHTML+= "<tr><td><a id=loadU2001A-" + i + "'>" + savedU2001As[i].config_name + "</a></td></tr>";
-                // document.getElementById("loadU2001A"+i).addEventListener("click", loadU2001A(i));                                            
+              };                                            
             };
             console.log('savedU2001AsHTML = ',savedU2001AsHTML);
             sU2001ADoc = document.getElementById("savedU2001As");

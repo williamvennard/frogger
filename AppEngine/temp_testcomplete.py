@@ -29,8 +29,8 @@ class Handler(InstrumentDataHandler):
         print 'in the right place'
         
     def post(self, company_nickname="", config_name="", active_testplan_name=""):
-        key = (config_name+active_testplan_name)
-        print key, "is the key name"
+        key = config_name
+        logging.info("%s is the key name", key)
         key = db.Key.from_path('ConfigDB', key, parent = company_key())
         config = db.get(key)
         config.commence_test = False

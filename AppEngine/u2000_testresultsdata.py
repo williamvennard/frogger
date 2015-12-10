@@ -62,6 +62,7 @@ class Handler(InstrumentDataHandler):
     def post(self,company_nickname= "", testplan_name="", config_name =""):
         "store data by intstrument name and time slice name"
         testresults_content = json.loads(self.request.body)
+        logging.debug('TESTRESULTS_CONTENT: %s' % testresults_content)
         hardware_name = testresults_content['hardware_name']
         test_plan = testresults_content['test_plan']
         if test_plan == 'True':
