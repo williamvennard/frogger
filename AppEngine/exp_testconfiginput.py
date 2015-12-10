@@ -28,6 +28,8 @@ from google.appengine.api import users
 from google.appengine.ext import db
 from google.appengine.api import taskqueue
 import appengine_config
+from collections import defaultdict
+
 
 class Handler(InstrumentDataHandler):
     def get(self):
@@ -80,7 +82,17 @@ class Handler(InstrumentDataHandler):
             )
         test.put()
         order_str = str(order)
-        order_list = get_ordered_list(order_str)
+        logging.debug("ORDER: %s" % order_str)
+        order_list = []
+        for item in order:
+            elems = item.split(':')
+            order_dict = defaultdict()
+            order_dict['type'] = elems[0]
+            order_dict['name'] = elems[1]
+            order_dict['order'] = elems[2]
+            order_list.append(order_dict)
+        # order_list = get_ordered_list(order_str)  # Something broken in get_ordered_list that is skipping elements
+        logging.debug("ORDER LIST: %s" % order_list)
         for o in order_list:
             state = StateDB(key_name = testplan_name+o['type']+o['name'], 
                 parent = company_key(),

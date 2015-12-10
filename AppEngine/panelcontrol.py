@@ -38,17 +38,19 @@ class Handler(InstrumentDataHandler):
         control_object = json.loads(self.request.body)
         order = control_object['command']
         key_name = config_name
-        logging.debug("KEYNAME: %s" % key_name)
+        # logging.debug("SWITCHING KEYNAME: %s" % key_name)
         key = db.Key.from_path('ConfigDB', key_name, parent = company_key())
         config = db.get(key)
         if order == 'Stop_Explore':
             config.commence_explore = False
         elif order == 'Start_Explore':
             config.commence_explore = True
+            config.active_testplan_name = testplan_name
         elif order == 'Stop_Trace':
             config.commence_test = False
         elif order == 'Start_Trace':
             config.commence_test = True
+            config.active_testplan_name = testplan_name
         config.put()
 
 

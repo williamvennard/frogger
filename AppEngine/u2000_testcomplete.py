@@ -45,9 +45,10 @@ class Handler(InstrumentDataHandler):
             config_to_update.commence_test = False
             config_to_update.active_testplan_name = None
             config_to_update.put()
-            s = db.Query(StateDB)
-            s.filter('company_nickname =', company_nickname).filter('testplan_name =', testplan_name).filter('start_time =', None).order('order')
-            next_state = s.get()
+            q = db.Query(StateDB)
+            q.filter('company_nickname =', company_nickname).filter('testplan_name =', testplan_name)
+            q.filter('start_time =', None).filter('widget =', 'U2001A').order('order')
+            next_state = q.get()
             to_save = []
             key = 'TestResultsDB'+testplan_name+config_name
             test_plan = True
@@ -157,13 +158,13 @@ class UpdateResults(InstrumentDataHandler):
         cached_result = memcache.get(key)
         key_name = trace_name + str(start_tse)
         test_key = db.Key.from_path('TestResultsDB', key_name, parent=company_key())
-        if not cached_result:
-            test_results = TestResultsDB.get(test_key)
-            test_results.pass_fail = pass_fail
-            test_results.min_pass = float(min_pass)
-            test_results.max_pass = float(max_pass)
-            test_results.put()
-            memcache.set(key, test_results)
+        # if not cached_result:
+        #     test_results = TestResultsDB.get(test_key)
+        #     test_results.pass_fail = pass_fail
+        #     test_results.min_pass = float(min_pass)
+        #     test_results.max_pass = float(max_pass)
+        #     test_results.put()
+        #     memcache.set(key, test_results)
 
 
 
