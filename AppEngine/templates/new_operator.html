@@ -23,6 +23,10 @@
 		<h1>{{ self.title() }}</h1>
 		<h3>Test Overview</h3>
 	    <p>Test - {{test.testplan_name}}</p>
+      <p>Order - {% for o in order %}
+        {{o}}, 
+      {% endfor %}</p>
+<!--  Keep for debugging 
       {% for config in configs %}
       <p>Config - {{config.config_name}}</p>
       {% endfor %}
@@ -31,7 +35,7 @@
       {% endfor %}
       {% for measurement in measurements  %}
       <p>Measurement - {{measurement.meas_name}}</p>
-      {% endfor %}
+      {% endfor %} -->
 		<div class="col-md-6">
 			<p>Max Pass Value:</p>
 			<input class="black_ops" type="text" id="max_pass_value" value=""><br>
@@ -122,20 +126,17 @@ function addComment() {
   };
 };
 </script>
-{% for instrument_config in instrument_configs %}
   <script type="text/javascript">
     var instrument_config = {
-    configName : '{{instrument_config.config_name}}',
+    configName : '{{instrument_configs[0].config_name}}',
     traceName : '{{data.testplan_name}}',
-    frequencyCorrection : '{{instrument_config.correction_frequency}}',
-    offset : '{{instrument_config.offset}}',
-    units : '{{instrument_config.units}}',
-    avgCountAuto : '{{instrument_config.averaging_count_auto}}',
-    rangeAuto : '{{instrument_config.range_auto}}',
+    frequencyCorrection : '{{instrument_configs[0].correction_frequency}}',
+    offset : '{{instrument_configs[0].offset}}',
+    units : '{{instrument_configs[0].units}}',
+    avgCountAuto : '{{instrument_configs[0].averaging_count_auto}}',
+    rangeAuto : '{{instrument_configs[0].range_auto}}',
     };
   $( document ).ready(function(){OPConfig(instrument_config);});
   </script>
-{% endfor %}
-<script typo="text/javascript" src="/static/js/testops.js"></script>
-
+<script type="text/javascript" src="/static/js/testops.js"></script>
 {% endblock %}

@@ -56,6 +56,14 @@ class Handler(InstrumentDataHandler):
         comment_thread = []
         if testplan:
             templatedata['testplan'] = testplan.to_dict()
+            measurements = []
+            for m_key in testplan.measurements:
+                measurements.append(db.get(m_key).to_dict())
+            templatedata['measurements'] = measurements
+            configs = []
+            for c_key in testplan.configs:
+                configs.append(db.get(c_key).to_dict())
+            templatedata['configs'] = configs
             comments_query = CommentsDB.all()
             comments_query.ancestor(testplan)
             comments = comments_query.run(limit=10)
