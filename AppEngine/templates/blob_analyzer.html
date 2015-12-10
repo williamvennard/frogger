@@ -6,7 +6,9 @@
 <style type="text/css">
   .label {text-align: right}
   .error {color: red}
+  #query {color: black;}
   body {color: white;}
+  td,th {padding:0 5px 0 5px;}
 </style>
 {% endblock %}
 {% block content %}
@@ -28,27 +30,32 @@
     </table>
   </form>
   <table style="width:100%">
-  <a href ="blob_export/{{download_key}}">export</a>
-    <tr>
-      <th>Start Time</th>
-      <th>Correction Freq (Hz)</th>
-      <th>Config Name</th> 
-      <th>Measurement Source</th>
-      <th>Max</th>
-      <th>Min</th>
-      <th>Offset (dBm)</th>
-      <th>Pass Fail Type</th>
-      <th>Data (dBm)</th>
-      <th>Testplan Name or Trace Name</th> 
-      <th>Hardware Name</th>
-      <th>Pass/Fail</th> 
-    </tr>
-    {% for entry in result %}
+    <a href ="blob_export/{{download_key}}">export</a>
+    <form name "selectForm" action="/search" method="post">
       <tr>
-      {% for item in entry %}
-          <td> {{ item.value }} </td>
-      {% endfor %}
+        <th>SELECT</th>
+        <th>Start Time</th>
+        <th>Correction Freq (Hz)</th>
+        <th>Max</th>
+        <th>Min</th>
+        <th>Offset (dBm)</th>
+        <th>Pass Fail Type</th>
+        <th>Test Plan?</th>
+        <th>Pass / Fail</th>
+        <th>Hardware Name</th>
+        <th>Data (dBm)</th>
+        <th>Instrument</th>
+        <th>Config Name</th> 
+        <th>Testplan Name or Trace Name</th> 
       </tr>
-    {% endfor %}
+      {% for entry in result %}
+        <tr>
+        <td><input type="checkbox" name="test_batch" value = "{{entry.start_tse}}"></td>
+        {% for item in entry %}
+           <td> {{ item.value }} </td>
+        {% endfor %}
+        </tr>
+      {% endfor %}
+    </form>
   </table>
 {% endblock %}  
