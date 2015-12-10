@@ -59,13 +59,13 @@ class Handler(InstrumentDataHandler):
             configs_tps_traces = query_to_dict(rows)
             # grab instrument configurations associated with the config that need to run
             if configs_tps_traces:
-                print configs_tps_traces
+                logging.debug("CONFIG_TPS_TRACES %s", configs_tps_traces)
                 nested_config_name = configs_tps_traces[0]['config_name']
                 nested_instrument_type = configs_tps_traces[0]['instrument_type']
                 rows = db.GqlQuery("SELECT * FROM agilentU2000 WHERE company_nickname =:1 and config_name =:2", 
                                     company_nickname, nested_config_name)
                 nested_config = query_to_dict(rows)
-                print nested_config
+                logging.debug("NESTED_CONFIG %s", nested_config)
                 # grab measurements associated with the config
                 rows = db.GqlQuery("SELECT * FROM MeasurementDB WHERE company_nickname =:1 and config_name =:2",
                                     company_nickname, nested_config_name)

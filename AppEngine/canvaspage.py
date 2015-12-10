@@ -35,11 +35,10 @@ class Handler(InstrumentDataHandler):
             active_user = user.email()
             active_user= active_user.split('@')
             author = active_user[0]
-            print author
         else:
             self.redirect(users.create_login_url(self.request.uri))
         profile = get_profile_cookie(self)
-        if (not profile) or (profile['permissions'] == 'viewer'):
+        if not profile or profile['permissions'] == 'viewer':
             self.redirect('/profile')
         company_nickname_check = company_nickname.split('.')
         company_nickname = company_nickname_check[0]
@@ -57,5 +56,5 @@ class Handler(InstrumentDataHandler):
             widgets = {'tests':tests, 'measurements':measurements, 'configs':configs, 'duts':duts, 'u2000configs':u2000configs}
             render_json(self, widgets) 
         else:
-            print 'just rendering the page'
+            logging.info('just rendering the page')
             self.render('index.html', profile=profile)

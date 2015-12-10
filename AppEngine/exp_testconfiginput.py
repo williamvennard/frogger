@@ -4,7 +4,9 @@ from gradientone import author_creation
 from gradientone import query_to_dict
 from gradientone import is_checked
 from gradientone import instruments_and_explanations
+from gradientone import get_ordered_list
 from onedb import ConfigDB
+from onedb import ConfigDB_key
 from onedb import company_key
 from onedb import TestDB
 from onedb import DutDB
@@ -13,6 +15,8 @@ from onedb import InstrumentsDB
 from onedb import MeasurementDB
 from onedb import MeasurementDB_key
 from onedb import agilentU2000
+from onedb import agilentU2000_key
+from onedb import StateDB
 import datetime
 import jinja2
 import json
@@ -61,7 +65,7 @@ class Handler(InstrumentDataHandler):
             date_object = datetime.datetime.now()
         else:
             date_object = datetime.datetime.fromtimestamp(int(start_time)/1000)
-        t = TestDB(key_name = testplan_name, parent = company_key(),
+        test = TestDB(key_name = testplan_name, parent = company_key(),
             testplan_name = testplan_name, 
             company_nickname = company_nickname,
             hardware_name = hardware_name, 
@@ -74,9 +78,19 @@ class Handler(InstrumentDataHandler):
             test_scheduled = True,
             ops_start = ops_start,
             )
-        t.put() 
-        key = db.Key.from_path('TestDB', testplan_name, parent = company_key())
-        test = db.get(key)
+        test.put()
+        order_str = str(order)
+        order_list = get_ordered_list(order_str)
+        for o in order_list:
+            state = StateDB(key_name = testplan_name+o['type']+o['name'], 
+                parent = company_key(),
+                testplan_name = testplan_name,
+                company_nickname = company_nickname,
+                widget = o['type'],
+                name = o['name'],
+                order = int(o['order']),
+            )
+            state.put()
         for item in duts:
             dut = DutDB.gql("Where dut_name =:1", item['dut_name']).get()
             if dut == None:  #if there is not an instrument with the inputted name, then create it in the DB
@@ -120,7 +134,7 @@ class Handler(InstrumentDataHandler):
                 test.put()
                    
         for item in configs:
-            config = ConfigDB.get(ConfigDB_key(config_name+testplan_name))
+            config = ConfigDB.get(ConfigDB_key(item['config_name']))
             if config == None:  #if there is not an instrument with the inputted name, then create it in the DB
                 # c = ConfigDB(key_name = (item['config_name']+testplan_name), parent = company_key(),
                 # company_nickname = company_nickname, author = author,
@@ -137,47 +151,51 @@ class Handler(InstrumentDataHandler):
                 # config_name = item['config_name'],
                 # )
                 # c.put()
-                config = ConfigDB(key_name = (item['config_name']+testplan_name), parent = company_key())
-                company_nickname = company_nickname, 
-                author = author,
-                instrument_type = item['instrument_type'],
-                hardware_name = item['hardware'],
-                test_plan = True,
-                active_testplan_name = testplan_name,
-                commence_test = False,
-                trace = False,
-                config_name = item['config_name'],
+                config = ConfigDB(key_name = item['config_name'], 
+                    parent = company_key(),
+                    company_nickname = company_nickname, 
+                    author = author,
+                    instrument_type = item['instrument_type'],
+                    hardware_name = item['hardware'],
+                    test_plan = True,
+                    active_testplan_name = testplan_name,
+                    commence_test = False,
+                    trace = False,
+                    config_name = item['config_name'],
                 )
                 config.put()
-
                 if item['instrument_type'] == "U2001A":
                     print 'item =', item
                     pass_fail = item['pass_fail']
                     max_value = float(item['max_value'])
                     min_value = float(item['min_value'])
-                    print pass_fail, max_value, min_value
-                    s = agilentU2000(key_name = (item['config_name']+item['instrument_type']), parent = company_key(),
-                    config_name = item['config_name'],
-                    company_nickname = company_nickname, 
-                    hardware_name = item['hardware'], 
-                    instrument_type = item['instrument_type'],
-                    averaging_count_auto = item['averaging_count_auto'], 
-                    correction_frequency = item['correction_frequency'], 
-                    offset = item['offset'], 
-                    range_auto = item['range_auto'], 
-                    units = item['units'],
-                    max_value = max_value,
-                    min_value = min_value,
-                    pass_fail = pass_fail,
-                    pass_fail_type = 'Range',
+                    s = agilentU2000(
+                        key_name = item['config_name']+item['instrument_type'],
+                        parent = company_key(),
+                        config_name = item['config_name'],
+                        company_nickname = company_nickname, 
+                        hardware_name = item['hardware'], 
+                        instrument_type = item['instrument_type'],
+                        averaging_count_auto = item['averaging_count_auto'], 
+                        correction_frequency = item['correction_frequency'], 
+                        offset = item['offset'], 
+                        range_auto = item['range_auto'], 
+                        units = item['units'],
+                        max_value = max_value,
+                        min_value = min_value,
+                        pass_fail = pass_fail,
+                        pass_fail_type = 'Range',
+                        test_plan = True,
                     )
                     s.put()
-                    if s.key() not in test.instrument_configs:
-                        test.instrument_configs.append(s.key())
-                        test.put()
             if test.key() not in config.tests:  #add the test plan to the list property of the dut
                 config.tests.append(test.key())
                 config.put()
+            if config.instrument_type == "U2001A":
+                i_key = agilentU2000_key(config.config_name+config.instrument_type)
+                if i_key not in test.instrument_configs:
+                    test.instrument_configs.append(i_key)
+                    test.put()
             if config.key() not in test.configs:  #add the  dut name to the list property ot the test plan
                 test.configs.append(config.key())
                 test.put()

@@ -45,14 +45,16 @@ class Handler(InstrumentDataHandler):
         range_auto = config_data['range_auto']
         units = config_data['units']
         testplan_name = config_data['trace_name']
-        measurement = config_data['measurement']
         # max_value = config_data['max_value']
         # min_value = config_data['min_value']
         # pass_fail = config_data['pass_fail']
         # pass_fail_type = config_data['pass_fail_type']
-        print range_auto, "range auto"
-        print averaging_count_auto, "averaging count auto"
-        c = agilentU2000(key_name = (config_name+instrument_type), parent = company_key(),
+        measurement = ""
+        if config_data.has_key('measurement'):
+            measurement = config_data['measurement']
+        logging.debug("range auto: % s" % range_auto)
+        logging.debug("averaging count auto: %s" % averaging_count_auto)
+        c = agilentU2000(key_name = config_name+instrument_type, parent = company_key(),
             config_name = config_name,
             company_nickname = company_nickname, 
             hardware_name = hardware_name, 
@@ -66,9 +68,10 @@ class Handler(InstrumentDataHandler):
             # min_value = min_value,
             # pass_fail = pass_fail,
             pass_fail_type = 'N/A',
+            test_plan = False,
             )
         c.put() 
-        s = ConfigDB(key_name = (config_name+testplan_name), parent = company_key(),
+        s = ConfigDB(key_name = config_name, parent = company_key(),
             config_name = config_name,
             company_nickname = company_nickname,
             hardware_name = hardware_name, 

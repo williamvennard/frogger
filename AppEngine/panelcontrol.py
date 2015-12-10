@@ -37,7 +37,8 @@ class Handler(InstrumentDataHandler):
     def post(self, company_nickname="", hardware_name="",config_name="", testplan_name=""):
         control_object = json.loads(self.request.body)
         order = control_object['command']
-        key_name = config_name + testplan_name
+        key_name = config_name
+        logging.debug("KEYNAME: %s" % key_name)
         key = db.Key.from_path('ConfigDB', key_name, parent = company_key())
         config = db.get(key)
         if order == 'Stop_Explore':
