@@ -1,5 +1,5 @@
 {% extends "one.html" %}
-{% block title %} Blob Analyzer {% endblock %}
+{% block title %} Analysis {% endblock %}
 {% block head %}
 {{ super() }}
 <title> {{ self.title() }} </title>
@@ -10,29 +10,23 @@
 </style>
 {% endblock %}
 {% block content %}
-  <h2> {{ self.title() }} </h2>
-      <form name="searchform" action="/search" method="post">
-      <input type="hidden" name="download_key" value="{{download_key}}"/>
-
-      <table>
-
-      <tr>
-
-      <td>
-
-       <input type="text" id="query" name="query" size="80" value="{{base_query}}" />
-
-      </td>
-
-      <tr>
-      <td>
-       <input type="submit" class="btn primary"  name="searchsub" value="Search"/>
-       <input type="reset" class="btn primary"  name="searchreset" value="Clear"/>
-      </td><td></td><td></td></tr>
-
-      </table>
-
-    </form>
+  <div class="col-md-12 canv">
+    <h1 class="headr"> {{ self.title() }} </h1>
+  </div>
+  <form name="searchform" action="/search" method="post">
+    <input type="hidden" name="download_key" value="{{download_key}}"/>
+    <table>
+    <tr>
+    <td>
+     <input type="text" id="query" name="query" size="80" value="{{base_query}}" />
+    </td>
+    <tr>
+    <td>
+     <input type="submit" class="btn primary"  name="searchsub" value="Search"/>
+     <input type="reset" class="btn primary"  name="searchreset" value="Clear"/>
+    </td><td></td><td></td></tr>
+    </table>
+  </form>
   <table style="width:100%">
   <a href ="blob_export/{{download_key}}">export</a>
     <tr>
@@ -48,13 +42,11 @@
       <th>Testplan Name or Trace Name</th> 
       <th>Hardware Name</th>
       <th>Pass/Fail</th> 
-
     </tr>
     {% for entry in result %}
       <tr>
       {% for item in entry %}
-              <td> {{ item.value }} </td>
-
+          <td> {{ item.value }} </td>
       {% endfor %}
       </tr>
     {% endfor %}
