@@ -404,7 +404,8 @@
     <script>
     $(document).ready(function(){
         $("#ShareResults").click(function(){
-          test_info_url = window.location.origin + '/u2000_traceresults/Acme/Tahoe' + '/' + configName ; //unhard code company and hardware asap
+          company = 'profile.company_nickname'
+          test_info_url = window.location.origin + '/u2000_traceresults/' + company + '/' gConfigVars.hardwareName + '/' + configName ; //unhard code company and hardware asap
             var email = document.getElementById('email_input').value;
             var measurement = document.getElementById('measurementValue').value;
             var units = document.getElementById('PMUnits').value;
@@ -441,7 +442,7 @@
       var company_nickname = document.getElementById('company_nickname').value;
       var comment_author = document.getElementById('comment_author').value;
       // var hardware_name = document.getElementById('hardware_name');
-      var hardware_name = 'Tahoe';
+      var hardware_name = gConfigVars.hardwareName;
       // var start_tse = document.getElementById('start_tse')
       var start_tse = Date.now()
       var comment_time = start_tse
@@ -516,9 +517,8 @@
 
     <script type="text/javascript">
     $(document).ready(function () {
-    //widget_url = 'https://gradientone-test.appspot.com/testresults/widgets/Acme.json';
-
-    widget_url = window.location.origin + '/testresults/widgets/Acme.json';
+    var company = '{{profile.company_nickname}}'
+    widget_url = window.location.origin + '/testresults/widgets/' + company + '.json';
     console.log('widget_url', widget_url);
         $.ajax({
             async: true,
@@ -595,6 +595,14 @@
                 loadU2001A(i);
             };
         };
+    }
+
+    function validateInput(input) {
+        console.log(input);
+        console.log("TYPE: ", typeof input);
+        input = input.replace(/ +$/, "");
+        input = input.replace(/\s+/g, '-');
+        return input;
     }
     </script>
 

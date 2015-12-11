@@ -149,7 +149,7 @@
                                 <tr>
                                     <td class="label">                                        
                                       <input class="nameTestInput" id="start_time" type="text" name="start_time" value="" placeholder="time goes here">
-                                      <input type="hidden" name="company_nickname" value="Acme">
+                                      <input type="hidden" name="company_nickname" value="{{profile.company_nickname}}">
                                       <input type="hidden" name="timepost" value=True>
                                     </td>
                                 </tr>
@@ -170,7 +170,7 @@
                                 <tr>
                                     <td class="label">                                        
                                       <input class="nameTestInput" id="summary" type="text" name="summary" value="" placeholder="summary goes here">
-                                      <input type="hidden" name="company_nickname" value="Acme">
+                                      <input type="hidden" name="company_nickname" value="{{profile.company_nickname}}">
                                       <input type="hidden" name="timepost" value=True>
                                     </td>
                                 </tr>                              
@@ -404,7 +404,7 @@
 $(document).ready(function () {
     //widget_url = 'https://gradientone-test.appspot.com/testresults/widgets/Acme.json';
 
-    widget_url = window.location.origin + '/testresults/widgets/Acme.json';
+    widget_url = window.location.origin + '/testresults/widgets/' + '{{profile.company_nickname}}' + '.json';
     console.log('widget_url', widget_url);
         $.ajax({
             async: true,

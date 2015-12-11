@@ -789,7 +789,7 @@
 
         var testSetUp = document.getElementById('testSetup');
         var testSetUpInfo = testSetUp.childNodes;
-        var companyName = 'Acme';
+        var companyName = '{{profile.company_nickname}}';
         var testPlanName = testSetUpInfo[1].children[0].children[1].children[0].value;
         
         //var config_search_url = 'https://gradientone-test.appspot.com';
@@ -891,9 +891,9 @@
         var testSetUp = document.getElementById('testSetup');
         var testSetUpInfo = testSetUp.childNodes;
         testPlanName = testSetUpInfo[3].children[0].children[1].children[0].value;
-        companyName = 'Acme';
-        hardwareName = 'Tahoe';
-        testPlanAuthor = 'nedwards';
+        companyName = '{{profile.company_nickname}}';
+        hardwareName = gConfigVars.hardwareName;
+        testPlanAuthor = '{{profile.name}}';
         startTime = testSetUpInfo[3].children[1].children[1].children[0].value;
         d = new Date(startTime);
         var startMS = d.getTime();
@@ -931,9 +931,9 @@
         var testSetUpInfo = testSetUp.childNodes;
         testPlanName = testSetUpInfo[1].children[0].children[1].children[0].value;
         var opsStart = new Boolean(document.getElementById('opsStartCheck').checked);
-        companyName = 'Acme';
-        testPlanAuthor = 'nedwards';
-        hardwareName = 'Tahoe';
+        companyName = '{{profile.company_nickname}}';
+        testPlanAuthor = '{{profile.name}}';
+        hardwareName = gConfigVars.hardwareName;
         startTime = testSetUpInfo[1].children[1].children[1].children[0].value;
         d = new Date(startTime);
         var startMS = d.getTime();
@@ -985,7 +985,7 @@
                 }
 
                 var U2001AJsonObj = {"config_name":configName, "correction_frequency": freqCorrection, "offset":offset, "units":units, 
-                "instrument_type": "U2001A", "hardware": "Tahoe", "averaging_count_auto": avgCountAuto, "range_auto": rangeAuto, 
+                "instrument_type": "U2001A", "hardware": gConfigVars.hardwareName, "averaging_count_auto": avgCountAuto, "range_auto": rangeAuto, 
                 "pass_fail":passFail, "min_value": passFailMin, "max_value": passFailMax}
                 configArray.push(U2001AJsonObj);
 

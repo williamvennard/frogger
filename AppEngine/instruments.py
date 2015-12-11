@@ -44,13 +44,6 @@ def get_google_user():
 
 class Handler(InstrumentDataHandler):
     def get(self, author="", instrument_type="", instrument_name=""):
-        #if not self.authcheck():
-        #    return
-        #author = author_creation()
-        #name_of_inst = 'myscope'
-        #company_name = 'Acme'
-        #key = name_of_inst+company_name
-        #myscope = agilentMSO7014A(key_name = key)
         user = get_google_user()
         logging.info("instruments:get: user = %s" % user)
         if user:

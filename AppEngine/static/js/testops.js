@@ -1,8 +1,8 @@
 //PM CONFIG FORM SUBMIT
 var configName;
 var traceName;
-var company = 'Acme';
-var hardware = 'Tahoe';
+var company = '{{profile.company_nickname}}';
+var hardware = gConfigVars.hardwareName;
 
 function OPConfig(instrument_config) {
 
@@ -29,8 +29,8 @@ function OPConfig(instrument_config) {
       console.log('saveStatus: config_url = ',config_url);
 
       var configSettings = JSON.stringify({"config_name":configName,"trace_name":traceName, "correction_frequency":frequencyCorrection,
-       "offset":offset, "units":units, "avg_count_auto":avgCountAuto, "range_auto":rangeAuto, "hardware_name":"Tahoe",
-       "inst_name":"U2001A","company_nickname":"Acme"});
+       "offset":offset, "units":units, "avg_count_auto":avgCountAuto, "range_auto":rangeAuto, "hardware_name": hardware,
+       "inst_name":"U2001A","company_nickname":"{{profile.company_nickname}}"});
 
       console.log('instConfig: configSettings = ',configSettings);
 
@@ -49,7 +49,6 @@ function OPConfig(instrument_config) {
 function PMtraceStart(el){
       console.log('traceStart !!!!!')
       //formatStartUrl = raw_urlPath.split('/');
-      //https://gradientone-test.appspot.com/panelcontrol/Acme/Tahoe/Primetime
       var startValue = 'Start_Trace';
       var start_url = window.location.origin + '/panelcontrol/' + company + '/' + hardware + '/' + configName + '/' + traceName;// + formatStartUrl[formatStartUrl.length-2];
       console.log('exploreStart: start_url =',start_url);
@@ -103,7 +102,6 @@ $("#powerMeterStartStop").click(function() {
 var resultsTrigger;
 function powerMeterData() {
   console.log('PowerMeter START!');
-      //test_info_url = 'https://gradientone-test.appspot.com/u2000_traceresults/Acme/MSP/Tahoe';
       test_info_url = window.location.origin + '/u2000_traceresults/' + company + '/' + hardware + '/' + configName;
       $.ajax({
           async: true,
