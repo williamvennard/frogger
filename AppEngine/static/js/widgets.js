@@ -1063,15 +1063,28 @@
         $(".draggable").each(function(){        
         });
     }  
-
+    function validateInput(input) {
+        console.log(input);
+        console.log("TYPE: ", typeof input);
+        input = input.replace(/ +$/, "");
+        input = input.replace(/\s+/g, '-');
+        return input;
+    }
     function checkTestName() {
         var name = document.getElementById("tesPlanName").value;
+        name = validateInput(name);
+        console.log("tesPlanName: ", name)
+        if (name == ''){
+            var message = "<h3>Woops! No test plan name. Please enter one.</h3>"
+            document.getElementById("FlashBox").innerHTML = message
+            return false
+        }
         var check_url = window.location.origin + '/check-testplan-name/' + name;
         $.getJSON( check_url, function( data ) {
             console.log("CHECKDATA: ", data["available"])
           if (data["available"] === false){
             console.log("CHECKED FALSE!");
-            var message = "<h3>Woops! Test plan name taken. Please try another</h3>";
+            var message = "<h3>Woops! Test plan name taken. Please try another.</h3>";
             document.getElementById("FlashBox").innerHTML = message;
             return false
           }else{

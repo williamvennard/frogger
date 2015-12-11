@@ -18,7 +18,7 @@
                 <h1 class="headr">{{profile.company_nickname}} Canvas </h1>
             </div>
             <div class="col-md-7">
-                <span id="FlashBox"><h3>Hello</h3></span>
+                <span id="FlashBox"></span>
             </div>
         </div>
         <div class="row">
@@ -496,9 +496,10 @@ $(document).ready(function () {
         };
     }
     function checkTextField() {
-        var testPlanName = document.getElementById("tesPlanName")
+        var testPlanName = document.getElementById("tesPlanName").value
+        testPlanName = validateInput(testPlanName);
         var testSpace = document.getElementById("testPlan")
-        if (testPlanName.value == '') {
+        if (testPlanName == '') {
             console.log('field is empty');
             $("#accordion").hide();
         }else if (!(testSpace.innerHTML == '')) {
@@ -508,7 +509,6 @@ $(document).ready(function () {
             $("#accordion").fadeIn("fast");   
         }  
     };
-
     </script>
 
     </script>
