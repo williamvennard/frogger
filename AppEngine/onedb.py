@@ -111,6 +111,8 @@ class TestDB(DictModel):
     test_scheduled = db.BooleanProperty(required = False)
     scheduled_start_time = db.DateTimeProperty(required = False)
     ops_start = db.BooleanProperty(default = False)
+    summary = db.TextProperty(required = False)
+
 
 class TestInterface(FlexModel):
     name = db.StringProperty(required = False)
