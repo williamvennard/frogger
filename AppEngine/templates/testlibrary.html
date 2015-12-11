@@ -79,7 +79,7 @@
         var orderstringArray = [];
         var config_name = "";
         for (var i=0;i<testArray.length;i++) {
-          console.log("testplan_name: "+testArray[i].testplan_name);
+            // console.log("testplan_name: "+testArray[i].testplan_name);
             configTable+="<div style='margin-bottom:20px;'>";
             configTable+="<span class='name'> Name: </span>" + "<a href='" + window.location.origin + "/view_testplan/" + testArray[i].company_nickname + "/" + testArray[i].hardware_name + "/" + testArray[i].testplan_name + "' " + "<span  class='testName text-capitalize'>" + testArray[i].testplan_name + "</span></a>";
             configTable+="<br>"
@@ -87,7 +87,7 @@
             configTable+="<span class='startTime'> Date Created: </span>" + "<span>" + testArray[i].date_created + "</span><br>";
             configTable+="<span class='subField'> Date Test Performed: </span> <span> Dummy Date </span> <br>"
             configTable+="<span class='subField'> Author: </span><span> Dummy Author Name </span><br>"
-            configTable+="<span class='subField'>More Options: </span><span><a class='resultsLink' href='" + window.location.origin + "/testlibrary/testresults/" + "'> Results </a>";
+            configTable+="<span class='subField'>More Options: </span><span><a class='resultsLink' href='" + window.location.origin + "/testlibrary/testresults/" + testArray[i].company_nickname + '/' + testArray[i].testplan_name + "'> Results </a>";
             if (testArray[i].ops_start == 'True'){            
               orderstring = testArray[i].order;
               console.log("orderstring: "+orderstring)            
@@ -95,27 +95,33 @@
               config_name = orderstringArray[1];
               configTable+="<a class='resultsLink' href='" + ops_url + testArray[i].company_nickname + "/" + testArray[i].hardware_name + "/" + config_name + "/" + testArray[i].testplan_name +  "'>Operator</a>";
             };
-            configTable+="<a class='resultsLink' href='" + window.location.origin + "/canvas?library=saved&index=" + i + "'>Canvas</a>"
+            configTable+="<a class='resultsLink' href='" + window.location.origin + "/canvas?library=testplan&index=" + i + "'>Canvas</a>"
             configTable+="</span><br>"
             configTable+="</div>" 
         };
         configTable+="</div>"
-        console.log('configTable = ', configTable);
-
-        //config_config == traceConfigTable
+        // console.log('configTable = ', configTable);
+        //TRACES TAB
+        //config_config == traceConfigTable 
         var traceConfigTable = "<div>"
         for (var i=0;i<configArray.length;i++) {
-          console.log(configArray[i].testplan_name);
+          if (configArray[i].test_plan === 'False'){
             traceConfigTable+="<div style='margin-bottom:20px;'>";
-            traceConfigTable+="<span class='name'> Name: </span>" + "<span  class='testName text-capitalize'>" + configArray[i].config_name + "</span>";
-            traceConfigTable+="<br>"
+            traceConfigTable+="<span class='name'> Trace Name: </span>" + "<span  class='testName text-capitalize'>" + configArray[i].active_testplan_name + "</span><br>";
+            traceConfigTable+="<span class='name'> Config Name: </span>" + "<span  class='testName text-capitalize'><a href='" + window.location.origin + "/instruments?library=trace&U2001A=" + configArray[i].config_name + "'>" + configArray[i].config_name + "</a></span><br>";
+            traceConfigTable+="<span class='subField'> Summary: </span> <span> Dummy Summary </span><br>"
             traceConfigTable+="<span class='instType'> Inst Type: </span>" + "<span>" + configArray[i].instrument_type + "</span>";
             traceConfigTable+="<br>"
-            traceConfigTable+="<span class='startTime'> Date Created: </span>" + "<span>" + configArray[i].date_created + "</span>";
+            traceConfigTable+="<span class='startTime'> Date Created: </span>" + "<span>" + configArray[i].date_created + "</span><br>";
+            traceConfigTable+="<span class='subField'> Author: </span><span> Dummy Author Name </span><br>"
+            traceConfigTable+="<span class='subField'> Results: </span><span id='" + configArray[i].active_testplan_name + "ResultsLink'></span><br>"
             traceConfigTable+="</div>"
+          };
         };
         traceConfigTable+="</div>"
         //console.log('traceConfigTable = ', traceConfigTable);
+        document.getElementById("configTable").innerHTML = configTable;
+        document.getElementById("traceConfigTable").innerHTML = traceConfigTable;
         //RESULTS TAB
         var testTable = "<div>";
         var traceTable = "<div>";
@@ -131,13 +137,12 @@
             console.log('resultsArray[i] = ',resultsArray[i]);
             if (resultsArray[i].test_plan  === 'True') {
                 testTable+="<div class='libraryEntry' style='margin-bottom: -60px;'>";
-                testTable+="<span class='name'>" + "Name: "  + "</span>" + "<span  class='testName text-capitalize'>" + resultsArray[i].testplan_name + "</span>";
-                testTable+="<br>";
+                testTable+="<span class='name'>" + "Name: "  + "</span>" + "<span  class='testName text-capitalize'>" + resultsArray[i].testplan_name + "</span><br>";
                 testTable+="<span class='startTime'>" + "Start Time: " + "</span>" + "<span class='libTime'>" + formatStartDate + "</span>";
                 testTable+="<br>";
                 testTable+="<span class='endTime'>" + "End Time: " + "</span>" + "<span class='libTime'>" + formatEndDate + "</span>";
                 testTable+="<br>";
-                testTable+="<a class='resultsLink' href='" + window.location.origin + "/testlibrary/testresults/" + resultsArray[i].company_nickname + "/" + resultsArray[i].config_name + "/" + resultsArray[i].start_tse + "'>Results</a>";
+                testTable+= "<a class='resultsLink' href='" + window.location.origin + "/testlibrary/testresults/" + resultsArray[i].company_nickname + "/" + resultsArray[i].config_name + "/" + resultsArray[i].start_tse + "'>Results</a>";
                 testTable+="<div class='decChart hoverzoom showHidden' id='decChart" + index + "'></div>";
                 testTable+="<div class='hiddenInfo' style='color:white;'></div>"
                 testTable+="</div>"; 
@@ -151,7 +156,10 @@
                 traceTable+="<br>";
                 traceTable+="<span class='endTime'>" + "End Time: " + "</span>" + "<span class='libTime'>" + formatEndDate + "</span>";
                 traceTable+="<br>";
-                traceTable+="<a class='resultsLink' href='"+ window.location.origin + "/testlibrary/traceresults/" + resultsArray[i].company_nickname + "/" + resultsArray[i].config_name + "/" + resultsArray[i].start_tse + "'>Results</a>";
+                var resultsLink="<a class='resultsLink' href='" + window.location.origin
+                resultsLink+="/testlibrary/traceresults/" + resultsArray[i].company_nickname + "/" + resultsArray[i].config_name + "/" + resultsArray[i].start_tse + "'>Results</a>";
+                document.getElementById(resultsArray[i].testplan_name + 'ResultsLink').innerHTML = resultsLink
+                traceTable+=resultsLink
                 traceTable+="<div class='decChart hoverzoom showHidden' id='decChart" + index + "'></div>";
                 traceTable+="<div class='hiddenInfo' style='color:white;'></div>"
                 traceTable+="</div>"; 
@@ -161,12 +169,10 @@
         };
         testTable+="</div>";
         traceTable+="</div>";
-
-        document.getElementById("configTable").innerHTML = configTable;
-        document.getElementById("traceConfigTable").innerHTML = traceConfigTable;
-        document.getElementById("testTable").innerHTML = testTable;
-        console.log('testTable = ', testTable);
-        document.getElementById("traceTable").innerHTML = traceTable;
+        // Load results data on page. 
+        // document.getElementById("testTable").innerHTML = testTable;
+        // console.log('testTable = ', testTable);
+        // document.getElementById("traceTable").innerHTML = traceTable;
         });
     };
 

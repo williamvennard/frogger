@@ -28,7 +28,7 @@
           </div>
           <div id="navbar">
             <ul class="topmenu nav navbar-nav">
-              <li><a href="../../../../../instruments">INSTRUMENTS</a></li>
+              <li><a href="/instruments">INSTRUMENTS</a></li>
               <li class="dots glyphicon glyphicon-option-vertical"></li>
               <li><a href="../../../../../testresults">CANVAS</a></li>
               <li class="dots glyphicon glyphicon-option-vertical"></li>
@@ -102,7 +102,7 @@
 function addComment() {
   console.log('addComment START!');
   var comment_url = window.location.origin + '/comments';
-  var testplan_name = '{{testplan_name}}';
+  var testplan_name = '{{data.testplan_name}}';
   var author = document.getElementById('comment_author').value;
   var start_tse = document.getElementById('start_tse').value;
   if (!start_tse){ start_tse = Date.now()};
@@ -219,6 +219,7 @@ function addComment() {
         if (pm_data){
           // show PM results
           console.log("PM data received: ", pm_data)
+          $(".testResultsBox").hide();
           var PowerTitle = "Power Meter Results:"
           document.getElementById("PowerMeterTitle").innerHTML = PowerTitle
           document.getElementById("PowerMeterResults").innerHTML = pm_data 

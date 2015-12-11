@@ -54,7 +54,7 @@ class Handler(InstrumentDataHandler):
         # Get all posts
 		public_posts = CommunityPostDB.all().order('-date_created')
 
-	   	if profile:
+		if profile:
 			# Limit to posts of user's company and group posts
 			filterlist = []
 			if profile.has_key('company_nickname'):

@@ -5,31 +5,20 @@
     <script type="text/javascript" src="/static/js/addons/appDrag.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/css/savedTestPlans.css"> 
     <script type="text/javascript" src="/static/js/addons/clickadd.js"></script>
-    <script type="text/javascript">
-        function checkTextField() {
-            var testPlanName = document.getElementById("tesPlanName")
-            var testSpace = document.getElementById("testPlan")
-            if (testPlanName.value == '') {
-                console.log('field is empty');
-                $("#accordion").hide();
-            }else if (!(testSpace.innerHTML == '')) {
-                $(".collapseCommitTest").fadeIn("fast"); 
-                $("#accordion").fadeIn("fast"); 
-            }else {
-                $("#accordion").fadeIn("fast");   
-            }  
-        };
-    </script>
     <link rel="stylesheet" type="text/css" href="/static/css/canvasApp.css">
     <style type="text/css">
         #canvas-navlink {color: rgb(124,175,46);}
+        #FlashBox h3 {color: orange; }
+        .headr {color: white;}
     </style>
 {% endblock %}
 {% block content %}        
         <div class="row">
-            <div class="col-md-12 canv" style="">
-                <h1 id="headr">{{profile.company_nickname}} Canvas</h1>
-                <p></p>  
+            <div class="col-md-4" style="margin-left: 25px;">
+                <h1 class="headr">{{profile.company_nickname}} Canvas </h1>
+            </div>
+            <div class="col-md-7">
+                <span id="FlashBox"><h3>Hello</h3></span>
             </div>
         </div>
         <div class="row">
@@ -140,7 +129,7 @@
                             <div class="col-md-5" style="height: 35px;">
                                 <tr>
                                     <td class="label">  
-                                      <input id="tesPlanName" class="nameTestInput" type="text" onblur="checkTextField();" value="" placeholder="name goes here">
+                                      <input id="tesPlanName" class="nameTestInput" type="text" onkeydown="checkTextField();" onBlur="checkTestName();" value="" placeholder="name goes here">
                                     </td>
                                 </tr>
                                 <div class="opsStartBox">
@@ -469,7 +458,7 @@ $(document).ready(function () {
             // console.log('savedConfigsHTML = ',savedMeasHTML);
             // document.getElementById("savedMeas").innerHTML = savedMeasHTML;
             urlVars = getUrlVars()
-            if ( urlVars['library'] == 'saved' ){ savedTestView(urlVars['index']) }
+            if ( urlVars['library'] == 'testplan' ){ savedTestView(urlVars['index']) }
         }); //end of ajax
 
     }); //end doc ready
@@ -484,7 +473,29 @@ $(document).ready(function () {
             vars[hash[0]] = hash[1];
         }
         return vars;
-    }    
+    }
+    function loadSavedU2001A(config_name){
+        for (var i=0;i<savedU2001As.length;i++) {
+            if(config_name === savedU2001As[i].config_name) {
+                createU2001A(i);
+            };
+        };
+    }
+    function checkTextField() {
+        var testPlanName = document.getElementById("tesPlanName")
+        var testSpace = document.getElementById("testPlan")
+        if (testPlanName.value == '') {
+            console.log('field is empty');
+            $("#accordion").hide();
+        }else if (!(testSpace.innerHTML == '')) {
+            $(".collapseCommitTest").fadeIn("fast"); 
+            $("#accordion").fadeIn("fast"); 
+        }else {
+            $("#accordion").fadeIn("fast");   
+        }  
+    };
+
+    </script>
 
     </script>
 {% endblock %}

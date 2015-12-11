@@ -570,12 +570,32 @@
               console.log("TargetListener: ", index);
               }(index))
             };
-
-
+            urlVars = getUrlVars()
+            if ( urlVars['library'] == 'trace' ){ loadSavedU2001A(urlVars['U2001A'])}
         }); //end of ajax
         
 
     }); //end doc ready 
+
+    function getUrlVars()
+    {
+        var vars = [], hash;
+        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        for(var i = 0; i < hashes.length; i++)
+        {
+            hash = hashes[i].split('=');
+            vars.push(hash[0]);
+            vars[hash[0]] = hash[1];
+        }
+        return vars;
+    }
+    function loadSavedU2001A(config_name){
+        for (var i=0;i<savedU2001As.length;i++) {
+            if(config_name === savedU2001As[i].config_name) {
+                loadU2001A(i);
+            };
+        };
+    }
     </script>
 
 {% endblock %}

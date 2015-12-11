@@ -6,6 +6,7 @@ from gradientone import render_json
 from gradientone import author_creation
 from onedb import TestResultsDB
 from onedb import TestResultsDB_key
+from onedb import CommentsDB
 import ast
 import collections
 import csv
@@ -35,40 +36,38 @@ from string import maketrans
 from profile import get_profile_cookie
 
 class Handler(InstrumentDataHandler):
-    def get(self, company_nickname, testplan_name, start_tse):
+    def get(self, company_nickname, testplan_name):
         profile = get_profile_cookie(self)
-        if company_nickname and testplan_name and start_tse:
-            self.render('testLibResults.html', profile=profile, 
-                testplan_name = testplan_name)
+        if company_nickname and testplan_name:
+            query = TestResultsDB.all().filter("company_nickname =", company_nickname)
+            query = query.filter("testplan_name =", testplan_name)
+            test_results = query.run()
+            comment_thread = []
+            logging.debug("TEST_RESULTS: %s" % test_results)
+            # if test_results:
+            #     comments_query = CommentsDB.all()
+            #     comments_query.ancestor(test_results)
+            #     comments = comments_query.run(limit=10)
+            #     for comment in comments:
+            #         comment_thread.append(comment)
+            data = {
+                'company_nickname' : company_nickname,
+                'testplan_name' : testplan_name,
+            }
+            self.render('testLibResults.html', comment_thread=comment_thread, 
+                data=data, profile = profile)
         else:
             logging.warn("Bad input for test results")
             self.redirect('/')
 
 
-class TestResultsSet(InstrumentDataHandler):
-    def get(self, company_nickname, testplan_name):
-        testplan_name = testplan_name.split('.')[0]
-        if company_nickname and testplan_name:
-            rows = db.GqlQuery("""SELECT * FROM TestResultsDB 
-                                  WHERE testplan_name =:1 
-                                  AND company_nickname =:2""",
-                                  testplan_name, 
-                                  company_nickname)
-            rows = list(rows)
-            test_results_set = query_to_dict(rows)
-            render_json(self, test_results_set)
-
-
 class JSON_Handler(InstrumentDataHandler):
-    def get(self, company_nickname, testplan_name, signature):
-        start_tse_check = signature.split('.')
+    def get(self, company_nickname, testplan_name):
         start_tse = int(start_tse_check[0])
         rows = db.GqlQuery("""SELECT * FROM TestResultsDB 
                               WHERE testplan_name =:1
-                              AND start_tse =:2 
-                              AND company_nickname =:3""",
+                              AND company_nickname =:2""",
                               testplan_name, 
-                              start_tse, 
                               company_nickname)
         test_results = query_to_dict(list(rows))
         render_json(self, test_results)

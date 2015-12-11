@@ -8,6 +8,8 @@ from onedb import BscopeDB_key
 from onedb import OscopeDB
 from onedb import OscopeDB_key
 from onedb import CapabilitiesDB
+from onedb import TestDB
+from onedb import TestDB_key
 from google.appengine.api import users
 from google.appengine.api import memcache
 from google.appengine.ext import db
@@ -334,3 +336,15 @@ def oauth_check(self):
       self.response.write(' -> %s %s\n' % (e.__class__.__name__, e.message))
       logging.warn(traceback.format_exc())
       return False
+
+
+class check_testplan_name(InstrumentDataHandler):
+    def get(self, testplan_name):
+        key = TestDB_key(testplan_name)
+        testplan = TestDB.get(key)
+        retval = {}
+        if testplan:
+            retval['available'] = False
+        else:
+            retval['available'] = True
+        render_json(self, retval)

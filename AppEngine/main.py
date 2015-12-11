@@ -90,6 +90,7 @@ from encode import multipart_encode, MultipartParam
 import view_testplan
 import blob_selection
 import blob_export
+from gradientone import check_testplan_name
 
 authorized_users = ['charlie@gradientone.com',
                     'nedwards@gradientone.com',
@@ -284,6 +285,7 @@ app = webapp2.WSGIApplication([
     ('/bscopedata/([a-zA-Z0-9-]+)//([a-zA-Z0-9.-]+)', bscopedata.Handler),
     ('/bscopedata/dec/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', bscopedatadec.Handler),
     ('/canvas', canvaspage.Handler),
+    ('/check-testplan-name/([a-zA-Z0-9-]+)', check_testplan_name),
     ('/comments', comments.Handler),
     ('/community', communitytests.Handler),
     ('/communityprivate', communitytests.PrivateHandler),
@@ -325,9 +327,8 @@ app = webapp2.WSGIApplication([
     ('/testlibrary', testlibrary.Handler),
     ('/testlibrary/([a-zA-Z0-9-]+)', testlibrary.Handler),
     ('/testlibrary/([a-zA-Z0-9-]+.json)', testlibrary.JSON_Handler),
-    ('/testlibrary/testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', testlibrarytest.Handler),
-    ('/testlibrary/testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+.json)', testlibrarytest.JSON_Handler),
-    ('/testlibrary/testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+.json)', testlibrarytest.TestResultsSet),
+    ('/testlibrary/testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', testlibrarytest.Handler),
+    ('/testlibrary/testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+.json)', testlibrarytest.JSON_Handler),
     ('/testlibrary/traceresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', testlibrarytrace.Handler),
     ('/testlibrary/traceresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+.json)', testlibrarytrace.Handler),
     ('/testmanager', testmanager.Handler),

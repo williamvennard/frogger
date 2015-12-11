@@ -4,6 +4,7 @@ from google.appengine.ext.webapp import blobstore_handlers
 from collections import defaultdict
 from google.appengine.api import search
 
+
 class DictModel(db.Model):
     def to_dict(self):
        return defaultdict(str, [(p, unicode(getattr(self, p))) for p in self.properties()])

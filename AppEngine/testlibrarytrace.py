@@ -44,7 +44,10 @@ class Handler(InstrumentDataHandler):
             start_tse = int(start_tse_check[0])
         if company_nickname and config_name and start_tse and start_tse_check[-1] == 'json':
             print "trace"
-            rows = db.GqlQuery("SELECT * FROM TestResultsDB WHERE config_name =:1 and start_tse =:2 and company_nickname =:3", config_name, start_tse, company_nickname)
+            rows = db.GqlQuery("""SELECT * FROM TestResultsDB 
+                WHERE config_name =:1 AND start_tse =:2 
+                AND company_nickname =:3""", 
+                config_name, start_tse, company_nickname)
             rows = list(rows)            
             test_results = query_to_dict(rows)
             render_json(self, test_results)
@@ -54,7 +57,9 @@ class Handler(InstrumentDataHandler):
             query = query.filter("start_tse =", start_tse)
             test_results = query.get()
             comment_thread = []
+            testplan_name = ""
             if test_results:
+                testplan_name = test_results.testplan_name
                 comments_query = CommentsDB.all()
                 comments_query.ancestor(test_results)
                 comments = comments_query.run(limit=10)
@@ -65,6 +70,7 @@ class Handler(InstrumentDataHandler):
                 'company_nickname' : company_nickname,
                 'config_name' : config_name,
                 'start_tse' : start_tse,
+                'testplan_name' : testplan_name,
             }
             self.render('testLibResults.html', comment_thread=comment_thread, 
                 data=data, profile = profile)

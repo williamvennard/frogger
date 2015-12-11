@@ -918,6 +918,10 @@
     };
 
     function commitBtn() {
+        if (!checkTestName()){
+            $('html, body').animate({ scrollTop: 0 }, 'fast');
+            return
+        }
         Dropped(); //get order
         var configArray = [];
         var U2001Array = [];
@@ -1059,3 +1063,20 @@
         $(".draggable").each(function(){        
         });
     }  
+
+    function checkTestName() {
+        var name = document.getElementById("tesPlanName").value;
+        var check_url = window.location.origin + '/check-testplan-name/' + name;
+        $.getJSON( check_url, function( data ) {
+            console.log("CHECKDATA: ", data["available"])
+          if (data["available"] === false){
+            console.log("CHECKED FALSE!");
+            var message = "<h3>Woops! Test plan name taken. Please try another</h3>";
+            document.getElementById("FlashBox").innerHTML = message;
+            return false
+          }else{
+            document.getElementById("FlashBox").innerHTML = '';
+            return true
+          }
+        });
+    };
