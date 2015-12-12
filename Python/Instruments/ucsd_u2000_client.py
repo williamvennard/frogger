@@ -17,9 +17,9 @@ import ivi
 import collections
 import nuc_auth
 
-COMPANYNAME = 'Acme'
-HARDWARENAME = 'Tahoe'
-GAE_INSTANCE = 'gradientone-dev2'
+COMPANYNAME = 'ucsd'
+HARDWARENAME = 'triton'
+URL_BASE = "https://ucsd.gradientone.com"
 
 def dt2ms(dtime):
     """Converts date time to miliseconds
@@ -36,9 +36,7 @@ def post_status(status):
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
     window = {'status':status, 'time':time.time()}
     status = json.dumps(window, ensure_ascii=True)
-    # url_s = ("https://gradientone-test.appspot.com/status/"
-    #          + COMPANYNAME + '/' + HARDWARENAME)
-    url_s = ("https://" + GAE_INSTANCE + ".appspot.com/status/"
+    url_s = (URL_BASE + "/status/"
              + COMPANYNAME + '/' + HARDWARENAME)
     result = requests.post(url_s, data=status, headers=headers)
     print "result.reason=", result.reason
@@ -49,10 +47,7 @@ def post_complete(config_name, active_testplan_name, ses):
     window_complete = {'commence_test':False}
     out_complete = json.dumps(window_complete, ensure_ascii=True)
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-    # url_c = ("https://gradientone-test.appspot.com/temp_testcomplete/"
-    #          + COMPANYNAME + '/' + config_name + '/'
-    #          + active_testplan_name)
-    url_c = ("https://" + GAE_INSTANCE + ".appspot.com/temp_testcomplete/"
+    url_c = (URL_BASE + "/temp_testcomplete/"
              + COMPANYNAME + '/' + config_name + '/'
              + active_testplan_name)
     result = ses.post(url_c, data=out_complete, headers=headers)
@@ -108,12 +103,7 @@ def make_json(payload):
 
 def check_config_url():
     """polls the configuration URL for a start signal @ 1sec intervals"""
-    #config_url = "http://localhost:18080/testplansummary/Acme/MSP"
-    #config_url = ("https://gradientone-test.appspot.com/testplansummary/"
-    #              + COMPANYNAME + '/' + HARDWARENAME)
-    #config_url = ("https://gradientone-dev.appspot.com/
-    #              testplansummary/Acme/MSP")
-    config_url = ("https://" + GAE_INSTANCE + ".appspot.com/testplansummary/"
+    config_url = (URL_BASE + "/testplansummary/"
                   + COMPANYNAME + '/' + HARDWARENAME)
     token = nuc_auth.get_access_token()
     headers = {'Authorization': 'Bearer '+token}

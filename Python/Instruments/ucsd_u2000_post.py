@@ -9,9 +9,9 @@ import json
 import requests
 import csv
 
-COMPANYNAME = 'Acme'
-HARDWARENAME = 'Tahoe'
-GAE_INSTANCE = 'gradientone-dev2'
+COMPANYNAME = 'ucsd'
+HARDWARENAME = 'triton'
+URL_BASE = "https://ucsd.gradientone.com"
 USERNAME = 'nedwards'
 
 # import urllib3
@@ -61,13 +61,11 @@ class AgilentU2000:
         ses = self.ses
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
         if test_plan == True:
-            raw_data_url = ("https://" + GAE_INSTANCE +
-                           ".appspot.com/u2000data/"
+            raw_data_url = (URL_BASE + "/"
                            + COMPANYNAME + '/' + HARDWARENAME +'/'
                            + config_name
                            + "/%s" % start_tse)
-            url_t = ("https://" + GAE_INSTANCE
-                    + ".appspot.com/u2000_testresults/"
+            url_t = (URL_BASE + "/"
                     + COMPANYNAME + '/' + active_testplan_name
                     + '/' + config_name)
             window_u2000 = ({'i_settings':i_settings, 'cha':stuffing,
@@ -81,12 +79,10 @@ class AgilentU2000:
             print "result.reason=", result.reason
             print "result.status_code=", result.status_code
         else:
-            raw_data_url = ("https://" + GAE_INSTANCE
-                           + ".appspot.com/u2000data/"
+            raw_data_url = (URL_BASE + "/u2000data/"
                            + COMPANYNAME + '/' + HARDWARENAME +'/'
                            + config_name + "/%s" % start_tse)
-            url_t = ("https://" + GAE_INSTANCE
-                    + ".appspot.com/u2000_traceresults/"
+            url_t = (URL_BASE + "/u2000_traceresults/"
                     + COMPANYNAME + '/' + HARDWARENAME + '/' + config_name)
             window_u2000 = ({'i_settings':i_settings, 'cha':stuffing,
                            'raw_data_url':raw_data_url, 'start_tse':start_tse,
@@ -113,7 +109,7 @@ class AgilentU2000:
                            'hardware_name':HARDWARENAME})
         out_complete = json.dumps(window_complete, ensure_ascii=True)
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-        url_c = ("https://" + GAE_INSTANCE +".appspot.com/u2000_testcomplete/"
+        url_c = (URL_BASE + "/u2000_testcomplete/"
                 + COMPANYNAME + '/' + active_testplan_name
                 + '/' +config_name + "/%s" % str(stop_tse))
         result = ses.post(url_c, data=out_complete, headers=headers)
@@ -187,8 +183,7 @@ class AgilentU2000:
                    + USERNAME + '/' + COMPANYNAME
                    + '/Blobs/tempfile.csv', 'rb'), 'text/plain')}
                    )
-        blob_url = requests.get("https://"
-                   + GAE_INSTANCE + ".appspot.com/upload/geturl")
+        blob_url = requests.get(URL_BASE + "/upload/geturl")
         result = requests.post(blob_url.text, data=multipartblob,
                           headers={'Content-Type': multipartblob.content_type})
         print "result.reason=", result.reason
