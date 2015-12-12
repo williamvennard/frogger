@@ -37,13 +37,13 @@ function PMConfig() {
       $('#collapsePMConfig').collapse("hide");
 
       var d = document.getElementById('PMConfigSettings');
-
       var children = d.childNodes;
       console.log('PMConfig: children = ', children);
 
       configName = children[1].children[1].value;
       traceName = children[3].children[1].value;
-
+      
+      var company = document.getElementById('company_nickname').value;
       var frequencyCorrection =  children[5].children[1].value;
       var offset = children[7].children[1].value; 
       var units = children[9].children[1].value; 
@@ -66,7 +66,7 @@ function PMConfig() {
 
       var configSettings = JSON.stringify({"config_name":configName,"trace_name":traceName, "correction_frequency":frequencyCorrection,
        "offset":offset, "units":units, "avg_count_auto":avgCountAuto, "range_auto":rangeAuto, "hardware_name": gConfigVars.hardwareName,
-       "inst_name":"U2001A","company_nickname":"{{profile.company_nickname}}"});
+       "inst_name":"U2001A","company_nickname":company, });
 
       console.log('instConfig: configSettings = ',configSettings);
 
@@ -87,7 +87,7 @@ function PMtraceStart(el){
       console.log('traceStart !!!!!')
       //formatStartUrl = raw_urlPath.split('/');
       var startValue = 'Start_Trace';
-      var start_url = window.location.origin + '/panelcontrol/{{profile.company_nickname}}/gConfigVars.hardwareName/' + configName + '/' + traceName;// + formatStartUrl[formatStartUrl.length-2];
+      var start_url = window.location.origin + '/panelcontrol/'+ '{{profile.company_nickname}}' + '/gConfigVars.hardwareName/' + configName + '/' + traceName;// + formatStartUrl[formatStartUrl.length-2];
       console.log('exploreStart: start_url =',start_url);
       var startData = JSON.stringify({"command":startValue});
       console.log('exploreStart: startData =', startData);
@@ -107,7 +107,8 @@ function PMtraceStart(el){
       console.log('traceStop !!!!!')
       
       var startValue = 'Stop_Trace';
-      var start_url = window.location.origin + '/panelcontrol/{{profile.company_nickname}}/' + gConfigVars.hardwareName + '/' + configName + '/' + traceName;
+      var start_url = window.location.origin + '/panelcontrol/' + '{{profile.company_nickname}}' + 
+      '/' + gConfigVars.hardwareName + '/' + configName + '/' + traceName;
       console.log('exploreStart: start_url =',start_url);
 
       var startData = JSON.stringify({"command":startValue});

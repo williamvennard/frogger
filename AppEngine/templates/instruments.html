@@ -379,7 +379,7 @@
           <textarea name="content" id="content" form="usrform" rows="5" cols="50">Enter comment here...</textarea>
           <form action="/instruments"  method="post" id="usrform">
             <input class="hidden" id="start_tse" name="start_tse">
-            <input class="hidden" id="company_nickname" name="company_nickname" value='{{profile.company_nickname}}'>
+            <input class="hidden" id="company_nickname" name="company_nickname" value="{{profile.company_nickname}}">
             <input class="hidden" id="hardware_name" name="hardware_name"> 
             <input class="hidden" id="config_name" name="config_name"> 
             <input class="hidden" id="trace_name" name="trace_name"> 
@@ -405,8 +405,8 @@
     <script>
     $(document).ready(function(){
         $("#ShareResults").click(function(){
-          company = 'profile.company_nickname'
-          test_info_url = window.location.origin + '/u2000_traceresults/' + company + '/' gConfigVars.hardwareName + '/' + configName ; //unhard code company and hardware asap
+          company = "{{ profile.company_nickname | safe }}"
+          test_info_url = window.location.origin + '/u2000_traceresults/' + company + '/' + gConfigVars.hardwareName + '/' + configName ; //unhard code company and hardware asap
             var email = document.getElementById('email_input').value;
             var measurement = document.getElementById('measurementValue').value;
             var units = document.getElementById('PMUnits').value;
@@ -419,7 +419,7 @@
               recipient_email : email,
               measurement : measurement,
               units : units,
-              company_nickname : '{{company_nickname}}',
+              company_nickname : company,
               testplan_name : traceName,
               start_tse : start_tse,
             },
@@ -475,6 +475,7 @@
 
     <script type="text/javascript" src="/static/js/ochart.js"></script>
     <script type="text/javascript" src="/static/js/powerMeter.js"></script>
+    <script type="text/javascript" src="/static/js/gConfig.js"></script>
     <script type="text/javascript">$('#collapseOne').collapse("hide");</script><!--stops accordion from loading open -->
     <script type="text/javascript">$('#collapseTwo').collapse("hide");</script>
     <script type="text/javascript">$('#collapseThree').collapse("hide");</script>
@@ -518,7 +519,7 @@
 
     <script type="text/javascript">
     $(document).ready(function () {
-    var company = '{{profile.company_nickname}}'
+    var company = "{{ profile.company_nickname | safe }}"
     widget_url = window.location.origin + '/testresults/widgets/' + company + '.json';
     console.log('widget_url', widget_url);
         $.ajax({
@@ -567,10 +568,13 @@
             for (var index=0; index<elem.length; index++){
               (function(index){ 
                 console.log("INDEX: ", index);
-                elem[index].addEventListener("click", function(){loadU2001A(index)}, false);
-              console.log("TargetListener: ", index);
+                elem[index].addEventListener("click", function(){
+                  loadSavedU2001A(elem[index].innerHTML)
+                }, false);
+                console.log("TargetListener: ", index);
               }(index))
             };
+
             urlVars = getUrlVars()
             if ( urlVars['library'] == 'trace' ){ loadSavedU2001A(urlVars['U2001A'])}
         }); //end of ajax
@@ -606,5 +610,6 @@
         return input;
     }
     </script>
+    <script type="text/javascript" src="/static/js/gConfig.js"></script>
 
 {% endblock %}

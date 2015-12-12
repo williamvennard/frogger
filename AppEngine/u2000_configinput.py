@@ -9,6 +9,7 @@ import json
 import itertools
 import jinja2
 import webapp2
+import logging
 from measurements import max_min
 from measurements import threshold
 from google.appengine.api import memcache

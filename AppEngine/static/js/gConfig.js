@@ -2,4 +2,4 @@
 
 var gConfigVars = {
 	hardwareName : 'Tahoe'
-}
+};

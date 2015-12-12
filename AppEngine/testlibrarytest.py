@@ -63,7 +63,6 @@ class Handler(InstrumentDataHandler):
 
 class JSON_Handler(InstrumentDataHandler):
     def get(self, company_nickname, testplan_name):
-        start_tse = int(start_tse_check[0])
         rows = db.GqlQuery("""SELECT * FROM TestResultsDB 
                               WHERE testplan_name =:1
                               AND company_nickname =:2""",
