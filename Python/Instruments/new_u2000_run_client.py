@@ -180,7 +180,7 @@ def u2000_acq_run(config, nested_config, ses):
         print acq_dict
         bits = AgilentU2000(acq_dict, ses)
         bits.transmitraw()
-        r = s.get(config_url)
+        #r = ses.get(config_url)
         # config = r.json()
         # if config['configs_exps']:
         #     config = config['configs_exps'][0]
