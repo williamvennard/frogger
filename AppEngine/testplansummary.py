@@ -122,6 +122,7 @@ class Handler(InstrumentDataHandler):
             else:
                 config = {
                             'configs_tps_traces' : None,
+                            'configs_run' : None,
                             'commands' : commands,
                 }
             render_json(self, config)
