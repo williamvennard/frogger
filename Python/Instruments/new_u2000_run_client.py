@@ -59,24 +59,6 @@ def post_complete(config_name, active_testplan_name, ses):
     print "result.reason=", result.reason
     print "result.status_code=", result.status_code
 
-def post_run_complete(config_name, active_testplan_name, ses):
-    "posts information telling the server the test is complete"
-    window_complete = {'command':'Stop_Run'}
-    out_complete = json.dumps(window_complete, ensure_ascii=True)
-    headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-    # url_c = ("https://gradientone-test.appspot.com/temp_testcomplete/"
-    #          + COMPANYNAME + '/' + config_name + '/'
-    #          + active_testplan_name)
-    url_c = ("https://" + GAE_INSTANCE + ".appspot.com/panelcontrol/"
-             + COMPANYNAME + '/' + HARDWARENAME + '/' + config_name + '/'
-             + active_testplan_name)
-    result = ses.post(url_c, data=out_complete, headers=headers)
-    print "temp_result.reason=", result.reason
-    print "result.status_code=", result.status_code
-
-
-
-
 def check_config_vars(config, nested_config):
     "creates config variables to pass to the main u2000 code"
     if config['test_plan'] == 'True':
@@ -161,10 +143,6 @@ def check_config_url():
                 print "Starting API" 
                 post_status('Starting')
                 u2000_acq_run(config, nested_config, ses, headers)
-                # config_vars = check_config_vars(config, nested_config)
-                # config_name = config_vars[1]
-                # active_testplan_name = config_vars[0]
-                # post_run_complete(config_name, active_testplan_name, ses)
         else:
             print "No start order found"
     threading.Timer(1, check_config_url()).start()
@@ -207,10 +185,7 @@ def u2000_acq_run(config, nested_config, ses, headers):
         bits.transmitraw()
         new_result = ses.get(config_url, headers=headers)
         new_config = new_result.json()
-        print new_config
         if not new_config['configs_run']:
-        #     # config = config['configs_run'][0]
-        #     # if config['commence_run'] == 'False':
             print 'stopping'
             break
     u2000.close()
