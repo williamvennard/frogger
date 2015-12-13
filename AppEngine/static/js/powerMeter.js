@@ -42,7 +42,7 @@ function PMConfig() {
 
       configName = children[1].children[1].value;
       traceName = children[3].children[1].value;
-      
+
       var company = document.getElementById('company_nickname').value;
       var frequencyCorrection =  children[5].children[1].value;
       var offset = children[7].children[1].value; 
@@ -87,7 +87,8 @@ function PMtraceStart(el){
       console.log('traceStart !!!!!')
       //formatStartUrl = raw_urlPath.split('/');
       var startValue = 'Start_Trace';
-      var start_url = window.location.origin + '/panelcontrol/' + 'Acme' + '/' + 'Tahoe' + '/' + configName + '/' + traceName;// + formatStartUrl[formatStartUrl.length-2];
+      var company = document.getElementById('company_nickname').value;
+      var start_url = window.location.origin + '/panelcontrol/' + company + '/' + gConfigVars.hardwareName + '/' + configName + '/' + traceName;// + formatStartUrl[formatStartUrl.length-2];
       console.log('exploreStart: start_url =',start_url);
       var startData = JSON.stringify({"command":startValue});
       console.log('exploreStart: startData =', startData);
@@ -107,8 +108,9 @@ function PMtraceStart(el){
       console.log('traceStop !!!!!')
       
       var startValue = 'Stop_Trace';
-      var start_url = window.location.origin + '/panelcontrol/' + 'Acme' + 
-      '/' + 'Tahoe' + '/' + configName + '/' + traceName;
+      var company = document.getElementById('company_nickname').value;
+      var start_url = window.location.origin + '/panelcontrol/' + company + 
+      '/' + gConfigVars.hardwareName + '/' + configName + '/' + traceName;
       console.log('exploreStart: start_url =',start_url);
 
       var startData = JSON.stringify({"command":startValue});
@@ -194,7 +196,8 @@ $("#powerMeterStartStop").click(function() {
 var resultsTrigger;
 function powerMeterData() {
   console.log('PowerMeter START!');
-      test_info_url = window.location.origin + '/u2000_traceresults/' + 'Acme' + '/' + 'Tahoe' + '/' + configName ; //unhard code company and hardware asap
+      var company = document.getElementById('company_nickname').value;
+      test_info_url = window.location.origin + '/u2000_traceresults/' + company + '/' + gConfigVars.hardwareName + '/' + configName ; //unhard code company and hardware asap
       $.ajax({
           async: true,
           url: test_info_url,
@@ -203,11 +206,10 @@ function powerMeterData() {
         console.log('powerMeterStart: Power Meter results = ', results);      
         var testInfo = results;  
         resultsTrigger = results;
-
         var measurement = testInfo.cha;
         var start_tse = testInfo.start_tse;
-        var company_nickname = "Acme";
-        var hardware_name = 'Tahoe';
+        var company_nickname = company;
+        var hardware_name = gConfigVars.hardwareName;
 /*        var config_name = configName;
         var trace_name = configName;*/
 
@@ -222,9 +224,9 @@ function powerMeterData() {
         //def get(self,company_nickname="", hardware_name="",config_name="",start_tse=""):
         //u2000data
         
+        // For comment form 
         document.getElementById("measurementValue").innerHTML = measurement;
         document.getElementById("start_tse").value = start_tse;
-        document.getElementById("company_nickname").value = company_nickname;
         document.getElementById("hardware_name").value = hardware_name;
         document.getElementById("config_name").value = configName;
         document.getElementById("trace_name").value = traceName;
@@ -240,9 +242,9 @@ function PMSaveStatus(status) {
      document.getElementById("traceSave").disabled = true; 
       console.log('saveStatus: SAVED!!');
       
-
+      var company = document.getElementById('company_nickname').value;
       var saveValue = status;
-      var save_url = window.location.origin + '/datamgmt/u2000' + '/' + '{{profile.company_nickname}}' + '/' + gConfigVars.hardwareName;  //unhard code company and hardware asap
+      var save_url = window.location.origin + '/datamgmt/u2000' + '/' + company + '/' + gConfigVars.hardwareName;
       console.log('saveStatus: save_url = ',save_url);
 
       var formData = JSON.stringify({"save_status":saveValue,"totalNumPages":totalNumPages,"sliceSize":sliceSize});
