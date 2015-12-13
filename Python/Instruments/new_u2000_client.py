@@ -93,7 +93,6 @@ def check_config_vars(config, nested_config):
             pass_fail_type, max_value, min_value)
 
 
-
 def set_v_for_k(test_dict, key, val):
     "creates dictionary based off empty dictionary and key/value args"
     test_dict[key.encode('ascii')] = val
@@ -124,10 +123,10 @@ def check_config_url():
     if result:
         print 'checking'
         config = result.json()
-        print config
         if config['configs_tps_traces']:
             nested_config = config['nested_config'][0]
             config = config['configs_tps_traces'][0]
+            print 'configs_tps_traces config = ', config
             if config['commence_test'] == 'True':
                 print "Starting API"
                 post_status('Starting')
@@ -139,6 +138,7 @@ def check_config_url():
         elif config['configs_run']:
             nested_config = config['nested_config'][0]
             config = config['configs_run'][0]
+            print 'configs_runs config = ', config
             if config['commence_run'] == 'True':
                 print "Starting API" 
                 post_status('Starting')
