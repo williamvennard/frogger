@@ -132,6 +132,14 @@ def check_config_url():
             if config['commence_test'] == 'True':
                 print "Starting API"
                 post_status('Starting')
+                u2000_acq(config, nested_config, ses)
+                config_vars = check_config_vars(config, nested_config)
+                config_name = config_vars[1]
+                active_testplan_name = config_vars[0]
+                post_complete(config_name, active_testplan_name, ses)
+            elif config['commence_run'] == 'True':
+                print "Starting API"
+                post_status('Starting')
                 u2000_acq_run(config, nested_config, ses)
                 config_vars = check_config_vars(config, nested_config)
                 config_name = config_vars[1]
@@ -146,9 +154,6 @@ def u2000_acq_run(config, nested_config, ses):
     """sets the configuration for the u2000 API and calls the u2000 class"""
     acq_dict = {}
     print "Starting: Attempting to open one device..."
-    # config_vars = check_config_vars(config, nested_config)
-    # u2000 = ivi.agilent.agilentU2001A(("USB::0x0957::0x2b18::INSTR"))
-    #u2000.channels['channel1']
     config_url = ("https://" + GAE_INSTANCE + ".appspot.com/testplansummary/"
                   + COMPANYNAME + '/' + HARDWARENAME)
     while True:
@@ -190,44 +195,44 @@ def u2000_acq_run(config, nested_config, ses):
         #         break
         #post_status('Idle')
 
-# def u2000_acq(config, nested_config, ses):
-#     """sets the configuration for the u2000 API and calls the u2000 class"""
-#     acq_dict = {}
-#     print "Starting: Attempting to open one device..."
-#     config_vars = check_config_vars(config, nested_config)
-#     u2000 = ivi.agilent.agilentU2001A(("USB::0x0957::0x2b18::INSTR"))
-#     #u2000.channels['channel1']
-#     u2000.channels['channel1'].correction_frequency = config_vars[2]
-#     u2000.channels['channel1'].offset = config_vars[3]
-#     #u2000.channels['channel1'].range_auto = config_vars[4]
-#     u2000.channels['channel1'].units = config_vars[5]
-#     #   initiate measurement
-#     u2000.measurement.initiate()
-#     # read out channel 1 power data
-#     #post_status('Acquiring')
-#     power = u2000.measurement.fetch()
-#     u2000.close()
-#     tse = int(dt2ms(datetime.datetime.now()))
-#     inst_dict = {}
-#     inst_dict = set_v_for_k(inst_dict, 'correction_frequency', config_vars[2])
-#     inst_dict = set_v_for_k(inst_dict, 'pass_fail', config_vars[7])
-#     inst_dict = set_v_for_k(inst_dict, 'pass_fail_type', config_vars[8])
-#     inst_dict = set_v_for_k(inst_dict, 'max_value', config_vars[9])
-#     inst_dict = set_v_for_k(inst_dict, 'min_value', config_vars[10])
-#     inst_dict = set_v_for_k(inst_dict, 'offset', config_vars[3])
-#     acq_dict = collections.OrderedDict()
-#     acq_dict = set_v_for_k(acq_dict, 'Start_TSE', tse)
-#     acq_dict = set_v_for_k(acq_dict, 'data(dBm)', power)
-#     acq_dict = set_v_for_k(acq_dict, 'i_settings', inst_dict)
-#     acq_dict = set_v_for_k(acq_dict, 'config_name', config_vars[1])
-#     acq_dict = set_v_for_k(acq_dict, 'active_testplan_name', config_vars[0])
-#     acq_dict = set_v_for_k(acq_dict, 'test_plan', config_vars[6])
-#     print acq_dict
-#     bits = AgilentU2000(acq_dict, ses)
-#     bits.transmitraw()
-#     bits.transmitblob()
-#     bits.testcomplete()
-#     #post_status('Idle')
+def u2000_acq(config, nested_config, ses):
+    """sets the configuration for the u2000 API and calls the u2000 class"""
+    acq_dict = {}
+    print "Starting: Attempting to open one device..."
+    config_vars = check_config_vars(config, nested_config)
+    u2000 = ivi.agilent.agilentU2001A(("USB::0x0957::0x2b18::INSTR"))
+    #u2000.channels['channel1']
+    u2000.channels['channel1'].correction_frequency = config_vars[2]
+    u2000.channels['channel1'].offset = config_vars[3]
+    #u2000.channels['channel1'].range_auto = config_vars[4]
+    u2000.channels['channel1'].units = config_vars[5]
+    #   initiate measurement
+    u2000.measurement.initiate()
+    # read out channel 1 power data
+    #post_status('Acquiring')
+    power = u2000.measurement.fetch()
+    u2000.close()
+    tse = int(dt2ms(datetime.datetime.now()))
+    inst_dict = {}
+    inst_dict = set_v_for_k(inst_dict, 'correction_frequency', config_vars[2])
+    inst_dict = set_v_for_k(inst_dict, 'pass_fail', config_vars[7])
+    inst_dict = set_v_for_k(inst_dict, 'pass_fail_type', config_vars[8])
+    inst_dict = set_v_for_k(inst_dict, 'max_value', config_vars[9])
+    inst_dict = set_v_for_k(inst_dict, 'min_value', config_vars[10])
+    inst_dict = set_v_for_k(inst_dict, 'offset', config_vars[3])
+    acq_dict = collections.OrderedDict()
+    acq_dict = set_v_for_k(acq_dict, 'Start_TSE', tse)
+    acq_dict = set_v_for_k(acq_dict, 'data(dBm)', power)
+    acq_dict = set_v_for_k(acq_dict, 'i_settings', inst_dict)
+    acq_dict = set_v_for_k(acq_dict, 'config_name', config_vars[1])
+    acq_dict = set_v_for_k(acq_dict, 'active_testplan_name', config_vars[0])
+    acq_dict = set_v_for_k(acq_dict, 'test_plan', config_vars[6])
+    print acq_dict
+    bits = AgilentU2000(acq_dict, ses)
+    bits.transmitraw()
+    bits.transmitblob()
+    bits.testcomplete()
+    #post_status('Idle')
 
 # #post_status('Idle')
 
