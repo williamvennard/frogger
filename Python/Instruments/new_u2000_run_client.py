@@ -137,7 +137,7 @@ def check_config_url():
                 config_name = config_vars[1]
                 active_testplan_name = config_vars[0]
                 post_complete(config_name, active_testplan_name, ses)
-        elif config['config_run'] == 'True':
+        elif config['config_run']:
             nested_config = config['nested_config'][0]
             config = config['config_run'][0]
             if config['commence_run']:
