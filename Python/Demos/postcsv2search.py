@@ -4,6 +4,7 @@
 import csv
 import json
 import requests
+import sys
 
 def rows_from_file(fname):
     f = open(fname)
@@ -21,8 +22,17 @@ def rows_from_file(fname):
 datarows = rows_from_file('../../DataFiles/powerMeterSample.1.csv')
 outrows = json.dumps(datarows)
 print "outrows =", outrows
-#url = "https://fiberboardfreeway.appspot.com/searchdemo/upload"
-url = "http://localhost:8080/searchdemo/upload"
+if len(sys.argv) > 1:
+   hostname = sys.argv[1]
+   if hostname == "localhost":
+       url = "http://localhost:8080/searchdemo/upload"
+   elif hostname[:9] == "localhost":
+       url = "http://" + hostname + "/searchdemo/upload"
+   else:
+       url = "https://" + hostname + "/searchdemo/upload"
+else:
+   url = "https://fiberboardfreeway.appspot.com/searchdemo/upload"
+   #url = "http://localhost:8080/searchdemo/upload"
 headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
 s = requests.session()
 r = s.post(url, data=outrows, headers=headers)

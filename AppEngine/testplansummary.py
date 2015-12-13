@@ -57,6 +57,11 @@ class Handler(InstrumentDataHandler):
                                 company_nickname, True, hardware_name)
             rows = list(rows)
             configs_tps_traces = query_to_dict(rows)
+            rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE company_nickname =:1 and commence_run =:2 and hardware_name =:3", 
+                                company_nickname, True, hardware_name)
+            rows = list(rows)
+            configs_run = query_to_dict(rows)
+            print configs_run
             # grab instrument configurations associated with the config that need to run
             if configs_tps_traces:
                 logging.debug("CONFIG_TPS_TRACES %s", configs_tps_traces)
@@ -74,9 +79,42 @@ class Handler(InstrumentDataHandler):
                                     company_nickname, True, hardware_name)
                 rows = list(rows)
                 configs_exps = query_to_dict(rows)
+                rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE company_nickname =:1 and commence_run =:2 and hardware_name =:3", 
+                                company_nickname, True, hardware_name)
+                rows = list(rows)
+                configs_run = query_to_dict(rows)
                 config = {
                             'configs_exps' : configs_exps, 
                             'configs_tps_traces' : configs_tps_traces, 
+                            'configs_run' : configs_run,
+                            'nested_config' : nested_config,
+                            'measurements' : measurements,
+                            'commands' : commands,
+                }
+            elif configs_run:
+                logging.debug("CONFIG_RUN %s", configs_run)
+                nested_config_name = configs_run[0]['config_name']
+                nested_instrument_type = configs_run[0]['instrument_type']
+                rows = db.GqlQuery("SELECT * FROM agilentU2000 WHERE company_nickname =:1 and config_name =:2", 
+                                    company_nickname, nested_config_name)
+                nested_config = query_to_dict(rows)
+                logging.debug("NESTED_CONFIG %s", nested_config)
+                # grab measurements associated with the config
+                rows = db.GqlQuery("SELECT * FROM MeasurementDB WHERE company_nickname =:1 and config_name =:2",
+                                    company_nickname, nested_config_name)
+                measurements = query_to_dict(rows)
+                rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE company_nickname =:1 and commence_explore =:2 and hardware_name =:3", 
+                                    company_nickname, True, hardware_name)
+                rows = list(rows)
+                configs_exps = query_to_dict(rows)
+                rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE company_nickname =:1 and commence_run =:2 and hardware_name =:3", 
+                                company_nickname, True, hardware_name)
+                rows = list(rows)
+                configs_run = query_to_dict(rows)
+                config = {
+                            'configs_exps' : configs_exps, 
+                            'configs_tps_traces' : configs_tps_traces, 
+                            'configs_run' : configs_run,
                             'nested_config' : nested_config,
                             'measurements' : measurements,
                             'commands' : commands,

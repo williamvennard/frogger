@@ -126,6 +126,7 @@ def check_config_url():
     if result:
         print 'checking'
         config = result.json()
+        print config
         if config['configs_tps_traces']:
             nested_config = config['nested_config'][0]
             config = config['configs_tps_traces'][0]
@@ -133,6 +134,17 @@ def check_config_url():
                 print "Starting API"
                 post_status('Starting')
                 u2000_acq(config, nested_config, ses)
+                config_vars = check_config_vars(config, nested_config)
+                config_name = config_vars[1]
+                active_testplan_name = config_vars[0]
+                post_complete(config_name, active_testplan_name, ses)
+        elif config['configs_run']:
+            nested_config = config['nested_config'][0]
+            config = config['configs_run'][0]
+            if config['commence_run']:
+                print "Starting API" == 'True'
+                post_status('Starting')
+                u2000_acq_run(config, nested_config, ses)
                 config_vars = check_config_vars(config, nested_config)
                 config_name = config_vars[1]
                 active_testplan_name = config_vars[0]
@@ -146,12 +158,11 @@ def u2000_acq_run(config, nested_config, ses):
     """sets the configuration for the u2000 API and calls the u2000 class"""
     acq_dict = {}
     print "Starting: Attempting to open one device..."
-    config_vars = check_config_vars(config, nested_config)
-    u2000 = ivi.agilent.agilentU2001A(("USB::0x0957::0x2b18::INSTR"))
-    #u2000.channels['channel1']
     config_url = ("https://" + GAE_INSTANCE + ".appspot.com/testplansummary/"
                   + COMPANYNAME + '/' + HARDWARENAME)
     while True:
+        config_vars = check_config_vars(config, nested_config)
+        u2000 = ivi.agilent.agilentU2001A(("USB::0x0957::0x2b18::INSTR"))
         u2000.channels['channel1'].correction_frequency = config_vars[2]
         u2000.channels['channel1'].offset = config_vars[3]
         #u2000.channels['channel1'].range_auto = config_vars[4]
@@ -180,13 +191,16 @@ def u2000_acq_run(config, nested_config, ses):
         print acq_dict
         bits = AgilentU2000(acq_dict, ses)
         bits.transmitraw()
-        r = s.get(config_url)
-        # config = r.json()
-        # if config['configs_exps']:
-        #     config = config['configs_exps'][0]
-        #     if config['commence_explore'] == 'False':
-        #         break
+        result = ses.get(config_url)
+        config = result.json()
+        if config['configs_run']:
+            config = config['configs_run'][0]
+            if config['commence_run'] == 'False':
+                break
+        bits.transmitblob()
         #post_status('Idle')
+
+
 
 def u2000_acq(config, nested_config, ses):
     """sets the configuration for the u2000 API and calls the u2000 class"""
@@ -227,7 +241,7 @@ def u2000_acq(config, nested_config, ses):
     bits.testcomplete()
     #post_status('Idle')
 
-#post_status('Idle')
+# #post_status('Idle')
 
 
 # To test, use "export TEST_U2000_CLIENT=1"
