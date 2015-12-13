@@ -205,9 +205,9 @@ def u2000_acq_run(config, nested_config, ses, headers):
         acq_dict = set_v_for_k(acq_dict, 'test_plan', config_vars[6])
         bits = AgilentU2000(acq_dict, ses)
         bits.transmitraw()
-        print 'transmitting stuff'
         result = ses.get(config_url, headers=headers)
         config = result.json()
+        print config
         if config['configs_run']:
             config = config['configs_run'][0]
             if config['commence_run'] == 'False':
