@@ -11,7 +11,7 @@ import csv
 
 COMPANYNAME = 'Acme'
 HARDWARENAME = 'Tahoe'
-GAE_INSTANCE = 'gradientone-dev2'
+GAE_INSTANCE = 'gradientone-test'
 USERNAME = 'nedwards'
 
 # import urllib3
