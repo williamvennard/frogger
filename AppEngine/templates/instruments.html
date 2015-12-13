@@ -405,7 +405,7 @@
     <script>
     $(document).ready(function(){
         $("#ShareResults").click(function(){
-          company = "{{ profile.company_nickname | safe }}"
+          company = document.getElementById('company_nickname').value;
           test_info_url = window.location.origin + '/u2000_traceresults/' + company + '/' + gConfigVars.hardwareName + '/' + configName ; //unhard code company and hardware asap
             var email = document.getElementById('email_input').value;
             var measurement = document.getElementById('measurementValue').value;
@@ -519,7 +519,7 @@
 
     <script type="text/javascript">
     $(document).ready(function () {
-    var company = "{{ profile.company_nickname | safe }}"
+    var company = document.getElementById('company_nickname').value;
     widget_url = window.location.origin + '/testresults/widgets/' + company + '.json';
     console.log('widget_url', widget_url);
         $.ajax({

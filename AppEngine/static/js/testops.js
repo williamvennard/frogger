@@ -1,7 +1,7 @@
 //PM CONFIG FORM SUBMIT
 var configName;
 var traceName;
-var company = '{{profile.company_nickname}}';
+var company = document.getElementById('company_nickname').value;
 var hardware = gConfigVars.hardwareName;
 
 function OPConfig(instrument_config) {
@@ -30,7 +30,7 @@ function OPConfig(instrument_config) {
 
       var configSettings = JSON.stringify({"config_name":configName,"trace_name":traceName, "correction_frequency":frequencyCorrection,
        "offset":offset, "units":units, "avg_count_auto":avgCountAuto, "range_auto":rangeAuto, "hardware_name": hardware,
-       "inst_name":"U2001A","company_nickname":"{{profile.company_nickname}}"});
+       "inst_name":"U2001A","company_nickname": company});
 
       console.log('instConfig: configSettings = ',configSettings);
 
