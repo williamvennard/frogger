@@ -93,8 +93,6 @@ def check_config_vars(config, nested_config):
         min_value = nested_config['min_value']
         test_plan = config['test_plan']
     else:
-        print 'config =', config
-        print 'nested_config', nested_config
         active_testplan_name = config['active_testplan_name']
         test_plan = 'False'
         config_name = config['config_name']
