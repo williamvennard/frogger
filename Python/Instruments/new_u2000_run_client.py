@@ -211,8 +211,8 @@ def u2000_acq_run(config, nested_config, ses, headers):
         if not config['configs_run']:
             # config = config['configs_run'][0]
             # if config['commence_run'] == 'False':
-                print 'stoppings'
-                break
+            print 'stopping'
+            break
         u2000.close()
         #post_status('Idle')
 
