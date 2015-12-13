@@ -172,7 +172,6 @@ def u2000_acq_run(config, nested_config, ses, headers):
         # read out channel 1 power data
         #post_status('Acquiring')
         power = u2000.measurement.fetch()
-        u2000.close()
         tse = int(dt2ms(datetime.datetime.now()))
         inst_dict = {}
         inst_dict = set_v_for_k(inst_dict, 'correction_frequency', config_vars[2])
@@ -198,7 +197,7 @@ def u2000_acq_run(config, nested_config, ses, headers):
             config = config['configs_run'][0]
             if config['commence_run'] == 'False':
                 break
-        bits.testcomplete()
+        u2000.close()
         #post_status('Idle')
 
 
