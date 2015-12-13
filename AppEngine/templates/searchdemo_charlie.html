@@ -1,5 +1,5 @@
 {% extends "one.html" %}
-{% block title %} Analysis {% endblock %}
+{% block title %} Power Meter Demo {% endblock %}
 {% block head %}
 {{ super() }}
 <title> {{ self.title() }} </title>
@@ -9,6 +9,7 @@
   #query {color: black;}
   body {color: white;}
   td,th {padding:0 5px 0 5px;}
+  input,textarea {font: normal; color: black}
 </style>
 {% endblock %}
 {% block content %}
@@ -17,8 +18,11 @@
   </div>
   <form name="searchform" action="/searchdemo/charlie" method="post">
       <div>Search Demo</div>
-      <div><textarea name="search" rows="1" cols="60">enter criteria</textarea></div>
-      <div><input type="submit" value="Search"/></div>
+      <div>
+          <input name="search" type="text" size=60 value="{{query}}" />
+          <input type="submit" style="display: none" />
+          <input type="submit" class="btn primary" value="Search"/>
+      </div>
   </form>
   {{number_returned}} of {{results.number_found}} records found <p>
     {% for scored_document in results %}
