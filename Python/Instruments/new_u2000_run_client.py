@@ -144,7 +144,7 @@ def check_config_url():
             if config['commence_run']:
                 print "Starting API" == 'True'
                 post_status('Starting')
-                u2000_acq_run(config, nested_config, ses)
+                u2000_acq_run(config, nested_config, ses, headers)
                 config_vars = check_config_vars(config, nested_config)
                 config_name = config_vars[1]
                 active_testplan_name = config_vars[0]
@@ -154,7 +154,7 @@ def check_config_url():
     threading.Timer(1, check_config_url()).start()
 
 
-def u2000_acq_run(config, nested_config, ses):
+def u2000_acq_run(config, nested_config, ses, headers):
     """sets the configuration for the u2000 API and calls the u2000 class"""
     acq_dict = {}
     print "Starting: Attempting to open one device..."
