@@ -138,9 +138,9 @@ def check_config_url():
                 config_name = config_vars[1]
                 active_testplan_name = config_vars[0]
                 post_complete(config_name, active_testplan_name, ses)
-        elif config['config_run']:
+        elif config['configs_run']:
             nested_config = config['nested_config'][0]
-            config = config['config_run'][0]
+            config = config['configs_run'][0]
             if config['commence_run']:
                 print "Starting API" == 'True'
                 post_status('Starting')
