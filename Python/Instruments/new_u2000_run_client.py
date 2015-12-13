@@ -140,7 +140,7 @@ def check_config_url():
         elif config['config_run'] == 'True':
             nested_config = config['nested_config'][0]
             config = config['config_run'][0]
-            if config['commence_run']
+            if config['commence_run']:
                 print "Starting API" == 'True'
                 post_status('Starting')
                 u2000_acq_run(config, nested_config, ses)
