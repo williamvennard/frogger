@@ -71,7 +71,7 @@ def post_run_complete(config_name, active_testplan_name, ses):
              + COMPANYNAME + '/' + HARDWARENAME + '/' + config_name + '/'
              + active_testplan_name)
     result = ses.post(url_c, data=out_complete, headers=headers)
-    print "result.reason=", result.reason
+    print "temp_result.reason=", result.reason
     print "result.status_code=", result.status_code
 
 
