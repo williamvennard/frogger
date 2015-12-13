@@ -19,7 +19,7 @@ import nuc_auth
 
 COMPANYNAME = 'Acme'
 HARDWARENAME = 'Tahoe'
-GAE_INSTANCE = 'gradientone-dev2'
+GAE_INSTANCE = 'gradientone-test'
 
 def dt2ms(dtime):
     """Converts date time to miliseconds
