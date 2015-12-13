@@ -1,0 +1,34 @@
+{% extends "one.html" %}
+{% block title %} Power Meter Demo {% endblock %}
+{% block head %}
+{{ super() }}
+<title> {{ self.title() }} </title>
+<style type="text/css">
+  .label {text-align: right}
+  .error {color: red}
+  #query {color: black;}
+  body {color: white;}
+  td,th {padding:0 5px 0 5px;}
+  input,textarea {font: normal; color: black}
+</style>
+{% endblock %}
+{% block content %}
+  <div class="col-md-12 canv">
+    <h1 class="headr"> {{ self.title() }} </h1>
+  </div>
+  <form name="searchform" action="/searchdemo/charlie" method="post">
+      <div>Search Demo</div>
+      <div>
+          <input name="search" type="text" size=60 value="{{query}}" />
+          <input type="submit" style="display: none" />
+          <input type="submit" class="btn primary" value="Search"/>
+      </div>
+  </form>
+  {{number_returned}} of {{results.number_found}} records found <p>
+    {% for scored_document in results %}
+      {% for f in scored_document.fields %}
+        {{f.value}} &nbsp;
+    {% endfor %}
+    <p>
+  {% endfor %}
+{% endblock %}  
