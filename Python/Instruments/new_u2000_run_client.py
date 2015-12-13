@@ -191,13 +191,16 @@ def u2000_acq_run(config, nested_config, ses):
         print acq_dict
         bits = AgilentU2000(acq_dict, ses)
         bits.transmitraw()
-        #r = ses.get(config_url)
-        # config = r.json()
-        # if config['configs_exps']:
-        #     config = config['configs_exps'][0]
-        #     if config['commence_explore'] == 'False':
-        #         break
+        result = ses.get(config_url)
+        config = result.json()
+        if config['configs_run']:
+            config = config['configs_run'][0]
+            if config['commence_run'] == 'False':
+                break
+        bits.transmitblob()
         #post_status('Idle')
+
+
 
 def u2000_acq(config, nested_config, ses):
     """sets the configuration for the u2000 API and calls the u2000 class"""

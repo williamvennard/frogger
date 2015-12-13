@@ -61,6 +61,7 @@ class Handler(InstrumentDataHandler):
                                 company_nickname, True, hardware_name)
             rows = list(rows)
             configs_run = query_to_dict(rows)
+            print configs_run
             # grab instrument configurations associated with the config that need to run
             if configs_tps_traces:
                 logging.debug("CONFIG_TPS_TRACES %s", configs_tps_traces)
@@ -91,9 +92,9 @@ class Handler(InstrumentDataHandler):
                             'commands' : commands,
                 }
             elif configs_run:
-                logging.debug("CONFIG_TPS_TRACES %s", configs_tps_traces)
-                nested_config_name = configs_tps_traces[0]['config_name']
-                nested_instrument_type = configs_tps_traces[0]['instrument_type']
+                logging.debug("CONFIG_RUN %s", configs_run)
+                nested_config_name = configs_run[0]['config_name']
+                nested_instrument_type = configs_run[0]['instrument_type']
                 rows = db.GqlQuery("SELECT * FROM agilentU2000 WHERE company_nickname =:1 and config_name =:2", 
                                     company_nickname, nested_config_name)
                 nested_config = query_to_dict(rows)
