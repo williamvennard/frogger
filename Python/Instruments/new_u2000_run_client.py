@@ -134,10 +134,10 @@ def check_config_url():
                 print "Starting API"
                 post_status('Starting')
                 u2000_acq(config, nested_config, ses)
-                config_vars = check_config_vars(config, nested_config)
-                config_name = config_vars[1]
-                active_testplan_name = config_vars[0]
-                post_complete(config_name, active_testplan_name, ses)
+                # config_vars = check_config_vars(config, nested_config)
+                # config_name = config_vars[1]
+                # active_testplan_name = config_vars[0]
+                # post_complete(config_name, active_testplan_name, ses)
         elif config['configs_run']:
             nested_config = config['nested_config'][0]
             config = config['configs_run'][0]
@@ -145,10 +145,10 @@ def check_config_url():
                 print "Starting API" == 'True'
                 post_status('Starting')
                 u2000_acq_run(config, nested_config, ses, headers)
-                config_vars = check_config_vars(config, nested_config)
-                config_name = config_vars[1]
-                active_testplan_name = config_vars[0]
-                post_complete(config_name, active_testplan_name, ses)
+                # config_vars = check_config_vars(config, nested_config)
+                # config_name = config_vars[1]
+                # active_testplan_name = config_vars[0]
+                # post_complete(config_name, active_testplan_name, ses)
         else:
             print "No start order found"
     threading.Timer(1, check_config_url()).start()
