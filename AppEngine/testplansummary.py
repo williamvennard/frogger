@@ -81,7 +81,7 @@ class Handler(InstrumentDataHandler):
                 config = {
                             'configs_exps' : configs_exps, 
                             'configs_tps_traces' : configs_tps_traces, 
-                            'config_run' : config_run,
+                            'configs_run' : configs_run,
                             'nested_config' : nested_config,
                             'measurements' : measurements,
                             'commands' : commands,
