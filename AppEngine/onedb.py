@@ -31,6 +31,7 @@ class ConfigDB(DictModel):
     capture_buffer_size = db.IntegerProperty(required = False)
     commence_test = db.BooleanProperty(default = False)
     commence_explore = db.BooleanProperty(required = False)
+    commence_run = db.BooleanProperty(required = False)
     analog_bandwidth = db.StringProperty(required = False)
     test_plan = db.BooleanProperty(required = True)
     trace = db.BooleanProperty(required = True)

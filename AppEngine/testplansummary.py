@@ -74,9 +74,14 @@ class Handler(InstrumentDataHandler):
                                     company_nickname, True, hardware_name)
                 rows = list(rows)
                 configs_exps = query_to_dict(rows)
+                rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE company_nickname =:1 and commence_run =:2 and hardware_name =:3", 
+                                company_nickname, True, hardware_name)
+                rows = list(rows)
+                configs_run = query_to_dict(rows)
                 config = {
                             'configs_exps' : configs_exps, 
                             'configs_tps_traces' : configs_tps_traces, 
+                            'config_run' : config_run,
                             'nested_config' : nested_config,
                             'measurements' : measurements,
                             'commands' : commands,
