@@ -208,9 +208,9 @@ def u2000_acq_run(config, nested_config, ses, headers):
         result = ses.get(config_url, headers=headers)
         config = result.json()
         print config
-        if config['configs_run']:
-            config = config['configs_run'][0]
-            if config['commence_run'] == 'False':
+        if not config['configs_run']:
+            # config = config['configs_run'][0]
+            # if config['commence_run'] == 'False':
                 print 'stoppings'
                 break
         u2000.close()
