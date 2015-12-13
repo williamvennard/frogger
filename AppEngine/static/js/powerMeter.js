@@ -87,7 +87,7 @@ function PMtraceStart(el){
       console.log('traceStart !!!!!')
       //formatStartUrl = raw_urlPath.split('/');
       var startValue = 'Start_Trace';
-      var start_url = window.location.origin + '/panelcontrol/'+ '{{profile.company_nickname}}' + '/gConfigVars.hardwareName/' + configName + '/' + traceName;// + formatStartUrl[formatStartUrl.length-2];
+      var start_url = window.location.origin + '/panelcontrol/' + 'Acme' + '/' + 'Tahoe' + '/' + configName + '/' + traceName;// + formatStartUrl[formatStartUrl.length-2];
       console.log('exploreStart: start_url =',start_url);
       var startData = JSON.stringify({"command":startValue});
       console.log('exploreStart: startData =', startData);
@@ -107,8 +107,8 @@ function PMtraceStart(el){
       console.log('traceStop !!!!!')
       
       var startValue = 'Stop_Trace';
-      var start_url = window.location.origin + '/panelcontrol/' + '{{profile.company_nickname}}' + 
-      '/' + gConfigVars.hardwareName + '/' + configName + '/' + traceName;
+      var start_url = window.location.origin + '/panelcontrol/' + 'Acme' + 
+      '/' + 'Tahoe' + '/' + configName + '/' + traceName;
       console.log('exploreStart: start_url =',start_url);
 
       var startData = JSON.stringify({"command":startValue});
@@ -126,11 +126,65 @@ function PMtraceStart(el){
       clearTimeout(PMtraceTimerID);
     };
 
+function PMruntraceStart(el){
+      console.log('runStart !!!!!')
+      //formatStartUrl = raw_urlPath.split('/');
+      var startValue = 'Start_Run';
+      var start_url = window.location.origin + '/panelcontrol/' + 'Acme' + 
+      '/' + 'Tahoe' + '/' + configName + '/' + traceName;
+      console.log('runStart: start_url =',start_url);
+
+      var startData = JSON.stringify({"command":startValue});
+      console.log('runStart: startData =', startData);
+     $.ajax({
+        type: "POST",
+        url: start_url,
+        data: startData,
+        dataType: 'json',
+        success: function(data, textStatus, jqXHR)
+        {
+          console.log('saveStatus: Ajax post was a success!');
+        },
+      });
+      powerMeterData();
+    }
+    function PMruntraceStop(el){
+      console.log('runStop!!!!!')
+      //formatStartUrl = raw_urlPath.split('/');
+      
+      var startValue = 'Stop_Run';
+      var start_url = window.location.origin + '/panelcontrol/' + 'Acme' + 
+      '/' + 'Tahoe' + '/' + configName + '/' + traceName;
+      console.log('runStart: start_url =',start_url);
+
+      var startData = JSON.stringify({"command":startValue});
+      console.log('runStart: startData =', startData);
+     $.ajax({
+        type: "POST",
+        url: start_url,
+        data: startData,
+        dataType: 'json',
+        success: function(data, textStatus, jqXHR)
+        {
+          console.log('saveStatus: Ajax post was a success!');
+        },
+      });
+      clearTimeout(PMtraceTimerID);
+    };
+
+//POWER METER RUN START and STOP
+$("#powerMeterRunStartStop").click(function() {
+      $(this).text(function(i, v){
+      return v === 'STOP' ? 'RUN' : 'STOP'
+      })
+      var el = this;
+      return (el.t = !el.t) ? PMruntraceStart(el) : PMruntraceStop(el);
+    });
 
 //POWER METER START and STOP
 $("#powerMeterStartStop").click(function() {
       $(this).text(function(i, v){
-      return v === 'STOP' ? 'START' : 'STOP'
+      return v === 'STOP' ? 'CAPTURE' : 'STOP'
       })
       var el = this;
       return (el.t = !el.t) ? PMtraceStart(el) : PMtraceStop(el);
@@ -140,7 +194,7 @@ $("#powerMeterStartStop").click(function() {
 var resultsTrigger;
 function powerMeterData() {
   console.log('PowerMeter START!');
-      test_info_url = window.location.origin + '/u2000_traceresults/' + '{{profile.company_nickname}}' + '/' + gConfigVars.hardwareName + '/' + configName ; //unhard code company and hardware asap
+      test_info_url = window.location.origin + '/u2000_traceresults/' + 'Acme' + '/' + 'Tahoe' + '/' + configName ; //unhard code company and hardware asap
       $.ajax({
           async: true,
           url: test_info_url,
@@ -152,8 +206,8 @@ function powerMeterData() {
 
         var measurement = testInfo.cha;
         var start_tse = testInfo.start_tse;
-        var company_nickname = "{{profile.company_nickname}}";
-        var hardware_name = gConfigVars.hardwareName;
+        var company_nickname = "Acme";
+        var hardware_name = 'Tahoe';
 /*        var config_name = configName;
         var trace_name = configName;*/
 
