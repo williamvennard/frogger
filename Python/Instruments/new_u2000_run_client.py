@@ -176,9 +176,9 @@ def u2000_acq_run(config, nested_config, ses, headers):
     print "Starting: Attempting to open one device..."
     config_url = ("https://" + GAE_INSTANCE + ".appspot.com/testplansummary/"
                   + COMPANYNAME + '/' + HARDWARENAME)
+    u2000 = ivi.agilent.agilentU2001A(("USB::0x0957::0x2b18::INSTR"))
     while True:
         config_vars = check_config_vars(config, nested_config)
-        u2000 = ivi.agilent.agilentU2001A(("USB::0x0957::0x2b18::INSTR"))
         u2000.channels['channel1'].correction_frequency = config_vars[2]
         u2000.channels['channel1'].offset = config_vars[3]
         #u2000.channels['channel1'].range_auto = config_vars[4]
