@@ -163,10 +163,10 @@ def check_config_url():
                 print "Starting API" 
                 post_status('Starting')
                 u2000_acq_run(config, nested_config, ses, headers)
-                config_vars = check_config_vars(config, nested_config)
-                config_name = config_vars[1]
-                active_testplan_name = config_vars[0]
-                post_run_complete(config_name, active_testplan_name, ses)
+                # config_vars = check_config_vars(config, nested_config)
+                # config_name = config_vars[1]
+                # active_testplan_name = config_vars[0]
+                # post_run_complete(config_name, active_testplan_name, ses)
         else:
             print "No start order found"
     threading.Timer(1, check_config_url()).start()
@@ -205,15 +205,14 @@ def u2000_acq_run(config, nested_config, ses, headers):
         acq_dict = set_v_for_k(acq_dict, 'config_name', config_vars[1])
         acq_dict = set_v_for_k(acq_dict, 'active_testplan_name', config_vars[0])
         acq_dict = set_v_for_k(acq_dict, 'test_plan', config_vars[6])
-        print acq_dict
         bits = AgilentU2000(acq_dict, ses)
         bits.transmitraw()
         result = ses.get(config_url, headers=headers)
-        print result
         config = result.json()
         if config['configs_run']:
             config = config['configs_run'][0]
             if config['commence_run'] == 'False':
+                print 'stoppings'
                 break
         u2000.close()
         #post_status('Idle')
