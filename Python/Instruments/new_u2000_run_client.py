@@ -198,7 +198,7 @@ def u2000_acq_run(config, nested_config, ses, headers):
             config = config['configs_run'][0]
             if config['commence_run'] == 'False':
                 break
-        bits.transmitblob()
+        bits.testcomplete()
         #post_status('Idle')
 
 
