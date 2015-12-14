@@ -2,25 +2,26 @@
 var configName;
 var traceName;
 
-function loadConfig(type, savedSettings){
+function loadConfig(type, savedSettings, savedU2000Settings){
       console.log('loadConfig: Type = ', type);
       if (type == 'sU2001A') {
-        var sconfigName = savedSettings.config_name;
-        var scorrectionFreq = savedSettings.correction_frequency;
-        var soffset = savedSettings.offset;
-        var sunits = savedSettings.units;
-        var savgCountAuto = savedSettings.averaging_count_auto;
-        var srangeAuto = savedSettings.range_auto;
-        var spassFail = savedSettings.pass_fail;
-        var sminPass = savedSettings.min_value;
-        var smaxPass = savedSettings.max_value;
+        var sconfigName = savedU2000Settings.config_name;
+        var scorrectionFreq = savedU2000Settings.correction_frequency;
+        var soffset = savedU2000Settings.offset;
+        var sunits = savedU2000Settings.units;
+        var savgCountAuto = savedU2000Settings.averaging_count_auto;
+        var srangeAuto = savedU2000Settings.range_auto;
+        var spassFail = savedU2000Settings.pass_fail;
+        var sminPass = savedU2000Settings.min_value;
+        var smaxPass = savedU2000Settings.max_value;
         var d = document.getElementById('PMConfigSettings');
 
         var children = d.childNodes;
         console.log('PMConfig: children = ', children);
 
         children[1].children[1].value = sconfigName;
-        children[3].children[1].value = 'DefaultTraceName'
+        // wrong: children[3].children[1].value = 'DefaultTraceName'
+        children[3].children[1].value = savedSettings.active_testplan_name;
 
         children[5].children[1].value = scorrectionFreq;
         children[7].children[1].value = soffset; 

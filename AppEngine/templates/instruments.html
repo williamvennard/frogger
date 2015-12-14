@@ -513,8 +513,9 @@
       function loadU2001A(index) {
         console.log("savedSettings: ", savedResults);
         console.log("INDEX: ", index);
-        var savedSettings = savedResults.u2000configs[index]
-        loadConfig('sU2001A',savedSettings);
+        var savedSettings = savedResults.configs[index]
+        var savedU2000Settings = savedResults.u2000configs[index]
+        loadConfig('sU2001A',savedSettings,savedU2000Settings);
       };
     </script>     
 
@@ -544,6 +545,8 @@
             console.log('Saved Widgets: savedSeq', savedSeq);
             console.log('Saved Widgets: savedTests', savedTests);
             console.log('Saved Widgets: savedU2001As', savedU2001As);
+            loadSavedU2001A("working"); // set default/working configuration
+            PMConfig();  // apply working configuration.
 
 // SAVED CONFIGS                      
             // var savedConfigsHTML = "";

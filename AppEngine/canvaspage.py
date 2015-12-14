@@ -45,6 +45,7 @@ class Handler(InstrumentDataHandler):
         if company_nickname_check[-1] == 'json':
             rows = db.GqlQuery("""SELECT * FROM ConfigDB WHERE company_nickname =:1""", company_nickname)
             configs = query_to_dict(rows)
+            logging.info("configs=%s" + str(configs))
             rows = db.GqlQuery("""SELECT * FROM DutDB WHERE company_nickname =:1""", company_nickname)
             duts = query_to_dict(rows)
             rows = db.GqlQuery("""SELECT * FROM MeasurementDB WHERE company_nickname =:1""", company_nickname)
@@ -53,6 +54,7 @@ class Handler(InstrumentDataHandler):
             tests = query_to_dict(rows)
             rows = db.GqlQuery("""SELECT * FROM agilentU2000 WHERE company_nickname =:1""", company_nickname)
             u2000configs = query_to_dict(rows)
+            logging.info("u2000configs=%s" + str(u2000configs))
             widgets = {'tests':tests, 'measurements':measurements, 'configs':configs, 'duts':duts, 'u2000configs':u2000configs}
             render_json(self, widgets) 
         else:
