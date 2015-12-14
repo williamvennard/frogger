@@ -510,12 +510,12 @@
     <script type="text/javascript">
       var savedResults
 
-      function loadU2001A(index) {
+      function loadU2001A(index, show) {
         console.log("savedSettings: ", savedResults);
         console.log("INDEX: ", index);
         var savedSettings = savedResults.configs[index]
         var savedU2000Settings = savedResults.u2000configs[index]
-        loadConfig('sU2001A',savedSettings,savedU2000Settings);
+        loadConfig('sU2001A', savedSettings, savedU2000Settings, show);
       };
     </script>     
 
@@ -545,7 +545,7 @@
             console.log('Saved Widgets: savedSeq', savedSeq);
             console.log('Saved Widgets: savedTests', savedTests);
             console.log('Saved Widgets: savedU2001As', savedU2001As);
-            loadSavedU2001A("working"); // set default/working configuration
+            loadSavedU2001A("working", false); // set default/working configuration
             PMConfig();  // apply working configuration.
 
 // SAVED CONFIGS                      
@@ -573,14 +573,14 @@
               (function(index){ 
                 console.log("INDEX: ", index);
                 elem[index].addEventListener("click", function(){
-                  loadSavedU2001A(elem[index].innerHTML)
+                  loadSavedU2001A(elem[index].innerHTML, true)
                 }, false);
                 console.log("TargetListener: ", index);
               }(index))
             };
 
             urlVars = getUrlVars()
-            if ( urlVars['library'] == 'trace' ){ loadSavedU2001A(urlVars['U2001A'])}
+            if ( urlVars['library'] == 'trace' ){ loadSavedU2001A(urlVars['U2001A'], true)}
         }); //end of ajax
         
 
@@ -598,10 +598,10 @@
         }
         return vars;
     }
-    function loadSavedU2001A(config_name){
+    function loadSavedU2001A(config_name, show){
         for (var i=0;i<savedU2001As.length;i++) {
             if(config_name === savedU2001As[i].config_name) {
-                loadU2001A(i);
+                loadU2001A(i, show);
             };
         };
     }

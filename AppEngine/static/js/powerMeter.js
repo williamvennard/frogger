@@ -2,7 +2,7 @@
 var configName;
 var traceName;
 
-function loadConfig(type, savedSettings, savedU2000Settings){
+function loadConfig(type, savedSettings, savedU2000Settings, show){
       console.log('loadConfig: Type = ', type);
       if (type == 'sU2001A') {
         var sconfigName = savedU2000Settings.config_name;
@@ -32,7 +32,9 @@ function loadConfig(type, savedSettings, savedU2000Settings){
       } else {
         console.log('No type match')
       };
-      $('#collapsePMConfig').collapse("show");
+      if (show) {
+        $('#collapsePMConfig').collapse("show");
+      }
 };
 function PMConfig() {
       $('#collapsePMConfig').collapse("hide");
