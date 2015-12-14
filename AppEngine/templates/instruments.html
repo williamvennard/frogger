@@ -44,31 +44,6 @@
                                     </form>
                                 </div>
                               </div>
-                            <li data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" class="OScope">O-Scope</li>
-                              <div id="collapseTwo" class="panel-collapse collapse in">
-                                <div class="panel-body" style="padding-top: 0px; padding-left: 0px;">
-                                    <table class="savedList" id="savedOList">
-                                    </table>
-                                </div>
-                              </div>
-                            <li data-toggle="collapse" data-parent="#accordion" href="#collapseThree">VNA</li>
-                              <div id="collapseThree" class="panel-collapse collapse in">
-                                <div class="panel-body" style="padding-top: 0px; padding-left: 0px;">
-                                    <table class="savedList">
-                                    <p>Saved :</p>
-                                        <tr>
-                                            <td>
-                                                <a class="savedLink">Will's</a>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <a class="savedLink">Nick's</a>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </div>
-                              </div>
                               <li data-toggle="collapse" data-parent="#accordion" href="#collapseFour" class="PowerMeter">Power Meter</li>
                               <div id="collapseFour" class="panel-collapse collapse in">
                                 <div class="panel-body" style="padding-top: 0px; padding-left: 0px;">
@@ -510,12 +485,12 @@
     <script type="text/javascript">
       var savedResults
 
-      function loadU2001A(index, show) {
+      function loadU2001A(index) {
         console.log("savedSettings: ", savedResults);
         console.log("INDEX: ", index);
         var savedSettings = savedResults.configs[index]
         var savedU2000Settings = savedResults.u2000configs[index]
-        loadConfig('sU2001A', savedSettings, savedU2000Settings, show);
+        loadConfig('sU2001A',savedSettings,savedU2000Settings);
       };
     </script>     
 
@@ -545,7 +520,7 @@
             console.log('Saved Widgets: savedSeq', savedSeq);
             console.log('Saved Widgets: savedTests', savedTests);
             console.log('Saved Widgets: savedU2001As', savedU2001As);
-            loadSavedU2001A("working", false); // set default/working configuration
+            loadSavedU2001A("working"); // set default/working configuration
             PMConfig();  // apply working configuration.
 
 // SAVED CONFIGS                      
@@ -573,14 +548,14 @@
               (function(index){ 
                 console.log("INDEX: ", index);
                 elem[index].addEventListener("click", function(){
-                  loadSavedU2001A(elem[index].innerHTML, true)
+                  loadSavedU2001A(elem[index].innerHTML)
                 }, false);
                 console.log("TargetListener: ", index);
               }(index))
             };
 
             urlVars = getUrlVars()
-            if ( urlVars['library'] == 'trace' ){ loadSavedU2001A(urlVars['U2001A'], true)}
+            if ( urlVars['library'] == 'trace' ){ loadSavedU2001A(urlVars['U2001A'])}
         }); //end of ajax
         
 
@@ -598,10 +573,10 @@
         }
         return vars;
     }
-    function loadSavedU2001A(config_name, show){
+    function loadSavedU2001A(config_name){
         for (var i=0;i<savedU2001As.length;i++) {
             if(config_name === savedU2001As[i].config_name) {
-                loadU2001A(i, show);
+                loadU2001A(i);
             };
         };
     }
