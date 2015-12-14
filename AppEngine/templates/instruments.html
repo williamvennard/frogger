@@ -269,7 +269,7 @@
                           <h6 style="margin-bottom: 0px;"><span style="margin-right:3px;">FC:</span><span class="configSettings"></span><span style="position:absolute; left:150px; margin-right:3px;">Offset:</span><span style="position:absolute; left:195px;"></span></h6>
                         </div>
                         <div class="col-md-2 statusInfoBox" style="margin-left:10px;">
-                          <h5 style="margin-bottom: 0px; text-align:center;">Status <span id="currentStatus" class="status"></span> </h5>   
+                          <h5 style="margin-bottom: 0px; text-align:center;">Status <span id="PMcurrentStatus" class="status"></span> </h5>   
                         </div>
                       </div> 
                     </div>
@@ -282,7 +282,15 @@
                           <button style="margin-left:16px; padding-left:2px;" class="text-capitalize optionsBtn" data-toggle="collapse" data-parent="#accordion" href="#collapsePMConfig">Configure</button> 
 <!--Config Form-->  
                           <div id="collapsePMConfig" class="collapse in PMConfigBox" style="padding-left: 30px;">
-                            <div id="PMConfigSettings">  
+                            <div id="PMConfigSettings"> 
+                                <div class="row configRow">
+                                   <tr>
+                                    <td class="label">
+                                      <p class="configLabel">Trace Name:</p>  
+                                      <input class="PMConfigInput" type="text" style="" placeholder='' value="">
+                                    </td>
+                                  </tr>
+                                </div>   
                                 <div class="row configRow">
                                    <tr>
                                     <td class="label">
@@ -291,14 +299,7 @@
                                     </td>
                                   </tr>
                                 </div>
-                                <div class="row configRow">
-                                   <tr>
-                                    <td class="label">
-                                      <p class="configLabel">Trace Name:</p>  
-                                      <input class="PMConfigInput" type="text" style="" placeholder='' value="">
-                                    </td>
-                                  </tr>
-                                </div>        
+      
                                 <div class="row configRow">
                                    <tr>
                                     <td class="label">
@@ -490,7 +491,7 @@
         console.log("INDEX: ", index);
         var savedSettings = savedResults.configs[index]
         var savedU2000Settings = savedResults.u2000configs[index]
-        loadConfig('sU2001A',savedSettings,savedU2000Settings);
+        loadConfig('sU2001A',savedSettings,savedU2000Settings, true);
       };
     </script>     
 
@@ -553,9 +554,10 @@
                 console.log("TargetListener: ", index);
               }(index))
             };
-
+            var t=setInterval(PMStatusUpdate,1000);
             urlVars = getUrlVars()
             if ( urlVars['library'] == 'trace' ){ loadSavedU2001A(urlVars['U2001A'])}
+
         }); //end of ajax
         
 

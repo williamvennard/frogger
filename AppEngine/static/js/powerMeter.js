@@ -19,10 +19,9 @@ function loadConfig(type, savedSettings, savedU2000Settings, show){
         var children = d.childNodes;
         console.log('PMConfig: children = ', children);
 
-        children[1].children[1].value = sconfigName;
+        children[1].children[1].value = savedSettings.active_testplan_name;
         // wrong: children[3].children[1].value = 'DefaultTraceName'
-        children[3].children[1].value = savedSettings.active_testplan_name;
-
+        children[3].children[1].value = sconfigName;
         children[5].children[1].value = scorrectionFreq;
         children[7].children[1].value = soffset; 
         children[9].children[1].value = sunits;
@@ -32,7 +31,7 @@ function loadConfig(type, savedSettings, savedU2000Settings, show){
       } else {
         console.log('No type match')
       };
-      if (show) {
+      if (sconfigName != 'working') {
         $('#collapsePMConfig').collapse("show");
       }
 };
@@ -43,8 +42,8 @@ function PMConfig() {
       var children = d.childNodes;
       console.log('PMConfig: children = ', children);
 
-      configName = children[1].children[1].value;
-      traceName = children[3].children[1].value;
+      traceName = children[1].children[1].value;
+      configName = children[3].children[1].value;
 
       var company = document.getElementById('company_nickname').value;
       var frequencyCorrection =  children[5].children[1].value;
@@ -264,3 +263,17 @@ function PMSaveStatus(status) {
       }); 
 
 };
+
+function PMStatusUpdate(){
+      var company = document.getElementById('company_nickname').value;
+      var status_url = window.location.origin + '/status/' + company + '/' + gConfigVars.hardwareName;
+      console.log('STATUS CHECK URL: ', status_url);
+      $.ajax({
+          type: "GET",
+          url: status_url,
+          dataType: 'json',
+       }).done(function (results) {
+        console.log('STATUS: ', results.status);
+        document.getElementById("PMcurrentStatus").innerHTML = results.status;
+      });
+}
