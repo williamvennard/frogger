@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 import logging
 import json
 from cgi import parse_qs
@@ -49,7 +49,7 @@ class Handler(InstrumentDataHandler):
         except search.Error:
           logging.error("Search Results Error: %s" % e )
 
-        name_time = str(dt2ms(datetime.datetime.now()))
+        name_time = str(dt2ms(datetime.now()))
         newname = profile['name'] + name_time
         key = newname
         # memcache.set(key, output)
@@ -89,7 +89,7 @@ class Handler(InstrumentDataHandler):
             
         except search.Error:
           logging.error("Search Results Error: %s" % e )
-        name_time = str(dt2ms(datetime.datetime.now()))
+        name_time = str(dt2ms(datetime.now()))
         newname = profile['name'] + name_time
         key = newname
         self.render('blob_analyzer.html', result = output, 
@@ -112,7 +112,10 @@ class UploadHandler(InstrumentDataHandler):
                  search.NumberField(name='dB',
                                     value=float(row['data'])), # 'data' yuck!
                  search.TextField(name='pass_fail', value=row['pass_fail']),
-                 search.TextField(name='start_time', value=row['Start_TSE']),
+                 search.DateField(name='start_time', 
+                                  value=datetime.fromtimestamp(
+                                                int(row['Start_TSE'])//1000)),
+                 search.TextField(name='msbased_key', value=row['Start_TSE']),
                  search.TextField(name='config_name', value=row['config_name']),
                  search.NumberField(name='correction_frequency',
                                     value=float(row['correction_frequency'])),
@@ -160,7 +163,7 @@ class HandlerCharlie(InstrumentDataHandler):
 
         # sort results by author descending
         expr_list = [search.SortExpression(
-            expression='author', default_value='',
+            expression='start_time', default_value='',
             direction=search.SortExpression.DESCENDING)]
         # construct the sort options
         sort_opts = search.SortOptions(
