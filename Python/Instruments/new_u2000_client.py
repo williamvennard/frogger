@@ -164,7 +164,7 @@ def u2000_acq_run(config, nested_config, ses, headers):
         #   initiate measurement
         u2000.measurement.initiate()
         # read out channel 1 power data
-        #post_status('Acquiring')
+        post_status('Acquiring')
         power = u2000.measurement.fetch()
         tse = int(dt2ms(datetime.datetime.now()))
         inst_dict = {}
@@ -207,7 +207,7 @@ def u2000_acq(config, nested_config, ses):
     #   initiate measurement
     u2000.measurement.initiate()
     # read out channel 1 power data
-    #post_status('Acquiring')
+    post_status('Acquiring')
     power = u2000.measurement.fetch()
     u2000.close()
     tse = int(dt2ms(datetime.datetime.now()))
@@ -232,7 +232,7 @@ def u2000_acq(config, nested_config, ses):
     bits.testcomplete()
     #post_status('Idle')
 
-# #post_status('Idle')
+post_status('Idle')
 
 
 # To test, use "export TEST_U2000_CLIENT=1"
