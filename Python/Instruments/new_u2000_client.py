@@ -31,7 +31,7 @@ def dt2ms(dtime):
     """
     return int(dtime.strftime('%s'))*1000 + int(dtime.microsecond/1000)
 
-def post_status(status):
+def post_status(status, ses):
     "posts hardware status updates to the server"
     headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
     window = {'status':status, 'time':time.time()}
@@ -129,7 +129,7 @@ def check_config_url():
             print 'configs_tps_traces config = ', config
             if config['commence_test'] == 'True':
                 print "Starting API"
-                post_status('Starting')
+                post_status('Starting', ses)
                 u2000_acq(config, nested_config, ses)
                 config_vars = check_config_vars(config, nested_config)
                 config_name = config_vars[1]
@@ -141,7 +141,7 @@ def check_config_url():
             print 'configs_runs config = ', config
             if config['commence_run'] == 'True':
                 print "Starting API" 
-                post_status('Starting')
+                post_status('Starting', ses)
                 u2000_acq_run(config, nested_config, ses, headers)
         else:
             print "No start order found"
@@ -164,7 +164,7 @@ def u2000_acq_run(config, nested_config, ses, headers):
         #   initiate measurement
         u2000.measurement.initiate()
         # read out channel 1 power data
-        post_status('Acquiring')
+        post_status('Acquiring', ses)
         power = u2000.measurement.fetch()
         tse = int(dt2ms(datetime.datetime.now()))
         inst_dict = {}
@@ -183,10 +183,12 @@ def u2000_acq_run(config, nested_config, ses, headers):
         acq_dict = set_v_for_k(acq_dict, 'test_plan', config_vars[6])
         bits = AgilentU2000(acq_dict, ses)
         bits.transmitraw()
+        post_status('Idle')
         new_result = ses.get(config_url, headers=headers)
         new_config = new_result.json()
         if not new_config['configs_run']:
             print 'stopping'
+            post_status('Idle', ses)
             break
     u2000.close()
         #post_status('Idle')
@@ -207,7 +209,7 @@ def u2000_acq(config, nested_config, ses):
     #   initiate measurement
     u2000.measurement.initiate()
     # read out channel 1 power data
-    post_status('Acquiring')
+    post_status('Acquiring', ses)
     power = u2000.measurement.fetch()
     u2000.close()
     tse = int(dt2ms(datetime.datetime.now()))
@@ -230,7 +232,7 @@ def u2000_acq(config, nested_config, ses):
     bits.transmitraw()
     bits.transmitblob()
     bits.testcomplete()
-    post_status('Idle')
+    post_status('Idle', ses)
 
 
 
