@@ -153,6 +153,7 @@ class U2000(BaseDocumentManager):
   # 'core' U2000 document field names
 
   START_TSE = 'start_tse'
+  START_DATETIME = 'start_date'
   CORRECTION_FREQ = 'correction_freq'
   MAX_VALUE = 'max_value'
   MIN_VALUE = 'min_value'

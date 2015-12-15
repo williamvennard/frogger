@@ -25,20 +25,20 @@
     <form name "selectForm" action="/selectedreports" method="post">
     <!-- <form name "selectForm" action="/docselect" method="post"> -->
       <tr>
-        <th>SELECT</th>
-        <th>Start Time</th>
-        <th>Correction Freq (Hz)</th>
-        <th>Max</th>
-        <th>Min</th>
-        <th>Offset (dBm)</th>
-        <th>Pass Fail Type</th>
-        <th>Test Plan?</th>
-        <th>Pass / Fail</th>
-        <th>Hardware Name</th>
-        <th>Data (dBm)</th>
-        <th>Instrument</th>
-        <th>Config Name</th> 
-        <th>Testplan Name or Trace Name</th> 
+        <th><input type="checkbox" onClick="toggle(this)"></th>
+        <th>start_datetime</th>
+        <th>correction_freq</th>
+        <th>max_value</th>
+        <th>min_value</th>
+        <th>offset</th>
+        <th>pass_fail_type</th>
+        <th>test_plan</th>
+        <th>pass_fail</th>
+        <th>hardware_name</th>
+        <th>data</th>
+        <th>instrument_type</th>
+        <th>config_name</th> 
+        <th>testplan_name</th> 
       </tr>
       {% for key,fields in results.iteritems() %}
         <tr>
@@ -56,4 +56,13 @@
       <input type="hidden" name="download_key" value="{{download_key}}">
     </form>
   </table>
-{% endblock %}  
+<script type="text/javascript">
+function toggle(source) {
+  checkboxes = document.getElementsByName('doc_ids');
+  for(var i in checkboxes){
+    checkboxes[i].checked = source.checked;
+  }
+}
+</script>
+{% endblock %}
+
