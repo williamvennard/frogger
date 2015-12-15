@@ -142,7 +142,6 @@ def check_config_url():
             if config['commence_run'] == 'True':
                 print "Starting API" 
                 post_status('Starting', ses)
-                post_status('Acquiring', ses)
                 u2000_acq_run(config, nested_config, ses, headers)
         else:
             print "No start order found"
@@ -152,6 +151,7 @@ def check_config_url():
 def u2000_acq_run(config, nested_config, ses, headers):
     """sets the configuration for the u2000 API and calls the u2000 class"""
     acq_dict = {}
+    post_status('Acquiring', ses)
     print "Starting: Attempting to open one device..."
     config_url = ("https://" + GAE_INSTANCE + ".appspot.com/testplansummary/"
                   + COMPANYNAME + '/' + HARDWARENAME)
