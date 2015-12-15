@@ -183,7 +183,6 @@ def u2000_acq_run(config, nested_config, ses, headers):
         acq_dict = set_v_for_k(acq_dict, 'test_plan', config_vars[6])
         bits = AgilentU2000(acq_dict, ses)
         bits.transmitraw()
-        post_status('Idle', ses)
         new_result = ses.get(config_url, headers=headers)
         new_config = new_result.json()
         if not new_config['configs_run']:
