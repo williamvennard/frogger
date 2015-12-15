@@ -230,9 +230,9 @@ def u2000_acq(config, nested_config, ses):
     bits.transmitraw()
     bits.transmitblob()
     bits.testcomplete()
-    #post_status('Idle')
+    post_status('Idle')
 
-post_status('Idle')
+
 
 
 # To test, use "export TEST_U2000_CLIENT=1"
