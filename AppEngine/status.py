@@ -1,5 +1,5 @@
 from gradientone import InstrumentDataHandler
-from gradientone import render_json_cached
+from gradientone import render_json
 from gradientone import oauth_check
 import jinja2
 import json
@@ -17,7 +17,7 @@ class Handler(InstrumentDataHandler):
     def get(self, company_nickname="", hardware_name=""):
         key = 'status' + company_nickname + hardware_name
         status = memcache.get(key)
-        render_json_cached(self, status)
+        render_json(self, status)
     def post(self, company_nickname="", hardware_name=""):
         status = json.loads(self.request.body)
         key = 'status' + company_nickname + hardware_name
