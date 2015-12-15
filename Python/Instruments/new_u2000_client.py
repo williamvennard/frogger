@@ -142,6 +142,7 @@ def check_config_url():
             if config['commence_run'] == 'True':
                 print "Starting API" 
                 post_status('Starting', ses)
+                post_status('Acquiring', ses)
                 u2000_acq_run(config, nested_config, ses, headers)
         else:
             print "No start order found"
@@ -155,7 +156,6 @@ def u2000_acq_run(config, nested_config, ses, headers):
     config_url = ("https://" + GAE_INSTANCE + ".appspot.com/testplansummary/"
                   + COMPANYNAME + '/' + HARDWARENAME)
     u2000 = ivi.agilent.agilentU2001A(("USB::0x0957::0x2b18::INSTR"))
-    post_status('Acquiring', ses)
     while True:
         config_vars = check_config_vars(config, nested_config)
         u2000.channels['channel1'].correction_frequency = config_vars[2]
