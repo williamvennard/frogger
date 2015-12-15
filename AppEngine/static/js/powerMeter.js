@@ -1,4 +1,3 @@
-//PM CONFIG FORM SUBMIT
 var configName;
 var traceName;
 
@@ -19,8 +18,8 @@ function loadConfig(type, savedSettings, savedU2000Settings, show){
         var children = d.childNodes;
         console.log('PMConfig: children = ', children);
 
-        children[1].children[1].value = savedSettings.active_testplan_name;
-        // wrong: children[3].children[1].value = 'DefaultTraceName'
+        children[1].children[1].value = savedSettings.active_testplan_name; // Also wrong... gives Nonetype
+        // wrong: children[1].children[1].value = 'DefaultTraceName'
         children[3].children[1].value = sconfigName;
         children[5].children[1].value = scorrectionFreq;
         children[7].children[1].value = soffset; 
@@ -35,6 +34,8 @@ function loadConfig(type, savedSettings, savedU2000Settings, show){
         $('#collapsePMConfig').collapse("show");
       }
 };
+
+//PM CONFIG FORM SUBMIT
 function PMConfig() {
       $('#collapsePMConfig').collapse("hide");
 

@@ -5,7 +5,9 @@ from cgi import parse_qs
 import urllib
 from urlparse import urlparse
 import webapp2
-
+import collections
+import StringIO
+import csv
 from google.appengine.api import memcache
 from google.appengine.ext import ndb
 from google.appengine.api import search
@@ -17,20 +19,35 @@ from onedb import ProfileDB
 INDEX_NAME = 'U2000'
 
 def dt2ms(t):
-    return int(t.strftime('%s'))*1000 + int(t.microsecond/1000)
+    return str(t.strftime('%s'))*1000 + str(t.microsecond/1000)
 
 class Handler(InstrumentDataHandler):
     def post(self):
         profile = get_profile_cookie(self)
         querystring = self.request.get('query')
         doc_limit = 10
+        doc_ids = self.request.get('doc_ids')
+
         logging.debug("QUERYSTRING: %s" % querystring)
+
+        name_time = str(dt2ms(datetime.now()))
+        # sort results by starttime descending
+        expr_list = [search.SortExpression(
+            expression='start_tse', default_value=name_time,
+            direction=search.SortExpression.DESCENDING)]
+        # construct the sort options
+        sort_opts = search.SortOptions(
+            expressions=expr_list)
+
         try:
           index = search.Index(INDEX_NAME)
           search_query = search.Query(
               query_string=querystring,
               options=search.QueryOptions(
-                  limit=doc_limit))
+                  limit=doc_limit,
+                  sort_options = sort_opts,
+              )
+          )
           search_results = index.search(search_query)
         except search.Error, e:
           logging.error("Search Query Error: %s" % e )
@@ -38,23 +55,19 @@ class Handler(InstrumentDataHandler):
         try:
           returned_count = len(search_results.results)
           number_found = search_results.number_found
-          output = []
-          logging.debug("SEARCH: %s" % search_results)
+          result_docs = collections.defaultdict()
           for doc in search_results:
-            doc_id = doc.doc_id
-            fields = doc.fields
-            logging.debug("FIELDS: %s" % fields)
-            output.append(fields)
+            result_docs[doc.doc_id] = doc.fields
             
         except search.Error:
           logging.error("Search Results Error: %s" % e )
 
-        name_time = str(dt2ms(datetime.now()))
+        # name_time = str(dt2ms(datetime.now()))
         newname = profile['name'] + name_time
         key = newname
-        # memcache.set(key, output)
-        logging.debug('QUERY RESULT: %s' % output)
-        self.render('blob_analyzer.html', result = output, 
+        memcache.set(key, result_docs)
+        # logging.debug('QUERY RESULT: %s' % result_docs)
+        self.render('blob_analyzer.html', results = result_docs, 
             download_key = newname, profile = profile)
 
     def get(self):
@@ -79,21 +92,71 @@ class Handler(InstrumentDataHandler):
         try:
           returned_count = len(search_results.results)
           number_found = search_results.number_found
-          output = []
-          logging.debug("SEARCH: %s" % search_results)
+          result_docs = collections.defaultdict()
+          # logging.debug("SEARCH: %s" % search_results)
           for doc in search_results:
-            doc_id = doc.doc_id
-            fields = doc.fields
-            logging.debug("FIELDS: %s" % fields)
-            output.append(fields)
+            result_docs[doc.doc_id] = doc.fields
             
         except search.Error:
           logging.error("Search Results Error: %s" % e )
         name_time = str(dt2ms(datetime.now()))
         newname = profile['name'] + name_time
         key = newname
-        self.render('blob_analyzer.html', result = output, 
+        memcache.set(key, result_docs)
+        self.render('blob_analyzer.html', results = result_docs, 
             download_key = newname, profile = profile)
+
+
+class DocExport(InstrumentDataHandler):
+    def post(self):
+        key = self.request.get('download_key')
+        result_docs = memcache.get(key)
+        headers = self.response.headers
+        headers['Content-Type'] = 'text/csv'
+        headers['Content-Disposition'] =  ('attachment; filename=export' + 
+          str(datetime.now()) + '.csv')
+        tmp = StringIO.StringIO()
+        writer = csv.writer(tmp)
+        counter = 0
+        for k,fields in result_docs.iteritems():
+            if counter == 0:
+                writer.writerow([field.name for field in fields])
+                writer.writerow([field.value for field in fields])
+            else:
+                writer.writerow([field.value for field in fields]) 
+            counter +=1
+        contents = tmp.getvalue()
+        tmp.close()
+        self.response.out.write(contents)
+
+
+class DocHandler(InstrumentDataHandler):
+    def post(self):
+        profile = get_profile_cookie(self)
+        doc_limit = 10
+        doc_ids = self.request.params.getall('doc_ids')
+        try:
+          index = search.Index(INDEX_NAME)
+          result_docs = collections.defaultdict()
+          for doc_id in doc_ids:
+            result_docs[doc_id] = index.get(doc_id).fields
+        except search.Error:
+          logging.error("Search Results Error: %s" % e )
+        name_time = str(dt2ms(datetime.now()))
+        newname = profile['name'] + name_time
+        key = newname
+        memcache.set(key, result_docs)
+        self.render('blob_analyzer.html', results = result_docs, 
+            download_key = newname, profile = profile)
+
+    def re(self):
+        query = self.request.get('search')
+        if query:
+            self.redirect('/searchdemo?' + urllib.urlencode(
+                #{'query': query}))
+                {'query': query.encode('utf-8')}))
+        else:
+            self.redirect('/searchdemo')
 
 class UploadHandler(InstrumentDataHandler):
     def post(self):
@@ -186,3 +249,17 @@ class HandlerCharlie(InstrumentDataHandler):
                 {'query': query.encode('utf-8')}))
         else:
             self.redirect('/searchdemo/charlie/')
+
+def delete_all_in_index(index_name):
+    """Delete all the docs in the given index. Only use when resetting."""
+    doc_index = search.Index(name=index_name)
+
+    # looping because get_range by default returns up to 100 documents at a time
+    while True:
+        # Get a list of documents populating only the doc_id field and extract the ids.
+        document_ids = [document.doc_id
+                        for document in doc_index.get_range(ids_only=True)]
+        if not document_ids:
+            break
+        # Delete the documents for the given ids from the Index.
+        doc_index.delete(document_ids)

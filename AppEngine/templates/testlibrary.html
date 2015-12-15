@@ -9,41 +9,43 @@
       #testlibrary-navlink {color: rgb(124,175,46);}
     </style>
 {% endblock %}
-{% block noncontainer %}
+{% block content %}
     <div class="row">
-      <div class="col-md-2 subMenu" style="margin-left:80px;">
-        <h3 style="margin-bottom: 5px; cursor: pointer; cursor: hand;" href='#' class="tog" data-id="planMenu">Test Plans</h3>
-        <hr class="subMenuLine planMenuline">
+      <div class="col-md-12">
+        <div class="col-md-2 subMenu">
+          <h3 style="margin-bottom: 5px; cursor: pointer; cursor: hand;" href='#' class="tog" data-id="planMenu">Test Plans</h3>
+          <hr class="subMenuLine planMenuline">
+        </div>
+        <div class="col-md-2 subMenu">
+          <h3 style="margin-bottom: 5px; cursor: pointer; cursor: hand;" href='#' class="tog" data-id="resultsMenu">Traces</h3>
+          <hr class="subMenuLine resultsMenuline">
+        </div>
       </div>
-      <div class="col-md-2 subMenu">
-        <h3 style="margin-bottom: 5px; cursor: pointer; cursor: hand;" href='#' class="tog" data-id="resultsMenu">Traces</h3>
-        <hr class="subMenuLine resultsMenuline">
-      </div>
-    </div>
 
-    <div class="menu planMenu" id="planMenu">
-      <div class="col-md-12" id="testListBox">
-        <h4 class="colTitle text-capitalize">Test Plans<span style="margin-right: 215px"></span> Preview<span style="margin-right: 20%"></span>Measurements</h4>
-        <hr class="headerLine">
-        <div id="configTable" style="color:white;" class=""></div>
+      <div class="menu planMenu" id="planMenu">
+        <div class="col-md-12" id="testListBox">
+          <h4 class="colTitle text-capitalize">Test Plans<span style="margin-right: 215px"></span> Preview<span style="margin-right: 20%"></span>Measurements</h4>
+          <hr class="headerLine">
+          <div id="configTable" style="color:white;" class=""></div>
+        </div>
+        <div class="col-md-12" id="testListBox">
+          <h4 class="colTitle text-capitalize">Results<span style="margin-right: 215px"></span> Preview<span style="margin-right: 20%"></span>Measurements</h4>
+          <hr class="headerLine">
+          <div id="testTable" style="color:white;" class=""></div>
+        </div>
       </div>
-      <div class="col-md-12" id="testListBox">
-        <h4 class="colTitle text-capitalize">Results<span style="margin-right: 215px"></span> Preview<span style="margin-right: 20%"></span>Measurements</h4>
-        <hr class="headerLine">
-        <div id="testTable" style="color:white;" class=""></div>
-      </div>
-    </div>
 
-    <div class="menu resultsMenu" id="resultsMenu">
-      <div class="col-md-12" id="testListBox">
-        <h4 class="colTitle text-capitalize">Traces</h4>
-        <hr class="headerLine">
-        <div id="traceConfigTable" style="color:white;" class=""></div>
-      </div>  
-      <div class="col-md-12" id="testListBox">
-        <h4 class="colTitle text-capitalize">Results<span style="margin-right: 215px"></span> Preview<span style="margin-right: 20%"></span>Measurements</h4>
-        <hr class="headerLine">
-        <div id="traceTable" style="color:white;" class=""></div>
+      <div class="menu resultsMenu" id="resultsMenu">
+        <div class="col-md-12" id="testListBox">
+          <h4 class="colTitle text-capitalize">Traces</h4>
+          <hr class="headerLine">
+          <div id="traceConfigTable" style="color:white;" class=""></div>
+        </div>  
+        <div class="col-md-12" id="testListBox">
+          <h4 class="colTitle text-capitalize">Results<span style="margin-right: 215px"></span> Preview<span style="margin-right: 20%"></span>Measurements</h4>
+          <hr class="headerLine">
+          <div id="traceTable" style="color:white;" class=""></div>
+        </div>
       </div>
     </div>    
     

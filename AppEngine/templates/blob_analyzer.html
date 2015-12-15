@@ -17,21 +17,13 @@
   </div>
   <form name="searchform" action="/search" method="post">
     <input type="hidden" name="download_key" value="{{download_key}}"/>
-    <table>
-    <tr>
-    <td>
-     <input type="text" id="query" name="query" size="80" value="{{base_query}}" />
-    </td>
-    <tr>
-    <td>
-     <input type="submit" class="btn primary"  name="searchsub" value="Search"/>
-     <input type="reset" class="btn primary"  name="searchreset" value="Clear"/>
-    </td><td></td><td></td></tr>
-    </table>
+    <input type="text" id="query" name="query" size="80" value="{{base_query}}" />
+    <input type="submit" class="btn" name="searchsub" value="Search"/>
+    <input type="reset" class="btn" name="searchreset" value="Clear"/>
   </form>
   <table style="width:100%">
-    <a href ="blob_export/{{download_key}}">export</a>
-    <form name "selectForm" action="/search" method="post">
+    <form name "selectForm" action="/selectedreports" method="post">
+    <!-- <form name "selectForm" action="/docselect" method="post"> -->
       <tr>
         <th>SELECT</th>
         <th>Start Time</th>
@@ -48,14 +40,20 @@
         <th>Config Name</th> 
         <th>Testplan Name or Trace Name</th> 
       </tr>
-      {% for entry in result %}
+      {% for key,fields in results.iteritems() %}
         <tr>
-        <td><input type="checkbox" name="test_batch" value = "{{entry.start_tse}}"></td>
-        {% for item in entry %}
-           <td> {{ item.value }} </td>
+        <td><input type="checkbox" name="doc_ids" value = "{{key}}"></td>
+        {% for item in fields %}
+           {% if item.name != 'start_tse' %}<td> {{ item.value }} </td>{% endif %}
         {% endfor %}
         </tr>
       {% endfor %}
+      <input type="submit" class="btn-sm btn-primary" name="selected" value="Analyze Selected">
+    </form>
+    &nbsp;
+    <form name "export" action="/doc_export" method="post">
+      <input type="submit" class="btn-sm btn-primary" value="Export Page">
+      <input type="hidden" name="download_key" value="{{download_key}}">
     </form>
   </table>
 {% endblock %}  

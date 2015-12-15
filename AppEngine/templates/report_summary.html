@@ -19,7 +19,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.13/angular.min.js"></script>
     <script type="text/javascript" src="../static/js/addons/clickadd.js"></script>
     <script type="text/javascript" src="../static/js/addons/jquery.knob.min.js"></script>
-    <style type="text/css"></style>
+    <style type="text/css">
+    p {color: white;} 
+    </style>
 
 
 </head>
@@ -60,21 +62,27 @@
                         <li class="side-menu" role="menu">
                           <h4 id="sideHeader">Reports</h4>
                           <ul  id="isntrumentList" style="">
-                                          <form method="post" id="resultsForm">
-                                            <table class="savedList">
-                                              <tr>
-                                              </tr>   
-                                        {% block import %}
-
-                                        {% for r in rows %}
-                                          <a class="testName" href ="report_detail/{{r.company_nickname}}/{{r.config_name}}">{{ r.config_name }}</a>
-                                          <br><br>   
-                                        {% endfor %}
-                                        {% endblock %}  
-                                            </table>
-                                          </form>
+                          <form method="post" id="resultsForm">
+                                <table class="savedList">
+                                  <tr>
+                                  </tr>   
+                            {% for r in rows %}
+                              <a class="testName" href ="report_detail/{{r.company_nickname}}/{{r.config_name}}">{{ r.config_name }}</a>
+                              <br><br>   
+                            {% endfor %}
+                                </table>
+                          </form>
+                          </ul> 
+                        </li>
+                    </ul> 
+                </div>        
+                <div class="col-md-9">
+                  <h4> Selected Configs: </h4>
+                  {% for data in selected_data %}
+ 
+                  {% endfor %}
                 </div>
-              </div>
+                <div>
                         <form method="post">
                           <table>
                             <tr>
@@ -84,12 +92,9 @@
                               <td>
                                 <input type="text" name="recipient_email" value="{{recipient_email}}">
                             </tr>
+                          </table>
                           <input type="submit">
                         </form>
- 
-                            </ul> 
-                        </li>
-                    </ul> 
                 </div>                           
 
               </div>

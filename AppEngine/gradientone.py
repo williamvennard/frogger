@@ -355,3 +355,7 @@ class check_testplan_name(InstrumentDataHandler):
         else:
             retval['available'] = True
         render_json(self, retval)
+
+
+def dt2ms(t):
+    return int(t.strftime('%s'))*1000 + int(t.microsecond/1000)

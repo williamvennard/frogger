@@ -61,7 +61,7 @@ class Handler(InstrumentDataHandler):
                                 company_nickname, True, hardware_name)
             rows = list(rows)
             configs_run = query_to_dict(rows)
-            print configs_run
+            # print configs_run
             # grab instrument configurations associated with the config that need to run
             if configs_tps_traces:
                 logging.debug("CONFIG_TPS_TRACES %s", configs_tps_traces)

@@ -345,8 +345,8 @@ class agilentU2000(pwrmeter):
     test_plan = db.BooleanProperty(default = True)
 
 
-def agilentU2000data_key(name = 'default'):
-    return db.Key.from_path('company_nickname', name)
+def agilentU2000data_key(key_name):
+    return db.Key.from_path('agilentU2000data', key_name, parent=company_key())
 
 class agilentU2000data(ResultsData):
     company_nickname = db.StringProperty(required = True)
