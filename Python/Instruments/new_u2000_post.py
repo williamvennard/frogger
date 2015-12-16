@@ -145,7 +145,7 @@ class AgilentU2000:
         test_plan = self.u2000_test_results['test_plan']
         i_settings = self.u2000_test_results['i_settings']
         max_value = i_settings['max_value']
-        max_value = i_settings['max_value']
+        min_value = i_settings['min_value']
         test_results = self.u2000_test_results['data(dBm)']
         if i_settings['pass_fail_type'] == 'N/A':
             i_settings['pass_fail'] = 'N/A'
