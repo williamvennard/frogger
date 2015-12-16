@@ -160,6 +160,7 @@ class Selected(InstrumentDataHandler):
         stat_results.append(numpy.std(meas_results_calcs)) #standard deviation 
         for entry in meas_results:
             temp_dict = collections.OrderedDict()
+            temp_dict['start_datetime'] = datetime.fromtimestamp(int(entry[0])/1000)          
             temp_dict['start_time'] = entry[0]
             temp_dict['correction_frequency(Hz)'] = entry[1]
             temp_dict['max_value'] = entry[2]
