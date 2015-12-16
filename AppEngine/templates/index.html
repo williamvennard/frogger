@@ -55,7 +55,7 @@
                             <div class="panel-body">
                                 <table class="table" style="margin-bottom:0px;">
                                     <!--BitScope-->
-                                    <tr>
+<!--                                     <tr>
                                         <p>
                                             <span id="bitScopeBack" class="glyphicon glyphicon-chevron-left"></span><span id="bitScope">BitScope</span>
                                         </p>
@@ -63,7 +63,7 @@
                                     <td id="bitScopeMenu">
                                         <a id="newConfig">NEW</a>
                                         <table id="savedConfigs" class="table"></table>
-                                    </td>
+                                    </td> -->
                                     <!--U2001A-->
 
                                     <tr>
@@ -190,13 +190,13 @@
             </fieldset>
         </div>
 <!--TEST REEL-->      
-        <fieldset id='reelTitle'><legend style="text-align:center; width: 120px; color:white">Test Reel</legend></fieldset>
+<!--         <fieldset id='reelTitle'><legend style="text-align:center; width: 120px; color:white">Test Reel</legend></fieldset>
         <div class="row">
             <div id="chart1" class="col-md-4 hoverzoom" style="height: 200px;"></div>  
             <div id="chart2" class="col-md-4 hoverzoom"></div>               
             <div id="chart3" class="col-md-4 hoverzoom"></div>             
         </div> 
-        <hr>
+        <hr> -->
     <!-- </div>  -->
     <script type="text/javascript" src="/static/js/gConfig.js"></script>
 
@@ -445,13 +445,13 @@ $(document).ready(function () {
             console.log('savedDutsHTML = ',savedDutsHTML);
             document.getElementById("savedDuts").innerHTML = savedDutsHTML;
 // SAVED CONFIGS                      
-            var savedConfigsHTML = "";
-            savedConfigsHTML += "<tr><td><p class='savedTitle'>Saved:</p></td></tr>";
-            for (var i=0;i<savedConfigs.length;i++){
-                savedConfigsHTML+= "<tr><td><a onclick='createConfig(" + i + ")'>" + savedConfigs[i].config_name + "</a></td></tr>";                                                
-            };
-            console.log('savedConfigsHTML = ',savedConfigsHTML);
-            document.getElementById("savedConfigs").innerHTML = savedConfigsHTML;
+            // var savedConfigsHTML = "";
+            // savedConfigsHTML += "<tr><td><p class='savedTitle'>Saved:</p></td></tr>";
+            // for (var i=0;i<savedConfigs.length;i++){
+            //     savedConfigsHTML+= "<tr><td><a onclick='createConfig(" + i + ")'>" + savedConfigs[i].config_name + "</a></td></tr>";                                                
+            // };
+            // console.log('savedConfigsHTML = ',savedConfigsHTML);
+            // document.getElementById("savedConfigs").innerHTML = savedConfigsHTML;
 // SAVED U2001AS
             var savedU2001AsHTML = "";
             savedU2001AsHTML += "<tr><td><p class='savedTitle'>Saved:</p></td></tr>";

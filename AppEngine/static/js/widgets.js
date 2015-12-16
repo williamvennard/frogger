@@ -210,7 +210,7 @@
                 testPlanHTML+= "</form>";
                 testPlanHTML+= "</div>";
 
-                testPlanHTML+= "<div id='configSearchResults' class='col-md-4'>";
+                testPlanHTML+= "<div id='configSearchResults' class='col-md-4' style='left:100px;'>";
                 testPlanHTML+= "<form method='post'>";
 
                 testPlanHTML+= "<div class='row appRow'>";
@@ -420,20 +420,24 @@
             testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Range Auto: </p>"; 
             testPlanHTML+= "<input class='appInput' style='margin-bottom:0px; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='checkbox' name='' autocomplete='off' value=''></td></tr></div>";
                             
-            testPlanHTML+= "<div class='row appRow'>";
-            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Pass/Fail: </p>";
-            testPlanHTML+= "<input class='appInput' type='checkbox' name='' autocomplete='off' value=''></td></tr></div>"; 
+            // Hides pass fail and defers that to measurement widget
+                            
+            // testPlanHTML+= "<div class='row appRow'>";
+            // testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Pass/Fail: </p>";
+            // testPlanHTML+= "<input class='appInput' type='checkbox' name='' autocomplete='off' value=''></td></tr></div>"; 
 
-            testPlanHTML+= "<div class='row appRow'>";
-            testPlanHTML+= "<tr><td class='label'><p class='appLabel'> Max: </p>"; 
-            testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' placeholder='12,000' name='capture_buffer_size' value=''></td></tr></div>";
+            // testPlanHTML+= "<div class='row appRow'>";
+            // testPlanHTML+= "<tr><td class='label'><p class='appLabel'> Max: </p>"; 
+            // testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' placeholder='12,000' name='capture_buffer_size' value=''></td></tr></div>";
 
-            testPlanHTML+= "<div class='row appRow'>";
-            testPlanHTML+= "<tr><td class='label'><p class='appLabel'> Min: </p>"; 
-            testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' placeholder='12,000' name='capture_buffer_size' value=''></td></tr></div>";
+            // testPlanHTML+= "<div class='row appRow'>";
+            // testPlanHTML+= "<tr><td class='label'><p class='appLabel'> Min: </p>"; 
+            // testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' placeholder='12,000' name='capture_buffer_size' value=''></td></tr></div>";
 
             testPlanHTML+= "</form>";
             testPlanHTML+= "</div>";
+
+            // Search for Config Section
 
             testPlanHTML+= "<div id='configSearchResults' class='col-md-4' style='left:100px;'>";
             testPlanHTML+= "<form method='post'>";
@@ -673,17 +677,17 @@
             testPlanHTML+= "<input class='appInput' style='margin-bottom:0px; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px;' type='checkbox' name='' autocomplete='off' value='" + srangeAuto;
             testPlanHTML+= "'></td></tr></div>";
                             
-            testPlanHTML+= "<div class='row appRow'>";
-            testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Pass/Fail: </p>";
-            testPlanHTML+= "<input class='appInput' type='checkbox' name='' autocomplete='off' value='" + spassFail + "'></td></tr></div>"; 
+            // testPlanHTML+= "<div class='row appRow'>";
+            // testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Pass/Fail: </p>";
+            // testPlanHTML+= "<input class='appInput' type='checkbox' name='' autocomplete='off' value='" + spassFail + "'></td></tr></div>"; 
 
-            testPlanHTML+= "<div class='row appRow'>";
-            testPlanHTML+= "<tr><td class='label'><p class='appLabel'> Max: </p>"; 
-            testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' placeholder='12,000' name='capture_buffer_size' value='" + smaxPass + "'></td></tr></div>";
+            // testPlanHTML+= "<div class='row appRow'>";
+            // testPlanHTML+= "<tr><td class='label'><p class='appLabel'> Max: </p>"; 
+            // testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' placeholder='12,000' name='capture_buffer_size' value='" + smaxPass + "'></td></tr></div>";
 
-            testPlanHTML+= "<div class='row appRow'>";
-            testPlanHTML+= "<tr><td class='label'><p class='appLabel'> Min: </p>"; 
-            testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' placeholder='12,000' name='capture_buffer_size' value='" + sminPass + "'></td></tr></div>";
+            // testPlanHTML+= "<div class='row appRow'>";
+            // testPlanHTML+= "<tr><td class='label'><p class='appLabel'> Min: </p>"; 
+            // testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' placeholder='12,000' name='capture_buffer_size' value='" + sminPass + "'></td></tr></div>";
 
             testPlanHTML+= "</form>";
             testPlanHTML+= "</div>";
@@ -919,7 +923,7 @@
     //     });
     // };
 
-    function commitBtn() {
+    function commitBtn(name) {
         Dropped(); //get order
         var configArray = [];
         var U2001Array = [];
@@ -927,17 +931,29 @@
         var dutArray = [];
         var testSetUp = document.getElementById('testSetup');
         var testSetUpInfo = testSetUp.childNodes;
-        testPlanName = testSetUpInfo[1].children[0].children[1].children[0].value;
-        var opsStart = new Boolean(document.getElementById('opsStartCheck').checked);
+        testPlanName = name;
+        var opsStart = document.getElementById('opsStartCheck').checked;
         companyName = document.getElementById('company_nickname').value;
         testPlanAuthor = document.getElementById('author').value;
         hardwareName = gConfigVars.hardwareName;
         var testplanSummary = document.getElementById('summary').value;
         startTime = testSetUpInfo[1].children[1].children[1].children[0].value;
+        console.log('startTime: ', startTime)
         d = new Date(startTime);
         var startMS = d.getTime();
-        var startNowLogic = new Boolean(
-            document.getElementById('startNowCheck').checked);
+        console.log ("startMS: ", startMS)
+        var startNowLogic = document.getElementById('startNowCheck').checked;
+        if (startTime === 'None'){
+            startTime = null;
+        }
+        if (startTime || startNowLogic || opsStart){
+            console.log ('START VARS: ', timecheck, startNowLogic, opsStart )
+        }else{
+            var message = "<h3>Woops! No start trigger. Please try again.</h3>"
+            document.getElementById("FlashBox").innerHTML = message;
+            $('html, body').animate({ scrollTop: 0 }, 'fast');
+            return
+        }
         //LOOP FOR WIDGET SETTINGS 
         var d = document.getElementById('testPlan');
         var children = d.childNodes;
@@ -1099,7 +1115,7 @@
           if (data["available"]){
             document.getElementById("FlashBox").innerHTML = '';
             console.log("Name is available!");
-            commitBtn();
+            commitBtn(name);
             return true
           }else{
             console.log("Name not available!");
