@@ -770,7 +770,7 @@
         configSearch();
     });
     $("#commitBtn").click(function () {
-        commitBtn();
+        processCanvas();
     });
 
 //CONFIG SEARCH BUTTON
@@ -918,10 +918,6 @@
     };
 
     function commitBtn() {
-        if (!checkTestName()){
-            $('html, body').animate({ scrollTop: 0 }, 'fast');
-            return
-        }
         Dropped(); //get order
         var configArray = [];
         var U2001Array = [];
@@ -1062,34 +1058,52 @@
             }
         $(".draggable").each(function(){        
         });
-    }  
-    function validateInput(input) {
-        console.log(input);
-        console.log("TYPE: ", typeof input);
-        input = input.replace(/ +$/, "");
-        input = input.replace(/\s+/g, '-');
-        return input;
     }
-    function checkTestName() {
+    function checkTestPlanName(){
+        var name = document.getElementById("tesPlanName").value;
+        name = validateInput(name)
+        return name
+    } 
+    function validateInput(input) {
+        // console.log(input);
+        // console.log("TYPE: ", typeof input);
+        if (input === '' || input === undefined){
+            var message = "<h3>No test plan name. Please enter one.</h3>"
+            document.getElementById("FlashBox").innerHTML = message;
+            return '';
+        }
+        input = input.replace(/ +$/, "");
+        var validated = input.replace(/\s+/g, '-');
+        if (validated == ''){
+            var message = "<h3>Woops! Still no test plan name. Please enter one.</h3>"
+            document.getElementById("FlashBox").innerHTML = message;
+        }else{
+            document.getElementById("FlashBox").innerHTML = '';
+        }
+        return validated
+    }
+    function processCanvas() {
         var name = document.getElementById("tesPlanName").value;
         name = validateInput(name);
         console.log("tesPlanName: ", name)
         if (name == ''){
-            var message = "<h3>Woops! No test plan name. Please enter one.</h3>"
-            document.getElementById("FlashBox").innerHTML = message
+            $('html, body').animate({ scrollTop: 0 }, 'fast');
             return false
         }
         var check_url = window.location.origin + '/check-testplan-name/' + name;
         $.getJSON( check_url, function( data ) {
-            console.log("CHECKDATA: ", data["available"])
-          if (data["available"] === false){
-            console.log("CHECKED FALSE!");
+          console.log("CHECKDATA: ", data["available"])
+          if (data["available"]){
+            document.getElementById("FlashBox").innerHTML = '';
+            console.log("Name is available!");
+            commitBtn();
+            return true
+          }else{
+            console.log("Name not available!");
             var message = "<h3>Woops! Test plan name taken. Please try another.</h3>";
             document.getElementById("FlashBox").innerHTML = message;
+            $('html, body').animate({ scrollTop: 0 }, 'fast');
             return false
-          }else{
-            document.getElementById("FlashBox").innerHTML = '';
-            return true
           }
         });
     };

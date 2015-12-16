@@ -129,7 +129,7 @@
                             <div class="col-md-5" style="height: 35px;">
                                 <tr>
                                     <td class="label">  
-                                      <input id="tesPlanName" class="nameTestInput" type="text" onkeydown="checkTextField();" onBlur="checkTestName();" value="" placeholder="name goes here">
+                                      <input id="tesPlanName" class="nameTestInput" type="text" onkeydown="checkTextField();" onBlur="checkTestPlanName();" value="" placeholder="name goes here">
                                     </td>
                                 </tr>
                                 <div class="opsStartBox">
@@ -199,8 +199,9 @@
         </div> 
         <hr>
     <!-- </div>  -->
+    <script type="text/javascript" src="/static/js/gConfig.js"></script>
 
-    <script type="text/javascript" src="../static/js/widgets.js"></script>
+    <script type="text/javascript" src="/static/js/widgets.js"></script>
 
     <script type="text/javascript">
     $(function() {
@@ -497,7 +498,6 @@ $(document).ready(function () {
     }
     function checkTextField() {
         var testPlanName = document.getElementById("tesPlanName").value
-        testPlanName = validateInput(testPlanName);
         var testSpace = document.getElementById("testPlan")
         if (testPlanName == '') {
             console.log('field is empty');
