@@ -135,8 +135,9 @@ function PMruntraceStart(el){
       console.log('runStart !!!!!')
       //formatStartUrl = raw_urlPath.split('/');
       var startValue = 'Start_Run';
-      var start_url = window.location.origin + '/panelcontrol/' + 'Acme' + 
-      '/' + 'Tahoe' + '/' + configName + '/' + traceName;
+      var company = document.getElementById('company_nickname').value;
+      var start_url = window.location.origin + '/panelcontrol/' + company + 
+      '/' + gConfigVars.hardwareName + '/' + configName + '/' + traceName;
       console.log('runStart: start_url =',start_url);
 
       var startData = JSON.stringify({"command":startValue});
@@ -158,8 +159,9 @@ function PMruntraceStart(el){
       //formatStartUrl = raw_urlPath.split('/');
       
       var startValue = 'Stop_Run';
-      var start_url = window.location.origin + '/panelcontrol/' + 'Acme' + 
-      '/' + 'Tahoe' + '/' + configName + '/' + traceName;
+      var company = document.getElementById('company_nickname').value;
+      var start_url = window.location.origin + '/panelcontrol/' + company + 
+      '/' + gConfigVars.hardwareName + '/' + configName + '/' + traceName;
       console.log('runStart: start_url =',start_url);
 
       var startData = JSON.stringify({"command":startValue});

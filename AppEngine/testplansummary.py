@@ -129,4 +129,5 @@ class Handler(InstrumentDataHandler):
                             'configs_run' : None,
                             'commands' : commands,
                 }
+            print config
             render_json(self, config)

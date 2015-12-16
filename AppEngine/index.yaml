@@ -44,3 +44,9 @@ indexes:
   - name: privacy
   - name: date_created
     direction: desc
+
+- kind: TestDB
+  properties:
+  - name: company_nickname
+  - name: testplan_name
+  - name: configs
