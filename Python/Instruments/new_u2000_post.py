@@ -60,7 +60,7 @@ class AgilentU2000:
         """
         ses = self.ses
         headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-        if test_plan == True:
+        if test_plan == 'True':
             raw_data_url = ("https://" + GAE_INSTANCE +
                            ".appspot.com/u2000data/"
                            + COMPANYNAME + '/' + HARDWARENAME +'/'
