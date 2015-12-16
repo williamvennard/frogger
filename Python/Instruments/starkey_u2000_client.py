@@ -16,7 +16,7 @@ from new_u2000_post import AgilentU2000
 import ivi
 import collections
 import nuc_auth
-from python_enum_usb import find_usb_devices
+#from python_enum_usb import find_usb_devices
 
 COMPANYNAME = 'Starkey'
 HARDWARENAME = 'MSP1'
@@ -157,7 +157,7 @@ def check_config_url():
                     u2000_acq_run(config, nested_config, ses, headers)
             else:
                 print "No start order found"
-        find_usb_devices()
+        #find_usb_devices()
         time.sleep(1)
 
 
