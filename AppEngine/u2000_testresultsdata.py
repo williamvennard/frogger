@@ -74,11 +74,11 @@ class Handler(InstrumentDataHandler):
         testresults_content['test_complete_bool'] = False
         testresults_content = unic_to_ascii(testresults_content)
         key = 'u2000testresults' + testplan_name + config_name
-        testresults_content = json.dumps(testresults_content)
-        memcache.set(key, testresults_content)
         i_settings = testresults_content['i_settings']
         start_tse = testresults_content['start_tse']
         cha = testresults_content['cha']
+        testresults_content = json.dumps(testresults_content)
+        memcache.set(key, testresults_content)
         window_u2000 = {'i_settings':i_settings, 'cha':cha, 'testplan_name':testplan_name,
         'start_tse':start_tse, 'company_nickname':company_nickname, 'hardware_name':hardware_name, 'config_name':config_name, 'test_plan':test_plan}
         out_u2000 = json.dumps(window_u2000, ensure_ascii=True)

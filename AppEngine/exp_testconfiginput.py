@@ -180,9 +180,9 @@ class Handler(InstrumentDataHandler):
                 config.put()
                 if item['instrument_type'] == "U2001A":
                     print 'item =', item
-                    pass_fail = item['pass_fail']
-                    max_value = float(item['max_value'])
-                    min_value = float(item['min_value'])
+                    # pass_fail = item['pass_fail']
+                    # max_value = float(item['max_value'])
+                    # min_value = float(item['min_value'])
                     s = agilentU2000(
                         key_name = item['config_name']+item['instrument_type'],
                         parent = company_key(),
@@ -195,10 +195,10 @@ class Handler(InstrumentDataHandler):
                         offset = item['offset'], 
                         range_auto = item['range_auto'], 
                         units = item['units'],
-                        max_value = max_value,
-                        min_value = min_value,
-                        pass_fail = pass_fail,
-                        pass_fail_type = 'Range',
+                        # max_value = max_value,
+                        # min_value = min_value,
+                        # pass_fail = pass_fail,
+                        # pass_fail_type = 'Range',
                         test_plan = True,
                     )
                     s.put()

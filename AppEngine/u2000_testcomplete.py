@@ -28,6 +28,7 @@ from string import maketrans
 import docs
 import searchconfig
 
+
 class Handler(InstrumentDataHandler):
     def post(self, company_nickname="", testplan_name="", config_name="", stop_tse=""):
         test_complete_content = json.loads(self.request.body)
