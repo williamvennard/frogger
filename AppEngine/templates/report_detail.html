@@ -1,0 +1,63 @@
+{% extends "one.html" %}
+{% block title %} Analysis {% endblock %}
+{% block head %}
+{{ super() }}
+<title> {{ self.title() }} </title>
+<style type="text/css">
+  .label {text-align: right}
+  .error {color: red}
+  #query {color: black;}
+  body {color: white;}
+  td,th {padding:0 5px 0 5px;}
+  table { border: 4px solid white; display: inline-block;}
+</style>
+{% endblock %}
+{% block content %}
+  <table style="width:100%">
+    <form name "export" action="/analysis_export" method="post">
+      <input type="submit" class="btn-sm btn-primary" value="Export Page">
+      <input type="hidden" name="download_key" value="{{download_key}}">
+    </form>
+      <tr>
+        <th>Maximum Value</th>
+        <th>Minimum Value</th>
+        <th>Median</th>
+        <th>Mean</th>
+        <th>Standard Deviation</th>
+      </tr>
+      {% for entry in stat_results %}
+        <td> {{ entry }} </td>
+      {% endfor %}
+  </table>
+  <br>
+  <br>
+  <br>
+  <br>
+  <table style="width:100%">
+      <tr>
+        <th>Start Time</th>
+        <th>Correction Freq (Hz)</th>
+        <th>Max</th>
+        <th>Min</th>
+        <th>Offset (dBm)</th>
+        <th>Pass Fail Type</th>
+        <th>Test Plan?</th>
+        <th>Pass / Fail</th>
+        <th>Hardware Name</th>
+        <th>Data (dBm)</th>
+        <th>Instrument</th>
+        <th>Config Name</th> 
+        <th>Testplan Name or Trace Name</th> 
+      </tr>
+      {% for entry in meas_results %}
+        <tr>
+        {% for item in entry %}
+           <td> {{ item }} </td>
+        {% endfor %}
+        </tr>
+      {% endfor %}
+    </form>
+  </table>
+{% endblock %}  
+
+

@@ -61,7 +61,7 @@ class Handler(InstrumentDataHandler):
                                 company_nickname, True, hardware_name)
             rows = list(rows)
             configs_run = query_to_dict(rows)
-            print configs_run
+            # print configs_run
             # grab instrument configurations associated with the config that need to run
             if configs_tps_traces:
                 logging.debug("CONFIG_TPS_TRACES %s", configs_tps_traces)
@@ -75,6 +75,10 @@ class Handler(InstrumentDataHandler):
                 rows = db.GqlQuery("SELECT * FROM MeasurementDB WHERE company_nickname =:1 and config_name =:2",
                                     company_nickname, nested_config_name)
                 measurements = query_to_dict(rows)
+                if not measurements:
+                    measurements = [{'default':'N/A'}]
+                else:
+                    measurements[0]['default'] = 'True'
                 rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE company_nickname =:1 and commence_explore =:2 and hardware_name =:3", 
                                     company_nickname, True, hardware_name)
                 rows = list(rows)
@@ -88,7 +92,7 @@ class Handler(InstrumentDataHandler):
                             'configs_tps_traces' : configs_tps_traces, 
                             'configs_run' : configs_run,
                             'nested_config' : nested_config,
-                            'measurements' : measurements,
+                            'meas' : measurements,
                             'commands' : commands,
                 }
             elif configs_run:
@@ -116,7 +120,7 @@ class Handler(InstrumentDataHandler):
                             'configs_tps_traces' : configs_tps_traces, 
                             'configs_run' : configs_run,
                             'nested_config' : nested_config,
-                            'measurements' : measurements,
+                            'meas' : measurements,
                             'commands' : commands,
                 }
             else:

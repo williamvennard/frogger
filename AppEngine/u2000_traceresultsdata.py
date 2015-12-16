@@ -51,9 +51,9 @@ class Handler(InstrumentDataHandler):
         else:
             self.redirect(users.create_login_url(self.request.uri))
         key = 'u2000_traceresultsdata' + company_nickname + hardware_name + config_name
-        memcache.get(key)
         output = memcache.get(key)
         render_json_cached(self, output)
+        memcache.delete(key)
         #print company_nickname, hardware_name, config_name
         #rows = db.GqlQuery("""SELECT * FROM TestResultsDB WHERE company_nickname =:1 and hardware_name =:2
         #                        AND config_name = :3 and test_complete_bool =:4""", company_nickname, hardware_name, config_name, False)  

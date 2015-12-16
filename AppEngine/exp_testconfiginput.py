@@ -49,6 +49,7 @@ class Handler(InstrumentDataHandler):
         author = testplan_object['author']
         company_nickname = testplan_object['company_nickname']
         hardware_name = testplan_object['hardware_name']
+        summary = testplan_object['summary']
         order = testplan_object['order']
         order = [item.encode("ascii") for item in order]  # temporarily comment out to support dummy u2000 config data
         #order = ['config:mmm1:0', 'config:mmm2:1']
@@ -79,6 +80,7 @@ class Handler(InstrumentDataHandler):
             test_ready = True,
             test_scheduled = True,
             ops_start = ops_start,
+            summary = summary,
             )
         test.put()
         order_str = str(order)

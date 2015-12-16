@@ -62,7 +62,7 @@ class Handler(InstrumentDataHandler):
                     test_complete_bool = True,
                     test_complete = int(stop_tse),
                     trace = trace, 
-                    start_tse=(test_complete_content['start_tse']),
+                    start_tse=test_complete_content['start_tse'],
                     u2000_result = str(test_complete_content['cha']),
                     )
             to_save.append(r) 
@@ -99,7 +99,7 @@ class Handler(InstrumentDataHandler):
                     test_complete_bool = True,
                     test_complete = int(stop_tse),
                     trace = trace, 
-                    start_tse=(test_complete_content['start_tse']),
+                    start_tse=test_complete_content['start_tse'],
                     u2000_result = str(test_complete_content['cha']),
                     )
             to_save.append(r) 
@@ -110,10 +110,11 @@ class Handler(InstrumentDataHandler):
         logging.debug("THE BLOB!!! %s" % the_blob)
         blob_key = the_blob.b_key
         fields = [ 
-            search.DateField(name=docs.U2000.START_TSE, 
+            search.DateField(name='start_datetime', 
                 value=datetime.datetime.fromtimestamp(
                     int(test_complete_content['start_tse'])/1000
                     )),
+            search.TextField(name=docs.U2000.START_TSE, value=str(test_complete_content['start_tse'])),
             search.NumberField(name=docs.U2000.CORRECTION_FREQ, value=float(i_settings['correction_frequency'])), 
             search.NumberField(name=docs.U2000.MAX_VALUE, value=float(i_settings['max_value'])), 
             search.NumberField(name=docs.U2000.MIN_VALUE, value=float(i_settings['min_value'])), 
@@ -122,7 +123,7 @@ class Handler(InstrumentDataHandler):
             search.TextField(name=docs.U2000.TEST_PLAN, value=test_complete_content['test_plan']),
             search.TextField(name=docs.U2000.PASS_FAIL, value=i_settings['pass_fail']),
             search.TextField(name=docs.U2000.HARDWARE_NAME, value=hardware_name),
-            search.TextField(name=docs.U2000.DATA, value=str(test_complete_content['cha'])),
+            search.NumberField(name=docs.U2000.DATA, value=test_complete_content['cha']),
             search.TextField(name=docs.U2000.INSTRUMENT_TYPE, value='U2000'),
             search.TextField(name=docs.U2000.CONFIG_NAME, value=config_name),
             search.TextField(name=docs.U2000.TESTPLAN_NAME, value=test_complete_content['active_testplan_name']),
@@ -134,14 +135,6 @@ class Handler(InstrumentDataHandler):
         except search.Error:
             logging.exception("Search error adding document")
             #memcache.set(key, to_save)
-
-
-            #Done - refactored docs.py to work with U2000 code
-            #Done - added a searchconfig.py file for search configurations
-            #Done - identified location for and placed Index creation code
-            #Done - enter in extra fields for U2000
-            #TODO - update U2000_client and U2000_post to post config data along with results to server
-            #TODO - write queryhandlers or refactor google example code to work with gradientone code
 
 
 class UpdateResults(InstrumentDataHandler):

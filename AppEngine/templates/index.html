@@ -128,9 +128,11 @@
                             </div>
                             <div class="col-md-5" style="height: 35px;">
                                 <tr>
-                                    <td class="label">  
-                                      <input id="tesPlanName" class="nameTestInput" type="text" onkeydown="checkTextField();" onBlur="checkTestName();" value="" placeholder="name goes here">
-                                    </td>
+                                  <td class="label">  
+                                      <input id="tesPlanName" class="nameTestInput" type="text" onkeydown="checkTextField();" onBlur="checkTestPlanName();" value="" placeholder="name goes here">
+                                      <input type="hidden" name="company_nickname" id="company_nickname" value="{{profile.company_nickname}}">
+                                      <input type="hidden" id="author" value="{{profile.name}}">
+                                  </td>
                                 </tr>
                                 <div class="opsStartBox">
                                     <p class="opsStartLabel">Operator Start</p> 
@@ -149,7 +151,6 @@
                                 <tr>
                                     <td class="label">                                        
                                       <input class="nameTestInput" id="start_time" type="text" name="start_time" value="" placeholder="time goes here">
-                                      <input type="hidden" name="company_nickname" value="{{profile.company_nickname}}">
                                       <input type="hidden" name="timepost" value=True>
                                     </td>
                                 </tr>
@@ -170,8 +171,6 @@
                                 <tr>
                                     <td class="label">                                        
                                       <input class="nameTestInput" id="summary" type="text" name="summary" value="" placeholder="summary goes here">
-                                      <input type="hidden" name="company_nickname" value="{{profile.company_nickname}}">
-                                      <input type="hidden" name="timepost" value=True>
                                     </td>
                                 </tr>                              
                             </div>
@@ -199,8 +198,9 @@
         </div> 
         <hr>
     <!-- </div>  -->
+    <script type="text/javascript" src="/static/js/gConfig.js"></script>
 
-    <script type="text/javascript" src="../static/js/widgets.js"></script>
+    <script type="text/javascript" src="/static/js/widgets.js"></script>
 
     <script type="text/javascript">
     $(function() {
@@ -318,6 +318,14 @@
         var savedOrder = savedTestsJson.order;
         console.log('savedTestView: savedOrder = ',savedOrder);
 
+        $(".savedTestsBox").hide(); 
+        $(".collapseNewTest").fadeIn("fast"); 
+        $(".droppable").fadeIn("fast");
+        $(".collapseCommitTest").fadeIn("fast");
+        $("#accordion").fadeIn("fast");
+        document.getElementById("tesPlanName").value = savedTestsJson.testplan_name;
+        document.getElementById("start_time").value = savedTestsJson.scheduled_start_time;
+        
         var savedOrderSplit = savedOrder.split("'");
         savedOrderSplit = savedOrderSplit.splice(1,savedOrderSplit.length-2);
         for (var i=0;i<savedOrderSplit.length;i++) {
@@ -388,17 +396,6 @@
             };
             console.log('IS THIS RUNNING?');
         };
-
-        $(".savedTestsBox").hide(); 
-        $(".collapseNewTest").fadeIn("fast"); 
-        $(".droppable").fadeIn("fast");
-        $(".collapseCommitTest").fadeIn("fast");
-        $("#accordion").fadeIn("fast");
-        
-
-        document.getElementById("tesPlanName").value = savedTestsJson.testplan_name;
-        document.getElementById("start_time").value = savedTestsJson.scheduled_start_time;
-
     };
 
 $(document).ready(function () {
@@ -497,7 +494,6 @@ $(document).ready(function () {
     }
     function checkTextField() {
         var testPlanName = document.getElementById("tesPlanName").value
-        testPlanName = validateInput(testPlanName);
         var testSpace = document.getElementById("testPlan")
         if (testPlanName == '') {
             console.log('field is empty');

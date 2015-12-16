@@ -61,14 +61,14 @@ class Handler(InstrumentDataHandler):
         print company_nickname, config_name
         rows = db.GqlQuery("SELECT * FROM agilentU2000data WHERE company_nickname =:1 and config_name =:2", company_nickname, config_name)
         rows = query_to_dict(rows)
+        run_numbers(rows)
         meas_results = []
         meas_results_calcs = []
         for entry in rows:
-            meas_results.append((float(entry['test_results_data']), config_name, entry['i_settings'], ("https://gradientone-test.appspot.com/u2000data/" + company_nickname + '/' + entry['hardware_name'] +'/' + config_name + "/%s" % entry['start_tse'])))
+            meas_results.append((float(entry['test_results_data']), config_name, entry['i_settings'])) 
+            # meas_results.append((float(entry['test_results_data']), config_name, entry['i_settings'], ("https://gradientone-test.appspot.com/u2000data/" + company_nickname + '/' + entry['hardware_name'] +'/' + config_name + "/%s" % entry['start_tse'])))
             meas_results_calcs.append(float(entry['test_results_data']))
-        print meas_results
         mean_value = numpy.mean(meas_results_calcs)
-        print mean_value
         max_value = numpy.amax(meas_results_calcs)
         min_value = numpy.amin(meas_results_calcs)
         median_value = numpy.median(meas_results_calcs)
