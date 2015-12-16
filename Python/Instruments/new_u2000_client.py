@@ -222,6 +222,7 @@ def u2000_acq(config, nested_config, ses):
     inst_dict = set_v_for_k(inst_dict, 'min_value', config_vars[10])
     inst_dict = set_v_for_k(inst_dict, 'offset', config_vars[3])
     inst_dict = set_v_for_k(inst_dict, 'active_testplan_name', config_vars[0])
+    print inst_dict
     acq_dict = collections.OrderedDict()
     acq_dict = set_v_for_k(acq_dict, 'Start_TSE', tse)
     acq_dict = set_v_for_k(acq_dict, 'data(dBm)', power)
