@@ -75,6 +75,10 @@ class Handler(InstrumentDataHandler):
                 rows = db.GqlQuery("SELECT * FROM MeasurementDB WHERE company_nickname =:1 and config_name =:2",
                                     company_nickname, nested_config_name)
                 measurements = query_to_dict(rows)
+                if not measurements:
+                    measurements = [{'default':'N/A'}]
+                else:
+                    measurements[0]['default'] = 'True'
                 rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE company_nickname =:1 and commence_explore =:2 and hardware_name =:3", 
                                     company_nickname, True, hardware_name)
                 rows = list(rows)
