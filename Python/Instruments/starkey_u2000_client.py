@@ -43,7 +43,7 @@ def post_status(status, ses):
     #          + COMPANYNAME + '/' + HARDWARENAME)
     #url_s = ("https://" + GAE_INSTANCE + ".appspot.com/status/"
     #        + COMPANYNAME + '/' + HARDWARENAME)
-    url_s = BASE_INSTANCE + '/' + 'status' + '/' + 
+    url_s = BASE_INSTANCE + '/' + 'status' + '/' 
             + COMPANYNAME + '/' + HARDWARENAME)
     result = requests.post(url_s, data=status, headers=headers)
     print "result.reason=", result.reason
