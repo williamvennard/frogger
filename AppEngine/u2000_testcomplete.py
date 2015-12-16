@@ -11,6 +11,7 @@ from onedb import ConfigDB_key
 from onedb import company_key
 from onedb import StateDB
 from onedb import BlobberDB
+from onedb import agilentU2000data
 import itertools
 import jinja2
 import json
@@ -34,7 +35,19 @@ class Handler(InstrumentDataHandler):
         test_complete_content = json.loads(self.request.body)
         test_plan = test_complete_content['test_plan']
         i_settings = test_complete_content['i_settings']
+        start_tse = test_complete_content['start_tse']
         logging.debug("TEST_CONTENT: %s" % test_complete_content)
+        a = agilentU2000data(
+                parent = company_key(), 
+                key_name = str(start_tse),
+                config_name=config_name,
+                company_nickname = company_nickname,
+                hardware_name=hardware_name,
+                i_settings=str(i_settings),
+                test_results_data= str(test_complete_content['cha']),
+                start_tse=int(start_tse),
+        )            
+        a.put()
         if test_plan == 'True':   
             stop_time = datetime.datetime.now()
             key = testplan_name+'U2001A'+config_name
@@ -110,6 +123,13 @@ class Handler(InstrumentDataHandler):
         the_blob = BlobberDB.get(blobber_key)
         logging.debug("THE BLOB!!! %s" % the_blob)
         blob_key = the_blob.b_key
+        pass_fail_type = i_settings['pass_fail_type']
+        if pass_fail_type == 'N/A':
+            max_value = None
+            min_value = None
+        else:
+            max_value = float(i_settings['max_value'])
+            min_value = float(i_settings['min_value'])
         fields = [ 
             search.DateField(name='start_datetime', 
                 value=datetime.datetime.fromtimestamp(
@@ -117,8 +137,8 @@ class Handler(InstrumentDataHandler):
                     )),
             search.TextField(name=docs.U2000.START_TSE, value=str(test_complete_content['start_tse'])),
             search.NumberField(name=docs.U2000.CORRECTION_FREQ, value=float(i_settings['correction_frequency'])), 
-            search.NumberField(name=docs.U2000.MAX_VALUE, value=float(i_settings['max_value'])), 
-            search.NumberField(name=docs.U2000.MIN_VALUE, value=float(i_settings['min_value'])), 
+            search.NumberField(name=docs.U2000.MAX_VALUE, value=max_value, 
+            search.NumberField(name=docs.U2000.MIN_VALUE, value=min_value, 
             search.NumberField(name=docs.U2000.OFFSET, value=float(i_settings['offset'])), 
             search.TextField(name=docs.U2000.PASS_FAIL_TYPE, value=i_settings['pass_fail_type']),
             search.TextField(name=docs.U2000.TEST_PLAN, value=test_complete_content['test_plan']),
