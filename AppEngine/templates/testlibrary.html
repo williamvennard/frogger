@@ -82,10 +82,10 @@
             configTable+="<div style='margin-bottom:20px;'>";
             configTable+="<span class='name'> Name: </span>" + "<a href='" + window.location.origin + "/view_testplan/" + testArray[i].company_nickname + "/" + testArray[i].hardware_name + "/" + testArray[i].testplan_name + "' " + "<span  class='testName text-capitalize'>" + testArray[i].testplan_name + "</span></a>";
             configTable+="<br>"
-            configTable+="<span class='subField'> Summary: </span> <span> Dummy Summary </span><br>"
+            configTable+="<span class='subField'> Summary: </span> <span> " + testArray[i].summary + "</span><br>"
             configTable+="<span class='startTime'> Date Created: </span>" + "<span>" + testArray[i].date_created + "</span><br>";
-            configTable+="<span class='subField'> Date Test Performed: </span> <span> Dummy Date </span> <br>"
-            configTable+="<span class='subField'> Author: </span><span> Dummy Author Name </span><br>"
+            configTable+="<span class='subField'> Date Test Performed: </span> <span> " + testArray[i].stop_time + "</span> <br>"
+            configTable+="<span class='subField'> Author: </span><span>" + testArray[i].author + " </span><br>"
             configTable+="<span class='subField'>More Options: </span><span><a class='resultsLink' href='" + window.location.origin + "/testlibrary/testresults/" + testArray[i].company_nickname + '/' + testArray[i].testplan_name + "'> Results </a>";
             if (testArray[i].ops_start == 'True'){            
               orderstring = testArray[i].order;
@@ -108,11 +108,11 @@
             traceConfigTable+="<div style='margin-bottom:20px;'>";
             traceConfigTable+="<span class='name'> Trace Name: </span>" + "<span  class='testName text-capitalize'>" + configArray[i].active_testplan_name + "</span><br>";
             traceConfigTable+="<span class='name'> Config Name: </span>" + "<span  class='testName text-capitalize'><a href='" + window.location.origin + "/instruments?library=trace&U2001A=" + configArray[i].config_name + "'>" + configArray[i].config_name + "</a></span><br>";
-            traceConfigTable+="<span class='subField'> Summary: </span> <span> Dummy Summary </span><br>"
+            // traceConfigTable+="<span class='subField'> Summary: </span> <span> Dummy Summary </span><br>"
             traceConfigTable+="<span class='instType'> Inst Type: </span>" + "<span>" + configArray[i].instrument_type + "</span>";
             traceConfigTable+="<br>"
             traceConfigTable+="<span class='startTime'> Date Created: </span>" + "<span>" + configArray[i].date_created + "</span><br>";
-            traceConfigTable+="<span class='subField'> Author: </span><span> Dummy Author Name </span><br>"
+            traceConfigTable+="<span class='subField'> Author: </span><span> " + configArray[i].author + " </span><br>"
             traceConfigTable+="<span class='subField'> Results: </span><span id='" + configArray[i].active_testplan_name + "ResultsLink'></span><br>"
             traceConfigTable+="</div>"
           };

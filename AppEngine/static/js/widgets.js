@@ -145,14 +145,15 @@
                     var rangeAuto = ''
                 };
 
-                if (children[index].children[0].children[1].children[6].children[1].checked==true) {
-                    var passFail = 'checked'
-                }else{
-                    var passFail = ''
-                }; 
+                // commented out for measure widget use instead
+                // if (children[index].children[0].children[1].children[6].children[1].checked==true) {
+                //     var passFail = 'checked'
+                // }else{
+                //     var passFail = ''
+                // }; 
 
-                var passFailMax = children[index].children[0].children[1].children[7].children[1].value
-                var passFailMin = children[index].children[0].children[1].children[8].children[1].value
+                // var passFailMax = children[index].children[0].children[1].children[7].children[1].value
+                // var passFailMin = children[index].children[0].children[1].children[8].children[1].value
 
                 //Search results
                 var configResults = children[index].children[1].children[0].children[0].children[1].innerHTML;
@@ -190,20 +191,21 @@
                 testPlanHTML+= "<div style='' class='row appRow'>";
                 testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Range Auto: </p>"; 
                 testPlanHTML+= "<input class='appInput' type='checkbox' name='' autocomplete='off' value=''" + rangeAuto + "></td></tr></div>";
-                                
-                testPlanHTML+= "<div class='row appRow'>";
-                testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Pass/Fail: </p>";
-                testPlanHTML+= "<input class='appInput' type='checkbox' name='' autocomplete='off' value=''" + passFail + "></td></tr></div>"; 
+                 
+                // commented out to use measure widget.                 
+                // testPlanHTML+= "<div class='row appRow'>";
+                // testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Pass/Fail: </p>";
+                // testPlanHTML+= "<input class='appInput' type='checkbox' name='' autocomplete='off' value=''" + passFail + "></td></tr></div>"; 
 
-                testPlanHTML+= "<div class='row appRow'>";
-                testPlanHTML+= "<tr><td class='label'><p class='appLabel'> Max: </p>"; 
-                testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' placeholder='12,000' name='capture_buffer_size' value='" + passFailMax;
-                testPlanHTML+= "'></td></tr></div>";
+                // testPlanHTML+= "<div class='row appRow'>";
+                // testPlanHTML+= "<tr><td class='label'><p class='appLabel'> Max: </p>"; 
+                // testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' placeholder='12,000' name='capture_buffer_size' value='" + passFailMax;
+                // testPlanHTML+= "'></td></tr></div>";
 
-                testPlanHTML+= "<div class='row appRow'>";
-                testPlanHTML+= "<tr><td class='label'><p class='appLabel'> Min: </p>"; 
-                testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' placeholder='12,000' name='capture_buffer_size' value='" + passFailMin;
-                testPlanHTML+= "'></td></tr></div>";
+                // testPlanHTML+= "<div class='row appRow'>";
+                // testPlanHTML+= "<tr><td class='label'><p class='appLabel'> Min: </p>"; 
+                // testPlanHTML+= "<input autocomplete='off' class='appInput' type='text' placeholder='12,000' name='capture_buffer_size' value='" + passFailMin;
+                // testPlanHTML+= "'></td></tr></div>";
 
                 testPlanHTML+= "</form>";
                 testPlanHTML+= "</div>";
@@ -789,7 +791,7 @@
 
         var testSetUp = document.getElementById('testSetup');
         var testSetUpInfo = testSetUp.childNodes;
-        var companyName = '{{profile.company_nickname}}';
+        var companyName = document.getElementById('company_nickname').value;
         var testPlanName = testSetUpInfo[1].children[0].children[1].children[0].value;
         
         //var config_search_url = 'https://gradientone-test.appspot.com';
@@ -886,36 +888,36 @@
     var companyName;
     var indexArray = []; 
 
-    function postInitInfo() {
-        console.log('postInitInfo called!!!!');
-        var testSetUp = document.getElementById('testSetup');
-        var testSetUpInfo = testSetUp.childNodes;
-        testPlanName = testSetUpInfo[3].children[0].children[1].children[0].value;
-        companyName = '{{profile.company_nickname}}';
-        hardwareName = gConfigVars.hardwareName;
-        testPlanAuthor = '{{profile.name}}';
-        startTime = testSetUpInfo[3].children[1].children[1].children[0].value;
-        d = new Date(startTime);
-        var startMS = d.getTime();
-        startNowLogic = new Boolean(
-       testSetUpInfo[3].children[1].children[1].children[3].children[1].checked);
+    // function postInitInfo() {
+    //     console.log('postInitInfo called!!!!');
+    //     var testSetUp = document.getElementById('testSetup');
+    //     var testSetUpInfo = testSetUp.childNodes;
+    //     testPlanName = testSetUpInfo[3].children[0].children[1].children[0].value;
+    //     companyName = '{{profile.company_nickname}}';
+    //     hardwareName = gConfigVars.hardwareName;
+    //     testPlanAuthor = '{{profile.name}}';
+    //     startTime = testSetUpInfo[3].children[1].children[1].children[0].value;
+    //     d = new Date(startTime);
+    //     var startMS = d.getTime();
+    //     startNowLogic = new Boolean(
+    //    testSetUpInfo[3].children[1].children[1].children[3].children[1].checked);
 
-        //var initInfo_url = 'https://gradientone-test.appspot.com/testconfiginput';
-        var initInfo_url = window.location.origin;
-        initInfo_url += "/testconfiginput";
-        var initData = JSON.stringify({"testplan_name":testPlanName,"author":testPlanAuthor,"company_nickname":companyName,"hardware_name":hardwareName,"start_time":startMS,"start_now":startNowLogic});
-        console.log('postInitInfo: initData = ', initData);
-        $.ajax({
-        type: "POST",
-        url: initInfo_url,
-        data: initData,
-        dataType: 'json',
-        success: function(data, textStatus, jqXHR)
-        {
-            console.log('commitBtn: Ajax post was a success!');
-        },
-        });
-    };
+    //     //var initInfo_url = 'https://gradientone-test.appspot.com/testconfiginput';
+    //     var initInfo_url = window.location.origin;
+    //     initInfo_url += "/testconfiginput";
+    //     var initData = JSON.stringify({"testplan_name":testPlanName,"author":testPlanAuthor,"company_nickname":companyName,"hardware_name":hardwareName,"start_time":startMS,"start_now":startNowLogic});
+    //     console.log('postInitInfo: initData = ', initData);
+    //     $.ajax({
+    //     type: "POST",
+    //     url: initInfo_url,
+    //     data: initData,
+    //     dataType: 'json',
+    //     success: function(data, textStatus, jqXHR)
+    //     {
+    //         console.log('commitBtn: Ajax post was a success!');
+    //     },
+    //     });
+    // };
 
     function commitBtn() {
         Dropped(); //get order
@@ -927,14 +929,15 @@
         var testSetUpInfo = testSetUp.childNodes;
         testPlanName = testSetUpInfo[1].children[0].children[1].children[0].value;
         var opsStart = new Boolean(document.getElementById('opsStartCheck').checked);
-        companyName = '{{profile.company_nickname}}';
-        testPlanAuthor = '{{profile.name}}';
+        companyName = document.getElementById('company_nickname').value;
+        testPlanAuthor = document.getElementById('author').value;
         hardwareName = gConfigVars.hardwareName;
+        var testplanSummary = document.getElementById('summary').value;
         startTime = testSetUpInfo[1].children[1].children[1].children[0].value;
         d = new Date(startTime);
         var startMS = d.getTime();
         var startNowLogic = new Boolean(
-  testSetUpInfo[1].children[1].children[1].children[3].children[1].checked);
+            document.getElementById('startNowCheck').checked);
         //LOOP FOR WIDGET SETTINGS 
         var d = document.getElementById('testPlan');
         var children = d.childNodes;
@@ -972,13 +975,13 @@
                 var units = children[index].children[0].children[1].children[3].children[1].value
                 var avgCountAuto = new Boolean(children[index].children[0].children[1].children[4].children[1].checked)
                 var rangeAuto = new Boolean(children[index].children[0].children[1].children[5].children[1].checked)
-                var passFail = new Boolean(children[index].children[0].children[1].children[6].children[1].checked)
-                var passFailMin = 0.0
-                var passFailMax = 0.0
-                if (passFail){
-                    passFailMin = children[index].children[0].children[1].children[7].children[1].value
-                    passFailMax = children[index].children[0].children[1].children[8].children[1].value
-                }
+                // var passFail = new Boolean(children[index].children[0].children[1].children[6].children[1].checked)
+                // var passFailMin = 0.0
+                // var passFailMax = 0.0
+                // if (passFail){
+                //     passFailMin = children[index].children[0].children[1].children[7].children[1].value
+                //     passFailMax = children[index].children[0].children[1].children[8].children[1].value
+                // }
 
                 var U2001AJsonObj = {"config_name":configName, "correction_frequency": freqCorrection, "offset":offset, "units":units, 
                 "instrument_type": "U2001A", "hardware": gConfigVars.hardwareName, "averaging_count_auto": avgCountAuto, "range_auto": rangeAuto, 
@@ -1013,7 +1016,7 @@
         //var commit_url = 'https://gradientone-test.appspot.com/testconfiginput';
         var commit_url = window.location.origin + "/testconfiginput";
         console.log('commitBtn: indexArray = ', indexArray);
-        var commitData = JSON.stringify({"testplan_name":testPlanName,"author":testPlanAuthor,"company_nickname":companyName,"hardware_name":hardwareName,"start_time":startMS,"start_now":startNowLogic,"configs":configArray,"meas":measArray,"duts":dutArray,"order":indexArray,"ops_start": opsStart});
+        var commitData = JSON.stringify({"testplan_name":testPlanName,"author":testPlanAuthor,"summary":testplanSummary, "company_nickname":companyName,"hardware_name":hardwareName,"start_time":startMS,"start_now":startNowLogic,"configs":configArray,"meas":measArray,"duts":dutArray,"order":indexArray,"ops_start": opsStart});
         console.log('commitBtn: commitData = ', commitData);
         $.ajax({
         type: "POST",
