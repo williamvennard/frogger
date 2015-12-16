@@ -144,8 +144,16 @@ class AgilentU2000:
         config_name = self.u2000_test_results['config_name']
         test_plan = self.u2000_test_results['test_plan']
         i_settings = self.u2000_test_results['i_settings']
-        start_tse = int(self.u2000_test_results['Start_TSE'])
+        max_value = i_settings['max_value']
+        max_value = i_settings['max_value']
         test_results = self.u2000_test_results['data(dBm)']
+        if i_settings['pass_fail_type'] == 'N/A':
+            i_settings['pass_fail'] = 'N/A'
+        elif float('min_value') <= float(test_results) <= float(max_value):
+            i_settings['pass_fail'] = 'PASS'
+        else:
+            i_settings['pass_fail'] = 'FAIL'
+        start_tse = int(self.u2000_test_results['Start_TSE'])
         self.post_complete(active_testplan_name, config_name,
                            test_plan, stop_tse, i_settings,
                            start_tse, test_results)
