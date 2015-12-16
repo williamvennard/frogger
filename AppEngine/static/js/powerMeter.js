@@ -188,12 +188,14 @@ $("#powerMeterRunStartStop").click(function() {
 
 //POWER METER START and STOP
 $("#powerMeterStartStop").click(function() {
-      $(this).text(function(i, v){
-      return v === 'STOP' ? 'CAPTURE' : 'STOP'
-      })
-      var el = this;
-      return (el.t = !el.t) ? PMtraceStart(el) : PMtraceStop(el);
+      PMtraceStart()
     });
+    //   $(this).text(function(i, v){
+    //   return v === 'STOP' ? 'CAPTURE' : 'STOP'
+    //   })
+    //   var el = this;
+    //   return (el.t = !el.t) ? PMtraceStart(el) : PMtraceStop(el);
+    // });
 
 
 var resultsTrigger;
