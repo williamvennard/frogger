@@ -224,7 +224,7 @@ def u2000_acq(config, nested_config, meas, ses):
     # inst_dict = set_v_for_k(inst_dict, 'max_value', config_vars[9])
     # inst_dict = set_v_for_k(inst_dict, 'min_value', config_vars[10])
     inst_dict = set_v_for_k(inst_dict, 'pass_fail', meas['pass_fail'])
-    inst_dict = set_v_for_k(inst_dict, 'pass_fail_type', meas['pass_fail_type'])
+    inst_dict = set_v_for_k(inst_dict, 'pass_fail_type', 'Range') #needs more work, range is a placeholder
     inst_dict = set_v_for_k(inst_dict, 'max_value', meas['max_value'])
     inst_dict = set_v_for_k(inst_dict, 'min_value', meas['min_value'])
     inst_dict = set_v_for_k(inst_dict, 'offset', config_vars[3])
