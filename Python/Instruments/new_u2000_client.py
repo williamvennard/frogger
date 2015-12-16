@@ -127,14 +127,9 @@ def check_config_url():
             print 'checking'
             config = result.json()
             if config['configs_tps_traces']:
-                print config
-                print type(config)
-                for i in config:
-                    print i, type(i)
                 nested_config = config['nested_config'][0]
+                meas = config['meas'][0] 
                 config = config['configs_tps_traces'][0]
-                #meas = config['meas'][0] 
-                print 'configs_tps_traces config = ', config
                 if config['commence_test'] == 'True':
                     print "Starting API"
                     post_status('Starting', ses)
