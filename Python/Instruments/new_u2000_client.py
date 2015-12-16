@@ -226,8 +226,8 @@ def u2000_acq(config, nested_config, meas, ses):
     if not meas['default']:
         inst_dict = set_v_for_k(inst_dict, 'pass_fail', meas['pass_fail'])
         inst_dict = set_v_for_k(inst_dict, 'pass_fail_type', 'Range') #needs more work, range is a placeholder
-        inst_dict = set_v_for_k(inst_dict, 'max_value', meas['max_pass'])
-        inst_dict = set_v_for_k(inst_dict, 'min_value', meas['min_pass'])
+        inst_dict = set_v_for_k(inst_dict, 'max_value', 0.0)
+        inst_dict = set_v_for_k(inst_dict, 'min_value', 0.0)
     else:
         inst_dict = set_v_for_k(inst_dict, 'pass_fail', 'N/A')
         inst_dict = set_v_for_k(inst_dict, 'pass_fail_type', 'N/A') #needs more work, range is a placeholder
