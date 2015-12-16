@@ -36,6 +36,7 @@ class Handler(InstrumentDataHandler):
         test_plan = test_complete_content['test_plan']
         i_settings = test_complete_content['i_settings']
         start_tse = test_complete_content['start_tse']
+        hardware_name = test_complete_content['hardware_name']
         logging.debug("TEST_CONTENT: %s" % test_complete_content)
         a = agilentU2000data(
                 parent = company_key(), 
@@ -67,7 +68,6 @@ class Handler(InstrumentDataHandler):
             key = 'TestResultsDB'+testplan_name+config_name
             test_plan = True
             trace = False
-            hardware_name = test_complete_content['hardware_name']
             r = TestResultsDB(parent = company_key(), testplan_name=testplan_name, key_name = key,
                     company_nickname = company_nickname, 
                     config_name=config_name,
