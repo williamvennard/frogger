@@ -39,11 +39,11 @@ class Handler(InstrumentDataHandler):
     def get(self, company_nickname, testplan_name):
         profile = get_profile_cookie(self)
         if company_nickname and testplan_name:
-            query = TestResultsDB.all().filter("company_nickname =", company_nickname)
-            query = query.filter("testplan_name =", testplan_name)
-            test_results = query.run()
+            # query = TestResultsDB.all().filter("company_nickname =", company_nickname)
+            # query = query.filter("testplan_name =", testplan_name)
+            # test_results = query.run()
+            # logging.debug("TEST_RESULTS: %s" % test_results)
             comment_thread = []
-            logging.debug("TEST_RESULTS: %s" % test_results)
             # if test_results:
             #     comments_query = CommentsDB.all()
             #     comments_query.ancestor(test_results)
@@ -63,10 +63,11 @@ class Handler(InstrumentDataHandler):
 
 class JSON_Handler(InstrumentDataHandler):
     def get(self, company_nickname, testplan_name):
-        rows = db.GqlQuery("""SELECT * FROM TestResultsDB 
+        testplan_name = testplan_name.split(".")[0]
+        # q = TestResultsDB.all().filter('testplan_name =', testplan_name).filter('company_nickname =', company_nickname)
+        q = db.GqlQuery("""SELECT * FROM TestResultsDB 
                               WHERE testplan_name =:1
                               AND company_nickname =:2""",
-                              testplan_name, 
-                              company_nickname)
-        test_results = query_to_dict(list(rows))
+                              testplan_name, company_nickname)                          
+        test_results = query_to_dict(list(q))
         render_json(self, test_results)

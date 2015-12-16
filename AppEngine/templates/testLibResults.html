@@ -169,13 +169,13 @@ function addComment() {
     console.log(test_info_url);
 
     function getTestInfo() {
-      //test_info_url = 'https://gradientone-test.appspot.com/testlibrary/traceresults/Acme/Primetime/1438785769100.json';
       $.ajax({
           async: true,
           url: test_info_url,
           dataType: 'json',
        }).done(function (results) {
         testInfo = results[0];
+        console.log("TEST INFO: ", testInfo);
 
         testName = testInfo.testplan_name;
         document.getElementById("testNamehtml").innerHTML = String(testName);
