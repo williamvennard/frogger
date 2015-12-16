@@ -12,7 +12,6 @@ import json
 import requests
 import time   # time is a module here
 import datetime
-import threading
 from new_u2000_post import AgilentU2000
 import ivi
 import collections
@@ -113,40 +112,43 @@ def check_config_url():
     #              testplansummary/Acme/MSP")
     config_url = ("https://" + GAE_INSTANCE + ".appspot.com/testplansummary/"
                   + COMPANYNAME + '/' + HARDWARENAME)
-    token = nuc_auth.get_access_token()
-    headers = {'Authorization': 'Bearer '+token}
-    ses = requests.session()
-    result = ses.get(config_url, headers=headers)
-    if result.status_code == 401:
-        token = nuc_auth.get_new_token()
+
+    # loop forever
+    while True:
+        token = nuc_auth.get_access_token()
         headers = {'Authorization': 'Bearer '+token}
+        ses = requests.session()
         result = ses.get(config_url, headers=headers)
-    if result:
-        print 'checking'
-        config = result.json()
-        if config['configs_tps_traces']:
-            nested_config = config['nested_config'][0]
-            config = config['configs_tps_traces'][0]
-            print 'configs_tps_traces config = ', config
-            if config['commence_test'] == 'True':
-                print "Starting API"
-                post_status('Starting', ses)
-                u2000_acq(config, nested_config, ses)
-                config_vars = check_config_vars(config, nested_config)
-                config_name = config_vars[1]
-                active_testplan_name = config_vars[0]
-                post_complete(config_name, active_testplan_name, ses)
-        elif config['configs_run']:
-            nested_config = config['nested_config'][0]
-            config = config['configs_run'][0]
-            print 'configs_runs config = ', config
-            if config['commence_run'] == 'True':
-                print "Starting API" 
-                post_status('Starting', ses)
-                u2000_acq_run(config, nested_config, ses, headers)
-        else:
-            print "No start order found"
-    threading.Timer(1, check_config_url()).start()
+        if result.status_code == 401:
+            token = nuc_auth.get_new_token()
+            headers = {'Authorization': 'Bearer '+token}
+            result = ses.get(config_url, headers=headers)
+        if result:
+            print 'checking'
+            config = result.json()
+            if config['configs_tps_traces']:
+                nested_config = config['nested_config'][0]
+                config = config['configs_tps_traces'][0]
+                print 'configs_tps_traces config = ', config
+                if config['commence_test'] == 'True':
+                    print "Starting API"
+                    post_status('Starting', ses)
+                    u2000_acq(config, nested_config, ses)
+                    config_vars = check_config_vars(config, nested_config)
+                    config_name = config_vars[1]
+                    active_testplan_name = config_vars[0]
+                    post_complete(config_name, active_testplan_name, ses)
+            elif config['configs_run']:
+                nested_config = config['nested_config'][0]
+                config = config['configs_run'][0]
+                print 'configs_runs config = ', config
+                if config['commence_run'] == 'True':
+                    print "Starting API" 
+                    post_status('Starting', ses)
+                    u2000_acq_run(config, nested_config, ses, headers)
+            else:
+                print "No start order found"
+        time.sleep(1)
 
 
 def u2000_acq_run(config, nested_config, ses, headers):
