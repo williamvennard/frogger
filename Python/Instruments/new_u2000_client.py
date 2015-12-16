@@ -16,7 +16,7 @@ from new_u2000_post import AgilentU2000
 import ivi
 import collections
 import nuc_auth
-from python_enum_usb import find_usb_devices
+#from python_enum_usb import find_usb_devices
 
 COMPANYNAME = 'Acme'
 HARDWARENAME = 'Tahoe'
