@@ -149,7 +149,7 @@ class AgilentU2000:
         test_results = self.u2000_test_results['data(dBm)']
         if i_settings['pass_fail_type'] == 'N/A':
             i_settings['pass_fail'] = 'N/A'
-        elif float('min_value') <= float(test_results) <= float(max_value):
+        elif float(min_value) <= float(test_results) <= float(max_value):
             i_settings['pass_fail'] = 'PASS'
         else:
             i_settings['pass_fail'] = 'FAIL'
