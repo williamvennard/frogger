@@ -133,7 +133,7 @@ def check_config_url():
                     print i, type(i)
                 nested_config = config['nested_config'][0]
                 config = config['configs_tps_traces'][0]
-                meas = config['meas'][0] 
+                #meas = config['meas'][0] 
                 print 'configs_tps_traces config = ', config
                 if config['commence_test'] == 'True':
                     print "Starting API"
