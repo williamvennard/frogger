@@ -66,6 +66,29 @@ class Handler(InstrumentDataHandler):
 def dt2ms(t):
     return int(t.strftime('%s'))*1000 + int(t.microsecond/1000)
 
+def parseisettings(i_settings):
+    i_list = []
+    a = str(i_settings)
+    print a
+    b = a.split(',')
+    b1 = b[0].split(':')
+    b1 = str(b1[1].strip().lstrip('u'))
+    b1 = b1.strip("'")
+    i_list.append(b1) #appending pass_fail_type
+    for i in b[1:-1]:
+        new_i = i.split(':')
+        new_i = str(new_i[-1])
+        new_i = new_i.strip()
+        new_i = new_i.strip("u'")
+        print new_i
+        new_i = float(new_i)
+        i_list.append(new_i)
+    bn1 = b[-1].split(':')
+    bn1 = str(bn1[-1].strip().lstrip('u').rstrip('}')) # pass_fail
+    bn1 = bn1.strip("'")
+    i_list.append(bn1)
+    return i_list
+
 
 class Selected(InstrumentDataHandler):
     def post(self):
@@ -94,20 +117,24 @@ class Selected(InstrumentDataHandler):
         meas_results = []
         meas_results_calcs = []
         for entry in data:
-            meas_results.append((float(entry['test_results_data']), entry['config_name'], entry['i_settings'])) 
+            i_list = parseisettings(entry['i_settings'])
+            i_list.insert(0, str(entry['config_name']))
+            i_list.insert(1, float(entry['test_results_data']))
+            meas_results.append(i_list)
+            # meas_results.append((float(entry['test_results_data']), entry['config_name'], i_list)) 
             # meas_results.append((float(entry['test_results_data']), config_name, entry['i_settings'], ("https://gradientone-test.appspot.com/u2000data/" + company_nickname + '/' + entry['hardware_name'] +'/' + config_name + "/%s" % entry['start_tse'])))
             meas_results_calcs.append(float(entry['test_results_data']))
-        mean_value = numpy.mean(meas_results_calcs)
-        max_value = numpy.amax(meas_results_calcs)
-        min_value = numpy.amin(meas_results_calcs)
-        median_value = numpy.median(meas_results_calcs)
-        std_value = numpy.std(meas_results_calcs)
-        report_results = {'mean_value':mean_value, 'max_value':max_value, 'min_value':min_value, 'median_value':median_value, 'std_value':std_value, 'meas_results':meas_results}
-        render_json(self, report_results)
-        # self.render('report_summary.html', rows = rows, 
-        #     selected_data=selected_data,
-        #     profile=profile)
-    
+        print meas_results
+        stat_results = []
+        stat_results.append(numpy.amax(meas_results_calcs)) #max value
+        stat_results.append(numpy.amin(meas_results_calcs)) #min value
+        stat_results.append(numpy.median(meas_results_calcs)) #median 
+        stat_results.append(numpy.mean(meas_results_calcs)) #mean 
+        stat_results.append(numpy.std(meas_results_calcs)) #standard deviation 
+        temp_list = []
+        self.render('report_detail.html', stat_results = stat_results, meas_results = meas_results, profile = profile)
+
+
     def oldpost(self):
         profile = get_profile_cookie(self)
         rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE company_nickname =:1", profile['company_nickname'])
