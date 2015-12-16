@@ -127,6 +127,7 @@ def check_config_url():
             print 'checking'
             config = result.json()
             if config['configs_tps_traces']:
+                print config
                 nested_config = config['nested_config'][0]
                 config = config['configs_tps_traces'][0]
                 measurements = config['measurements'][0]
