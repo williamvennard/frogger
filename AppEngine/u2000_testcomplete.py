@@ -125,8 +125,8 @@ class Handler(InstrumentDataHandler):
         blob_key = the_blob.b_key
         pass_fail_type = i_settings['pass_fail_type']
         if pass_fail_type == 'N/A':
-            max_value = None
-            min_value = None
+            max_value = 0.0
+            min_value = 0.0
         else:
             max_value = float(i_settings['max_value'])
             min_value = float(i_settings['min_value'])
