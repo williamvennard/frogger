@@ -43,7 +43,7 @@ def post_status(status, ses):
     #          + COMPANYNAME + '/' + HARDWARENAME)
     #url_s = ("https://" + GAE_INSTANCE + ".appspot.com/status/"
     #        + COMPANYNAME + '/' + HARDWARENAME)
-    url_s = BASE_INSTANCE + '/' + 'status' + '/' 
+    url_s = (BASE_INSTANCE + '/' + 'status' + '/' 
             + COMPANYNAME + '/' + HARDWARENAME)
     result = requests.post(url_s, data=status, headers=headers)
     print "result.reason=", result.reason
@@ -60,7 +60,7 @@ def post_complete(config_name, active_testplan_name, ses):
     # url_c = ("https://" + GAE_INSTANCE + ".appspot.com/temp_testcomplete/"
     #          + COMPANYNAME + '/' + config_name + '/'
     #          + active_testplan_name)
-    url_c = BASE_INSTANCE + '/' + 'temp_testcomplete' + '/'
+    url_c = (BASE_INSTANCE + '/' + 'temp_testcomplete' + '/'
               + COMPANYNAME + '/' + config_name + '/'
               + active_testplan_name)
     result = ses.post(url_c, data=out_complete, headers=headers)
@@ -120,8 +120,8 @@ def check_config_url():
     #              testplansummary/Acme/MSP")
     #config_url = ("https://" + GAE_INSTANCE + ".appspot.com/testplansummary/"
     #              + COMPANYNAME + '/' + HARDWARENAME)
-    config_url = BASE_INSTANCE + '/' + 'testplansummary' +'/'
-                 + COMPANYNAME + '/' + HARDWARENAME
+    config_url = (BASE_INSTANCE + '/' + 'testplansummary' +'/'
+                 + COMPANYNAME + '/' + HARDWARENAME)
     # loop forever
     while True:
         token = nuc_auth.get_access_token()
@@ -168,8 +168,8 @@ def u2000_acq_run(config, nested_config, ses, headers):
     print "Starting: Attempting to open one device..."
     #config_url = ("https://" + GAE_INSTANCE + ".appspot.com/testplansummary/"
     #              + COMPANYNAME + '/' + HARDWARENAME)
-    config_url = BASE_INSTANCE + '/' + 'testplansummary' +'/'
-                 + COMPANYNAME + '/' + HARDWARENAME
+    config_url = (BASE_INSTANCE + '/' + 'testplansummary' +'/'
+                 + COMPANYNAME + '/' + HARDWARENAME)
     u2000 = ivi.agilent.agilentU2001A(("USB::0x0957::0x2b18::INSTR"))
     while True:
         config_vars = check_config_vars(config, nested_config)
