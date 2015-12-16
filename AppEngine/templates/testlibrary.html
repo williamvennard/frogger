@@ -92,7 +92,7 @@
               console.log("orderstring: "+orderstring)            
               orderstringArray = orderstring.split(":");
               config_name = orderstringArray[1];
-              configTable+="<a class='resultsLink' href='" + ops_url + testArray[i].company_nickname + "/" + testArray[i].hardware_name + "/" + config_name + "/" + testArray[i].testplan_name +  "'>Operator</a>";
+              configTable+="<a class='resultsLink' href='" + ops_url + testArray[i].company_nickname + "/" + testArray[i].hardware_name + "/" + testArray[i].testplan_name +  "'>Operator</a>";
             };
             configTable+="<a class='resultsLink' href='" + window.location.origin + "/canvas?library=testplan&index=" + i + "'>Canvas</a>"
             configTable+="</span><br>"
