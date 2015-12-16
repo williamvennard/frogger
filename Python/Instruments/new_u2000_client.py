@@ -16,6 +16,7 @@ from new_u2000_post import AgilentU2000
 import ivi
 import collections
 import nuc_auth
+from python-enum-usb import find_usb_devices
 
 COMPANYNAME = 'Acme'
 HARDWARENAME = 'Tahoe'
@@ -148,6 +149,7 @@ def check_config_url():
                     u2000_acq_run(config, nested_config, ses, headers)
             else:
                 print "No start order found"
+        find_usb_devices()
         time.sleep(1)
 
 
