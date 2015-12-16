@@ -1,51 +1,17 @@
-<!DOCTYPE html>
-<!--{% block import %}-->
-<html>
-<head>
-  <title>Library Results Template</title>
-
-  <script src="../../../../static/js/addons/jquery-1.11.3.js"></script>    
-  <script src="../../../../static/js/jquery-ui-1.11.4/jquery-ui.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-  <link rel="stylesheet" type="text/css" href="../../../../static/bootstrap/css/bootstrap.min.css">
-  <link rel="stylesheet" type="text/css" href="../../../../static/css/fonts/stylesheet.css" charset="utf-8" /> 
-  <link rel="stylesheet" type="text/css" href="../../../../static/css/custom.css">
-  <link rel="stylesheet" type="text/css" href="../../../../static/css/testResultsPage.css">
-  <script type="text/javascript" src="../../../../static/js/addons/jquery.knob.min.js"></script>
-  <style type="text/css">
-  p {color: white;}
-  #PowerMeterDataBox p {color: green; font-size: 300%;}
-  </style>
-</head>
-<body id="mainBackground">
-  <div class="container">
-    <div class="row">
-      <nav id="topNavBar" class="navbar navbar-inverse navbar-collapse collapse"> <!--NAVBAR-->
-        <div class="container-fluid">
-          <div class="navbar-header">
-            <img class="logo" src="../../../../static/images/Glogo.png" style="width:110px;" alt="Gradient One logo">
-          </div>
-          <div id="navbar">
-            <ul class="topmenu nav navbar-nav">
-              <li><a href="/instruments">INSTRUMENTS</a></li>
-              <li class="dots glyphicon glyphicon-option-vertical"></li>
-              <li><a href="../../../../../testresults">CANVAS</a></li>
-              <li class="dots glyphicon glyphicon-option-vertical"></li>
-              <li><a href="../../../../../testlibrary/acme" style="color: rgb(124,175,46);">TEST LIBRARY</a></li>
-              <li class="dots glyphicon glyphicon-option-vertical"></li>
-              <li><a href="../../../../../community">COMMUNITY</a></li>          
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-              <li><a class="glyphicon glyphicon-envelope" href="../navbar-static-top/"></a></li>
-              <li><a class="glyphicon glyphicon-bell" href="../navbar-static-top/"></a></li>
-              <li><a class="glyphicon glyphicon-user" href="../navbar-fixed-top/">Profile</a></li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-    </div>
-    <div> <!--HEADER-->
+{% extends "one.html" %}
+{% block title %} Library Results {% endblock %}
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="/static/css/testResultsPage.css">
+    <script type="text/javascript" src="/static/js/addons/jquery.knob.min.js"></script>
+    <style type="text/css">
+      #testlibrary-navlink {color: rgb(124,175,46);}
+      p {color: white;}
+      #PowerMeterDataBox p {color: green; font-size: 300%;}
+    </style>
+{% endblock %}
+{% block content %}
+    <div>
       <div class="" style="min-width: 100px;" id="compHeader">
          <h1 class="compName" id="testPlanCompany">Test Results: <span id="testNamehtml"></span></h1>
       </div>
@@ -495,7 +461,4 @@ function addComment() {
     });
   });
 </script>
-
-</body>
-</html>
-<!--{% endblock %}-->
+{% endblock %}
