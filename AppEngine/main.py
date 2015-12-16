@@ -278,6 +278,7 @@ app = webapp2.WSGIApplication([
     ('/adduser', profile.AdduserPage),
     ('/admin/adduser', profile.AdminAddUser),
     ('/admin/editusers', profile.AdminEditUsers),
+    ('/analysis_export', report_summary.AnalysisExport),
     ('/blob_export/([a-zA-Z0-9-]+)', blob_export.Handler),
     ('/blob_selection', blob_selection.Handler),
     ('/bscopeconfiginput', bscopeconfig.Handler),

@@ -31,10 +31,16 @@ from google.appengine.api import search
 import appengine_config
 from google.appengine.api import mail
 from profile import get_profile_cookie
-#from send_script_post import Script
+import collections
+from datetime import datetime
+import StringIO
+import csv
 
-DOMAIN = "gradientone-dev2.appspot.com"
+DOMAIN = "gradientone-test.appspot.com"
 INDEX_NAME = 'U2000'
+
+def dt2ms(t):
+    return str(t.strftime('%s'))*1000 + str(t.microsecond/1000)
 
 class Handler(InstrumentDataHandler):
     def get(self, company_nickname=""):
@@ -69,26 +75,38 @@ def dt2ms(t):
 def parseisettings(i_settings):
     i_list = []
     a = str(i_settings)
-    print a
     b = a.split(',')
     b1 = b[0].split(':')
     b1 = str(b1[1].strip().lstrip('u'))
     b1 = b1.strip("'")
     i_list.append(b1) #appending pass_fail_type
-    for i in b[1:-1]:
+    for i in b[1:4]: #appends max, min, and offset
         new_i = i.split(':')
         new_i = str(new_i[-1])
         new_i = new_i.strip()
         new_i = new_i.strip("u'")
-        print new_i
         new_i = float(new_i)
         i_list.append(new_i)
+    bn4 = b[-4].split(':')
+    bn4 = str(bn4[-1])
+    bn4 = bn4.strip()
+    bn4 = bn4.strip("u'")
+    i_list.append(bn4) # appends test_plan
+    bn3 = b[-3].split(':') 
+    bn3 = str(bn3[-1])
+    bn3 = bn3.strip()
+    bn3 = bn3.strip("u'")
+    i_list.append(bn3)    #appends correction freq
+    bn2 = b[-2].split(':')
+    bn2 = str(bn2[-1])
+    bn2 = bn2.strip()
+    bn2 = bn2.strip("u'")
+    i_list.append(bn2)  # appends  active testplan name
     bn1 = b[-1].split(':')
     bn1 = str(bn1[-1].strip().lstrip('u').rstrip('}')) # pass_fail
     bn1 = bn1.strip("'")
     i_list.append(bn1)
     return i_list
-
 
 class Selected(InstrumentDataHandler):
     def post(self):
@@ -107,7 +125,6 @@ class Selected(InstrumentDataHandler):
         except search.Error:
           logging.error("Search Results Error: %s" % e )
         logging.debug("Selected Configs: %s" % selected_data)
-
         keys = []
         for start in selected_data:
             keys.append(agilentU2000data_key(start))
@@ -118,22 +135,51 @@ class Selected(InstrumentDataHandler):
         meas_results_calcs = []
         for entry in data:
             i_list = parseisettings(entry['i_settings'])
-            i_list.insert(0, str(entry['config_name']))
-            i_list.insert(1, float(entry['test_results_data']))
-            meas_results.append(i_list)
-            # meas_results.append((float(entry['test_results_data']), entry['config_name'], i_list)) 
-            # meas_results.append((float(entry['test_results_data']), config_name, entry['i_settings'], ("https://gradientone-test.appspot.com/u2000data/" + company_nickname + '/' + entry['hardware_name'] +'/' + config_name + "/%s" % entry['start_tse'])))
+            print i_list
+            temp_i_list = []
+            temp_i_list.insert(0, str(entry['start_tse']))
+            temp_i_list.insert(1, i_list[5]) #+1
+            temp_i_list.insert(2, i_list[1]) #+2
+            temp_i_list.insert(3, i_list[2]) #+3
+            temp_i_list.insert(4, i_list[3]) #+4
+            temp_i_list.insert(5, i_list[0])  #+5
+            temp_i_list.insert(6, i_list[4]) #+6
+            temp_i_list.insert(7, i_list[-1])
+            temp_i_list.insert(8, (entry['hardware_name'])) #+7
+            temp_i_list.insert(9, float(entry['test_results_data'])) #+8
+            temp_i_list.insert(10, 'U2001') #+9
+            temp_i_list.insert(11, str(entry['config_name'])) #+10
+            temp_i_list.insert(12, i_list[6]) #+11
+            meas_results.append(temp_i_list)
             meas_results_calcs.append(float(entry['test_results_data']))
-        print meas_results
         stat_results = []
         stat_results.append(numpy.amax(meas_results_calcs)) #max value
         stat_results.append(numpy.amin(meas_results_calcs)) #min value
         stat_results.append(numpy.median(meas_results_calcs)) #median 
         stat_results.append(numpy.mean(meas_results_calcs)) #mean 
         stat_results.append(numpy.std(meas_results_calcs)) #standard deviation 
-        temp_list = []
-        self.render('report_detail.html', stat_results = stat_results, meas_results = meas_results, profile = profile)
-
+        for entry in meas_results:
+            temp_dict = collections.OrderedDict()
+            temp_dict['start_time'] = entry[0]
+            temp_dict['correction_frequency(Hz)'] = entry[1]
+            temp_dict['max_value'] = entry[2]
+            temp_dict['min_value'] = entry[3]
+            temp_dict['offset(dBm)'] = entry[4]
+            temp_dict['pass_fail_type'] = entry[5]
+            temp_dict['test_plan'] = entry[6]
+            temp_dict['pass_fail'] = entry[7]
+            temp_dict['hardware_name'] = entry[8]
+            temp_dict['data(dBm)'] = entry[9]
+            temp_dict['instrument'] = entry[10]
+            temp_dict['config_name'] = entry[11]
+            temp_dict['active_testplan_name'] = entry[12]
+        name_time = str(dt2ms(datetime.now()))
+        newname = profile['name'] + name_time
+        key = newname
+        print temp_i_list
+        memcache.set(key, temp_dict)
+        self.render('report_detail.html', stat_results = stat_results, meas_results = meas_results, 
+                    profile = profile, download_key = newname)
 
     def oldpost(self):
         profile = get_profile_cookie(self)
@@ -154,3 +200,26 @@ class Selected(InstrumentDataHandler):
         self.render('report_summary.html', rows = rows, 
             selected_data=selected_configs,
             profile=profile)
+
+
+class AnalysisExport(InstrumentDataHandler):
+    def post(self):
+        key = self.request.get('download_key')
+        meas_results = memcache.get(key)
+        headers = self.response.headers
+        headers['Content-Type'] = 'text/csv'
+        headers['Content-Disposition'] =  ('attachment; filename=export' + 
+          str(datetime.now()) + '.csv')
+        tmp = StringIO.StringIO()
+        writer = csv.writer(tmp)
+        counter = 0
+        for item in meas_results:
+            if counter == 0:
+                writer.writerow(meas_results.keys())
+                writer.writerow(meas_results.values())
+            else:
+                writer.writerow(meas_results.values()) 
+            counter +=1
+        contents = tmp.getvalue()
+        tmp.close()
+        self.response.out.write(contents)
