@@ -133,11 +133,11 @@ def check_config_url():
                 if config['commence_test'] == 'True':
                     print "Starting API"
                     post_status('Starting', ses)
-                    u2000_acq(config, nested_config, ses)
+                    u2000_acq(config, nested_config, meas, ses)
                     config_vars = check_config_vars(config, nested_config)
                     config_name = config_vars[1]
                     active_testplan_name = config_vars[0]
-                    post_complete(config_name, active_testplan_name, meas, ses)
+                    post_complete(config_name, active_testplan_name, ses)
             elif config['configs_run']:
                 nested_config = config['nested_config'][0]
                 config = config['configs_run'][0]
