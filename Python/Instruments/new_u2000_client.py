@@ -1,3 +1,4 @@
+#!/usr/bin/python2
 """Post status to monitor URL
 >>> import ivi
 >>> import new_u2000_client
