@@ -88,7 +88,7 @@ class Handler(InstrumentDataHandler):
                             'configs_tps_traces' : configs_tps_traces, 
                             'configs_run' : configs_run,
                             'nested_config' : nested_config,
-                            'measurements' : measurements,
+                            'meas' : measurements,
                             'commands' : commands,
                 }
             elif configs_run:
@@ -116,7 +116,7 @@ class Handler(InstrumentDataHandler):
                             'configs_tps_traces' : configs_tps_traces, 
                             'configs_run' : configs_run,
                             'nested_config' : nested_config,
-                            'measurements' : measurements,
+                            'meas' : measurements,
                             'commands' : commands,
                 }
             else:

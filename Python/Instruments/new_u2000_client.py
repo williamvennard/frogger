@@ -130,7 +130,7 @@ def check_config_url():
                 print config
                 nested_config = config['nested_config'][0]
                 config = config['configs_tps_traces'][0]
-                measurements = config['measurements'][0]
+                meas = config['meas'][0] 
                 print 'configs_tps_traces config = ', config
                 if config['commence_test'] == 'True':
                     print "Starting API"
@@ -139,7 +139,7 @@ def check_config_url():
                     config_vars = check_config_vars(config, nested_config)
                     config_name = config_vars[1]
                     active_testplan_name = config_vars[0]
-                    post_complete(config_name, active_testplan_name, measurements, ses)
+                    post_complete(config_name, active_testplan_name, meas, ses)
             elif config['configs_run']:
                 nested_config = config['nested_config'][0]
                 config = config['configs_run'][0]
@@ -201,7 +201,7 @@ def u2000_acq_run(config, nested_config, ses, headers):
 
 
 
-def u2000_acq(config, nested_config, measurements, ses):
+def u2000_acq(config, nested_config, meas, ses):
     """sets the configuration for the u2000 API and calls the u2000 class"""
     acq_dict = {}
     print "Starting: Attempting to open one device..."
@@ -225,10 +225,10 @@ def u2000_acq(config, nested_config, measurements, ses):
     # inst_dict = set_v_for_k(inst_dict, 'pass_fail_type', config_vars[8])
     # inst_dict = set_v_for_k(inst_dict, 'max_value', config_vars[9])
     # inst_dict = set_v_for_k(inst_dict, 'min_value', config_vars[10])
-    inst_dict = set_v_for_k(inst_dict, 'pass_fail', measurements['pass_fail'])
-    inst_dict = set_v_for_k(inst_dict, 'pass_fail_type', measurements['pass_fail_type'])
-    inst_dict = set_v_for_k(inst_dict, 'max_value', measurements['max_value'])
-    inst_dict = set_v_for_k(inst_dict, 'min_value', measurements['min_value'])
+    inst_dict = set_v_for_k(inst_dict, 'pass_fail', meas['pass_fail'])
+    inst_dict = set_v_for_k(inst_dict, 'pass_fail_type', meas['pass_fail_type'])
+    inst_dict = set_v_for_k(inst_dict, 'max_value', meas['max_value'])
+    inst_dict = set_v_for_k(inst_dict, 'min_value', meas['min_value'])
     inst_dict = set_v_for_k(inst_dict, 'offset', config_vars[3])
     inst_dict = set_v_for_k(inst_dict, 'active_testplan_name', config_vars[0])
     inst_dict = set_v_for_k(inst_dict, 'test_plan', config_vars[6])
