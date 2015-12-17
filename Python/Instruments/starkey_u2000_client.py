@@ -7,7 +7,7 @@ result.reason= OK
 result.status_code= 200
 >>>
 """
-
+import sys
 import json
 import requests
 import time   # time is a module here
@@ -122,12 +122,24 @@ def check_config_url():
     #              + COMPANYNAME + '/' + HARDWARENAME)
     config_url = (BASE_INSTANCE + '/' + 'testplansummary' +'/'
                  + COMPANYNAME + '/' + HARDWARENAME)
+    nuc_auth.refresh()
     # loop forever
     while True:
         token = nuc_auth.get_access_token()
         headers = {'Authorization': 'Bearer '+token}
         ses = requests.session()
-        result = ses.get(config_url, headers=headers)
+        try:
+            result = ses.get(config_url, headers=headers)
+        except requests.exceptions.Timeout:
+            print "Timeout!"
+            continue
+        except requests.exceptions.ConnectionError:
+            print "Connection Error!"
+            time.sleep(10)
+            continue
+        except requests.exceptions.RequestException as e:
+            print e
+            sys.exit(1)
         if result.status_code == 401:
             token = nuc_auth.get_new_token()
             headers = {'Authorization': 'Bearer '+token}
