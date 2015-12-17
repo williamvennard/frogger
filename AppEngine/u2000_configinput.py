@@ -38,6 +38,7 @@ class Handler(InstrumentDataHandler):
         company_nickname = config_data['company_nickname']
         print company_nickname
         hardware_name = config_data['hardware_name']
+        print hardware_name
         instrument_type = config_data['inst_name']
         config_name = config_data['config_name']
         trace_name = config_data['trace_name']
