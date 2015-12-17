@@ -33,7 +33,9 @@ def refresh():
     print(r.text)
     raw_cred = r.text
     json_cred = json.loads(r.text)
-    pickle.dump(raw_cred, open('saved_cred.p', 'wb'))
+    my_dir = os.path.dirname(__file__)
+    pickle_file_path = os.path.join(my_dir, 'saved_cred.p')
+    pickle.dump(raw_cred, open(pickle_file_path, 'wb'))
     # cred = AccessTokenCredentials(json_cred['access_token'], 'SD-NUC/1.0') # For use with google storage library
     return raw_cred
 
@@ -46,7 +48,9 @@ def get_new_token():
 
 
 def get_access_token():
-    raw_cred = pickle.load(open('saved_cred.p', 'rb'))
+    my_dir = os.path.dirname(__file__)
+    pickle_file_path = os.path.join(my_dir, 'saved_cred.p')
+    raw_cred = pickle.load(open(pickle_file_path, 'rb'))
     cred = json.loads(raw_cred)
     access_token = cred['access_token']
     return access_token
