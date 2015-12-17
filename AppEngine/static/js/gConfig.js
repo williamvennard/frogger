@@ -1,5 +1,5 @@
 // gConfig.js
 
 var gConfigVars = {
-	hardwareName : 'Tahoe'
+	hardwareName : 'MSP1'
 };
