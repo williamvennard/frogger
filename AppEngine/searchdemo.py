@@ -8,15 +8,14 @@ import webapp2
 import collections
 import StringIO
 import csv
+import settings
 from google.appengine.api import memcache
 from google.appengine.ext import ndb
 from google.appengine.api import search
-
 from profile import get_profile_cookie
 from gradientone import InstrumentDataHandler
 from onedb import ProfileDB
 
-INDEX_NAME = 'U2000'
 
 def dt2ms(t):
     return str(t.strftime('%s'))*1000 + str(t.microsecond/1000)
@@ -40,7 +39,7 @@ class Handler(InstrumentDataHandler):
             expressions=expr_list)
 
         try:
-          index = search.Index(INDEX_NAME)
+          index = search.Index(settings.INDEX_NAME)
           search_query = search.Query(
               query_string=querystring,
               options=search.QueryOptions(
@@ -80,7 +79,7 @@ class Handler(InstrumentDataHandler):
         doc_limit = 20
         logging.debug("QUERYSTRING: %s" % querystring)
         try:
-          index = search.Index(INDEX_NAME)
+          index = search.Index(settings.INDEX_NAME)
           search_query = search.Query(
               query_string=querystring,
               options=search.QueryOptions(
@@ -136,7 +135,7 @@ class DocHandler(InstrumentDataHandler):
         doc_limit = 10
         doc_ids = self.request.params.getall('doc_ids')
         try:
-          index = search.Index(INDEX_NAME)
+          index = search.Index(settings.INDEX_NAME)
           result_docs = collections.defaultdict()
           for doc_id in doc_ids:
             result_docs[doc_id] = index.get(doc_id).fields
