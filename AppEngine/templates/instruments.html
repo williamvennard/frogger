@@ -383,12 +383,12 @@
     $(document).ready(function(){
         $("#ShareResults").click(function(){
           company = document.getElementById('company_nickname').value;
-          test_info_url = window.location.origin + '/u2000_traceresults/' + company + '/' + gConfigVars.hardwareName + '/' + configName ; //unhard code company and hardware asap
+          test_info_url = window.location.origin + '/u2000_traceresults/' + company + '/' + gConfigVars.hardwareName + '/' + configName;
             var email = document.getElementById('email_input').value;
             var measurement = document.getElementById('measurementValue').value;
             var units = document.getElementById('PMUnits').value;
             var start_tse = document.getElementById('start_tse').value;
-            var d = document.getElementById('PMConfigSettings');
+            var d = document.getElementById('PMConfigSettings'); 
             var children = d.childNodes;
             traceName = children[3].children[1].value
             $.post($('#shareForm').attr('action'),
@@ -417,6 +417,8 @@
       var comment_url = window.location.origin + '/instruments';
       configName = children[1].children[1].value;
       traceName = children[3].children[1].value;
+      configName = validateInput(configName);
+      traceName = validateInput(traceName);
       var company_nickname = document.getElementById('company_nickname').value;
       var comment_author = document.getElementById('comment_author').value;
       // var hardware_name = document.getElementById('hardware_name');
@@ -583,13 +585,6 @@
         };
     }
 
-    function validateInput(input) {
-        console.log(input);
-        console.log("TYPE: ", typeof input);
-        input = input.replace(/ +$/, "");
-        input = input.replace(/\s+/g, '-');
-        return input;
-    }
     </script>
     <script type="text/javascript" src="/static/js/gConfig.js"></script>
 
