@@ -149,7 +149,7 @@ def check_config_url():
                     u2000_acq_run(config, nested_config, ses, headers)
             else:
                 print "No start order found"
-        find_usb_devices()
+        #find_usb_devices()
         time.sleep(1)
 
 
