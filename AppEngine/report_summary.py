@@ -135,7 +135,6 @@ class Selected(InstrumentDataHandler):
         meas_results_calcs = []
         for entry in data:
             i_list = parseisettings(entry['i_settings'])
-            print i_list
             temp_i_list = []
             temp_i_list.insert(0, str(entry['start_tse']))
             temp_i_list.insert(1, i_list[5]) #+1
@@ -158,6 +157,7 @@ class Selected(InstrumentDataHandler):
         stat_results.append(numpy.median(meas_results_calcs)) #median 
         stat_results.append(numpy.mean(meas_results_calcs)) #mean 
         stat_results.append(numpy.std(meas_results_calcs)) #standard deviation 
+        exp_info = []
         for entry in meas_results:
             temp_dict = collections.OrderedDict()
             temp_dict['start_datetime'] = datetime.fromtimestamp(int(entry[0])/1000)          
@@ -174,11 +174,12 @@ class Selected(InstrumentDataHandler):
             temp_dict['instrument'] = entry[10]
             temp_dict['config_name'] = entry[11]
             temp_dict['active_testplan_name'] = entry[12]
+            exp_info.append(temp_dict)
         name_time = str(dt2ms(datetime.now()))
         newname = profile['name'] + name_time
         key = newname
-        print temp_i_list
-        memcache.set(key, temp_dict)
+        print exp_info
+        memcache.set(key, exp_info)
         self.render('report_detail.html', stat_results = stat_results, meas_results = meas_results, 
                     profile = profile, download_key = newname)
 
@@ -216,10 +217,10 @@ class AnalysisExport(InstrumentDataHandler):
         counter = 0
         for item in meas_results:
             if counter == 0:
-                writer.writerow(meas_results.keys())
-                writer.writerow(meas_results.values())
+                writer.writerow(item.keys())
+                writer.writerow(item.values())
             else:
-                writer.writerow(meas_results.values()) 
+                writer.writerow(item.values()) 
             counter +=1
         contents = tmp.getvalue()
         tmp.close()
