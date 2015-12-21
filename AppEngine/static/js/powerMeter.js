@@ -18,8 +18,7 @@ function loadConfig(type, savedSettings, savedU2000Settings, show){
         var children = d.childNodes;
         console.log('PMConfig: children = ', children);
 
-        children[1].children[1].value = savedSettings.active_testplan_name; // Also wrong... gives Nonetype
-        // wrong: children[1].children[1].value = 'DefaultTraceName'
+        children[1].children[1].value = savedSettings.active_testplan_name;
         children[3].children[1].value = sconfigName;
         children[5].children[1].value = scorrectionFreq;
         children[7].children[1].value = soffset; 
@@ -283,13 +282,21 @@ function PMSaveStatus(status) {
 function PMStatusUpdate(){
       var company = document.getElementById('company_nickname').value;
       var status_url = window.location.origin + '/status/' + company + '/' + gConfigVars.hardwareName;
-      console.log('STATUS CHECK URL: ', status_url);
+      // console.log('STATUS CHECK URL: ', status_url);
       $.ajax({
           type: "GET",
           url: status_url,
           dataType: 'json',
        }).done(function (results) {
-        console.log('STATUS: ', results.status);
-        document.getElementById("PMcurrentStatus").innerHTML = results.status;
+        var statusUpdate
+        if (results) { 
+          console.log('STATUS: ', results.status);
+          statusUpdate = results.status;
+        }
+        else { 
+          console.log("NO STATUS UPDATE!");
+          statusUpdate = "NULL"
+        }
+        document.getElementById("PMcurrentStatus").innerHTML = statusUpdate;
       });
 }

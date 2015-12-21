@@ -2,7 +2,6 @@
 {% block title %} Instruments {% endblock %}
 {% block head %}
     {{ super() }}
-    <script type="text/javascript" src="/static/js/sachart.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/css/oscope.css">
     <link rel="stylesheet" type="text/css" href="/static/css/specanal.css">
     <link rel="stylesheet" type="text/css" href="/static/css/powerMeter.css">        
@@ -418,7 +417,7 @@
 
       var d = document.getElementById('PMConfigSettings');
       var children = d.childNodes;
-      console.log('PMConfig: children = ', children);
+      // console.log('PMConfig: children = ', children);
       var comment_url = window.location.origin + '/instruments';
       configName = children[1].children[1].value;
       traceName = children[3].children[1].value;
@@ -427,10 +426,10 @@
       var company_nickname = document.getElementById('company_nickname').value;
       var comment_author = document.getElementById('comment_author').value;
       var hardware_name = gConfigVars.hardwareName;
-      var start_tse = document.getElementById('start_tse').value
+      var start_tse = document.getElementById('start_tse').value;
       if (!start_tse){
-          alert("Cannot comment without a trace")
-          console.log("CANNOT COMMENT WITHOUT TRACE AND START TSE")
+          alert("Cannot comment without a trace");
+          console.log("CANNOT COMMENT WITHOUT TRACE AND START TSE");
           return
       }
       console.log("START TSE: ", start_tse)      
@@ -496,12 +495,25 @@
     <script type="text/javascript">
       var savedResults
 
-      function loadU2001A(index) {
-        console.log("savedSettings: ", savedResults);
-        console.log("INDEX: ", index);
-        var savedSettings = savedResults.configs[index]
-        var savedU2000Settings = savedResults.u2000configs[index]
-        loadConfig('sU2001A', savedSettings, savedU2000Settings, true);
+      function loadU2001A(u2000index) {
+        // console.log("savedSettings: ", savedResults);
+        // console.log("U2000 INDEX: ", u2000index);
+        var savedU2000Settings = savedResults.u2000configs[u2000index]
+        var generalConfigs = savedResults.configs
+        var generalConfigsIndex = -1;
+        for (var i=0;i<generalConfigs.length;i++) {
+            if(savedU2000Settings.config_name == generalConfigs[i].config_name) {
+                var generalConfigsIndex = i;
+            };
+        };
+        if (generalConfigsIndex == -1) {
+          alert("Sorry, unassigned instrument configs cannot be loaded. Please check config names.");
+          console.log("Instrument Config to General Config naming or index mismatch");
+        }else{
+          // console.log("INDEX MATCH");
+          var savedSettings = generalConfigs[generalConfigsIndex];
+          loadConfig('sU2001A', savedSettings, savedU2000Settings, true);
+        }        
       };
     </script>     
 
@@ -524,15 +536,14 @@
             savedU2001As = results.u2000configs;
 
             savedResults = results;
-            //console.log('Saved Widgets: results', results);
-            console.log('Saved Widgets: savedConfigs', savedConfigs);
-            console.log('Saved Widgets: savedDuts', savedDuts);
-            console.log('Saved Widgets: savedMeas', savedMeas);
-            console.log('Saved Widgets: savedSeq', savedSeq);
-            console.log('Saved Widgets: savedTests', savedTests);
-            console.log('Saved Widgets: savedU2001As', savedU2001As);
-            loadSavedU2001A("working"); // set default/working configuration
-            PMConfig();  // apply working configuration.
+            // console.log('Saved Widgets: results', results);
+            // console.log('Saved Widgets: savedConfigs', savedConfigs);
+            // console.log('Saved Widgets: savedDuts', savedDuts);
+            // console.log('Saved Widgets: savedMeas', savedMeas);
+            // console.log('Saved Widgets: savedSeq', savedSeq);
+            // console.log('Saved Widgets: savedTests', savedTests);
+            // console.log('Saved Widgets: savedU2001As', savedU2001As);
+
 
 // SAVED CONFIGS                      
             // var savedConfigsHTML = "";
@@ -550,24 +561,28 @@
                 savedU2001AsHTML+= "<tr><td><a id=loadU2001A-" + i + "'>" + savedU2001As[i].config_name + "</a></td></tr>";
               };                                            
             };
-            console.log('savedU2001AsHTML = ',savedU2001AsHTML);
+            // console.log('savedU2001AsHTML = ',savedU2001AsHTML);
             sU2001ADoc = document.getElementById("savedU2001As");
             sU2001ADoc.innerHTML = savedU2001AsHTML;
             var elem = sU2001ADoc.querySelectorAll('a');
-            console.log("ELEMENT: ", elem);
+            // console.log("ELEMENT: ", elem);
             for (var index=0; index<elem.length; index++){
               (function(index){ 
-                console.log("INDEX: ", index);
+                // console.log("INDEX: ", index);
                 elem[index].addEventListener("click", function(){
                   loadSavedU2001A(elem[index].innerHTML)
                 }, false);
-                console.log("TargetListener: ", index);
+                // console.log("TargetListener: ", index);
               }(index))
             };
-            var t=setInterval(PMStatusUpdate,1000);
-            urlVars = getUrlVars()
-            if ( urlVars['library'] == 'trace' ){ loadSavedU2001A(urlVars['U2001A'])}
 
+            urlVars = getUrlVars()
+            if ( urlVars['library'] == 'trace' ){ 
+              loadSavedU2001A(urlVars['U2001A'])
+            }else{
+              loadSavedU2001A("working"); // set default/working configuration
+              PMConfig();  // apply working configuration.
+            }
         }); //end of ajax
         
 
@@ -592,7 +607,34 @@
             };
         };
     }
-
+    var statusPing;
+    function startStatusPing() {
+      // console.log("STARTING STATUS PING")
+      window.removeEventListener("mousemove", startStatusPing);
+        statusPing = window.setInterval(PMStatusUpdate, 1000);
+        setTimer();
+    }
+    function stopStatusPing() {
+      // console.log("STOPPING STATUS PING!!")
+        window.clearInterval(statusPing);
+    }
+    window.addEventListener('focus', startStatusPing);    
+    window.addEventListener('blur', stopStatusPing);
+    var idleSeconds = 5;
+    function setTimer(){
+      var idleTimer;
+      function resetTimer(){
+        clearTimeout(idleTimer);
+        idleTimer = setTimeout(whenUserIdle,idleSeconds*1000);
+      }
+      $(document).on('mousemove keydown click',resetTimer);
+      resetTimer(); // Start the timer when the page loads
+      console.log("TIMER SET!!")
+    };
+    function whenUserIdle(){
+      stopStatusPing();
+      window.addEventListener('mousemove', startStatusPing);    
+    }
     </script>
     <script type="text/javascript" src="/static/js/gConfig.js"></script>
 
