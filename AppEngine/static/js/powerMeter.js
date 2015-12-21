@@ -45,6 +45,8 @@ function PMConfig() {
 
       traceName = children[1].children[1].value;
       configName = children[3].children[1].value;
+      traceName = validateInput(traceName);
+      configName = validateInput(configName);
 
       var company = document.getElementById('company_nickname').value;
       var frequencyCorrection =  children[5].children[1].value;
@@ -83,6 +85,15 @@ function PMConfig() {
             console.log('saveStatus: Ajax post was a success!');
         },
       }); 
+    };
+
+
+function validateInput(input) {
+        console.log(input);
+        console.log("TYPE: ", typeof input);
+        input = input.replace(/ +$/, "");
+        input = input.replace(/\s+/g, '-');
+        return input;
     };
 
 

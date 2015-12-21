@@ -35,12 +35,9 @@ import collections
 from datetime import datetime
 import StringIO
 import csv
+import settings
 
-DOMAIN = "gradientone-test.appspot.com"
-INDEX_NAME = 'U2000'
 
-def dt2ms(t):
-    return str(t.strftime('%s'))*1000 + str(t.microsecond/1000)
 
 class Handler(InstrumentDataHandler):
     def get(self, company_nickname=""):
@@ -51,7 +48,7 @@ class Handler(InstrumentDataHandler):
         recipient_email = self.request.get('recipient_email')
         start_tse = self.request.get('start_tse')
         testplan_name = self.request.get('testplan_name')
-        result_url = ('https://' + DOMAIN + '/testlibrary/testresults/' +
+        result_url = ('https://' + settings.DOMAIN + '/testlibrary/testresults/' +
             company_nickname + '/' + testplan_name + '/' + start_tse)
         message = mail.EmailMessage(
             sender="GradientOne Support <nedwards@gradientone.com>",
@@ -115,7 +112,7 @@ class Selected(InstrumentDataHandler):
         a = query_to_dict(rows)
         doc_ids = self.request.params.getall('doc_ids')
         try:
-          index = search.Index(INDEX_NAME)
+          index = search.Index(settings.INDEX_NAME)
           selected_data = []
           for doc_id in doc_ids:
             fields = index.get(doc_id).fields
@@ -189,7 +186,7 @@ class Selected(InstrumentDataHandler):
         a = query_to_dict(rows)
         doc_ids = self.request.params.getall('doc_ids')
         try:
-          index = search.Index(INDEX_NAME)
+          index = search.Index(settings.INDEX_NAME)
           selected_configs = []
           for doc_id in doc_ids:
             fields = index.get(doc_id).fields
