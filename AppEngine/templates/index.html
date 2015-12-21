@@ -456,7 +456,11 @@ $(document).ready(function () {
             var savedU2001AsHTML = "";
             savedU2001AsHTML += "<tr><td><p class='savedTitle'>Saved:</p></td></tr>";
             for (var i=0;i<savedU2001As.length;i++){
-                savedU2001AsHTML+= "<tr><td><a onclick='createU2001A(" + i + ")'>" + savedU2001As[i].config_name + "</a></td></tr>";                                            
+                var displayName = savedU2001As[i].config_name;
+                if (displayName.length > 12) {
+                    displayName = displayName.substring(0,10) + "...";
+                }
+                savedU2001AsHTML+= "<tr><td><a onclick='createU2001A(" + i + ")'>" + displayName + "</a></td></tr>";                                            
             };
             console.log('savedU2001AsHTML = ',savedU2001AsHTML);
             document.getElementById("savedU2001As").innerHTML = savedU2001AsHTML;
