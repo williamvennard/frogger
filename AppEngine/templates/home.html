@@ -1,0 +1,52 @@
+{% extends "one.html" %}
+{% block title %} Home {% endblock %}
+{% block head %}
+    {{ super() }}
+    <style type="text/css">
+        h1,h2,h3,h4,p {color: white;}
+        #ErrorMessage {color: red;}
+    </style>
+{% endblock %}
+{% block content %}      
+        <div id="homeRow" class="row">
+          <div class="col-md-12">
+            <h1>GradientOne Home</h1>
+            {% if error %}
+              <h4 id="ErrorMessage">{{error}}</h4>
+            {% endif %}
+          </div>
+          <div class="col-md-12">  
+            <h3>Basic Info</h3>    
+            <div class="col-md-2">
+              <p>Name: <br>
+              Company: <br></p>
+            </div>
+            <div class="col-md-3">
+              <p> {{profile.name}} <br>
+              {{profile.company_nickname}} <br></p>
+            </div>
+            <div class="col-md-3">
+            </div>
+          </div>
+        </div>
+        <div id="harwareRow" class="row">
+          <div class="col-md-12">
+          <h3>Hardware Info</h3>
+            <div class="col-md-2">
+              <p>Hardware Name: </p>
+              <p>Software Version: </p>
+              <p>Latest Ping: </p>
+              <p>Instruments Connected:</p>
+            </div>
+            <div class="col-md-3">
+              <p>{{data.hardware}}</p>
+              <p>{{data.software_version}}</p>
+              <p>{{data.ping}}</p>
+              <p>{% for inst in data.instruments %}
+                {{inst}} &nbsp;
+                {% endfor %}
+              </p>
+            </div>
+          </div>
+        </div>
+{% endblock %}

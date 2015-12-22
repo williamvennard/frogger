@@ -66,6 +66,7 @@ import scriptconfig
 import u2000data
 import temp_testcomplete
 import comments
+import home
 from gradientone import InstrumentDataHandler
 from onedb import ProfileDB
 from onedb import UserDB
@@ -299,6 +300,7 @@ app = webapp2.WSGIApplication([
     ('/doc_export', searchdemo.DocExport),
     ('/exploremodestop/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', exploremodestop.Handler),
     ('/help', mainpage.Handler),
+    ('/home', home.Handler),
     ('/instlookup/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', instlookup.Handler),
     ('/instruments', instruments.Handler),
     ('/instruments/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', instruments.Handler),

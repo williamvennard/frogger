@@ -51,6 +51,7 @@ class Handler(InstrumentDataHandler):
             config = {'test_config':test_config, 'inst_config':inst_config}
             render_json(self, config)
         elif company_nickname and hardware_name:
+            memcache.set('lastNUCping', datetime.datetime.now())
             commands = ["keep doing what you are doing", "say cheese!"]
             # grab configs set to commence
             rows = db.GqlQuery("SELECT * FROM ConfigDB WHERE company_nickname =:1 and commence_test =:2 and hardware_name =:3", 
