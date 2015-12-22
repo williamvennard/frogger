@@ -618,9 +618,9 @@
       // console.log("STOPPING STATUS PING!!")
         window.clearInterval(statusPing);
     }
-    window.addEventListener('focus', startStatusPing);    
-    window.addEventListener('blur', stopStatusPing);
-    var idleSeconds = 30;
+    window.addEventListener('focus', startStatusPing);  // checks on page
+    window.addEventListener('blur', stopStatusPing);  // if user leaves page, stop pinging
+    var idleSeconds = 30;  // timeout period for if user is on page, but inactive
     function setTimer(){
       var idleTimer;
       function resetTimer(){
