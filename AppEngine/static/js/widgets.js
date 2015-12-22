@@ -52,10 +52,10 @@
                 var configResolution = children[index].children[0].children[1].children[4].children[1].value
                 var configChNum = children[index].children[0].children[1].children[5].children[1].value
                 //Search results
-                var configResults = children[index].children[1].children[0].children[0].children[1].innerHTML;
-                var configInstType = children[index].children[1].children[0].children[1].children[1].innerHTML;
-                var configHardware = children[index].children[1].children[0].children[2].children[1].innerHTML;
-                var configAvail = children[index].children[1].children[0].children[3].children[1].innerHTML;
+                // var configResults = children[index].children[1].children[0].children[0].children[1].innerHTML;
+                // var configInstType = children[index].children[1].children[0].children[1].children[1].innerHTML;
+                // var configHardware = children[index].children[1].children[0].children[2].children[1].innerHTML;
+                // var configAvail = children[index].children[1].children[0].children[3].children[1].innerHTML;
 
                 testPlanHTML+= "<div type='config' class='configBox' id='" + String(index) + "'>";
                 testPlanHTML+= "<div id='configSearch' class='col-md-4'>";
@@ -93,35 +93,35 @@
                 testPlanHTML+= "</form>";
                 testPlanHTML+= "</div>";
 
-                testPlanHTML+= "<div id='configSearchResults' class='col-md-4'>";
-                testPlanHTML+= "<form method='post'>";
+                // testPlanHTML+= "<div id='configSearchResults' class='col-md-4'>";
+                // testPlanHTML+= "<form method='post'>";
 
-                testPlanHTML+= "<div class='row appRow'>";
-                testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Results:</p>"; 
-                testPlanHTML+= "<p class='configResults' style='width: 180px;' id='results" + index;
-                testPlanHTML+= "'>" + configResults;
-                testPlanHTML+= "</p></td></tr></div>";
+                // testPlanHTML+= "<div class='row appRow'>";
+                // testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Results:</p>"; 
+                // testPlanHTML+= "<p class='configResults' style='width: 180px;' id='results" + index;
+                // testPlanHTML+= "'>" + configResults;
+                // testPlanHTML+= "</p></td></tr></div>";
 
-                testPlanHTML+= "<div class='row appRow'>";
-                testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Instrument Type:</p>"; 
-                testPlanHTML+= "<p class='configResults' style='' type='text' name='selected_inst_type' value='' id='instType" + index;
-                testPlanHTML+= "'>" + configInstType;
-                testPlanHTML+= "</p></td></tr></div>";
+                // testPlanHTML+= "<div class='row appRow'>";
+                // testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Instrument Type:</p>"; 
+                // testPlanHTML+= "<p class='configResults' style='' type='text' name='selected_inst_type' value='' id='instType" + index;
+                // testPlanHTML+= "'>" + configInstType;
+                // testPlanHTML+= "</p></td></tr></div>";
 
-                testPlanHTML+= "<div class='row appRow'>";
-                testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Hardware:</p>"; 
-                testPlanHTML+= "<p class='configResults' style='' type='text' name='selected_hardware' value='' id='hardware" + index;
-                testPlanHTML+= "'>" + configHardware;
-                testPlanHTML+= "</p></td></tr></div>";
+                // testPlanHTML+= "<div class='row appRow'>";
+                // testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Hardware:</p>"; 
+                // testPlanHTML+= "<p class='configResults' style='' type='text' name='selected_hardware' value='' id='hardware" + index;
+                // testPlanHTML+= "'>" + configHardware;
+                // testPlanHTML+= "</p></td></tr></div>";
 
-                testPlanHTML+= "<div class='row appRow'>";
-                testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Available Instruments:</p>"; 
-                testPlanHTML+= "<p class='configResults' id='avail" + index;
-                testPlanHTML+= "'>" + configAvail;
-                testPlanHTML+= "</p></td></tr></div>";
+                // testPlanHTML+= "<div class='row appRow'>";
+                // testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Available Instruments:</p>"; 
+                // testPlanHTML+= "<p class='configResults' id='avail" + index;
+                // testPlanHTML+= "'>" + configAvail;
+                // testPlanHTML+= "</p></td></tr></div>";
 
-                testPlanHTML+= "</form>";
-                testPlanHTML+= "</div>";
+                // testPlanHTML+= "</form>";
+                // testPlanHTML+= "</div>";
                 testPlanHTML+= "<button id='configSearchBtn' onclick='configSearch(" + index + ")'>SEARCH</button>";   
                 testPlanHTML+= "</div>";
 
@@ -156,10 +156,10 @@
                 // var passFailMin = children[index].children[0].children[1].children[8].children[1].value
 
                 //Search results
-                var configResults = children[index].children[1].children[0].children[0].children[1].innerHTML;
-                var configInstType = children[index].children[1].children[0].children[1].children[1].innerHTML;
-                var configHardware = children[index].children[1].children[0].children[2].children[1].innerHTML;
-                var configAvail = children[index].children[1].children[0].children[3].children[1].innerHTML;
+                // var configResults = children[index].children[1].children[0].children[0].children[1].innerHTML;
+                // var configInstType = children[index].children[1].children[0].children[1].children[1].innerHTML;
+                // var configHardware = children[index].children[1].children[0].children[2].children[1].innerHTML;
+                // var configAvail = children[index].children[1].children[0].children[3].children[1].innerHTML;
 
 
                 testPlanHTML+= "<div type='U2001A' class='U2001ABox' id='" + String(index) + "'>";
@@ -210,36 +210,37 @@
                 testPlanHTML+= "</form>";
                 testPlanHTML+= "</div>";
 
-                testPlanHTML+= "<div id='configSearchResults' class='col-md-4' style='left:100px;'>";
-                testPlanHTML+= "<form method='post'>";
+                // testPlanHTML+= "<div id='configSearchResults' class='col-md-4' style='left:100px;'>";
+                // testPlanHTML+= "<form method='post'>";
 
-                testPlanHTML+= "<div class='row appRow'>";
-                testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Results:</p>"; 
-                testPlanHTML+= "<p class='configResults' style='width: 180px;' id='results" + index;
-                testPlanHTML+= "'>" + configResults;
-                testPlanHTML+= "</p></td></tr></div>";
+                // testPlanHTML+= "<div class='row appRow'>";
+                // testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Results:</p>"; 
+                // testPlanHTML+= "<p class='configResults' style='width: 180px;' id='results" + index;
+                // testPlanHTML+= "'>" + configResults;
+                // testPlanHTML+= "</p></td></tr></div>";
 
-                testPlanHTML+= "<div class='row appRow'>";
-                testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Instrument Type:</p>"; 
-                testPlanHTML+= "<p class='configResults' style='' type='text' name='selected_inst_type' value='' id='instType" + index;
-                testPlanHTML+= "'>" + configInstType;
-                testPlanHTML+= "</p></td></tr></div>";
+                // testPlanHTML+= "<div class='row appRow'>";
+                // testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Instrument Type:</p>"; 
+                // testPlanHTML+= "<p class='configResults' style='' type='text' name='selected_inst_type' value='' id='instType" + index;
+                // testPlanHTML+= "'>" + configInstType;
+                // testPlanHTML+= "</p></td></tr></div>";
 
-                testPlanHTML+= "<div class='row appRow'>";
-                testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Hardware:</p>"; 
-                testPlanHTML+= "<p class='configResults' style='' type='text' name='selected_hardware' value='' id='hardware" + index;
-                testPlanHTML+= "'>" + configHardware;
-                testPlanHTML+= "</p></td></tr></div>";
+                // testPlanHTML+= "<div class='row appRow'>";
+                // testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Hardware:</p>"; 
+                // testPlanHTML+= "<p class='configResults' style='' type='text' name='selected_hardware' value='' id='hardware" + index;
+                // testPlanHTML+= "'>" + configHardware;
+                // testPlanHTML+= "</p></td></tr></div>";
 
-                testPlanHTML+= "<div class='row appRow'>";
-                testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Available Instruments:</p>"; 
-                testPlanHTML+= "<p class='configResults' id='avail" + index;
-                testPlanHTML+= "'>" + configAvail;
-                testPlanHTML+= "</p></td></tr></div>";
+                // testPlanHTML+= "<div class='row appRow'>";
+                // testPlanHTML+= "<tr><td class='label'><p class='appLabel'>Available Instruments:</p>"; 
+                // testPlanHTML+= "<p class='configResults' id='avail" + index;
+                // testPlanHTML+= "'>" + configAvail;
+                // testPlanHTML+= "</p></td></tr></div>";
 
-                testPlanHTML+= "</form>";
-                testPlanHTML+= "</div>";
-                testPlanHTML+= "<button id='configSearchBtn' onclick='configSearch(" + index + ")'>SEARCH</button>";   
+                // testPlanHTML+= "</form>";
+                // testPlanHTML+= "</div>";
+                // testPlanHTML+= "<button id='configSearchBtn' onclick='configSearch(" + index + ")'>SEARCH</button>";   
+
                 testPlanHTML+= "</div>";
 
 
@@ -260,7 +261,7 @@
                 
 
                 testPlanHTML+= "<div type='measure' class='appBox' id='" + String(index) + "'>";
-                testPlanHTML+= "<h4 class='appTitle'>Measure - <span onclick='removeWidget(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle' style='left:685px;'></span></h4>";
+                testPlanHTML+= "<h4 class='appTitle'>Measure - <span onclick='removeWidget(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle' style='left:777px;'></span></h4>";
                 testPlanHTML+= "<form method='post'>";
                 testPlanHTML+= "<input style='left:190px;' class='nameWidget' type='text' name='meas_name' value='" + measName;
                 testPlanHTML+= "' placeholder='name goes here'>";
@@ -288,7 +289,7 @@
                 console.log('rmsStop = ', measStop);
 
                 testPlanHTML+= "<div type='measurement' class='appBox' id='" + String(index) + "'>";
-                testPlanHTML+= "<h4 class='appTitle'>RMS Measurement - <span onclick='removeWidget(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle' style='left:685px;'></span></h4>";
+                testPlanHTML+= "<h4 class='appTitle'>RMS Measurement - <span onclick='removeWidget(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle' style='left:777px;'></span></h4>";
                 testPlanHTML+= "<form method='post'>";
                 testPlanHTML+= "<input style='left:190px;' class='nameWidget' type='text' name='meas_name' value='" + measName;
                 testPlanHTML+= "' placeholder='name goes here'>";
@@ -472,7 +473,7 @@
 
         }else if(type === 'measure') {
             testPlanHTML+= "<div type='measure' class='appBox' id='" + String(index) + "'>";
-            testPlanHTML+= "<h4 class='appTitle'>Measure - <span onclick='removeWidget(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle' style='left:685px;'></span></h4>";
+            testPlanHTML+= "<h4 class='appTitle'>Measure - <span onclick='removeWidget(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle' style='left:777px;'></span></h4>";
             testPlanHTML+= "<form method='post'>";
             testPlanHTML+= "<input style='left:190px;' class='nameWidget' type='text' name='meas_name' value='' placeholder='name goes here'>";
             testPlanHTML+= "<div class='row appRow'>";
@@ -497,7 +498,7 @@
             var smaxPass = savedSettings.max_pass;
 
             testPlanHTML+= "<div type='measure' class='appBox' id='" + String(index) + "'>";
-            testPlanHTML+= "<h4 class='appTitle'>Measure - <span onclick='removeWidget(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle' style='left:685px;'></span></h4>";
+            testPlanHTML+= "<h4 class='appTitle'>Measure - <span onclick='removeWidget(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle' style='left:777px;'></span></h4>";
             testPlanHTML+= "<form method='post'>";
             testPlanHTML+= "<input style='left:190px;' class='nameWidget' type='text' name='meas_name' value='" + smeasName + "'>";
             testPlanHTML+= "<div class='row appRow'>";
@@ -518,7 +519,7 @@
 
         }else if(type === 'measurement') {
             testPlanHTML+= "<div type='measurement' class='appBox' id='" + String(index) + "'>";
-            testPlanHTML+= "<h4 class='appTitle'>RMS Measurement - <span onclick='removeWidget(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle' style='left:685px;'></span></h4>";
+            testPlanHTML+= "<h4 class='appTitle'>RMS Measurement - <span onclick='removeWidget(" + index + ")' class='appRemove glyphicon glyphicon-remove-circle' style='left:777px;'></span></h4>";
             testPlanHTML+= "<form method='post'>";
             testPlanHTML+= "<input style='left:190px;' class='nameWidget' type='text' name='meas_name' value='' placeholder='name goes here'>";
             testPlanHTML+= "<div class='row appRow'>";
@@ -947,7 +948,7 @@
             startTime = null;
         }
         if (startTime || startNowLogic || opsStart){
-            console.log ('START VARS: ', timecheck, startNowLogic, opsStart )
+            console.log ('START VARS: ', startTime, startNowLogic, opsStart )
         }else{
             var message = "<h3>Woops! No start trigger. Please try again.</h3>"
             document.getElementById("FlashBox").innerHTML = message;
