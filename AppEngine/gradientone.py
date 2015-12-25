@@ -16,6 +16,7 @@ from google.appengine.ext import db
 from google.appengine.api import oauth
 import hashlib
 import traceback
+import collections
 
 
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
@@ -153,15 +154,17 @@ def get_ordered_list(order):
         fdict['order'] = f[-1]
         order_list = [fdict]
     else:
-        mdict = {}
-        for m in middle_section:
+        mlist = []
+        mdict = collections.defaultdict()
+        for m in middle_section: 
             m = m.strip()
             m = m.lstrip('u')
             m = m.strip('\'')
             m = m.split(':')
-            mdict['type'] = m[0]
+            mdict['type'] = m[0] 
             mdict['name'] = m[1]
             mdict['order'] = m[-1]
+            mlist.append(mdict)
         f = order[0]
         f = f.lstrip('[')
         f = f.lstrip('u')
@@ -181,13 +184,10 @@ def get_ordered_list(order):
         ldict['type'] = l[0]
         ldict['name'] = l[1]
         ldict['order'] = l[-1]
-        order_list = []
-        if mdict:
-            order_list = [mdict, ldict, fdict]
-        else:
-            order_list = [ldict, fdict]
+        order_list = [fdict, ldict]
+        order_list.extend(mlist)
     order_list = sorted(order_list, key=getOrderKey)
-    return order_list    
+    return order_list
 
 def is_checked(self,c,param):
     "Mesurement checked and up date test object 'c'."
