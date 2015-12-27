@@ -9,6 +9,7 @@ import collections
 import StringIO
 import csv
 import settings
+from google.appengine.api.search import search as gaesearch
 from google.appengine.api import memcache
 from google.appengine.ext import ndb
 from google.appengine.api import search
@@ -157,38 +158,93 @@ class DocHandler(InstrumentDataHandler):
         else:
             self.redirect('/searchdemo')
 
+# Note max_value == "N/A" will be gaesearch.MAX_NUMBER_VALUE
+# Note min_value == "N/A" will be  gaesearch.MIN_NUMBER_VALUE
+# Number Field: A double precision floating point value
+# between -2,147,483,647 and 2,147,483,647.
+# see: https://cloud.google.com/appengine/docs/python/search/
+
 class UploadHandler(InstrumentDataHandler):
+    def make_fields(self, row):
+        if 'start_time' in row.keys():
+            logging.info("row['max_value']=%s" % row['max_value'])
+            if row['max_value'] == 'N/A':
+               max_value = gaesearch.MAX_NUMBER_VALUE
+            else:
+               max_value = float(row['max_value'])
+            if max_value > gaesearch.MAX_NUMBER_VALUE:
+               max_value = gaesearch.MAX_NUMBER_VALUE - 1
+            logging.info("max_value=%s" % max_value)
+            if row['min_value'] == 'N/A':
+               min_value = gaesearch.MIN_NUMBER_VALUE
+            else:
+               min_value = float(row['min_value'])
+            if min_value < gaesearch.MIN_NUMBER_VALUE:
+               min_value = gaesearch.MIN_NUMBER_VALUE + 1
+            logging.info("min_value=%s" % min_value)
+            correction_frequency = float(row['correction_frequency(Hz)'])
+            correction_frequency /= 10000000 # convert to MHz
+            if correction_frequency > gaesearch.MAX_NUMBER_VALUE:
+               correction_frequency = gaesearch.MAX_NUMBER_VALUE - 1
+            fields = [
+                search.NumberField(name='max_value', value=max_value),
+                search.NumberField(name='min_value', value=min_value),
+                search.NumberField(name='dBm',
+                                   value=float(row['data(dBm)'])),
+                search.TextField(name='pass_fail', value=row['pass_fail']),
+                search.DateField(name='start_time', 
+                                 value=datetime.fromtimestamp(
+                                               int(row['start_time'])//1000)),
+                search.TextField(name='msbased_key', value=row['start_time']),
+                search.TextField(name='config_name', value=row['config_name']),
+                search.TextField(name='measurement_source', 
+                                 value=row['measurement_source']),
+                search.TextField(name='hardware_name', 
+                                 value=row['hardware_name']),
+                search.NumberField(name='correction_frequency',
+                                   value=correction_frequency),
+                search.TextField(name='active_testplan_name',
+                                 value=row['active_testplan_name']),
+            ]
+        else:
+            fields = [
+                search.NumberField(name='max_value', value=max_value),
+                search.NumberField(name='min_value', value=min_value),
+                search.NumberField(name='dBm',
+                                   value=float(row['data'])), # 'data' yuck!
+                search.TextField(name='pass_fail', value=row['pass_fail']),
+                search.DateField(name='start_time', 
+                                 value=datetime.fromtimestamp(
+                                          int(row['start_time'])//1000)),
+                search.TextField(name='msbased_key',
+                                 value=row['start_time']),
+                search.TextField(name='config_name', value=row['config_name']),
+                search.NumberField(name='correction_frequency',
+                                   value=float(row['correction_frequency'])),
+                search.TextField(name='active_testplan_name',
+                                 value=row['active_testplan_name']),
+            ]
+        return fields
+
     def post(self):
-         rows = json.loads(self.request.body)
-         logging.info(str(rows))
-         logging.info(rows[1].keys())
-           #logging.info(dir(search))
-         idx = search.Index(name='powermeterdemo')
-         for row in rows[1:]:
-             logging.info("max_value = %s" % row['max_value'])
-             fields = [
-                 search.NumberField(name='max_value',
-                                    value=float(row['max_value'])),
-                 search.NumberField(name='min_value',
-                                    value=float(row['min_value'])),
-                 search.NumberField(name='dB',
-                                    value=float(row['data'])), # 'data' yuck!
-                 search.TextField(name='pass_fail', value=row['pass_fail']),
-                 search.DateField(name='start_time', 
-                                  value=datetime.fromtimestamp(
-                                                int(row['Start_TSE'])//1000)),
-                 search.TextField(name='msbased_key', value=row['Start_TSE']),
-                 search.TextField(name='config_name', value=row['config_name']),
-                 search.NumberField(name='correction_frequency',
-                                    value=float(row['correction_frequency'])),
-                 search.TextField(name='active_testplan_name',
-                                  value=row['active_testplan_name']),
-             ]
-             d = search.Document(doc_id=row['Start_TSE'], fields=fields)
-             try:
-               add_result = idx.put(d)
-             except search.Error:
-               logging.error("search.Index error")
+        rows = json.loads(self.request.body)
+        #logging.info(str(rows))
+        logging.info("rows[0].keys=%s" % rows[0].keys())
+        #logging.info(dir(search))
+        if 'start_time' in rows[0].keys():
+            idx = search.Index(name='powermeterdemo')
+            timekey = 'start_time'
+        else:
+            idx = search.Index(name='oldpowermeterdemo')
+            timekey = 'Start_TSE'
+        for row in rows[1:]:
+            logging.info("max_value = %s" % row['max_value'])
+            fields= self.make_fields(row)
+            d = search.Document(doc_id=row[timekey], fields=fields)
+            try:
+              add_result = idx.put(d)
+            except search.Error:
+              logging.error("search.Index error")
 
     def get(self):
         #self.delete_all()
