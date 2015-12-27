@@ -15,7 +15,7 @@
   <div class="col-md-12 canv">
     <h1 class="headr"> {{ self.title() }} </h1>
   </div>
-  <form name="searchform" action="/search" method="post">
+  <form name="searchform" action="/analysis" method="post">
     <input type="hidden" name="download_key" value="{{download_key}}"/>
     <input type="text" id="query" name="query" size="80" value="{{base_query}}" />
     <input type="submit" class="btn" name="searchsub" value="Search"/>

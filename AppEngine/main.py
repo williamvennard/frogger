@@ -92,6 +92,7 @@ import view_testplan
 import blob_selection
 import blob_export
 from gradientone import check_testplan_name
+import analysis
 
 authorized_users = ['charlie@gradientone.com',
                     'nedwards@gradientone.com',
@@ -279,6 +280,7 @@ app = webapp2.WSGIApplication([
     ('/adduser', profile.AdduserPage),
     ('/admin/adduser', profile.AdminAddUser),
     ('/admin/editusers', profile.AdminEditUsers),
+    ('/analysis', analysis.Handler),
     ('/analysis_export', report_summary.AnalysisExport),
     ('/blob_export/([a-zA-Z0-9-]+)', blob_export.Handler),
     ('/blob_selection', blob_selection.Handler),
@@ -297,7 +299,7 @@ app = webapp2.WSGIApplication([
     ('/configoutput/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', configoutput.Handler),
     ('/datamgmt/bscopedata/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', datamgmt.Handler),
     ('/docselect', searchdemo.DocHandler),
-    ('/doc_export', searchdemo.DocExport),
+    ('/doc_export', analysis.DocExport),
     ('/exploremodestop/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', exploremodestop.Handler),
     ('/help', mainpage.Handler),
     ('/home', home.Handler),
@@ -319,7 +321,6 @@ app = webapp2.WSGIApplication([
     ('/report_detail/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)',  report_detail.Handler),
     ('/saveposttotest', communitytests.SavePostToTest),
     ('/scriptconfig', scriptconfig.Handler),
-    ('/search', searchdemo.Handler),
     ('/searchdemo', searchdemo.Handler),
     ('/searchdemo/', searchdemo.Handler),
     ('/searchdemo/charlie', searchdemo.HandlerCharlie),
@@ -345,8 +346,8 @@ app = webapp2.WSGIApplication([
     ('/testplansummary/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9-]+)', testplansummary.Handler),
     ('/testresults/([a-zA-Z0-9-]+)', testresultsdata.Handler),
     ('/testresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', testresultsdata.Handler),
-    ('/testresults/([a-zA-Z0-9-]+.json)', canvaspage.Handler),
-    ('/testresults/widgets/([a-zA-Z0-9-]+.json)', canvaspage.Handler),
+    ('/testresults/([a-zA-Z0-9-]+.json)', canvaspage.Handler), # TODO - change testresults to something sensible, as this contains no test results. Remember both here and wherever this is called
+    ('/testresults/widgets/([a-zA-Z0-9-]+.json)', canvaspage.Handler), # TODO - same as above
     ('/testsave', testsave.Handler),
     ('/traceresults/([a-zA-Z0-9-]+)/([a-zA-Z0-9.-]+)/([a-zA-Z0-9.-]+)', traceresultsdata.Handler),
     ('/u2000_configinput', u2000_configinput.Handler),
