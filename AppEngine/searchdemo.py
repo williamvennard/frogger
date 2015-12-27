@@ -167,30 +167,34 @@ class DocHandler(InstrumentDataHandler):
 class UploadHandler(InstrumentDataHandler):
     def make_fields(self, row):
         if 'start_time' in row.keys():
-            logging.info("row['max_value']=%s" % row['max_value'])
+            timekey = row['start_time']
             if row['max_value'] == 'N/A':
                max_value = gaesearch.MAX_NUMBER_VALUE
             else:
                max_value = float(row['max_value'])
             if max_value > gaesearch.MAX_NUMBER_VALUE:
+               logging.error("%s: max_value=%s too high" % (timekey, max_value))
                max_value = gaesearch.MAX_NUMBER_VALUE - 1
-            logging.info("max_value=%s" % max_value)
             if row['min_value'] == 'N/A':
                min_value = gaesearch.MIN_NUMBER_VALUE
             else:
                min_value = float(row['min_value'])
             if min_value < gaesearch.MIN_NUMBER_VALUE:
+               logging.error("%s: min_value=%s too low" % (timekey, min_value))
                min_value = gaesearch.MIN_NUMBER_VALUE + 1
-            logging.info("min_value=%s" % min_value)
             correction_frequency = float(row['correction_frequency(Hz)'])
             correction_frequency /= 10000000 # convert to MHz
             if correction_frequency > gaesearch.MAX_NUMBER_VALUE:
+               logging.error(
+                 "%s: correction_frequencey=%s too high" % (timekey, min_value))
                correction_frequency = gaesearch.MAX_NUMBER_VALUE - 1
             fields = [
-                search.NumberField(name='max_value', value=max_value),
-                search.NumberField(name='min_value', value=min_value),
                 search.NumberField(name='dBm',
                                    value=float(row['data(dBm)'])),
+                search.NumberField(name='offset_dBm',
+                                   value=float(row['offset(dBm)'])),
+                search.NumberField(name='max_value', value=max_value),
+                search.NumberField(name='min_value', value=min_value),
                 search.TextField(name='pass_fail', value=row['pass_fail']),
                 search.DateField(name='start_time', 
                                  value=datetime.fromtimestamp(
@@ -247,7 +251,7 @@ class UploadHandler(InstrumentDataHandler):
               logging.error("search.Index error")
 
     def get(self):
-        #self.delete_all()
+        self.delete_all()
         if False:
           for index in search.get_indexes(fetch_schema=True):
             logging.info("index attributes: %s", dir(index))
@@ -271,7 +275,44 @@ class UploadHandler(InstrumentDataHandler):
 class FakeProfile:
     company_nickname = "charliedemos"
 
+class Results:
+    number_found = 0
+
+class Result:
+    fields = []
+
+class ResultField:
+    name = ''
+    value = ''
+
 class HandlerCharlie(InstrumentDataHandler):
+
+    def insert_NA(self,results):
+
+        #NA_strings = [str(gaesearch.MAX_NUMBER_VALUE) + '.0',
+        #              str(gaesearch.MIN_NUMBER_VALUE) + '.0']
+        #logging.info("NA_strings=%s" % NA_strings)
+        NA_values = [float(gaesearch.MAX_NUMBER_VALUE), gaesearch.MIN_NUMBER_VALUE]
+        logging.info("NA_values=%s" % NA_values)
+        new_results = []
+        for result in results:
+            new_result = Result()
+            new_result.fields = []
+            for f in result.fields:
+                nf = ResultField()
+                nf.value = f.value
+                nf.name = f.name
+                if 'max' in f.name or 'min' in f.name:
+                    logging.info("f=%s" % f)
+                    logging.info("f.value=%s" % f.value)
+                    logging.info("NA_values[0]=%s" % NA_values[0])
+                    if f.value in NA_values:
+                        logging.info("changing value to N/A")
+                        nf.value = 'N/A'
+                new_result.fields.append(nf)
+            new_results.append(new_result)
+        return new_results
+
     def get(self):
         uri = urlparse(self.request.uri)
         query = ''
@@ -279,7 +320,7 @@ class HandlerCharlie(InstrumentDataHandler):
             query = parse_qs(uri.query)
             query = query['query'][0]
 
-        # sort results by author descending
+        # sort results by timestamp descending
         expr_list = [search.SortExpression(
             expression='start_time', default_value='',
             direction=search.SortExpression.DESCENDING)]
@@ -291,9 +332,12 @@ class HandlerCharlie(InstrumentDataHandler):
             sort_options=sort_opts)
         query_obj = search.Query(query_string=query, options=query_options)
         results = search.Index(name='powermeterdemo').search(query=query_obj)
-        self.render('searchdemo_charlie.html', results=results, 
+        #new_results = results
+        new_results = self.insert_NA(results)
+        self.render('searchdemo_charlie.html', results=new_results, 
             profile=FakeProfile(), query=query,
-            number_returned=len(results.results))
+            number_found=results.number_found,
+            number_returned=len(new_results))
 
     def post(self):
         """Handles a post request."""
